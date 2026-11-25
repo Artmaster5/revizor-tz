@@ -1,0 +1,328 @@
+{
+  "document": "kyc_upload_api_en.md",
+  "run": {
+    "provider": "offline",
+    "model": "",
+    "mode": "offline",
+    "cost_usd": 0.0,
+    "cost_note": "модель не вызывалась",
+    "duration_s": 0.03,
+    "doc_name": "kyc_upload_api_en.md"
+  },
+  "counts": {
+    "requirements": 44,
+    "findings_open": 8,
+    "advisory": 9
+  },
+  "recall": {
+    "overall": {
+      "total": 18,
+      "strict": 5,
+      "loose": 7,
+      "strict_share": 0.2777777777777778,
+      "loose_share": 0.3888888888888889
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 0,
+        "loose": 1,
+        "strict_share": 0.0,
+        "loose_share": 0.3333333333333333
+      },
+      "MAJOR": {
+        "total": 11,
+        "strict": 5,
+        "loose": 5,
+        "strict_share": 0.45454545454545453,
+        "loose_share": 0.45454545454545453
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 0,
+        "loose": 1,
+        "strict_share": 0.0,
+        "loose_share": 0.25
+      }
+    },
+    "by_origin": {}
+  },
+  "severity_agreement": {
+    "same": 4,
+    "tool_higher": 1,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "K-01",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Срок хранения изображений: удаление через 90 дней (6.1) против хранения весь срок отношений + 5 лет (7.2)",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-02",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Эндпоинт статуса без авторизации возвращает ФИО, ИИН, дату рождения и номер документа",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-001"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-03",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "ИИН передаётся в query-параметре URL",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-04",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Максимальный размер файла: 10 MB в 3.1 и 8 000 KB в разделе 5",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-05",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Допустимые форматы: JPEG/PNG в 3.1 и ответе 415, но JPEG/PNG/HEIC в лимитах",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-06",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Код 409 используется, но не описан среди ответов",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-003"
+      ],
+      "loose_fids": [
+        "D-003"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-07",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Ссылка на несуществующий пункт 4.3",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-08",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Статус APPROVED не входит в перечень статусов (там VERIFIED)",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-09",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Удаление документа методом GET нарушает семантику HTTP",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-005"
+      ],
+      "loose_fids": [
+        "D-005"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-10",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Время ответа 3 секунды без условий измерения",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-004"
+      ],
+      "loose_fids": [
+        "D-004"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-11",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Поведение при сбое провайдера верификации не определено («handled accordingly»)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-007"
+      ],
+      "loose_fids": [
+        "D-007"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-12",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "AC-5 проверяет блокировку 423 после трёх отклонённых селфи, которой нет в требованиях",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-13",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "«Within acceptable limits» для бликов и размытия — неизмеримо",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-14",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Раздел обратного вызова в АБС не заполнен (TBD)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-008"
+      ],
+      "loose_fids": [
+        "D-008"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-15",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Лимит частоты без периода времени",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-16",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Пример запроса использует docType=PHOTO, которого нет в допустимых значениях",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-002"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-17",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Требование предписывает реализацию проверки живости (конкретная библиотека и пул из 8 потоков)",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-18",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "П. 2.6 объединяет четыре разных требования к клиенту",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    }
+  ],
+  "false_alarms": [],
+  "false_alarms_exempt": [],
+  "unmatched": [
+    {
+      "fid": "D-006",
+      "severity": "MAJOR",
+      "title": "Код ответа 202 возвращается, но не описан",
+      "line": 78
+    }
+  ],
+  "warnings": [],
+  "result_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/kyc_upload_api_en.offline.json",
+  "key_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/kyc_upload_api_en.md.key.json"
+}

@@ -1,0 +1,294 @@
+{
+  "document": "qr_merchant_stories.md",
+  "run": {
+    "provider": "offline",
+    "model": "",
+    "mode": "offline",
+    "cost_usd": 0.0,
+    "cost_note": "модель не вызывалась",
+    "duration_s": 0.04,
+    "doc_name": "qr_merchant_stories.md"
+  },
+  "counts": {
+    "requirements": 56,
+    "findings_open": 3,
+    "advisory": 6
+  },
+  "recall": {
+    "overall": {
+      "total": 17,
+      "strict": 2,
+      "loose": 3,
+      "strict_share": 0.11764705882352941,
+      "loose_share": 0.17647058823529413
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 0,
+        "loose": 1,
+        "strict_share": 0.0,
+        "loose_share": 0.3333333333333333
+      },
+      "MAJOR": {
+        "total": 9,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 0.2222222222222222,
+        "loose_share": 0.2222222222222222
+      },
+      "MINOR": {
+        "total": 5,
+        "strict": 0,
+        "loose": 0,
+        "strict_share": 0.0,
+        "loose_share": 0.0
+      }
+    },
+    "by_origin": {}
+  },
+  "severity_agreement": {
+    "same": 2,
+    "tool_higher": 0,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "K-01",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Срок зачисления выручки: «в день оплаты» (QR-5) и «на следующий рабочий день» (QR-9)",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-02",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Номер телефона покупателя в URL чека, чек открывается без авторизации",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-03",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Срок жизни QR 5 минут против автоотмены через 10 минут; судьба оплаты между ними не определена",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-002"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-04",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Верхняя граница суммы: до 999 999 ₸ в общих ограничениях и до 1 000 000 ₸ включительно в QR-1",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-05",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Пример зачисления не соответствует комиссии 0,95%",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-06",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "«Мгновенно» — непроверяемый срок обновления статуса",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-001"
+      ],
+      "loose_fids": [
+        "D-001"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-07",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "QR-6 даёт кассиру оформлять возвраты, QR-7 это запрещает",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-08",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Ограничена только сумма одного частичного возврата, но не их сумма",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-09",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "История QR-8 не атомарна: четыре разные функции в одной истории",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-10",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Критерий про еженедельную отправку отчёта на e-mail не следует из истории",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-11",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "QR-12 — техническая задача без роли, ценности и критериев приёмки",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-12",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "QR-13 «удобный интерфейс, чтобы было удобно» — непроверяемая история с размытой ролью",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-003"
+      ],
+      "loose_fids": [
+        "D-003"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-13",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Размер наклейки «5 на 5» без единицы измерения",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-14",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Термин «Оператор» вместо определённого в глоссарии «Кассир»",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-15",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Ссылка на макет М-12, которого нет среди связанных документов",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-16",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Эпик «Офлайн-режим» пустой",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-17",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "QR-9 записана не в формате истории и дублирует тему QR-5",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    }
+  ],
+  "false_alarms": [],
+  "false_alarms_exempt": [],
+  "unmatched": [],
+  "warnings": [],
+  "result_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/qr_merchant_stories.offline.json",
+  "key_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/qr_merchant_stories.md.key.json"
+}

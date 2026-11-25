@@ -1,0 +1,4212 @@
+{
+  "format": "revizor-report/1",
+  "summary": {
+    "tests": {
+      "ready": 12,
+      "blocked": 14
+    },
+    "answers": null,
+    "verdict_after_answers": "",
+    "baseline": null,
+    "requirements": 56,
+    "requirements_with_findings": 6,
+    "findings": 7,
+    "by_severity": {
+      "CRITICAL": 0,
+      "MAJOR": 3,
+      "MINOR": 4
+    },
+    "by_criterion": {
+      "completeness": 1,
+      "unambiguity": 1,
+      "consistency": 0,
+      "verifiability": 1,
+      "feasibility": 0,
+      "necessity": 0,
+      "singularity": 0,
+      "set_completeness": 1,
+      "set_consistency": 2,
+      "set_feasibility": 0,
+      "comprehensibility": 0,
+      "traceability": 1
+    },
+    "observations": 3,
+    "questions": 7,
+    "questions_by_priority": {
+      "blocker": 0,
+      "important": 3,
+      "nice": 4
+    },
+    "readiness": 92,
+    "readiness_band": "готов",
+    "clarity_bands": {
+      "ясное": 52,
+      "есть замечания": 4,
+      "нужна доработка": 0,
+      "в таком виде использовать нельзя": 0
+    },
+    "verdict": "CONDITIONAL",
+    "verdict_after_blocker_answers": "",
+    "preliminary": true
+  },
+  "run": {
+    "agent_name": "Ревизор ТЗ",
+    "agent_version": "1.0.0",
+    "started_at": "2026-11-25T18:01:57+05:00",
+    "duration_s": 0.04,
+    "mode": "offline",
+    "provider": "offline",
+    "model": "",
+    "effort": "",
+    "doc_name": "loan_prescoring_tz.txt",
+    "doc_format": "txt",
+    "doc_size_bytes": 10263,
+    "doc_sha256": "00859c30b2d9358d35311db2e668af8ab9874d51d83ade7b53af7dc1888da2b0",
+    "doc_pages": null,
+    "doc_lines": 128,
+    "doc_chars": 6219,
+    "llm_calls": 0,
+    "llm_cache_hits": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_note": "модель не вызывалась",
+    "quotes_confirmed": 12,
+    "quotes_restored": 0,
+    "quotes_dropped": 0,
+    "skeptic_kept": 0,
+    "skeptic_rejected": 0,
+    "skeptic_merged": 0,
+    "manual_minutes_estimate": 269,
+    "warnings": [],
+    "injection_suspected": false,
+    "masked_values": 0,
+    "score": 92,
+    "score_formula": "10 × 9,85 (средняя ясность 56 треб.) − 6 (штраф за замечания к набору: 8×0 + 3×1 + 1×3 = 6) = 92",
+    "rules_version": "1.0",
+    "doc_words": 811,
+    "context_files": [],
+    "dup_merged": 0
+  },
+  "diagnostic": null,
+  "requirements": [
+    {
+      "rid": "REQ-001",
+      "doc_id": "1.1",
+      "section": "1. ОБЩИЕ СВЕДЕНИЯ",
+      "kind": "functional",
+      "quote": "1.1. Модуль ПреСкор выполняет предварительную оценку заявки на беззалоговый потребительский кредит в тенге до передачи заявки в основной кредитный конвейер.",
+      "summary": "",
+      "block_ids": [
+        "B006"
+      ],
+      "line_start": 15,
+      "line_end": 16,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-002",
+      "doc_id": "1.2",
+      "section": "1. ОБЩИЕ СВЕДЕНИЯ",
+      "kind": "functional",
+      "quote": "1.2. Цель доработки — снизить число заявок, поступающих кредитным экспертам, не менее чем на 30% от среднемесячного уровня октября 2026 года.",
+      "summary": "",
+      "block_ids": [
+        "B007"
+      ],
+      "line_start": 17,
+      "line_end": 18,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-003",
+      "doc_id": "1.3",
+      "section": "1. ОБЩИЕ СВЕДЕНИЯ",
+      "kind": "functional",
+      "quote": "1.3. Каналы подачи заявки: мобильное приложение и фронт-система отделений.",
+      "summary": "",
+      "block_ids": [
+        "B008"
+      ],
+      "line_start": 19,
+      "line_end": 19,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-004",
+      "doc_id": "2.1",
+      "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "kind": "functional",
+      "quote": "2.1. Заявка — запрос клиента на кредит с уникальным идентификатором application_id.",
+      "summary": "",
+      "block_ids": [
+        "B010"
+      ],
+      "line_start": 23,
+      "line_end": 23,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-005",
+      "doc_id": "2.2",
+      "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "kind": "functional",
+      "quote": "2.2. Кредитный отчёт — отчёт кредитного бюро о действующих и закрытых займах клиента.",
+      "summary": "",
+      "block_ids": [
+        "B011"
+      ],
+      "line_start": 24,
+      "line_end": 24,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-006",
+      "doc_id": "2.3",
+      "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "kind": "functional",
+      "quote": "2.3. КДН — коэффициент долговой нагрузки: сумма ежемесячных платежей клиента по всем действующим займам и по запрашиваемому кредиту, делённая на среднемесячный доход.",
+      "summary": "",
+      "block_ids": [
+        "B012"
+      ],
+      "line_start": 25,
+      "line_end": 26,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-007",
+      "doc_id": "2.4",
+      "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "kind": "functional",
+      "quote": "2.4. Предварительное решение — один из трёх исходов:",
+      "summary": "",
+      "block_ids": [
+        "B013"
+      ],
+      "line_start": 27,
+      "line_end": 27,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-008",
+      "doc_id": "",
+      "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "kind": "other",
+      "quote": "ПРОПУСТИТЬ заявка передаётся в кредитный конвейер;",
+      "summary": "",
+      "block_ids": [
+        "B014"
+      ],
+      "line_start": 28,
+      "line_end": 28,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-009",
+      "doc_id": "",
+      "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "kind": "other",
+      "quote": "ОТКАЗ заявка закрывается без передачи в конвейер;",
+      "summary": "",
+      "block_ids": [
+        "B015"
+      ],
+      "line_start": 29,
+      "line_end": 29,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-010",
+      "doc_id": "",
+      "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "kind": "other",
+      "quote": "РУЧНАЯ_ПРОВЕРКА заявка передаётся кредитному эксперту.",
+      "summary": "",
+      "block_ids": [
+        "B016"
+      ],
+      "line_start": 30,
+      "line_end": 30,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-011",
+      "doc_id": "3.1",
+      "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "kind": "functional",
+      "quote": "3.1. Возраст заявителя на дату подачи заявки — от 21 года до 63 лет включительно. Возраст определяется по дате рождения, закодированной в первых шести цифрах ИИН.",
+      "summary": "",
+      "block_ids": [
+        "B018"
+      ],
+      "line_start": 34,
+      "line_end": 35,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-012",
+      "doc_id": "3.2",
+      "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "kind": "functional",
+      "quote": "3.2. Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до 60 месяцев включительно, целым числом месяцев.",
+      "summary": "",
+      "block_ids": [
+        "B019"
+      ],
+      "line_start": 36,
+      "line_end": 37,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-013",
+      "doc_id": "3.3",
+      "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "kind": "functional",
+      "quote": "3.3. Среднемесячный доход за последние 6 месяцев по выписке о пенсионных взносах — не ниже 85 000 тенге.",
+      "summary": "",
+      "block_ids": [
+        "B020"
+      ],
+      "line_start": 38,
+      "line_end": 39,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-014",
+      "doc_id": "3.4",
+      "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "kind": "functional",
+      "quote": "3.4. КДН с учётом запрашиваемого кредита не должен превышать 0,5. При КДН выше 0,5 выносится решение ОТКАЗ.",
+      "summary": "",
+      "block_ids": [
+        "B021"
+      ],
+      "line_start": 40,
+      "line_end": 41,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-015",
+      "doc_id": "3.5",
+      "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "kind": "functional",
+      "quote": "3.5. Заявитель должен иметь стабильный доход и положительную кредитную историю.",
+      "summary": "",
+      "block_ids": [
+        "B022"
+      ],
+      "line_start": 42,
+      "line_end": 42,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-016",
+      "doc_id": "3.6",
+      "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "kind": "functional",
+      "quote": "3.6. Наличие в кредитном отчёте просрочки более 30 календарных дней по любому действующему займу — решение ОТКАЗ.",
+      "summary": "",
+      "block_ids": [
+        "B023"
+      ],
+      "line_start": 43,
+      "line_end": 44,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-017",
+      "doc_id": "3.7",
+      "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "kind": "functional",
+      "quote": "3.7. КДН округляется до двух знаков после запятой по правилам математического округления до сравнения с пороговыми значениями.",
+      "summary": "",
+      "block_ids": [
+        "B024"
+      ],
+      "line_start": 45,
+      "line_end": 46,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-018",
+      "doc_id": "4.1",
+      "section": "4. ЛОГИКА ПРЕДВАРИТЕЛЬНОГО СКОРИНГА",
+      "kind": "process",
+      "quote": "4.1. Модуль проверяет стоп-факторы, запрашивает кредитный отчёт, рассчитывает КДН, сохраняет результат в хранилище и отправляет клиенту SMS с решением.",
+      "summary": "",
+      "block_ids": [
+        "B026"
+      ],
+      "line_start": 50,
+      "line_end": 51,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-019",
+      "doc_id": "4.2",
+      "section": "4. ЛОГИКА ПРЕДВАРИТЕЛЬНОГО СКОРИНГА",
+      "kind": "process",
+      "quote": "4.2. Стоп-факторы проверяются в порядке, указанном в таблице 5.1. При срабатывании первого стоп-фактора дальнейшие проверки не выполняются.",
+      "summary": "",
+      "block_ids": [
+        "B027"
+      ],
+      "line_start": 52,
+      "line_end": 53,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-020",
+      "doc_id": "4.3",
+      "section": "4. ЛОГИКА ПРЕДВАРИТЕЛЬНОГО СКОРИНГА",
+      "kind": "process",
+      "quote": "4.3. Заявки клиентов старше 65 лет направляются на РУЧНАЯ_ПРОВЕРКА независимо от прочих условий.",
+      "summary": "",
+      "block_ids": [
+        "B028"
+      ],
+      "line_start": 54,
+      "line_end": 55,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-021",
+      "doc_id": "4.4",
+      "section": "4. ЛОГИКА ПРЕДВАРИТЕЛЬНОГО СКОРИНГА",
+      "kind": "process",
+      "quote": "4.4. Расчёт КДН выполняется хранимой процедурой PL/SQL в схеме CREDIT_CORE.",
+      "summary": "",
+      "block_ids": [
+        "B029"
+      ],
+      "line_start": 56,
+      "line_end": 56,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-022",
+      "doc_id": "4.5",
+      "section": "4. ЛОГИКА ПРЕДВАРИТЕЛЬНОГО СКОРИНГА",
+      "kind": "process",
+      "quote": "4.5. Модуль должен исключать ошибочные отказы платёжеспособным клиентам.",
+      "summary": "",
+      "block_ids": [
+        "B030"
+      ],
+      "line_start": 57,
+      "line_end": 57,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-023",
+      "doc_id": "4.6",
+      "section": "4. ЛОГИКА ПРЕДВАРИТЕЛЬНОГО СКОРИНГА",
+      "kind": "process",
+      "quote": "4.6. Пример расчёта: доход 300 000 тенге, платежи по действующим займам 90 000 тенге, платёж по запрашиваемому кредиту 70 000 тенге; КДН = 0,53; решение — ПРОПУСТИТЬ.",
+      "summary": "",
+      "block_ids": [
+        "B031"
+      ],
+      "line_start": 58,
+      "line_end": 59,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-024",
+      "doc_id": "5.1",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "kind": "functional",
+      "quote": "5.1. Стоп-факторы и решения (проверяются сверху вниз):",
+      "summary": "",
+      "block_ids": [
+        "B033"
+      ],
+      "line_start": 63,
+      "line_end": 63,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-025",
+      "doc_id": "",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "kind": "other",
+      "quote": "N: 1 | Условие: Возраст вне диапазона п. 3.1 | Решение: ОТКАЗ",
+      "summary": "",
+      "block_ids": [
+        "B034"
+      ],
+      "line_start": 66,
+      "line_end": 66,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-026",
+      "doc_id": "",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "kind": "other",
+      "quote": "N: 2 | Условие: Сумма или срок вне диапазона п. 3.2 | Решение: ОТКАЗ",
+      "summary": "",
+      "block_ids": [
+        "B035"
+      ],
+      "line_start": 67,
+      "line_end": 67,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-027",
+      "doc_id": "",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "kind": "other",
+      "quote": "N: 3 | Условие: Просрочка более 30 дней (п. 3.6) | Решение: ОТКАЗ",
+      "summary": "",
+      "block_ids": [
+        "B036"
+      ],
+      "line_start": 68,
+      "line_end": 68,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-028",
+      "doc_id": "",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "kind": "other",
+      "quote": "N: 4 | Условие: Доход ниже порога п. 3.3 | Решение: ОТКАЗ",
+      "summary": "",
+      "block_ids": [
+        "B037"
+      ],
+      "line_start": 69,
+      "line_end": 69,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-029",
+      "doc_id": "",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "kind": "other",
+      "quote": "N: 5 | Условие: КДН от 0,50 до 0,60 включительно | Решение: РУЧНАЯ_ПРОВЕРКА",
+      "summary": "",
+      "block_ids": [
+        "B038"
+      ],
+      "line_start": 70,
+      "line_end": 70,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-030",
+      "doc_id": "",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "kind": "other",
+      "quote": "N: 6 | Условие: КДН выше 0,60 | Решение: ОТКАЗ",
+      "summary": "",
+      "block_ids": [
+        "B039"
+      ],
+      "line_start": 71,
+      "line_end": 71,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-031",
+      "doc_id": "",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "kind": "other",
+      "quote": "N: 7 | Условие: Ни одно условие не выполнено | Решение: ПРОПУСТИТЬ",
+      "summary": "",
+      "block_ids": [
+        "B040"
+      ],
+      "line_start": 72,
+      "line_end": 72,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-032",
+      "doc_id": "6.1",
+      "section": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+      "kind": "functional",
+      "quote": "6.1. Повторное поступление заявки с тем же application_id не создаёт новой оценки: модуль возвращает ранее вынесенное предварительное решение без повторного запроса в бюро.",
+      "summary": "",
+      "block_ids": [
+        "B042"
+      ],
+      "line_start": 76,
+      "line_end": 77,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-033",
+      "doc_id": "6.2",
+      "section": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+      "kind": "functional",
+      "quote": "6.2. Если ИИН заявителя не проходит проверку контрольного разряда, модуль возвращает ошибку INVALID_IIN и не выносит предварительного решения.",
+      "summary": "",
+      "block_ids": [
+        "B043"
+      ],
+      "line_start": 78,
+      "line_end": 79,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-034",
+      "doc_id": "6.3",
+      "section": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+      "kind": "functional",
+      "quote": "6.3. Если кредитное бюро не ответило, заявка обрабатывается по имеющимся данным.",
+      "summary": "",
+      "block_ids": [
+        "B044"
+      ],
+      "line_start": 80,
+      "line_end": 80,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-035",
+      "doc_id": "6.4",
+      "section": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+      "kind": "functional",
+      "quote": "6.4. Повторная подача заявки после отказа — TBD.",
+      "summary": "",
+      "block_ids": [
+        "B045"
+      ],
+      "line_start": 81,
+      "line_end": 81,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-036",
+      "doc_id": "7.1",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "7.1. Модуль сохраняет по каждой заявке:",
+      "summary": "",
+      "block_ids": [
+        "B047"
+      ],
+      "line_start": 85,
+      "line_end": 85,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-037",
+      "doc_id": "",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "Поле: application_id | Тип: строка | Единица: — | Описание: идентификатор заявки",
+      "summary": "",
+      "block_ids": [
+        "B048"
+      ],
+      "line_start": 88,
+      "line_end": 88,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-038",
+      "doc_id": "",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "Поле: iin_hash | Тип: строка | Единица: — | Описание: хеш ИИН (SHA-256 с солью)",
+      "summary": "",
+      "block_ids": [
+        "B049"
+      ],
+      "line_start": 89,
+      "line_end": 89,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-039",
+      "doc_id": "",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "Поле: requested_amount | Тип: целое | Единица: тыс. тенге | Описание: запрашиваемая сумма",
+      "summary": "",
+      "block_ids": [
+        "B050"
+      ],
+      "line_start": 90,
+      "line_end": 90,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-040",
+      "doc_id": "",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "Поле: term_months | Тип: целое | Единица: месяц | Описание: срок кредита",
+      "summary": "",
+      "block_ids": [
+        "B051"
+      ],
+      "line_start": 91,
+      "line_end": 91,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-041",
+      "doc_id": "",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "Поле: dti | Тип: десятичное | Единица: — | Описание: КДН, два знака после запятой",
+      "summary": "",
+      "block_ids": [
+        "B052"
+      ],
+      "line_start": 92,
+      "line_end": 92,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-042",
+      "doc_id": "",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "Поле: decision | Тип: строка | Единица: — | Описание: предварительное решение",
+      "summary": "",
+      "block_ids": [
+        "B053"
+      ],
+      "line_start": 93,
+      "line_end": 93,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-043",
+      "doc_id": "",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "Поле: rules_version | Тип: строка | Единица: — | Описание: версия набора правил скоринга",
+      "summary": "",
+      "block_ids": [
+        "B054"
+      ],
+      "line_start": 94,
+      "line_end": 94,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-044",
+      "doc_id": "7.2",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "7.2. Записи журнала решений хранятся 5 лет с даты вынесения решения, затем удаляются.",
+      "summary": "",
+      "block_ids": [
+        "B055"
+      ],
+      "line_start": 96,
+      "line_end": 96,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-045",
+      "doc_id": "7.3",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "kind": "data",
+      "quote": "7.3. Для разбора инцидентов в журнал событий записываются ИИН, ФИО, номер телефона заявителя и полный ответ кредитного бюро.",
+      "summary": "",
+      "block_ids": [
+        "B056"
+      ],
+      "line_start": 97,
+      "line_end": 98,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-046",
+      "doc_id": "8.1",
+      "section": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+      "kind": "integration",
+      "quote": "8.1. Фронт-системы вызывают модуль синхронно. Сумма кредита передаётся в тиынах.",
+      "summary": "",
+      "block_ids": [
+        "B058"
+      ],
+      "line_start": 102,
+      "line_end": 102,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-047",
+      "doc_id": "8.2",
+      "section": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+      "kind": "integration",
+      "quote": "8.2. Ответ модуля содержит поле decision со значениями APPROVE, DECLINE или MANUAL.",
+      "summary": "",
+      "block_ids": [
+        "B059"
+      ],
+      "line_start": 103,
+      "line_end": 103,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-048",
+      "doc_id": "8.3",
+      "section": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+      "kind": "integration",
+      "quote": "8.3. Формат обмена и коды ошибок — см. п. 9.4.",
+      "summary": "",
+      "block_ids": [
+        "B060"
+      ],
+      "line_start": 104,
+      "line_end": 104,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-049",
+      "doc_id": "9.1",
+      "section": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+      "kind": "nonfunctional",
+      "quote": "9.1. Время ответа модуля — не более 2 секунд.",
+      "summary": "",
+      "block_ids": [
+        "B062"
+      ],
+      "line_start": 108,
+      "line_end": 108,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-050",
+      "doc_id": "9.2",
+      "section": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+      "kind": "nonfunctional",
+      "quote": "9.2. Модуль должен работать быстро и не создавать неудобств клиенту.",
+      "summary": "",
+      "block_ids": [
+        "B063"
+      ],
+      "line_start": 109,
+      "line_end": 109,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-051",
+      "doc_id": "9.3",
+      "section": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+      "kind": "nonfunctional",
+      "quote": "9.3. Доступность модуля — не ниже 99,5% за календарный месяц без учёта согласованных регламентных окон.",
+      "summary": "",
+      "block_ids": [
+        "B064"
+      ],
+      "line_start": 110,
+      "line_end": 111,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-052",
+      "doc_id": "",
+      "section": "10. КРИТЕРИИ ПРИЁМКИ",
+      "kind": "acceptance",
+      "quote": "N: 1 | Исходные данные: Возраст 20 лет, остальные условия выполнены | Ожидаемый результат: ОТКАЗ",
+      "summary": "",
+      "block_ids": [
+        "B066"
+      ],
+      "line_start": 116,
+      "line_end": 116,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-053",
+      "doc_id": "",
+      "section": "10. КРИТЕРИИ ПРИЁМКИ",
+      "kind": "acceptance",
+      "quote": "N: 2 | Исходные данные: Сумма 5 000 000 тенге, срок 60 месяцев | Ожидаемый результат: проверка суммы и срока пройдена",
+      "summary": "",
+      "block_ids": [
+        "B067"
+      ],
+      "line_start": 117,
+      "line_end": 117,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-054",
+      "doc_id": "",
+      "section": "10. КРИТЕРИИ ПРИЁМКИ",
+      "kind": "acceptance",
+      "quote": "N: 3 | Исходные данные: КДН 0,55 | Ожидаемый результат: РУЧНАЯ_ПРОВЕРКА",
+      "summary": "",
+      "block_ids": [
+        "B068"
+      ],
+      "line_start": 118,
+      "line_end": 118,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-055",
+      "doc_id": "",
+      "section": "10. КРИТЕРИИ ПРИЁМКИ",
+      "kind": "acceptance",
+      "quote": "N: 4 | Исходные данные: Повторная заявка того же ИИН в течение 24 часов | Ожидаемый результат: ОТКАЗ с кодом DUPLICATE",
+      "summary": "",
+      "block_ids": [
+        "B069"
+      ],
+      "line_start": 119,
+      "line_end": 119,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-056",
+      "doc_id": "",
+      "section": "10. КРИТЕРИИ ПРИЁМКИ",
+      "kind": "acceptance",
+      "quote": "N: 5 | Исходные данные: Повторный вызов с тем же application_id | Ожидаемый результат: прежнее решение без запроса в бюро",
+      "summary": "",
+      "block_ids": [
+        "B070"
+      ],
+      "line_start": 120,
+      "line_end": 120,
+      "page": null,
+      "origin": "heuristic"
+    }
+  ],
+  "skipped": [
+    {
+      "block_ids": [
+        "B001"
+      ],
+      "category": "explanation",
+      "reason": "название и шапка документа, до первого нумерованного раздела",
+      "section": "",
+      "line_start": 1,
+      "line_end": 2,
+      "text": "АО «Мерей Финанс Банк» (условное наименование) Департамент розничного кредитования",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B002"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "ТЕХНИЧЕСКОЕ ЗАДАНИЕ",
+      "line_start": 4,
+      "line_end": 4,
+      "text": "ТЕХНИЧЕСКОЕ ЗАДАНИЕ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B003"
+      ],
+      "category": "explanation",
+      "reason": "название и шапка документа, до первого нумерованного раздела",
+      "section": "ТЕХНИЧЕСКОЕ ЗАДАНИЕ",
+      "line_start": 5,
+      "line_end": 5,
+      "text": "на доработку «Предварительный скоринг заявки на потребительский кредит» (модуль ПреСкор)",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B004"
+      ],
+      "category": "meta",
+      "reason": "сведения о документе (версия, дата, статус)",
+      "section": "ТЕХНИЧЕСКОЕ ЗАДАНИЕ",
+      "line_start": 7,
+      "line_end": 11,
+      "text": "Версия документа: 0.9 Дата: ..2026 Статус: на согласовании Связанные документы: ТЗ «Кредитный конвейер» v2.3, Кредитная политика розничного блока (ред. 2026)",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B005"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "1. ОБЩИЕ СВЕДЕНИЯ",
+      "line_start": 13,
+      "line_end": 13,
+      "text": "1. ОБЩИЕ СВЕДЕНИЯ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B009"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "line_start": 21,
+      "line_end": 21,
+      "text": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B017"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "line_start": 32,
+      "line_end": 32,
+      "text": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B025"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "4. ЛОГИКА ПРЕДВАРИТЕЛЬНОГО СКОРИНГА",
+      "line_start": 48,
+      "line_end": 48,
+      "text": "4. ЛОГИКА ПРЕДВАРИТЕЛЬНОГО СКОРИНГА",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B032"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "line_start": 61,
+      "line_end": 61,
+      "text": "5. ТАБЛИЦА СТОП-ФАКТОРОВ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B041"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+      "line_start": 74,
+      "line_end": 74,
+      "text": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B046"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "line_start": 83,
+      "line_end": 83,
+      "text": "7. ТРЕБОВАНИЯ К ДАННЫМ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B057"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+      "line_start": 100,
+      "line_end": 100,
+      "text": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B061"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+      "line_start": 106,
+      "line_end": 106,
+      "text": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B065"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "10. КРИТЕРИИ ПРИЁМКИ",
+      "line_start": 113,
+      "line_end": 113,
+      "text": "10. КРИТЕРИИ ПРИЁМКИ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B071"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "11. СОГЛАСОВАНИЕ",
+      "line_start": 122,
+      "line_end": 122,
+      "text": "11. СОГЛАСОВАНИЕ",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B072"
+      ],
+      "category": "template",
+      "reason": "строка шаблона: значения не заполнены или оставлены варианты выбора",
+      "section": "11. СОГЛАСОВАНИЕ",
+      "line_start": 125,
+      "line_end": 125,
+      "text": "Подразделение: Управление рисков розничного блока",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B073"
+      ],
+      "category": "template",
+      "reason": "строка шаблона: значения не заполнены или оставлены варианты выбора",
+      "section": "11. СОГЛАСОВАНИЕ",
+      "line_start": 126,
+      "line_end": 126,
+      "text": "Подразделение: Служба информационной безопасности",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B074"
+      ],
+      "category": "template",
+      "reason": "строка шаблона: значения не заполнены или оставлены варианты выбора",
+      "section": "11. СОГЛАСОВАНИЕ",
+      "line_start": 127,
+      "line_end": 127,
+      "text": "Подразделение: Управление разработки кредитного конвейера",
+      "origin": "heuristic"
+    }
+  ],
+  "reviews": [
+    {
+      "rid": "REQ-001",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 8.8
+    },
+    {
+      "rid": "REQ-002",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-003",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-004",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-005",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-006",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-007",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-008",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-009",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-010",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-011",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-012",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-013",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-014",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-015",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-016",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-017",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-018",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-019",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-020",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-021",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-022",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-023",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-024",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-025",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-026",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-027",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-028",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-029",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-030",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-031",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-032",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-033",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-034",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-035",
+      "criteria": {
+        "completeness": {
+          "status": "issue",
+          "note": "Заглушка вместо значения: «TBD»"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 9.2
+    },
+    {
+      "rid": "REQ-036",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-037",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-038",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-039",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-040",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-041",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-042",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-043",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-044",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-045",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-046",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 8.8
+    },
+    {
+      "rid": "REQ-047",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-048",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 9.6
+    },
+    {
+      "rid": "REQ-049",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "issue",
+          "note": "Ограничение по времени без условий измерения"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 7.5
+    },
+    {
+      "rid": "REQ-050",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "issue",
+          "note": "Размытая формулировка: «быстро»"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 7.5
+    },
+    {
+      "rid": "REQ-051",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-052",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-053",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-054",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-055",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-056",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    }
+  ],
+  "findings": [
+    {
+      "scope": "set",
+      "criterion": "traceability",
+      "severity": "MINOR",
+      "title": "В шапке документа не заполнено поле «Дата»",
+      "problem": "В документе версия или дата оставлены незаполненными. Нельзя понять, какая редакция актуальна: замечания ревью, задачи и тесты нельзя привязать к конкретной версии, а изменения требований — отследить.",
+      "recommendation": "Добавьте в начало документа номер версии (например, 1.0), дату, автора и таблицу истории изменений.",
+      "quotes": [
+        {
+          "text": "Дата: __.__.2026",
+          "line_start": 8,
+          "line_end": 8,
+          "page": null,
+          "section": "ТЕХНИЧЕСКОЕ ЗАДАНИЕ",
+          "rid": "",
+          "exact": true
+        }
+      ],
+      "req_ids": [],
+      "question": {
+        "text": "Какую версию и дату присвоить документу?",
+        "options": [
+          "1.0 — первая согласуемая редакция",
+          "0.x — черновик до согласования"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:no-version",
+      "rule_ids": [
+        "no-version"
+      ],
+      "stage": "rules",
+      "fid": "D-001",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-04",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "IEEE 830-1998 п. 4.3.8 (Traceable)"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «всем» без границ",
+      "problem": "Слова вроде «всем» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "КДН — коэффициент долговой нагрузки: сумма ежемесячных платежей клиента по всем\n     действующим займам и по запрашиваемому кредиту, делённая на среднемесячный доход",
+          "line_start": 25,
+          "line_end": 26,
+          "page": null,
+          "section": "2. ТЕРМИНЫ И ОПРЕДЕЛЕНИЯ",
+          "rid": "REQ-006",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-006"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «всем»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-01",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Требование сформулировано через отрицание («не должен»)",
+      "problem": "Отрицательная формулировка говорит, чего не должно быть, но не говорит, что должно происходить вместо этого. Тестировщику трудно проверить «отсутствие» без перечня случаев. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Если возможно, переформулируйте положительно: что система делает в этом случае (например, «отклоняет операцию с сообщением …»).",
+      "quotes": [
+        {
+          "text": "КДН с учётом запрашиваемого кредита не должен превышать 0,5",
+          "line_start": 40,
+          "line_end": 40,
+          "page": null,
+          "section": "3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ",
+          "rid": "REQ-014",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-014"
+      ],
+      "question": {
+        "text": "Что система должна сделать вместо запрещённого действия?",
+        "options": [
+          "Описать положительное действие",
+          "Оставить как есть — запрет понятен"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:negative-wording",
+      "rule_ids": [
+        "negative-wording"
+      ],
+      "stage": "rules",
+      "fid": "Н-02",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Неясно, к чему относится «данным»",
+      "problem": "Слово «данным» отсылает к чему-то, названному раньше, но из одного этого требования не всегда понятно, к чему именно. Если требование процитируют отдельно, смысл потеряется. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Замените «данным» прямым названием предмета или значения.",
+      "quotes": [
+        {
+          "text": "Если кредитное бюро не ответило, заявка обрабатывается по имеющимся данным",
+          "line_start": 80,
+          "line_end": 80,
+          "page": null,
+          "section": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+          "rid": "REQ-034",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-034"
+      ],
+      "question": {
+        "text": "К чему относится «данным»?",
+        "options": [
+          "Назвать предмет явно",
+          "Оставить — из контекста понятно"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:vague-pronoun",
+      "rule_ids": [
+        "vague-pronoun"
+      ],
+      "stage": "rules",
+      "fid": "Н-03",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "completeness",
+      "severity": "MINOR",
+      "title": "Заглушка вместо значения: «TBD»",
+      "problem": "Вместо содержания стоит заглушка «TBD». Пока значение не определено, эту часть нельзя ни реализовать, ни проверить: каждый подставит своё, и расхождение обнаружится только на приёмке.",
+      "recommendation": "Впишите значение. Если оно ещё неизвестно — укажите, кто и к какой дате его определит, и не начинайте работу над этой частью до решения.",
+      "quotes": [
+        {
+          "text": "Повторная подача заявки после отказа — TBD",
+          "line_start": 81,
+          "line_end": 81,
+          "page": null,
+          "section": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+          "rid": "REQ-035",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-035"
+      ],
+      "question": {
+        "text": "Чем заменить заглушку «TBD»?",
+        "options": [
+          "Значение известно — вписать сейчас",
+          "Определит владелец продукта до начала разработки",
+          "Поле не нужно — удалить его"
+        ],
+        "addressee": "business",
+        "gap": ""
+      },
+      "source": "rule:placeholder",
+      "rule_ids": [
+        "placeholder"
+      ],
+      "stage": "rules",
+      "fid": "D-002",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-05",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_consistency",
+      "severity": "MAJOR",
+      "title": "Денежные суммы в разных единицах: тиын и тенге",
+      "problem": "Одни суммы заданы в единицах «тиын», другие — в «тенге», а правило пересчёта нигде не записано. Разработчик может сохранить сумму в одних единицах, а сравнить её с порогом в других — ошибка в 100 раз, которую не заметят до первого реального платежа.",
+      "recommendation": "Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.",
+      "quotes": [
+        {
+          "text": "Сумма кредита передаётся в тиынах",
+          "line_start": 102,
+          "line_end": 102,
+          "page": null,
+          "section": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+          "rid": "REQ-046",
+          "exact": true
+        },
+        {
+          "text": "Модуль ПреСкор выполняет предварительную оценку заявки на беззалоговый потребительский\n     кредит в тенге до передачи заявки в основной кредитный конвейер",
+          "line_start": 15,
+          "line_end": 16,
+          "page": null,
+          "section": "1. ОБЩИЕ СВЕДЕНИЯ",
+          "rid": "REQ-001",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-046",
+        "REQ-001"
+      ],
+      "question": {
+        "text": "В каких единицах хранить, передавать и сравнивать суммы?",
+        "options": [
+          "Везде в тиын, клиенту показывать в тенге",
+          "Везде в тенге с двумя знаками после запятой",
+          "Как сейчас, но с явным правилом пересчёта при сравнении"
+        ],
+        "addressee": "architect",
+        "gap": ""
+      },
+      "source": "rule:unit-mix",
+      "rule_ids": [
+        "unit-mix"
+      ],
+      "stage": "rules",
+      "fid": "D-003",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-01",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_consistency",
+      "severity": "MINOR",
+      "title": "Ссылка на несуществующий объект: раздел 9.4",
+      "problem": "Текст ссылается на «раздел 9.4», но в документе такого нет. Читатель не может открыть то, на что опирается требование, и каждый додумает содержание по-своему.",
+      "recommendation": "Исправьте ссылку на существующий раздел, таблицу или требование, либо добавьте «раздел 9.4» в документ.",
+      "quotes": [
+        {
+          "text": "Формат обмена и коды ошибок — см. п. 9.4",
+          "line_start": 104,
+          "line_end": 104,
+          "page": null,
+          "section": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+          "rid": "REQ-048",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-048"
+      ],
+      "question": {
+        "text": "Что имелось в виду под «раздел 9.4»?",
+        "options": [
+          "Опечатка — исправить номер",
+          "Добавить недостающую часть в документ"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:dangling-reference",
+      "rule_ids": [
+        "dangling-reference"
+      ],
+      "stage": "rules",
+      "fid": "D-004",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-06",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MAJOR",
+      "title": "Ограничение по времени без условий измерения",
+      "problem": "Задан срок «не более 2 секунд», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.",
+      "recommendation": "Допишите условия измерения: «не более 2 секунд для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
+      "quotes": [
+        {
+          "text": "Время ответа модуля — не более 2 секунд",
+          "line_start": 108,
+          "line_end": 108,
+          "page": null,
+          "section": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+          "rid": "REQ-049",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-049"
+      ],
+      "question": {
+        "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «не более 2 секунд»?",
+        "options": [
+          "95% случаев при обычной нагрузке",
+          "99% случаев при пиковой нагрузке (указать какой)",
+          "Каждый случай без исключений"
+        ],
+        "addressee": "business",
+        "gap": ""
+      },
+      "source": "rule:time-without-conditions",
+      "rule_ids": [
+        "time-without-conditions"
+      ],
+      "stage": "rules",
+      "fid": "D-005",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-02",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MAJOR",
+      "title": "Размытая формулировка: «быстро»",
+      "problem": "Слово «быстро» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.",
+      "recommendation": "Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
+      "quotes": [
+        {
+          "text": "Модуль должен работать быстро и не создавать неудобств клиенту",
+          "line_start": 109,
+          "line_end": 109,
+          "page": null,
+          "section": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+          "rid": "REQ-050",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-050"
+      ],
+      "question": {
+        "text": "Что конкретно означает «быстро» в этом требовании?",
+        "options": [
+          "Задать число и условия измерения (дописать в требование)",
+          "Перечислить случаи, когда это применяется",
+          "Убрать слово — оно ничего не добавляет"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:vague-word",
+      "rule_ids": [
+        "vague-word"
+      ],
+      "stage": "rules",
+      "fid": "D-006",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-03",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена",
+      "problem": "В таблице перечислены участники, но нет ни ФИО, ни подписей, ни дат. Это таблица согласования: документ формально никем не согласован, и непонятно, кто отвечает за требования и чья редакция действует.",
+      "recommendation": "Заполните таблицу: укажите подразделения, ФИО ответственных и дату согласования.",
+      "quotes": [
+        {
+          "text": "СОГЛАСОВАНИЕ",
+          "line_start": 122,
+          "line_end": 122,
+          "page": null,
+          "section": "11. СОГЛАСОВАНИЕ",
+          "rid": "",
+          "exact": true
+        },
+        {
+          "text": "Подразделение                            ФИО                  Дата",
+          "line_start": 124,
+          "line_end": 124,
+          "page": null,
+          "section": "11. СОГЛАСОВАНИЕ",
+          "rid": "",
+          "exact": true
+        }
+      ],
+      "req_ids": [],
+      "question": {
+        "text": "Кто должен быть в этой таблице?",
+        "options": [
+          "Заполнить до начала разработки",
+          "Таблица не нужна — удалить"
+        ],
+        "addressee": "business",
+        "gap": ""
+      },
+      "source": "rule:empty-table",
+      "rule_ids": [
+        "empty-table"
+      ],
+      "stage": "rules",
+      "fid": "D-007",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-07",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+    }
+  ],
+  "rejected": [],
+  "dropped": [],
+  "questions": [
+    {
+      "qid": "В-01",
+      "text": "В каких единицах хранить, передавать и сравнивать суммы?",
+      "why": "Одни суммы заданы в единицах «тиын», другие — в «тенге», а правило пересчёта нигде не записано.",
+      "addressee": "architect",
+      "options": [
+        "Везде в тиын, клиенту показывать в тенге",
+        "Везде в тенге с двумя знаками после запятой",
+        "Как сейчас, но с явным правилом пересчёта при сравнении"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-003"
+      ],
+      "req_ids": [
+        "REQ-046",
+        "REQ-001"
+      ],
+      "quote": {
+        "text": "Сумма кредита передаётся в тиынах",
+        "line_start": 102,
+        "line_end": 102,
+        "page": null,
+        "section": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+        "rid": "REQ-046",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "conflict"
+    },
+    {
+      "qid": "В-02",
+      "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «не более 2 секунд»?",
+      "why": "Задан срок «не более 2 секунд», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать.",
+      "addressee": "business",
+      "options": [
+        "95% случаев при обычной нагрузке",
+        "99% случаев при пиковой нагрузке (указать какой)",
+        "Каждый случай без исключений"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-005"
+      ],
+      "req_ids": [
+        "REQ-049"
+      ],
+      "quote": {
+        "text": "Время ответа модуля — не более 2 секунд",
+        "line_start": 108,
+        "line_end": 108,
+        "page": null,
+        "section": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+        "rid": "REQ-049",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "value"
+    },
+    {
+      "qid": "В-03",
+      "text": "Что конкретно означает «быстро» в этом требовании?",
+      "why": "Слово «быстро» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное.",
+      "addressee": "analyst",
+      "options": [
+        "Задать число и условия измерения (дописать в требование)",
+        "Перечислить случаи, когда это применяется",
+        "Убрать слово — оно ничего не добавляет"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-006"
+      ],
+      "req_ids": [
+        "REQ-050"
+      ],
+      "quote": {
+        "text": "Модуль должен работать быстро и не создавать неудобств клиенту",
+        "line_start": 109,
+        "line_end": 109,
+        "page": null,
+        "section": "9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ",
+        "rid": "REQ-050",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "term"
+    },
+    {
+      "qid": "В-04",
+      "text": "Какую версию и дату присвоить документу?",
+      "why": "В документе версия или дата оставлены незаполненными.",
+      "addressee": "analyst",
+      "options": [
+        "1.0 — первая согласуемая редакция",
+        "0.x — черновик до согласования"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-001"
+      ],
+      "req_ids": [],
+      "quote": {
+        "text": "Дата: __.__.2026",
+        "line_start": 8,
+        "line_end": 8,
+        "page": null,
+        "section": "ТЕХНИЧЕСКОЕ ЗАДАНИЕ",
+        "rid": "",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "owner"
+    },
+    {
+      "qid": "В-05",
+      "text": "Чем заменить заглушку «TBD»?",
+      "why": "Вместо содержания стоит заглушка «TBD».",
+      "addressee": "business",
+      "options": [
+        "Значение известно — вписать сейчас",
+        "Определит владелец продукта до начала разработки",
+        "Поле не нужно — удалить его"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-002"
+      ],
+      "req_ids": [
+        "REQ-035"
+      ],
+      "quote": {
+        "text": "Повторная подача заявки после отказа — TBD",
+        "line_start": 81,
+        "line_end": 81,
+        "page": null,
+        "section": "6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ",
+        "rid": "REQ-035",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "value"
+    },
+    {
+      "qid": "В-06",
+      "text": "Что имелось в виду под «раздел 9.4»?",
+      "why": "Текст ссылается на «раздел 9.4», но в документе такого нет.",
+      "addressee": "analyst",
+      "options": [
+        "Опечатка — исправить номер",
+        "Добавить недостающую часть в документ"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-004"
+      ],
+      "req_ids": [
+        "REQ-048"
+      ],
+      "quote": {
+        "text": "Формат обмена и коды ошибок — см. п. 9.4",
+        "line_start": 104,
+        "line_end": 104,
+        "page": null,
+        "section": "8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ",
+        "rid": "REQ-048",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "conflict"
+    },
+    {
+      "qid": "В-07",
+      "text": "Кто должен быть в этой таблице?",
+      "why": "В таблице перечислены участники, но нет ни ФИО, ни подписей, ни дат.",
+      "addressee": "business",
+      "options": [
+        "Заполнить до начала разработки",
+        "Таблица не нужна — удалить"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-007"
+      ],
+      "req_ids": [],
+      "quote": {
+        "text": "СОГЛАСОВАНИЕ",
+        "line_start": 122,
+        "line_end": 122,
+        "page": null,
+        "section": "11. СОГЛАСОВАНИЕ",
+        "rid": "",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario"
+    }
+  ],
+  "fix_first": [
+    {
+      "action": "Денежные суммы в разных единицах: тиын и тенге. Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.",
+      "finding_ids": [
+        "D-003"
+      ]
+    },
+    {
+      "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «не более 2 секунд для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
+      "finding_ids": [
+        "D-005"
+      ]
+    },
+    {
+      "action": "Размытая формулировка: «быстро». Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
+      "finding_ids": [
+        "D-006"
+      ]
+    }
+  ],
+  "strengths": [],
+  "coverage": [],
+  "verdict": "CONDITIONAL",
+  "verdict_text": "⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (модель не использовалась: проверены только автоматические правила, итог предварительный)",
+  "verdict_reason": "Блокеров нет, но есть 3 существенных замечания: без ответов автора разработчик и тестировщик могут понять эти места по-разному. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.",
+  "tests": [
+    {
+      "tid": "Т-01",
+      "title": "3.1: граничные допустимые значения 21",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-011"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.1: «Возраст заявителя на дату подачи заявки — от 21 года до 63 лет включительно».",
+      "when": "Ввести или передать значения на границе допустимого: 21.",
+      "then": "Значения принимаются без ошибки (требование 3.1 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-02",
+      "title": "3.1: значения сразу за границей 20",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-011"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.1: «Возраст заявителя на дату подачи заявки — от 21 года до 63 лет включительно».",
+      "when": "Ввести или передать значения сразу за границей: 20.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-03",
+      "title": "3.1: граничные допустимые значения 63",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-011"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.1: «Возраст заявителя на дату подачи заявки — от 21 года до 63 лет включительно».",
+      "when": "Ввести или передать значения на границе допустимого: 63.",
+      "then": "Значения принимаются без ошибки (требование 3.1 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-04",
+      "title": "3.1: значения сразу за границей 64",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-011"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.1: «Возраст заявителя на дату подачи заявки — от 21 года до 63 лет включительно».",
+      "when": "Ввести или передать значения сразу за границей: 64.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-05",
+      "title": "3.2: граничные допустимые значения 100 000, 5 000 000 тенге",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-012"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.2: «Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до…».",
+      "when": "Ввести или передать значения на границе допустимого: 100 000, 5 000 000 тенге.",
+      "then": "Значения принимаются без ошибки (требование 3.2 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-06",
+      "title": "3.2: значения сразу за границей 99 999, 5 000 001 тенге",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-012"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.2: «Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до…».",
+      "when": "Ввести или передать значения сразу за границей: 99 999, 5 000 001 тенге.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-07",
+      "title": "3.2: граничные допустимые значения 6, 60 месяцев",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-012"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.2: «Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до…».",
+      "when": "Ввести или передать значения на границе допустимого: 6, 60 месяцев.",
+      "then": "Значения принимаются без ошибки (требование 3.2 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-08",
+      "title": "3.2: значения сразу за границей 5, 61 месяцев",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-012"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.2: «Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до…».",
+      "when": "Ввести или передать значения сразу за границей: 5, 61 месяцев.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-09",
+      "title": "3.3: граничные допустимые значения 85 000 тенге",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-013"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.3: «Среднемесячный доход за последние 6 месяцев по выписке о пенсионных взносах — не ниже 85…».",
+      "when": "Ввести или передать значения на границе допустимого: 85 000 тенге.",
+      "then": "Значения принимаются без ошибки (требование 3.3 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-10",
+      "title": "3.3: значения сразу за границей 84 999 тенге",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-013"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.3: «Среднемесячный доход за последние 6 месяцев по выписке о пенсионных взносах — не ниже 85…».",
+      "when": "Ввести или передать значения сразу за границей: 84 999 тенге.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-11",
+      "title": "3.4: если КДН выше 0",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-014"
+      ],
+      "given": "Система работает в обычном режиме, данные для сценария подготовлены.",
+      "when": "Создать условие: КДН выше 0.",
+      "then": "5 выносится решение ОТКАЗ (требование 3.4).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-12",
+      "title": "3.6: граничные допустимые значения 31",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-016"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.6: «Наличие в кредитном отчёте просрочки более 30 календарных дней по любому действующему…».",
+      "when": "Ввести или передать значения на границе допустимого: 31.",
+      "then": "Значения принимаются без ошибки (требование 3.6 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-13",
+      "title": "3.6: значения сразу за границей 30",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-016"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.6: «Наличие в кредитном отчёте просрочки более 30 календарных дней по любому действующему…».",
+      "when": "Ввести или передать значения сразу за границей: 30.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-14",
+      "title": "REQ-027: граничные допустимые значения 31 дней",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-027"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-027: «N: 3 | Условие: Просрочка более 30 дней (п».",
+      "when": "Ввести или передать значения на границе допустимого: 31 дней.",
+      "then": "Значения принимаются без ошибки (требование REQ-027 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-15",
+      "title": "REQ-027: значения сразу за границей 30 дней",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-027"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-027: «N: 3 | Условие: Просрочка более 30 дней (п».",
+      "when": "Ввести или передать значения сразу за границей: 30 дней.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-16",
+      "title": "REQ-029: граничные допустимые значения 0,5, 0,6",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-029"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-029: «N: 5 | Условие: КДН от 0,50 до 0,60 включительно | Решение: РУЧНАЯ_ПРОВЕРКА».",
+      "when": "Ввести или передать значения на границе допустимого: 0,5, 0,6.",
+      "then": "Значения принимаются без ошибки (требование REQ-029 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-17",
+      "title": "REQ-029: значения сразу за границей 0,49, 0,61",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-029"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-029: «N: 5 | Условие: КДН от 0,50 до 0,60 включительно | Решение: РУЧНАЯ_ПРОВЕРКА».",
+      "when": "Ввести или передать значения сразу за границей: 0,49, 0,61.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-18",
+      "title": "6.2: если ИИН заявителя не проходит проверку контрольного разряда",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-033"
+      ],
+      "given": "Система работает в обычном режиме, данные для сценария подготовлены.",
+      "when": "Создать условие: ИИН заявителя не проходит проверку контрольного разряда.",
+      "then": "Модуль возвращает ошибку INVALID_IIN и не выносит предварительного решения (требование 6.2).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-19",
+      "title": "6.3: если кредитное бюро не ответило",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-034"
+      ],
+      "given": "Система работает в обычном режиме, данные для сценария подготовлены.",
+      "when": "Создать условие: кредитное бюро не ответило.",
+      "then": "Заявка обрабатывается по имеющимся данным (требование 6.3).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-20",
+      "title": "8.1: 8.1",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-046"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 8.1: «8.1. Фронт-системы вызывают модуль синхронно. Сумма кредита передаётся в тиынах.».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-01"
+      ],
+      "finding_ids": [
+        "D-003"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-21",
+      "title": "9.1: граничные допустимые значения 2 секунд",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-049"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 9.1: «Время ответа модуля — не более 2 секунд».",
+      "when": "Ввести или передать значения на границе допустимого: 2 секунд.",
+      "then": "Значения принимаются без ошибки (требование 9.1 допускает их).",
+      "blocked_by": [
+        "В-02"
+      ],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-22",
+      "title": "9.1: значения сразу за границей 3 секунд",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-049"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 9.1: «Время ответа модуля — не более 2 секунд».",
+      "when": "Ввести или передать значения сразу за границей: 3 секунд.",
+      "then": "",
+      "blocked_by": [
+        "В-02"
+      ],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-23",
+      "title": "9.1: 9.1",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-049"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 9.1: «9.1. Время ответа модуля — не более 2 секунд.».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-02"
+      ],
+      "finding_ids": [
+        "D-005"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-24",
+      "title": "9.2: 9.2",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-050"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 9.2: «9.2. Модуль должен работать быстро и не создавать неудобств клиенту.».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-03"
+      ],
+      "finding_ids": [
+        "D-006"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-25",
+      "title": "9.3: граничные допустимые значения 99,5 %",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-051"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 9.3: «Доступность модуля — не ниже 99,5% за календарный месяц без учёта согласованных…».",
+      "when": "Ввести или передать значения на границе допустимого: 99,5 %.",
+      "then": "Значения принимаются без ошибки (требование 9.3 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-26",
+      "title": "9.3: значения сразу за границей 99,4 %",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-051"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 9.3: «Доступность модуля — не ниже 99,5% за календарный месяц без учёта согласованных…».",
+      "when": "Ввести или передать значения сразу за границей: 99,4 %.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    }
+  ],
+  "verdict_after_answers": "",
+  "verdict_after_answers_text": "",
+  "audit": []
+}

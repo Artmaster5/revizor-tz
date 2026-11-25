@@ -1,0 +1,315 @@
+{
+  "document": "loan_prescoring_tz.txt",
+  "run": {
+    "provider": "offline",
+    "model": "",
+    "mode": "offline",
+    "cost_usd": 0.0,
+    "cost_note": "модель не вызывалась",
+    "duration_s": 0.04,
+    "doc_name": "loan_prescoring_tz.txt"
+  },
+  "counts": {
+    "requirements": 56,
+    "findings_open": 7,
+    "advisory": 3
+  },
+  "recall": {
+    "overall": {
+      "total": 17,
+      "strict": 6,
+      "loose": 6,
+      "strict_share": 0.35294117647058826,
+      "loose_share": 0.35294117647058826
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 0,
+        "loose": 0,
+        "strict_share": 0.0,
+        "loose_share": 0.0
+      },
+      "MAJOR": {
+        "total": 10,
+        "strict": 4,
+        "loose": 4,
+        "strict_share": 0.4,
+        "loose_share": 0.4
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 0.5,
+        "loose_share": 0.5
+      }
+    },
+    "by_origin": {}
+  },
+  "severity_agreement": {
+    "same": 3,
+    "tool_higher": 1,
+    "tool_lower": 2
+  },
+  "defects": [
+    {
+      "id": "K-01",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Верхняя граница возраста: 63 года в п. 3.1 и «старше 65 лет» в п. 4.3",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-02",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Порог КДН: отказ при КДН выше 0,5 (п. 3.4) против ручной проверки при 0,50–0,60 (таблица 5.1)",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-03",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Не определено решение при недоступности кредитного бюро",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-04",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Пример расчёта в п. 4.6 противоречит правилу КДН",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-05",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Единицы суммы кредита: тыс. тенге в данных, тиыны в интеграции, тенге в п. 3.2",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-003"
+      ],
+      "loose_fids": [
+        "D-003"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-06",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Коды решения названы по-разному: ПРОПУСТИТЬ/ОТКАЗ/РУЧНАЯ_ПРОВЕРКА и APPROVE/DECLINE/MANUAL",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-07",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Ссылка на несуществующий п. 9.4",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-004"
+      ],
+      "loose_fids": [
+        "D-004"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "K-08",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Персональные данные и полный кредитный отчёт пишутся в журнал событий открытым видом",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-09",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Правило повторной подачи после отказа не описано (TBD)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-002"
+      ],
+      "loose_fids": [
+        "D-002"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "K-10",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Критерий приёмки 4 (код DUPLICATE за 24 часа) не опирается ни на одно требование",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-11",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Время ответа 2 секунды без условий измерения",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-005"
+      ],
+      "loose_fids": [
+        "D-005"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-12",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Требование «исключать ошибочные отказы» непроверяемо и невыполнимо",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-13",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "«Стабильный доход» и «положительная кредитная история» не определены",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-14",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "П. 4.1 объединяет пять разных действий в одном требовании",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-15",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Требование предписывает реализацию (хранимая процедура PL/SQL), а не результат",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-16",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "«Работать быстро и не создавать неудобств» — непроверяемая формулировка",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-006"
+      ],
+      "loose_fids": [
+        "D-006"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-17",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Дата документа не заполнена",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-001"
+      ],
+      "loose_fids": [
+        "D-001"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    }
+  ],
+  "false_alarms": [],
+  "false_alarms_exempt": [],
+  "unmatched": [
+    {
+      "fid": "D-007",
+      "severity": "MINOR",
+      "title": "Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена",
+      "line": 122
+    }
+  ],
+  "warnings": [],
+  "result_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/loan_prescoring_tz.offline.json",
+  "key_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/loan_prescoring_tz.txt.key.json"
+}

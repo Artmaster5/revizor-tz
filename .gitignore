@@ -1,0 +1,11 @@
+.env
+.venv/
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
+
+# старые пробные прогоны (до калибровки), в репозиторий не идут
+reports/live/
+reports/live2/
+reports/live_haiku*

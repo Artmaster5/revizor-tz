@@ -1,0 +1,3827 @@
+{
+  "format": "revizor-report/1",
+  "summary": {
+    "tests": {
+      "ready": 3,
+      "blocked": 6
+    },
+    "answers": null,
+    "verdict_after_answers": "",
+    "baseline": null,
+    "requirements": 56,
+    "requirements_with_findings": 3,
+    "findings": 3,
+    "by_severity": {
+      "CRITICAL": 0,
+      "MAJOR": 3,
+      "MINOR": 0
+    },
+    "by_criterion": {
+      "completeness": 0,
+      "unambiguity": 2,
+      "consistency": 0,
+      "verifiability": 1,
+      "feasibility": 0,
+      "necessity": 0,
+      "singularity": 0,
+      "set_completeness": 0,
+      "set_consistency": 0,
+      "set_feasibility": 0,
+      "comprehensibility": 0,
+      "traceability": 0
+    },
+    "observations": 6,
+    "questions": 3,
+    "questions_by_priority": {
+      "blocker": 0,
+      "important": 3,
+      "nice": 0
+    },
+    "readiness": 99,
+    "readiness_band": "готов",
+    "clarity_bands": {
+      "ясное": 53,
+      "есть замечания": 3,
+      "нужна доработка": 0,
+      "в таком виде использовать нельзя": 0
+    },
+    "verdict": "CONDITIONAL",
+    "verdict_after_blocker_answers": "",
+    "preliminary": true
+  },
+  "run": {
+    "agent_name": "Ревизор ТЗ",
+    "agent_version": "1.0.0",
+    "started_at": "2026-11-25T18:01:57+05:00",
+    "duration_s": 0.04,
+    "mode": "offline",
+    "provider": "offline",
+    "model": "",
+    "effort": "",
+    "doc_name": "qr_merchant_stories.md",
+    "doc_format": "md",
+    "doc_size_bytes": 8778,
+    "doc_sha256": "7abd9447446b3060461b4d3e0ba414851fbe97f8573c3dc6b894868a45123395",
+    "doc_pages": null,
+    "doc_lines": 114,
+    "doc_chars": 5055,
+    "llm_calls": 0,
+    "llm_cache_hits": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_note": "модель не вызывалась",
+    "quotes_confirmed": 9,
+    "quotes_restored": 0,
+    "quotes_dropped": 0,
+    "skeptic_kept": 0,
+    "skeptic_rejected": 0,
+    "skeptic_merged": 0,
+    "manual_minutes_estimate": 269,
+    "warnings": [],
+    "injection_suspected": false,
+    "masked_values": 0,
+    "score": 99,
+    "score_formula": "10 × 9,87 (средняя ясность 56 треб.) − 0 (штраф за замечания к набору: 8×0 + 3×0 + 1×0 = 0) = 99",
+    "rules_version": "1.0",
+    "doc_words": 744,
+    "context_files": [],
+    "dup_merged": 0
+  },
+  "diagnostic": null,
+  "requirements": [
+    {
+      "rid": "REQ-001",
+      "doc_id": "",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Глоссарий",
+      "kind": "other",
+      "quote": "Продавец — ИП или ТОО, подключившее «Кассу QR»; владелец учётной записи в приложении.",
+      "summary": "",
+      "block_ids": [
+        "B004"
+      ],
+      "line_start": 10,
+      "line_end": 10,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-002",
+      "doc_id": "",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Глоссарий",
+      "kind": "other",
+      "quote": "Кассир — сотрудник продавца с ограниченными правами в приложении.",
+      "summary": "",
+      "block_ids": [
+        "B005"
+      ],
+      "line_start": 11,
+      "line_end": 11,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-003",
+      "doc_id": "",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Глоссарий",
+      "kind": "other",
+      "quote": "Динамический QR — QR-код на одну покупку с зашитой суммой, действует ограниченное время.",
+      "summary": "",
+      "block_ids": [
+        "B006"
+      ],
+      "line_start": 12,
+      "line_end": 12,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-004",
+      "doc_id": "",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Глоссарий",
+      "kind": "other",
+      "quote": "Статический QR — наклейка на кассе без суммы; покупатель вводит сумму сам.",
+      "summary": "",
+      "block_ids": [
+        "B007"
+      ],
+      "line_start": 13,
+      "line_end": 13,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-005",
+      "doc_id": "",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Глоссарий",
+      "kind": "other",
+      "quote": "Комиссия — плата банка за принятую оплату: 0,95% от суммы, удерживается при зачислении; покупатель комиссию не платит.",
+      "summary": "",
+      "block_ids": [
+        "B008"
+      ],
+      "line_start": 14,
+      "line_end": 14,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-006",
+      "doc_id": "",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Общие ограничения",
+      "kind": "constraint",
+      "quote": "Сумма одной оплаты по любому QR — от 100 до 999 999 ₸.",
+      "summary": "",
+      "block_ids": [
+        "B010"
+      ],
+      "line_start": 18,
+      "line_end": 18,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-007",
+      "doc_id": "",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Общие ограничения",
+      "kind": "constraint",
+      "quote": "Все суммы — в тенге, целым числом.",
+      "summary": "",
+      "block_ids": [
+        "B011"
+      ],
+      "line_start": 19,
+      "line_end": 19,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-008",
+      "doc_id": "QR-1",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-1. Динамический QR на сумму покупки",
+      "kind": "other",
+      "quote": "Как кассир, я хочу сформировать QR-код на сумму покупки, чтобы покупатель оплатил её из своего банковского приложения без ввода суммы.",
+      "summary": "",
+      "block_ids": [
+        "B014"
+      ],
+      "line_start": 24,
+      "line_end": 24,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-009",
+      "doc_id": "QR-1",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-1. Динамический QR на сумму покупки",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B015"
+      ],
+      "line_start": 26,
+      "line_end": 26,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-010",
+      "doc_id": "QR-1",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-1. Динамический QR на сумму покупки",
+      "kind": "other",
+      "quote": "Дано: кассир вошёл в приложение, введена сумма 4 500 ₸. Когда кассир нажимает «Выставить», Тогда на экране показываются QR-код и сумма 4 500 ₸.",
+      "summary": "",
+      "block_ids": [
+        "B016"
+      ],
+      "line_start": 27,
+      "line_end": 27,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-011",
+      "doc_id": "QR-1",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-1. Динамический QR на сумму покупки",
+      "kind": "other",
+      "quote": "Сумма — целое число тенге от 100 до 1 000 000 ₸ включительно.",
+      "summary": "",
+      "block_ids": [
+        "B017"
+      ],
+      "line_start": 28,
+      "line_end": 28,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-012",
+      "doc_id": "QR-1",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-1. Динамический QR на сумму покупки",
+      "kind": "other",
+      "quote": "QR-код действует 5 минут с момента формирования; по истечении на экране показывается «Срок оплаты истёк» и кнопка «Создать заново».",
+      "summary": "",
+      "block_ids": [
+        "B018"
+      ],
+      "line_start": 29,
+      "line_end": 29,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-013",
+      "doc_id": "QR-2",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-2. Статический QR на кассе",
+      "kind": "other",
+      "quote": "Как продавец, я хочу распечатать постоянный QR-код, чтобы принимать оплату, даже когда кассир занят.",
+      "summary": "",
+      "block_ids": [
+        "B020"
+      ],
+      "line_start": 32,
+      "line_end": 32,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-014",
+      "doc_id": "QR-2",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-2. Статический QR на кассе",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B021"
+      ],
+      "line_start": 34,
+      "line_end": 34,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-015",
+      "doc_id": "QR-2",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-2. Статический QR на кассе",
+      "kind": "other",
+      "quote": "Наклейка печатается из раздела «Мои QR» в PDF размером не менее 5 на 5.",
+      "summary": "",
+      "block_ids": [
+        "B022"
+      ],
+      "line_start": 35,
+      "line_end": 35,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-016",
+      "doc_id": "QR-2",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-2. Статический QR на кассе",
+      "kind": "other",
+      "quote": "Покупатель после сканирования видит название магазина и вводит сумму сам.",
+      "summary": "",
+      "block_ids": [
+        "B023"
+      ],
+      "line_start": 36,
+      "line_end": 36,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-017",
+      "doc_id": "QR-3",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+      "kind": "api",
+      "quote": "Как кассир, я хочу видеть, что покупатель оплатил, чтобы отдать товар без сомнений.",
+      "summary": "",
+      "block_ids": [
+        "B025"
+      ],
+      "line_start": 39,
+      "line_end": 39,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-018",
+      "doc_id": "QR-3",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+      "kind": "api",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B026"
+      ],
+      "line_start": 41,
+      "line_end": 41,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-019",
+      "doc_id": "QR-3",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+      "kind": "api",
+      "quote": "Статус оплаты обновляется на экране кассира мгновенно.",
+      "summary": "",
+      "block_ids": [
+        "B027"
+      ],
+      "line_start": 42,
+      "line_end": 42,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-020",
+      "doc_id": "QR-3",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+      "kind": "api",
+      "quote": "Дано: QR на 4 500 ₸ выставлен. Когда покупатель оплатил, Тогда на экране кассира статус «Оплачено», сумма и время оплаты.",
+      "summary": "",
+      "block_ids": [
+        "B028"
+      ],
+      "line_start": 43,
+      "line_end": 43,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-021",
+      "doc_id": "QR-3",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+      "kind": "api",
+      "quote": "Если оплата не поступила в течение 10 минут, счёт отменяется автоматически.",
+      "summary": "",
+      "block_ids": [
+        "B029"
+      ],
+      "line_start": 44,
+      "line_end": 44,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-022",
+      "doc_id": "QR-4",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-4. Отмена счёта",
+      "kind": "other",
+      "quote": "Как кассир, я хочу отменить выставленный счёт до оплаты, чтобы исправить ошибку в сумме.",
+      "summary": "",
+      "block_ids": [
+        "B031"
+      ],
+      "line_start": 47,
+      "line_end": 47,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-023",
+      "doc_id": "QR-4",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-4. Отмена счёта",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B032"
+      ],
+      "line_start": 49,
+      "line_end": 49,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-024",
+      "doc_id": "QR-4",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-4. Отмена счёта",
+      "kind": "other",
+      "quote": "Дано: счёт в статусе «Ожидает оплаты». Когда кассир нажимает «Отменить», Тогда счёт переходит в статус «Отменён», а оплата по этому QR отклоняется банком покупателя с сообщением «Счёт отменён».",
+      "summary": "",
+      "block_ids": [
+        "B033"
+      ],
+      "line_start": 50,
+      "line_end": 50,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-025",
+      "doc_id": "QR-4",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-4. Отмена счёта",
+      "kind": "other",
+      "quote": "Отменённый счёт нельзя вернуть в статус «Ожидает оплаты».",
+      "summary": "",
+      "block_ids": [
+        "B034"
+      ],
+      "line_start": 51,
+      "line_end": 51,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-026",
+      "doc_id": "QR-5",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-5. Зачисление выручки",
+      "kind": "other",
+      "quote": "Как продавец, я хочу получать деньги на свой счёт, чтобы пользоваться выручкой.",
+      "summary": "",
+      "block_ids": [
+        "B037"
+      ],
+      "line_start": 56,
+      "line_end": 56,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-027",
+      "doc_id": "QR-5",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-5. Зачисление выручки",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B038"
+      ],
+      "line_start": 58,
+      "line_end": 58,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-028",
+      "doc_id": "QR-5",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-5. Зачисление выручки",
+      "kind": "other",
+      "quote": "Зачисление на текущий счёт продавца — в день оплаты, за вычетом комиссии.",
+      "summary": "",
+      "block_ids": [
+        "B039"
+      ],
+      "line_start": 59,
+      "line_end": 59,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-029",
+      "doc_id": "QR-5",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-5. Зачисление выручки",
+      "kind": "other",
+      "quote": "Пример: оплата 10 000 ₸ → продавцу зачисляется 9 900 ₸.",
+      "summary": "",
+      "block_ids": [
+        "B040"
+      ],
+      "line_start": 60,
+      "line_end": 60,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-030",
+      "doc_id": "QR-6",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+      "kind": "other",
+      "quote": "Как кассир, я хочу оформить возврат по оплате, чтобы покупатель получил деньги за возвращённый товар.",
+      "summary": "",
+      "block_ids": [
+        "B042"
+      ],
+      "line_start": 63,
+      "line_end": 63,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-031",
+      "doc_id": "QR-6",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B043"
+      ],
+      "line_start": 65,
+      "line_end": 65,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-032",
+      "doc_id": "QR-6",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+      "kind": "other",
+      "quote": "Возврат оформляется из карточки оплаты в течение 30 дней с даты оплаты.",
+      "summary": "",
+      "block_ids": [
+        "B044"
+      ],
+      "line_start": 66,
+      "line_end": 66,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-033",
+      "doc_id": "QR-6",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+      "kind": "other",
+      "quote": "Допускается частичный возврат; сумма одного возврата не превышает сумму исходной оплаты.",
+      "summary": "",
+      "block_ids": [
+        "B045"
+      ],
+      "line_start": 67,
+      "line_end": 67,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-034",
+      "doc_id": "QR-6",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+      "kind": "other",
+      "quote": "Деньги возвращаются на счёт, с которого покупатель платил.",
+      "summary": "",
+      "block_ids": [
+        "B046"
+      ],
+      "line_start": 68,
+      "line_end": 68,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-035",
+      "doc_id": "QR-7",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+      "kind": "other",
+      "quote": "Как продавец, я хочу ограничить права кассира, чтобы он не мог распоряжаться деньгами магазина.",
+      "summary": "",
+      "block_ids": [
+        "B048"
+      ],
+      "line_start": 71,
+      "line_end": 71,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-036",
+      "doc_id": "QR-7",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B049"
+      ],
+      "line_start": 73,
+      "line_end": 73,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-037",
+      "doc_id": "QR-7",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+      "kind": "other",
+      "quote": "Кассир не может оформлять возвраты и не видит выручку за прошлые дни.",
+      "summary": "",
+      "block_ids": [
+        "B050"
+      ],
+      "line_start": 74,
+      "line_end": 74,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-038",
+      "doc_id": "QR-7",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+      "kind": "other",
+      "quote": "Вход кассира — по PIN-коду из 4 цифр; после 5 неверных попыток подряд вход блокируется на 15 минут.",
+      "summary": "",
+      "block_ids": [
+        "B051"
+      ],
+      "line_start": 75,
+      "line_end": 75,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-039",
+      "doc_id": "QR-7",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+      "kind": "other",
+      "quote": "Оператор может выставлять и отменять счета только в своей смене.",
+      "summary": "",
+      "block_ids": [
+        "B052"
+      ],
+      "line_start": 76,
+      "line_end": 76,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-040",
+      "doc_id": "QR-8",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-8. Отчёт для бухгалтерии",
+      "kind": "other",
+      "quote": "Как продавец, я хочу видеть историю платежей, выгружать её в Excel, настраивать push-уведомления и добавлять новых кассиров, чтобы вести учёт.",
+      "summary": "",
+      "block_ids": [
+        "B054"
+      ],
+      "line_start": 79,
+      "line_end": 79,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-041",
+      "doc_id": "QR-8",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-8. Отчёт для бухгалтерии",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B055"
+      ],
+      "line_start": 81,
+      "line_end": 81,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-042",
+      "doc_id": "QR-8",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-8. Отчёт для бухгалтерии",
+      "kind": "other",
+      "quote": "История показывает дату, время, сумму, комиссию и статус каждой оплаты.",
+      "summary": "",
+      "block_ids": [
+        "B056"
+      ],
+      "line_start": 82,
+      "line_end": 82,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-043",
+      "doc_id": "QR-8",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-8. Отчёт для бухгалтерии",
+      "kind": "other",
+      "quote": "Отчёт автоматически отправляется на e-mail бухгалтера каждый понедельник.",
+      "summary": "",
+      "block_ids": [
+        "B057"
+      ],
+      "line_start": 83,
+      "line_end": 83,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-044",
+      "doc_id": "QR-9",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-9. Выплаты",
+      "kind": "other",
+      "quote": "Средства по оплатам QR зачисляются на счёт продавца на следующий рабочий день после оплаты единой суммой за день.",
+      "summary": "",
+      "block_ids": [
+        "B059"
+      ],
+      "line_start": 86,
+      "line_end": 86,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-045",
+      "doc_id": "QR-10",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-10. Электронный чек покупателю",
+      "kind": "other",
+      "quote": "Как покупатель, я хочу получить чек по ссылке, чтобы сохранить подтверждение оплаты.",
+      "summary": "",
+      "block_ids": [
+        "B062"
+      ],
+      "line_start": 91,
+      "line_end": 91,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-046",
+      "doc_id": "QR-10",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-10. Электронный чек покупателю",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B063"
+      ],
+      "line_start": 93,
+      "line_end": 93,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-047",
+      "doc_id": "QR-10",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-10. Электронный чек покупателю",
+      "kind": "other",
+      "quote": "После оплаты покупателю приходит SMS со ссылкой на чек вида https://check.example.kz/r?phone=77000000000&amount=4500.",
+      "summary": "",
+      "block_ids": [
+        "B064"
+      ],
+      "line_start": 94,
+      "line_end": 94,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-048",
+      "doc_id": "QR-10",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-10. Электронный чек покупателю",
+      "kind": "other",
+      "quote": "Чек по ссылке открывается без входа в приложение.",
+      "summary": "",
+      "block_ids": [
+        "B065"
+      ],
+      "line_start": 95,
+      "line_end": 95,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-049",
+      "doc_id": "QR-10",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-10. Электронный чек покупателю",
+      "kind": "other",
+      "quote": "Макет чека — см. макет М-12.",
+      "summary": "",
+      "block_ids": [
+        "B066"
+      ],
+      "line_start": 96,
+      "line_end": 96,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-050",
+      "doc_id": "QR-11",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-11. Push продавцу",
+      "kind": "other",
+      "quote": "Как продавец, я хочу получать push о каждой оплате, чтобы видеть продажи без открытия приложения.",
+      "summary": "",
+      "block_ids": [
+        "B068"
+      ],
+      "line_start": 99,
+      "line_end": 99,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-051",
+      "doc_id": "QR-11",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-11. Push продавцу",
+      "kind": "other",
+      "quote": "Критерии приёмки:",
+      "summary": "",
+      "block_ids": [
+        "B069"
+      ],
+      "line_start": 101,
+      "line_end": 101,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-052",
+      "doc_id": "QR-11",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-11. Push продавцу",
+      "kind": "other",
+      "quote": "Push содержит сумму и время оплаты и не содержит данных покупателя.",
+      "summary": "",
+      "block_ids": [
+        "B070"
+      ],
+      "line_start": 102,
+      "line_end": 102,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-053",
+      "doc_id": "QR-11",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-11. Push продавцу",
+      "kind": "other",
+      "quote": "Push не отправляется, если продавец отключил уведомления в настройках.",
+      "summary": "",
+      "block_ids": [
+        "B071"
+      ],
+      "line_start": 103,
+      "line_end": 103,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-054",
+      "doc_id": "QR-12",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-12. Передача в ОФД",
+      "kind": "other",
+      "quote": "Необходимо реализовать передачу данных о каждой оплате в ОФД через REST-интеграцию с очередью сообщений.",
+      "summary": "",
+      "block_ids": [
+        "B073"
+      ],
+      "line_start": 106,
+      "line_end": 106,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-055",
+      "doc_id": "QR-13",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-13. Удобство",
+      "kind": "other",
+      "quote": "Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно.",
+      "summary": "",
+      "block_ids": [
+        "B075"
+      ],
+      "line_start": 109,
+      "line_end": 109,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-056",
+      "doc_id": "",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 4. Офлайн-режим",
+      "kind": "other",
+      "quote": "Описание будет добавлено позже.",
+      "summary": "",
+      "block_ids": [
+        "B077"
+      ],
+      "line_start": 113,
+      "line_end": 113,
+      "page": null,
+      "origin": "heuristic"
+    }
+  ],
+  "skipped": [
+    {
+      "block_ids": [
+        "B001"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR»)",
+      "line_start": 1,
+      "line_end": 1,
+      "text": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR»)",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B002"
+      ],
+      "category": "meta",
+      "reason": "сведения о документе (версия, дата, статус)",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR»)",
+      "line_start": 3,
+      "line_end": 6,
+      "text": "Продукт: мобильное приложение «Береке Бизнес» (условное название), модуль «Касса QR» Версия бэклога: 1.4 от 18.11.2026 Владелец продукта: команда эквайринга МСБ Связанные документы: ТЗ «Касса QR» v1.2, Тарифы для ИП и ТОО (ред. 01.10.2026)",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B003"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Глоссарий",
+      "line_start": 8,
+      "line_end": 8,
+      "text": "Глоссарий",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B009"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Общие ограничения",
+      "line_start": 16,
+      "line_end": 16,
+      "text": "Общие ограничения",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B012"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата",
+      "line_start": 21,
+      "line_end": 21,
+      "text": "Эпик 1. Выставление счёта и оплата",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B013"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-1. Динамический QR на сумму покупки",
+      "line_start": 23,
+      "line_end": 23,
+      "text": "QR-1. Динамический QR на сумму покупки",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B019"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-2. Статический QR на кассе",
+      "line_start": 31,
+      "line_end": 31,
+      "text": "QR-2. Статический QR на кассе",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B024"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+      "line_start": 38,
+      "line_end": 38,
+      "text": "QR-3. Статус оплаты у кассира",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B030"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-4. Отмена счёта",
+      "line_start": 46,
+      "line_end": 46,
+      "text": "QR-4. Отмена счёта",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B035"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца",
+      "line_start": 53,
+      "line_end": 53,
+      "text": "Эпик 2. Деньги продавца",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B036"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-5. Зачисление выручки",
+      "line_start": 55,
+      "line_end": 55,
+      "text": "QR-5. Зачисление выручки",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B041"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+      "line_start": 62,
+      "line_end": 62,
+      "text": "QR-6. Возврат покупателю",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B047"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+      "line_start": 70,
+      "line_end": 70,
+      "text": "QR-7. Права кассира",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B053"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-8. Отчёт для бухгалтерии",
+      "line_start": 78,
+      "line_end": 78,
+      "text": "QR-8. Отчёт для бухгалтерии",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B058"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-9. Выплаты",
+      "line_start": 85,
+      "line_end": 85,
+      "text": "QR-9. Выплаты",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B060"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления",
+      "line_start": 88,
+      "line_end": 88,
+      "text": "Эпик 3. Чеки и уведомления",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B061"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-10. Электронный чек покупателю",
+      "line_start": 90,
+      "line_end": 90,
+      "text": "QR-10. Электронный чек покупателю",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B067"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-11. Push продавцу",
+      "line_start": 98,
+      "line_end": 98,
+      "text": "QR-11. Push продавцу",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B072"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-12. Передача в ОФД",
+      "line_start": 105,
+      "line_end": 105,
+      "text": "QR-12. Передача в ОФД",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B074"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-13. Удобство",
+      "line_start": 108,
+      "line_end": 108,
+      "text": "QR-13. Удобство",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B076"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 4. Офлайн-режим",
+      "line_start": 111,
+      "line_end": 111,
+      "text": "Эпик 4. Офлайн-режим",
+      "origin": "heuristic"
+    }
+  ],
+  "reviews": [
+    {
+      "rid": "REQ-001",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-002",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-003",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-004",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-005",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-006",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-007",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-008",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-009",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-010",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-011",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-012",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-013",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-014",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-015",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-016",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-017",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-018",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-019",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "issue",
+          "note": "Размытая формулировка: «мгновенно»"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 7.5
+    },
+    {
+      "rid": "REQ-020",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-021",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "issue",
+          "note": "Ограничение по времени без условий измерения"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 7.5
+    },
+    {
+      "rid": "REQ-022",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-023",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-024",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-025",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-026",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-027",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-028",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-029",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-030",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-031",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-032",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-033",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-034",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-035",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-036",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-037",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-038",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-039",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-040",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-041",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-042",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-043",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-044",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-045",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-046",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-047",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-048",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-049",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-050",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-051",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-052",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-053",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-054",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-055",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "issue",
+          "note": "Размытые формулировки: «удобный», «понятный», «удобно»"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 7.5
+    },
+    {
+      "rid": "REQ-056",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    }
+  ],
+  "findings": [
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «Все» без границ",
+      "problem": "Слова вроде «Все» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "Все суммы — в тенге, целым числом",
+          "line_start": 19,
+          "line_end": 19,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Общие ограничения",
+          "rid": "REQ-007",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-007"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «Все»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-01",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MAJOR",
+      "title": "Размытая формулировка: «мгновенно»",
+      "problem": "Слово «мгновенно» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.",
+      "recommendation": "Замените «мгновенно» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
+      "quotes": [
+        {
+          "text": "Статус оплаты обновляется на экране кассира мгновенно",
+          "line_start": 42,
+          "line_end": 42,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+          "rid": "REQ-019",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-019"
+      ],
+      "question": {
+        "text": "Что конкретно означает «мгновенно» в этом требовании?",
+        "options": [
+          "Задать число и условия измерения (дописать в требование)",
+          "Перечислить случаи, когда это применяется",
+          "Убрать слово — оно ничего не добавляет"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:vague-word",
+      "rule_ids": [
+        "vague-word"
+      ],
+      "stage": "rules",
+      "fid": "D-001",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-01",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MAJOR",
+      "title": "Ограничение по времени без условий измерения",
+      "problem": "Задан срок «в течение 10 минут», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.",
+      "recommendation": "Допишите условия измерения: «в течение 10 минут для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
+      "quotes": [
+        {
+          "text": "Если оплата не поступила в течение 10 минут, счёт отменяется автоматически",
+          "line_start": 44,
+          "line_end": 44,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+          "rid": "REQ-021",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-021"
+      ],
+      "question": {
+        "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение 10 минут»?",
+        "options": [
+          "95% случаев при обычной нагрузке",
+          "99% случаев при пиковой нагрузке (указать какой)",
+          "Каждый случай без исключений"
+        ],
+        "addressee": "business",
+        "gap": ""
+      },
+      "source": "rule:time-without-conditions",
+      "rule_ids": [
+        "time-without-conditions"
+      ],
+      "stage": "rules",
+      "fid": "D-002",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-02",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Неясно, обязательно ли требование («Допускается»)",
+      "problem": "Слово «Допускается» не говорит, обязательно ли это поведение: его можно реализовать, а можно и нет. Тогда непонятно, считать ли его отсутствие дефектом. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Если поведение обязательно — пишите «должна»; если необязательно — пометьте его как опциональное с приоритетом.",
+      "quotes": [
+        {
+          "text": "Допускается частичный возврат; сумма одного возврата не превышает сумму исходной оплаты",
+          "line_start": 67,
+          "line_end": 67,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+          "rid": "REQ-033",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-033"
+      ],
+      "question": {
+        "text": "Обязательно ли поведение «Допускается»?",
+        "options": [
+          "Обязательно",
+          "Необязательно — пометить приоритет"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:weak-modal",
+      "rule_ids": [
+        "weak-modal"
+      ],
+      "stage": "rules",
+      "fid": "Н-02",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Неясно, обязательно ли требование («может»)",
+      "problem": "Слово «может» не говорит, обязательно ли это поведение: его можно реализовать, а можно и нет. Тогда непонятно, считать ли его отсутствие дефектом. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Если поведение обязательно — пишите «должна»; если необязательно — пометьте его как опциональное с приоритетом.",
+      "quotes": [
+        {
+          "text": "Кассир не может оформлять возвраты и не видит выручку за прошлые дни",
+          "line_start": 74,
+          "line_end": 74,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+          "rid": "REQ-037",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-037"
+      ],
+      "question": {
+        "text": "Обязательно ли поведение «может»?",
+        "options": [
+          "Обязательно",
+          "Необязательно — пометить приоритет"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:weak-modal",
+      "rule_ids": [
+        "weak-modal"
+      ],
+      "stage": "rules",
+      "fid": "Н-03",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Требование сформулировано через отрицание («не может»)",
+      "problem": "Отрицательная формулировка говорит, чего не должно быть, но не говорит, что должно происходить вместо этого. Тестировщику трудно проверить «отсутствие» без перечня случаев. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Если возможно, переформулируйте положительно: что система делает в этом случае (например, «отклоняет операцию с сообщением …»).",
+      "quotes": [
+        {
+          "text": "Кассир не может оформлять возвраты и не видит выручку за прошлые дни",
+          "line_start": 74,
+          "line_end": 74,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+          "rid": "REQ-037",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-037"
+      ],
+      "question": {
+        "text": "Что система должна сделать вместо запрещённого действия?",
+        "options": [
+          "Описать положительное действие",
+          "Оставить как есть — запрет понятен"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:negative-wording",
+      "rule_ids": [
+        "negative-wording"
+      ],
+      "stage": "rules",
+      "fid": "Н-04",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Неясно, обязательно ли требование («может»)",
+      "problem": "Слово «может» не говорит, обязательно ли это поведение: его можно реализовать, а можно и нет. Тогда непонятно, считать ли его отсутствие дефектом. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Если поведение обязательно — пишите «должна»; если необязательно — пометьте его как опциональное с приоритетом.",
+      "quotes": [
+        {
+          "text": "Оператор может выставлять и отменять счета только в своей смене",
+          "line_start": 76,
+          "line_end": 76,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-7. Права кассира",
+          "rid": "REQ-039",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-039"
+      ],
+      "question": {
+        "text": "Обязательно ли поведение «может»?",
+        "options": [
+          "Обязательно",
+          "Необязательно — пометить приоритет"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:weak-modal",
+      "rule_ids": [
+        "weak-modal"
+      ],
+      "stage": "rules",
+      "fid": "Н-05",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «каждый» без границ",
+      "problem": "Слова вроде «каждый» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "Отчёт автоматически отправляется на e-mail бухгалтера каждый понедельник",
+          "line_start": 83,
+          "line_end": 83,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-8. Отчёт для бухгалтерии",
+          "rid": "REQ-043",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-043"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «каждый»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-06",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MAJOR",
+      "title": "Размытые формулировки: «удобный», «понятный», «удобно»",
+      "problem": "Слово «удобный» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. Здесь же: «понятный», «удобно». По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.",
+      "recommendation": "Замените «удобный» проверяемым условием: задайте проверяемый критерий: число шагов до цели, время выполнения задачи пользователем или ссылку на утверждённый макет.",
+      "quotes": [
+        {
+          "text": "Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно",
+          "line_start": 109,
+          "line_end": 109,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-13. Удобство",
+          "rid": "REQ-055",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-055"
+      ],
+      "question": {
+        "text": "Что конкретно означает «удобный» в этом требовании?",
+        "options": [
+          "Задать число и условия измерения (дописать в требование)",
+          "Перечислить случаи, когда это применяется",
+          "Убрать слово — оно ничего не добавляет"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:vague-word",
+      "rule_ids": [
+        "vague-word"
+      ],
+      "stage": "rules",
+      "fid": "D-003",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-03",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    }
+  ],
+  "rejected": [],
+  "dropped": [],
+  "questions": [
+    {
+      "qid": "В-01",
+      "text": "Что конкретно означает «мгновенно» в этом требовании?",
+      "why": "Слово «мгновенно» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное.",
+      "addressee": "analyst",
+      "options": [
+        "Задать число и условия измерения (дописать в требование)",
+        "Перечислить случаи, когда это применяется",
+        "Убрать слово — оно ничего не добавляет"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-001"
+      ],
+      "req_ids": [
+        "REQ-019"
+      ],
+      "quote": {
+        "text": "Статус оплаты обновляется на экране кассира мгновенно",
+        "line_start": 42,
+        "line_end": 42,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+        "rid": "REQ-019",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "term"
+    },
+    {
+      "qid": "В-02",
+      "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение 10 минут»?",
+      "why": "Задан срок «в течение 10 минут», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать.",
+      "addressee": "business",
+      "options": [
+        "95% случаев при обычной нагрузке",
+        "99% случаев при пиковой нагрузке (указать какой)",
+        "Каждый случай без исключений"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-002"
+      ],
+      "req_ids": [
+        "REQ-021"
+      ],
+      "quote": {
+        "text": "Если оплата не поступила в течение 10 минут, счёт отменяется автоматически",
+        "line_start": 44,
+        "line_end": 44,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 1. Выставление счёта и оплата › QR-3. Статус оплаты у кассира",
+        "rid": "REQ-021",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "value"
+    },
+    {
+      "qid": "В-03",
+      "text": "Что конкретно означает «удобный» в этом требовании?",
+      "why": "Слово «удобный» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное.",
+      "addressee": "analyst",
+      "options": [
+        "Задать число и условия измерения (дописать в требование)",
+        "Перечислить случаи, когда это применяется",
+        "Убрать слово — оно ничего не добавляет"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-003"
+      ],
+      "req_ids": [
+        "REQ-055"
+      ],
+      "quote": {
+        "text": "Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно",
+        "line_start": 109,
+        "line_end": 109,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-13. Удобство",
+        "rid": "REQ-055",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "term"
+    }
+  ],
+  "fix_first": [
+    {
+      "action": "Размытая формулировка: «мгновенно». Замените «мгновенно» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
+      "finding_ids": [
+        "D-001"
+      ]
+    },
+    {
+      "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «в течение 10 минут для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
+      "finding_ids": [
+        "D-002"
+      ]
+    },
+    {
+      "action": "Размытые формулировки: «удобный», «понятный», «удобно». Замените «удобный» проверяемым условием: задайте проверяемый критерий: число шагов до цели, время выполнения задачи пользователем или ссылку на утверждённый макет.",
+      "finding_ids": [
+        "D-003"
+      ]
+    }
+  ],
+  "strengths": [],
+  "coverage": [],
+  "verdict": "CONDITIONAL",
+  "verdict_text": "⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (модель не использовалась: проверены только автоматические правила, итог предварительный)",
+  "verdict_reason": "Блокеров нет, но есть 3 существенных замечания: без ответов автора разработчик и тестировщик могут понять эти места по-разному. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.",
+  "tests": [
+    {
+      "tid": "Т-01",
+      "title": "REQ-006: граничные допустимые значения 100, 999999 ₸",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-006"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-006: «Сумма одной оплаты по любому QR — от 100 до 999 999 ₸».",
+      "when": "Ввести или передать значения на границе допустимого: 100, 999999 ₸.",
+      "then": "Значения принимаются без ошибки (требование REQ-006 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-02",
+      "title": "REQ-006: значения сразу за границей 99, 1000000 ₸",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-006"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-006: «Сумма одной оплаты по любому QR — от 100 до 999 999 ₸».",
+      "when": "Ввести или передать значения сразу за границей: 99, 1000000 ₸.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-03",
+      "title": "QR-1: граничные допустимые значения 100, 1000000 ₸",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-011"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование QR-1: «Сумма — целое число тенге от 100 до 1 000 000 ₸ включительно».",
+      "when": "Ввести или передать значения на границе допустимого: 100, 1000000 ₸.",
+      "then": "Значения принимаются без ошибки (требование QR-1 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-04",
+      "title": "QR-1: значения сразу за границей 99, 1000001 ₸",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-011"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование QR-1: «Сумма — целое число тенге от 100 до 1 000 000 ₸ включительно».",
+      "when": "Ввести или передать значения сразу за границей: 99, 1000001 ₸.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-05",
+      "title": "QR-2: граничные допустимые значения 5",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-015"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование QR-2: «Наклейка печатается из раздела «Мои QR» в PDF размером не менее 5 на 5».",
+      "when": "Ввести или передать значения на границе допустимого: 5.",
+      "then": "Значения принимаются без ошибки (требование QR-2 допускает их).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-06",
+      "title": "QR-2: значения сразу за границей 4",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-015"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование QR-2: «Наклейка печатается из раздела «Мои QR» в PDF размером не менее 5 на 5».",
+      "when": "Ввести или передать значения сразу за границей: 4.",
+      "then": "",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-07",
+      "title": "QR-3: Статус оплаты обновляется на экране кассира мгновенно",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-019"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование QR-3: «Статус оплаты обновляется на экране кассира мгновенно.».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-01"
+      ],
+      "finding_ids": [
+        "D-001"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-08",
+      "title": "QR-3: Если оплата не поступила в течение 10 минут, счёт отменяется автоматически",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-021"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование QR-3: «Если оплата не поступила в течение 10 минут, счёт отменяется автоматически.».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-02"
+      ],
+      "finding_ids": [
+        "D-002"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-09",
+      "title": "QR-13: Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-055"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование QR-13: «Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно.».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-03"
+      ],
+      "finding_ids": [
+        "D-003"
+      ],
+      "origin": "rule"
+    }
+  ],
+  "verdict_after_answers": "",
+  "verdict_after_answers_text": "",
+  "audit": []
+}

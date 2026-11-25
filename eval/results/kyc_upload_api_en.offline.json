@@ -1,0 +1,3800 @@
+{
+  "format": "revizor-report/1",
+  "summary": {
+    "tests": {
+      "ready": 5,
+      "blocked": 5
+    },
+    "answers": null,
+    "verdict_after_answers": "",
+    "baseline": null,
+    "requirements": 44,
+    "requirements_with_findings": 8,
+    "findings": 8,
+    "by_severity": {
+      "CRITICAL": 1,
+      "MAJOR": 6,
+      "MINOR": 1
+    },
+    "by_criterion": {
+      "completeness": 0,
+      "unambiguity": 1,
+      "consistency": 0,
+      "verifiability": 1,
+      "feasibility": 0,
+      "necessity": 0,
+      "singularity": 0,
+      "set_completeness": 1,
+      "set_consistency": 2,
+      "set_feasibility": 2,
+      "comprehensibility": 0,
+      "traceability": 1
+    },
+    "observations": 9,
+    "questions": 8,
+    "questions_by_priority": {
+      "blocker": 1,
+      "important": 6,
+      "nice": 1
+    },
+    "readiness": 77,
+    "readiness_band": "готов после правок",
+    "clarity_bands": {
+      "ясное": 39,
+      "есть замечания": 5,
+      "нужна доработка": 0,
+      "в таком виде использовать нельзя": 0
+    },
+    "verdict": "BLOCKED",
+    "verdict_after_blocker_answers": "CONDITIONAL",
+    "preliminary": true
+  },
+  "run": {
+    "agent_name": "Ревизор ТЗ",
+    "agent_version": "1.0.0",
+    "started_at": "2026-11-25T18:01:57+05:00",
+    "duration_s": 0.03,
+    "mode": "offline",
+    "provider": "offline",
+    "model": "",
+    "effort": "",
+    "doc_name": "kyc_upload_api_en.md",
+    "doc_format": "md",
+    "doc_size_bytes": 5486,
+    "doc_sha256": "4cf9a9852dac39bfd31ae07c7156d21d9f9654ef4be13e611b33184683df8836",
+    "doc_pages": null,
+    "doc_lines": 121,
+    "doc_chars": 5472,
+    "llm_calls": 0,
+    "llm_cache_hits": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_note": "модель не вызывалась",
+    "quotes_confirmed": 20,
+    "quotes_restored": 0,
+    "quotes_dropped": 0,
+    "skeptic_kept": 0,
+    "skeptic_rejected": 0,
+    "skeptic_merged": 0,
+    "manual_minutes_estimate": 221,
+    "warnings": [],
+    "injection_suspected": false,
+    "masked_values": 0,
+    "score": 77,
+    "score_formula": "10 × 9,78 (средняя ясность 44 треб.) − 21 (штраф за замечания к набору: 8×1 + 3×4 + 1×1 = 21) = 77",
+    "rules_version": "1.0",
+    "doc_words": 817,
+    "context_files": [],
+    "dup_merged": 0
+  },
+  "diagnostic": null,
+  "requirements": [
+    {
+      "rid": "REQ-001",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 1. Purpose",
+      "kind": "api",
+      "quote": "The API lets the mobile app upload images of the applicant's identity document (ID card of the Republic of Kazakhstan or passport) and a selfie during remote onboarding, submit them for verification and query the verification status.",
+      "summary": "",
+      "block_ids": [
+        "B008"
+      ],
+      "line_start": 13,
+      "line_end": 13,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-002",
+      "doc_id": "2.1",
+      "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+      "kind": "api",
+      "quote": "2.1. All endpoints are served over HTTPS only, TLS 1.2 or higher; plain HTTP requests are rejected without redirect.",
+      "summary": "",
+      "block_ids": [
+        "B010"
+      ],
+      "line_start": 17,
+      "line_end": 17,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-003",
+      "doc_id": "2.2",
+      "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+      "kind": "api",
+      "quote": "2.2. Every request carries Authorization: Bearer <access_token> issued to the onboarding session. The access token lifetime is 15 minutes.",
+      "summary": "",
+      "block_ids": [
+        "B011"
+      ],
+      "line_start": 18,
+      "line_end": 18,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-004",
+      "doc_id": "2.3",
+      "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+      "kind": "api",
+      "quote": "2.3. All timestamps are ISO 8601 strings in UTC, e.g. 2026-11-12T09:30:00Z.",
+      "summary": "",
+      "block_ids": [
+        "B012"
+      ],
+      "line_start": 19,
+      "line_end": 19,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-005",
+      "doc_id": "2.4",
+      "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+      "kind": "api",
+      "quote": "2.4. Every POST request must carry an Idempotency-Key header (UUID v4). A repeated request with the same key within 24 hours returns the original response and does not create a new upload.",
+      "summary": "",
+      "block_ids": [
+        "B013"
+      ],
+      "line_start": 20,
+      "line_end": 20,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-006",
+      "doc_id": "2.5",
+      "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+      "kind": "api",
+      "quote": "2.5. The applicant is identified by IIN (12 digits). Test IIN for examples: 000000000000.",
+      "summary": "",
+      "block_ids": [
+        "B014"
+      ],
+      "line_start": 21,
+      "line_end": 21,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-007",
+      "doc_id": "2.6",
+      "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+      "kind": "api",
+      "quote": "2.6. The client app compresses images, strips EXIF location data, shows a progress bar and retries failed uploads up to 3 times.",
+      "summary": "",
+      "block_ids": [
+        "B015"
+      ],
+      "line_start": 22,
+      "line_end": 22,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-008",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "Uploads one document image. Request body: multipart/form-data.",
+      "summary": "",
+      "block_ids": [
+        "B018"
+      ],
+      "line_start": 28,
+      "line_end": 28,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-009",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "Parameter: sessionId | In: path | Type: string (UUID) | Required: yes | Rules: Onboarding session id",
+      "summary": "",
+      "block_ids": [
+        "B019"
+      ],
+      "line_start": 32,
+      "line_end": 32,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-010",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "Parameter: iin | In: query | Type: string | Required: yes | Rules: Applicant IIN, 12 digits",
+      "summary": "",
+      "block_ids": [
+        "B020"
+      ],
+      "line_start": 33,
+      "line_end": 33,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-011",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "Parameter: docType | In: form | Type: string | Required: yes | Rules: ID_CARD, PASSPORT, SELFIE",
+      "summary": "",
+      "block_ids": [
+        "B021"
+      ],
+      "line_start": 34,
+      "line_end": 34,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-012",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "Parameter: side | In: form | Type: string | Required: for ID_CARD only | Rules: FRONT or BACK",
+      "summary": "",
+      "block_ids": [
+        "B022"
+      ],
+      "line_start": 35,
+      "line_end": 35,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-013",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "Parameter: file | In: form | Type: binary | Required: yes | Rules: JPEG or PNG, max 10 MB",
+      "summary": "",
+      "block_ids": [
+        "B023"
+      ],
+      "line_start": 36,
+      "line_end": 36,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-014",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "Example:\ncurl -X POST \"$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000\" \\\n  -H \"Authorization: Bearer $TOKEN\" -H \"Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002\" \\\n  -F docType=PHOTO -F file=@selfie.jpg",
+      "summary": "",
+      "block_ids": [
+        "B024",
+        "B025"
+      ],
+      "line_start": 38,
+      "line_end": 44,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-015",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "Responses:",
+      "summary": "",
+      "block_ids": [
+        "B026"
+      ],
+      "line_start": 46,
+      "line_end": 46,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-016",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "201 Created — upload accepted: {\"documentId\": \"d-001\", \"status\": \"RECEIVED\"}",
+      "summary": "",
+      "block_ids": [
+        "B027"
+      ],
+      "line_start": 48,
+      "line_end": 48,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-017",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "400 Bad Request — a parameter is missing or invalid",
+      "summary": "",
+      "block_ids": [
+        "B028"
+      ],
+      "line_start": 49,
+      "line_end": 49,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-018",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "413 Payload Too Large — the file exceeds the size limit",
+      "summary": "",
+      "block_ids": [
+        "B029"
+      ],
+      "line_start": 50,
+      "line_end": 50,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-019",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "415 Unsupported Media Type — the file is not JPEG or PNG",
+      "summary": "",
+      "block_ids": [
+        "B030"
+      ],
+      "line_start": 51,
+      "line_end": 51,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-020",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "422 Unprocessable Entity — image quality is insufficient, see 4.3",
+      "summary": "",
+      "block_ids": [
+        "B031"
+      ],
+      "line_start": 52,
+      "line_end": 52,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-021",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "If a document of the same docType and side has already been uploaded in the session, the server returns 409.",
+      "summary": "",
+      "block_ids": [
+        "B032"
+      ],
+      "line_start": 54,
+      "line_end": 54,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-022",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "kind": "api",
+      "quote": "The upload endpoint responds within 3 seconds.",
+      "summary": "",
+      "block_ids": [
+        "B033"
+      ],
+      "line_start": 56,
+      "line_end": 56,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-023",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.2. GET /v1/onboarding/{sessionId}/status",
+      "kind": "api",
+      "quote": "Returns the verification status of the session. Authorization is not required for this endpoint so that the web landing page can poll it.",
+      "summary": "",
+      "block_ids": [
+        "B035"
+      ],
+      "line_start": 60,
+      "line_end": 60,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-024",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.2. GET /v1/onboarding/{sessionId}/status",
+      "kind": "api",
+      "quote": "Response 200 OK:\n{\"sessionId\": \"3f1c9a52-0000-4000-8000-000000000001\", \"status\": \"PROCESSING\",\n \"fullName\": \"TEST APPLICANT\", \"iin\": \"000000000000\", \"birthDate\": \"1990-01-01\",\n \"documentNumber\": \"000000000\"}",
+      "summary": "",
+      "block_ids": [
+        "B036",
+        "B037"
+      ],
+      "line_start": 62,
+      "line_end": 68,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-025",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.2. GET /v1/onboarding/{sessionId}/status",
+      "kind": "api",
+      "quote": "Session status values: DRAFT, SUBMITTED, PROCESSING, VERIFIED, REJECTED.",
+      "summary": "",
+      "block_ids": [
+        "B038"
+      ],
+      "line_start": 70,
+      "line_end": 70,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-026",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete",
+      "kind": "api",
+      "quote": "Removes a previously uploaded document. A document can be removed only while the session status is DRAFT; otherwise the server returns 400.",
+      "summary": "",
+      "block_ids": [
+        "B040"
+      ],
+      "line_start": 74,
+      "line_end": 74,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-027",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+      "kind": "api",
+      "quote": "Submits all uploaded documents for verification. The session must contain an ID card (both sides) or a passport, and one selfie; otherwise 400 with {\"error\": \"INCOMPLETE_SET\"}. On success the status becomes SUBMITTED and the server returns 202 Accepted.",
+      "summary": "",
+      "block_ids": [
+        "B042"
+      ],
+      "line_start": 78,
+      "line_end": 78,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-028",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+      "kind": "api",
+      "quote": "The verification provider is called asynchronously. When it responds, the status changes to PROCESSING and then to APPROVED or REJECTED. If the verification provider fails, the session is handled accordingly.",
+      "summary": "",
+      "block_ids": [
+        "B043"
+      ],
+      "line_start": 80,
+      "line_end": 80,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-029",
+      "doc_id": "4.1",
+      "section": "Remote Onboarding — Identity Document Upload API › 4. Image quality",
+      "kind": "api",
+      "quote": "4.1. Minimum resolution of a document image is 1280×720 pixels; a selfie is at least 640×480 pixels.",
+      "summary": "",
+      "block_ids": [
+        "B047"
+      ],
+      "line_start": 88,
+      "line_end": 88,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-030",
+      "doc_id": "4.2",
+      "section": "Remote Onboarding — Identity Document Upload API › 4. Image quality",
+      "kind": "api",
+      "quote": "4.2. Glare and blur on the document image must be within acceptable limits.",
+      "summary": "",
+      "block_ids": [
+        "B048"
+      ],
+      "line_start": 89,
+      "line_end": 89,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-031",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 4. Image quality",
+      "kind": "api",
+      "quote": "Liveness of the selfie is checked by the FaceCheck SDK 4.2 library on the server in a dedicated thread pool of 8 workers.",
+      "summary": "",
+      "block_ids": [
+        "B049"
+      ],
+      "line_start": 91,
+      "line_end": 91,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-032",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 5. Limits",
+      "kind": "api",
+      "quote": "Limit: Maximum file size | Value: 8 000 KB",
+      "summary": "",
+      "block_ids": [
+        "B051"
+      ],
+      "line_start": 97,
+      "line_end": 97,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-033",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 5. Limits",
+      "kind": "api",
+      "quote": "Limit: Supported formats | Value: JPEG, PNG, HEIC",
+      "summary": "",
+      "block_ids": [
+        "B052"
+      ],
+      "line_start": 98,
+      "line_end": 98,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-034",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 5. Limits",
+      "kind": "api",
+      "quote": "Limit: Uploads per session | Value: at most 20",
+      "summary": "",
+      "block_ids": [
+        "B053"
+      ],
+      "line_start": 99,
+      "line_end": 99,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-035",
+      "doc_id": "",
+      "section": "Remote Onboarding — Identity Document Upload API › 5. Limits",
+      "kind": "api",
+      "quote": "Limit: Rate limit | Value: 30 requests per applicant",
+      "summary": "",
+      "block_ids": [
+        "B054"
+      ],
+      "line_start": 100,
+      "line_end": 100,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-036",
+      "doc_id": "6.1",
+      "section": "Remote Onboarding — Identity Document Upload API › 6. Data retention",
+      "kind": "data",
+      "quote": "6.1. Document images and selfies are stored for 90 days after the onboarding session ends and are then permanently deleted.",
+      "summary": "",
+      "block_ids": [
+        "B056"
+      ],
+      "line_start": 104,
+      "line_end": 104,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-037",
+      "doc_id": "6.2",
+      "section": "Remote Onboarding — Identity Document Upload API › 6. Data retention",
+      "kind": "data",
+      "quote": "6.2. Images are stored encrypted with AES-256; keys are managed by the bank's HSM.",
+      "summary": "",
+      "block_ids": [
+        "B057"
+      ],
+      "line_start": 105,
+      "line_end": 105,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-038",
+      "doc_id": "7.1",
+      "section": "Remote Onboarding — Identity Document Upload API › 7. Audit",
+      "kind": "api",
+      "quote": "7.1. Every upload, deletion and status change is written to the audit log with sessionId, documentId, operation and timestamp.",
+      "summary": "",
+      "block_ids": [
+        "B059"
+      ],
+      "line_start": 109,
+      "line_end": 109,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-039",
+      "doc_id": "7.2",
+      "section": "Remote Onboarding — Identity Document Upload API › 7. Audit",
+      "kind": "api",
+      "quote": "7.2. Original document images are retained for the whole term of the business relationship and for 5 years after it ends, as required by AML regulations.",
+      "summary": "",
+      "block_ids": [
+        "B060"
+      ],
+      "line_start": 110,
+      "line_end": 110,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-040",
+      "doc_id": "AC-1",
+      "section": "Remote Onboarding — Identity Document Upload API › 8. Acceptance criteria",
+      "kind": "acceptance",
+      "quote": "#: AC-1 | Given: Session in DRAFT | When: Upload a 2 MB JPEG ID_CARD FRONT | Then: 201, status RECEIVED",
+      "summary": "",
+      "block_ids": [
+        "B062"
+      ],
+      "line_start": 116,
+      "line_end": 116,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-041",
+      "doc_id": "AC-2",
+      "section": "Remote Onboarding — Identity Document Upload API › 8. Acceptance criteria",
+      "kind": "acceptance",
+      "quote": "#: AC-2 | Given: Session in DRAFT | When: Upload a GIF file | Then: 415",
+      "summary": "",
+      "block_ids": [
+        "B063"
+      ],
+      "line_start": 117,
+      "line_end": 117,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-042",
+      "doc_id": "AC-3",
+      "section": "Remote Onboarding — Identity Document Upload API › 8. Acceptance criteria",
+      "kind": "acceptance",
+      "quote": "#: AC-3 | Given: Any session | When: Repeat POST with the same Idempotency-Key within 24 hours | Then: Original response, no new document",
+      "summary": "",
+      "block_ids": [
+        "B064"
+      ],
+      "line_start": 118,
+      "line_end": 118,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-043",
+      "doc_id": "AC-4",
+      "section": "Remote Onboarding — Identity Document Upload API › 8. Acceptance criteria",
+      "kind": "acceptance",
+      "quote": "#: AC-4 | Given: Session in SUBMITTED | When: Delete a document | Then: 400",
+      "summary": "",
+      "block_ids": [
+        "B065"
+      ],
+      "line_start": 119,
+      "line_end": 119,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-044",
+      "doc_id": "AC-5",
+      "section": "Remote Onboarding — Identity Document Upload API › 8. Acceptance criteria",
+      "kind": "acceptance",
+      "quote": "#: AC-5 | Given: Session with 3 rejected selfies | When: Upload a 4th selfie | Then: 423 Locked for 24 hours",
+      "summary": "",
+      "block_ids": [
+        "B066"
+      ],
+      "line_start": 120,
+      "line_end": 120,
+      "page": null,
+      "origin": "heuristic"
+    }
+  ],
+  "skipped": [
+    {
+      "block_ids": [
+        "B001"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API",
+      "line_start": 1,
+      "line_end": 1,
+      "text": "Remote Onboarding — Identity Document Upload API",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B002"
+      ],
+      "category": "explanation",
+      "reason": "вступление под названием документа, до первого раздела",
+      "section": "Remote Onboarding — Identity Document Upload API",
+      "line_start": 5,
+      "line_end": 5,
+      "text": "Field: Service | Value: onboarding-docs",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B003"
+      ],
+      "category": "explanation",
+      "reason": "вступление под названием документа, до первого раздела",
+      "section": "Remote Onboarding — Identity Document Upload API",
+      "line_start": 6,
+      "line_end": 6,
+      "text": "Field: Owner | Value: Digital Onboarding squad, Dala Digital Bank JSC (fictional)",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B004"
+      ],
+      "category": "explanation",
+      "reason": "вступление под названием документа, до первого раздела",
+      "section": "Remote Onboarding — Identity Document Upload API",
+      "line_start": 7,
+      "line_end": 7,
+      "text": "Field: Document version | Value: 2.1",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B005"
+      ],
+      "category": "explanation",
+      "reason": "вступление под названием документа, до первого раздела",
+      "section": "Remote Onboarding — Identity Document Upload API",
+      "line_start": 8,
+      "line_end": 8,
+      "text": "Field: Last updated | Value: 2026-11-12",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B006"
+      ],
+      "category": "explanation",
+      "reason": "вступление под названием документа, до первого раздела",
+      "section": "Remote Onboarding — Identity Document Upload API",
+      "line_start": 9,
+      "line_end": 9,
+      "text": "Field: Related | Value: Onboarding BRD v3.0, Information Security Policy IS-07",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B007"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 1. Purpose",
+      "line_start": 11,
+      "line_end": 11,
+      "text": "1. Purpose",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B009"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+      "line_start": 15,
+      "line_end": 15,
+      "text": "2. General rules",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B016"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints",
+      "line_start": 24,
+      "line_end": 24,
+      "text": "3. Endpoints",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B017"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+      "line_start": 26,
+      "line_end": 26,
+      "text": "3.1. POST /v1/onboarding/{sessionId}/documents",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B034"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.2. GET /v1/onboarding/{sessionId}/status",
+      "line_start": 58,
+      "line_end": 58,
+      "text": "3.2. GET /v1/onboarding/{sessionId}/status",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B039"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete",
+      "line_start": 72,
+      "line_end": 72,
+      "text": "3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B041"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+      "line_start": 76,
+      "line_end": 76,
+      "text": "3.4. POST /v1/onboarding/{sessionId}/submit",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B044"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.5. Callback to the core banking system",
+      "line_start": 82,
+      "line_end": 82,
+      "text": "3.5. Callback to the core banking system",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B045"
+      ],
+      "category": "placeholder",
+      "reason": "заглушка вместо содержания",
+      "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.5. Callback to the core banking system",
+      "line_start": 84,
+      "line_end": 84,
+      "text": "TBD.",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B046"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 4. Image quality",
+      "line_start": 86,
+      "line_end": 86,
+      "text": "4. Image quality",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B050"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 5. Limits",
+      "line_start": 93,
+      "line_end": 93,
+      "text": "5. Limits",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B055"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 6. Data retention",
+      "line_start": 102,
+      "line_end": 102,
+      "text": "6. Data retention",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B058"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 7. Audit",
+      "line_start": 107,
+      "line_end": 107,
+      "text": "7. Audit",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B061"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Remote Onboarding — Identity Document Upload API › 8. Acceptance criteria",
+      "line_start": 112,
+      "line_end": 112,
+      "text": "8. Acceptance criteria",
+      "origin": "heuristic"
+    }
+  ],
+  "reviews": [
+    {
+      "rid": "REQ-001",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 9.6
+    },
+    {
+      "rid": "REQ-002",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-003",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-004",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-005",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-006",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-007",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-008",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 9.6
+    },
+    {
+      "rid": "REQ-009",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-010",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-011",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-012",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-013",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-014",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 8.8
+    },
+    {
+      "rid": "REQ-015",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-016",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-017",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-018",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-019",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-020",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-021",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 8.8
+    },
+    {
+      "rid": "REQ-022",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "issue",
+          "note": "Ограничение по времени без условий измерения"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 7.5
+    },
+    {
+      "rid": "REQ-023",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 9.6
+    },
+    {
+      "rid": "REQ-024",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-025",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-026",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-027",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 8.8
+    },
+    {
+      "rid": "REQ-028",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "issue",
+          "note": "Размытая формулировка: «accordingly»"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 7.5
+    },
+    {
+      "rid": "REQ-029",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-030",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-031",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-032",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-033",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-034",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-035",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-036",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-037",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-038",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-039",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-040",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-041",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-042",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-043",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-044",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    }
+  ],
+  "findings": [
+    {
+      "scope": "set",
+      "criterion": "traceability",
+      "severity": "MINOR",
+      "title": "У большинства требований нет номеров",
+      "problem": "Номер из документа есть только у 17 из 44 требований. Без номера на требование нельзя сослаться в задаче, тест-кейсе или замечании, и трудно проверить, что каждое требование покрыто тестом. Разделы без номеров: «1. Purpose», «3.1. POST /v1/onboarding/{sessionId}/documents», «3.2. GET /v1/onboarding/{sessionId}/status», «3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete», «3.4. POST /v1/onboarding/{sessionId}/submit», «4. Image quality», «5. Limits».",
+      "recommendation": "Присвойте каждому требованию уникальный номер (например, Ф-5, НФТ-1, ДАН-1, API-3) и ссылайтесь на эти номера в критериях приёмки.",
+      "quotes": [
+        {
+          "text": "The API lets the mobile app upload images of the applicant's identity document (ID card of the Republic of Kazakhstan or passport) and a selfie during remote onboarding, submit them for verification and query the verification status.",
+          "line_start": 13,
+          "line_end": 13,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 1. Purpose",
+          "rid": "REQ-001",
+          "exact": true
+        },
+        {
+          "text": "Uploads one document image. Request body: `multipart/form-data`.",
+          "line_start": 28,
+          "line_end": 28,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+          "rid": "REQ-008",
+          "exact": true
+        },
+        {
+          "text": "Returns the verification status of the session. Authorization is not required for this endpoint so that the web landing page can poll it.",
+          "line_start": 60,
+          "line_end": 60,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.2. GET /v1/onboarding/{sessionId}/status",
+          "rid": "REQ-023",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-001",
+        "REQ-008",
+        "REQ-023"
+      ],
+      "question": {
+        "text": "Какую схему номеров использовать для требований без номера?",
+        "options": [
+          "Продолжить существующую нумерацию на все разделы",
+          "Свой префикс для каждого раздела (НФТ-, ДАН-, API-)"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:missing-ids",
+      "rule_ids": [
+        "missing-ids"
+      ],
+      "stage": "rules",
+      "fid": "D-001",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-08",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "IEEE 830-1998 п. 4.3.8 (Traceable)"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «All» без границ",
+      "problem": "Слова вроде «All» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "All endpoints are served over HTTPS only, TLS 1.2 or higher; plain HTTP requests are rejected without redirect",
+          "line_start": 17,
+          "line_end": 17,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+          "rid": "REQ-002",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-002"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «All»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-01",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «Every» без границ",
+      "problem": "Слова вроде «Every» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "Every request carries `Authorization: Bearer <access_token>` issued to the onboarding session",
+          "line_start": 18,
+          "line_end": 18,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+          "rid": "REQ-003",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-003"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «Every»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-02",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «All» без границ",
+      "problem": "Слова вроде «All» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "All timestamps are ISO 8601 strings in UTC, e.g. `2026-11-12T09:30:00Z`",
+          "line_start": 19,
+          "line_end": 19,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+          "rid": "REQ-004",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-004"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «All»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-03",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «Every» без границ",
+      "problem": "Слова вроде «Every» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "Every POST request must carry an `Idempotency-Key` header (UUID v4)",
+          "line_start": 20,
+          "line_end": 20,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 2. General rules",
+          "rid": "REQ-005",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-005"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «Every»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-04",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_feasibility",
+      "severity": "MAJOR",
+      "title": "Чувствительные данные передаются в адресной строке запроса",
+      "problem": "Параметры «iin» передаются в строке запроса (query). Адрес запроса целиком попадает в журналы веб-серверов и прокси, историю браузера и системы мониторинга — идентификаторы карт, счетов, телефонов и токены окажутся там в открытом виде. Это противоречит требованиям к защите платёжных и персональных данных (PCI DSS).",
+      "recommendation": "Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы.",
+      "quotes": [
+        {
+          "text": "curl -X POST \"$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000\" \\\n  -H \"Authorization: Bearer $TOKEN\" -H \"Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002\" \\\n  -F docType=PHOTO -F file=@selfie.jpg",
+          "line_start": 41,
+          "line_end": 43,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+          "rid": "REQ-014",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-014"
+      ],
+      "question": {
+        "text": "Как передавать идентификатор карты и другие чувствительные значения?",
+        "options": [
+          "В теле запроса",
+          "В пути в виде внутреннего непрозрачного идентификатора",
+          "Оставить в query (обосновать для ИБ)"
+        ],
+        "addressee": "security",
+        "gap": ""
+      },
+      "source": "rule:sensitive-in-query",
+      "rule_ids": [
+        "sensitive-in-query"
+      ],
+      "stage": "rules",
+      "fid": "D-002",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-02",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_consistency",
+      "severity": "MAJOR",
+      "title": "Код ответа 409 возвращается, но не описан",
+      "problem": "В тексте код 409 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа. Разработчик не знает, когда его возвращать, а тестировщик — что проверять.",
+      "recommendation": "Добавьте описание кода 409: при каком условии он возвращается и пример тела ответа; или уберите упоминание.",
+      "quotes": [
+        {
+          "text": "If a document of the same `docType` and `side` has already been uploaded in the session, the server returns `409`",
+          "line_start": 54,
+          "line_end": 54,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+          "rid": "REQ-021",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-021"
+      ],
+      "question": {
+        "text": "Возвращает ли сервис код 409?",
+        "options": [
+          "Да — добавить описание",
+          "Нет — убрать упоминание"
+        ],
+        "addressee": "architect",
+        "gap": ""
+      },
+      "source": "rule:status-mismatch",
+      "rule_ids": [
+        "status-mismatch"
+      ],
+      "stage": "rules",
+      "fid": "D-003",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-03",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MAJOR",
+      "title": "Ограничение по времени без условий измерения",
+      "problem": "Задан срок «within 3 seconds», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.",
+      "recommendation": "Допишите условия измерения: «within 3 seconds для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
+      "quotes": [
+        {
+          "text": "The upload endpoint responds within 3 seconds",
+          "line_start": 56,
+          "line_end": 56,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+          "rid": "REQ-022",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-022"
+      ],
+      "question": {
+        "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «within 3 seconds»?",
+        "options": [
+          "95% случаев при обычной нагрузке",
+          "99% случаев при пиковой нагрузке (указать какой)",
+          "Каждый случай без исключений"
+        ],
+        "addressee": "business",
+        "gap": ""
+      },
+      "source": "rule:time-without-conditions",
+      "rule_ids": [
+        "time-without-conditions"
+      ],
+      "stage": "rules",
+      "fid": "D-004",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-04",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_feasibility",
+      "severity": "CRITICAL",
+      "title": "Метод GET используется для изменения данных",
+      "problem": "Запрос описан как GET, но по пути или описанию он сохраняет или меняет данные («/v1/onboarding/{sessionId}/documents/{d…»). По стандарту HTTP (RFC 9110, п. 9.2.1) GET — безопасный метод, он только читает. Браузеры, прокси и кэши вправе повторять и кэшировать такие запросы, а параметры попадают в адресную строку и журналы: изменение может выполниться повторно или без ведома клиента.",
+      "recommendation": "Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.",
+      "quotes": [
+        {
+          "text": "3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete",
+          "line_start": 72,
+          "line_end": 72,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete",
+          "rid": "",
+          "exact": true
+        }
+      ],
+      "req_ids": [],
+      "question": {
+        "text": "Какой HTTP-метод использовать для этого изменения?",
+        "options": [
+          "PUT — полная замена настройки",
+          "PATCH — изменение отдельных полей",
+          "POST — создание новой записи"
+        ],
+        "addressee": "architect",
+        "gap": ""
+      },
+      "source": "rule:get-mutation",
+      "rule_ids": [
+        "get-mutation"
+      ],
+      "stage": "rules",
+      "fid": "D-005",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-01",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "singularity",
+      "severity": "MINOR",
+      "title": "В одном пункте несколько утверждений",
+      "problem": "Пункт содержит 3 самостоятельных утверждения. Возможно, это одно правило с пояснениями, но если утверждения проверяются по отдельности, на них удобнее ссылаться под своими номерами.",
+      "recommendation": "Разделите пункт на отдельные требования — по одному обязательству в каждом, с собственными номерами (например, X-2.1, X-2.2) и своим критерием приёмки.",
+      "quotes": [
+        {
+          "text": "Removes a previously uploaded document. A document can be removed only while the session status is `DRAFT`; otherwise the server returns `400`.",
+          "line_start": 74,
+          "line_end": 74,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete",
+          "rid": "REQ-026",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-026"
+      ],
+      "question": {
+        "text": "Можно ли разделить пункт на отдельные требования?",
+        "options": [
+          "Да — разделить, каждому дать номер",
+          "Нет — это одно правило, переписать одним утверждением"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:non-atomic",
+      "rule_ids": [
+        "non-atomic"
+      ],
+      "stage": "rules",
+      "fid": "Н-05",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "singularity",
+      "severity": "MINOR",
+      "title": "В одном пункте несколько утверждений",
+      "problem": "Пункт содержит 4 самостоятельных утверждения. Возможно, это одно правило с пояснениями, но если утверждения проверяются по отдельности, на них удобнее ссылаться под своими номерами.",
+      "recommendation": "Разделите пункт на отдельные требования — по одному обязательству в каждом, с собственными номерами (например, X-2.1, X-2.2) и своим критерием приёмки.",
+      "quotes": [
+        {
+          "text": "Submits all uploaded documents for verification. The session must contain an ID card (both sides) or a passport, and one selfie; otherwise `400` with `{\"error\": \"INCOMPLETE_SET\"}`. On success the status becomes `SUBMITTED` and the server returns `202 Accepted`.",
+          "line_start": 78,
+          "line_end": 78,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+          "rid": "REQ-027",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-027"
+      ],
+      "question": {
+        "text": "Можно ли разделить пункт на отдельные требования?",
+        "options": [
+          "Да — разделить, каждому дать номер",
+          "Нет — это одно правило, переписать одним утверждением"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:non-atomic",
+      "rule_ids": [
+        "non-atomic"
+      ],
+      "stage": "rules",
+      "fid": "Н-06",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «all» без границ",
+      "problem": "Слова вроде «all» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "Submits all uploaded documents for verification",
+          "line_start": 78,
+          "line_end": 78,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+          "rid": "REQ-027",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-027"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «all»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-07",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_consistency",
+      "severity": "MAJOR",
+      "title": "Код ответа 202 возвращается, но не описан",
+      "problem": "В тексте код 202 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа. Разработчик не знает, когда его возвращать, а тестировщик — что проверять.",
+      "recommendation": "Добавьте описание кода 202: при каком условии он возвращается и пример тела ответа; или уберите упоминание.",
+      "quotes": [
+        {
+          "text": "On success the status becomes `SUBMITTED` and the server returns `202 Accepted`",
+          "line_start": 78,
+          "line_end": 78,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+          "rid": "REQ-027",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-027"
+      ],
+      "question": {
+        "text": "Возвращает ли сервис код 202?",
+        "options": [
+          "Да — добавить описание",
+          "Нет — убрать упоминание"
+        ],
+        "addressee": "architect",
+        "gap": ""
+      },
+      "source": "rule:status-mismatch",
+      "rule_ids": [
+        "status-mismatch"
+      ],
+      "stage": "rules",
+      "fid": "D-006",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-05",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MAJOR",
+      "title": "Размытая формулировка: «accordingly»",
+      "problem": "Слово «accordingly» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.",
+      "recommendation": "Замените «accordingly» проверяемым условием: опишите, что именно должно быть сделано: конкретное действие, его результат и как это проверить.",
+      "quotes": [
+        {
+          "text": "If the verification provider fails, the session is handled accordingly",
+          "line_start": 80,
+          "line_end": 80,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+          "rid": "REQ-028",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-028"
+      ],
+      "question": {
+        "text": "Что конкретно означает «accordingly» в этом требовании?",
+        "options": [
+          "Задать число и условия измерения (дописать в требование)",
+          "Перечислить случаи, когда это применяется",
+          "Убрать слово — оно ничего не добавляет"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:vague-word",
+      "rule_ids": [
+        "vague-word"
+      ],
+      "stage": "rules",
+      "fid": "D-007",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-06",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "singularity",
+      "severity": "MINOR",
+      "title": "В одном пункте несколько утверждений",
+      "problem": "Пункт содержит 3 самостоятельных утверждения. Возможно, это одно правило с пояснениями, но если утверждения проверяются по отдельности, на них удобнее ссылаться под своими номерами.",
+      "recommendation": "Разделите пункт на отдельные требования — по одному обязательству в каждом, с собственными номерами (например, X-2.1, X-2.2) и своим критерием приёмки.",
+      "quotes": [
+        {
+          "text": "The verification provider is called asynchronously. When it responds, the status changes to `PROCESSING` and then to `APPROVED` or `REJECTED`. If the verification provider fails, the session is handled accordingly.",
+          "line_start": 80,
+          "line_end": 80,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+          "rid": "REQ-028",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-028"
+      ],
+      "question": {
+        "text": "Можно ли разделить пункт на отдельные требования?",
+        "options": [
+          "Да — разделить, каждому дать номер",
+          "Нет — это одно правило, переписать одним утверждением"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:non-atomic",
+      "rule_ids": [
+        "non-atomic"
+      ],
+      "stage": "rules",
+      "fid": "Н-08",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MAJOR",
+      "title": "Раздел «3.5. Callback to the core banking system» не заполнен: вместо содержания заглушка",
+      "problem": "Вместо содержания раздела стоит заглушка «TBD.». Значит, эта часть требований не готова: по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел формально есть.",
+      "recommendation": "Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.",
+      "quotes": [
+        {
+          "text": "3.5. Callback to the core banking system",
+          "line_start": 82,
+          "line_end": 82,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.5. Callback to the core banking system",
+          "rid": "",
+          "exact": true
+        },
+        {
+          "text": "TBD.",
+          "line_start": 84,
+          "line_end": 84,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.5. Callback to the core banking system",
+          "rid": "",
+          "exact": true
+        }
+      ],
+      "req_ids": [],
+      "question": {
+        "text": "Кто и когда заполнит раздел «3.5. Callback to the core banking system»?",
+        "options": [
+          "Автор документа — до начала разработки",
+          "Другая команда — указать ответственного и срок",
+          "Раздел не нужен — удалить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:empty-section",
+      "rule_ids": [
+        "empty-section"
+      ],
+      "stage": "rules",
+      "fid": "D-008",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-07",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «Every» без границ",
+      "problem": "Слова вроде «Every» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "Every upload, deletion and status change is written to the audit log with sessionId, documentId, operation and timestamp",
+          "line_start": 109,
+          "line_end": 109,
+          "page": null,
+          "section": "Remote Onboarding — Identity Document Upload API › 7. Audit",
+          "rid": "REQ-038",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-038"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «Every»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-09",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+    }
+  ],
+  "rejected": [],
+  "dropped": [],
+  "questions": [
+    {
+      "qid": "В-01",
+      "text": "Какой HTTP-метод использовать для этого изменения?",
+      "why": "Запрос описан как GET, но по пути или описанию он сохраняет или меняет данные («/v1/onboarding/{sessionId}/documents/{d…»).",
+      "addressee": "architect",
+      "options": [
+        "PUT — полная замена настройки",
+        "PATCH — изменение отдельных полей",
+        "POST — создание новой записи"
+      ],
+      "priority": "blocker",
+      "finding_ids": [
+        "D-005"
+      ],
+      "req_ids": [],
+      "quote": {
+        "text": "3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete",
+        "line_start": 72,
+        "line_end": 72,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete",
+        "rid": "",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario"
+    },
+    {
+      "qid": "В-02",
+      "text": "Как передавать идентификатор карты и другие чувствительные значения?",
+      "why": "Параметры «iin» передаются в строке запроса (query).",
+      "addressee": "security",
+      "options": [
+        "В теле запроса",
+        "В пути в виде внутреннего непрозрачного идентификатора",
+        "Оставить в query (обосновать для ИБ)"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-002"
+      ],
+      "req_ids": [
+        "REQ-014"
+      ],
+      "quote": {
+        "text": "curl -X POST \"$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000\" \\\n  -H \"Authorization: Bearer $TOKEN\" -H \"Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002\" \\\n  -F docType=PHOTO -F file=@selfie.jpg",
+        "line_start": 41,
+        "line_end": 43,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+        "rid": "REQ-014",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario"
+    },
+    {
+      "qid": "В-03",
+      "text": "Возвращает ли сервис код 409?",
+      "why": "В тексте код 409 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа.",
+      "addressee": "architect",
+      "options": [
+        "Да — добавить описание",
+        "Нет — убрать упоминание"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-003"
+      ],
+      "req_ids": [
+        "REQ-021"
+      ],
+      "quote": {
+        "text": "If a document of the same `docType` and `side` has already been uploaded in the session, the server returns `409`",
+        "line_start": 54,
+        "line_end": 54,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+        "rid": "REQ-021",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "conflict"
+    },
+    {
+      "qid": "В-04",
+      "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «within 3 seconds»?",
+      "why": "Задан срок «within 3 seconds», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать.",
+      "addressee": "business",
+      "options": [
+        "95% случаев при обычной нагрузке",
+        "99% случаев при пиковой нагрузке (указать какой)",
+        "Каждый случай без исключений"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-004"
+      ],
+      "req_ids": [
+        "REQ-022"
+      ],
+      "quote": {
+        "text": "The upload endpoint responds within 3 seconds",
+        "line_start": 56,
+        "line_end": 56,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+        "rid": "REQ-022",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "value"
+    },
+    {
+      "qid": "В-05",
+      "text": "Возвращает ли сервис код 202?",
+      "why": "В тексте код 202 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа.",
+      "addressee": "architect",
+      "options": [
+        "Да — добавить описание",
+        "Нет — убрать упоминание"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-006"
+      ],
+      "req_ids": [
+        "REQ-027"
+      ],
+      "quote": {
+        "text": "On success the status becomes `SUBMITTED` and the server returns `202 Accepted`",
+        "line_start": 78,
+        "line_end": 78,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+        "rid": "REQ-027",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "conflict"
+    },
+    {
+      "qid": "В-06",
+      "text": "Что конкретно означает «accordingly» в этом требовании?",
+      "why": "Слово «accordingly» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное.",
+      "addressee": "analyst",
+      "options": [
+        "Задать число и условия измерения (дописать в требование)",
+        "Перечислить случаи, когда это применяется",
+        "Убрать слово — оно ничего не добавляет"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-007"
+      ],
+      "req_ids": [
+        "REQ-028"
+      ],
+      "quote": {
+        "text": "If the verification provider fails, the session is handled accordingly",
+        "line_start": 80,
+        "line_end": 80,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.4. POST /v1/onboarding/{sessionId}/submit",
+        "rid": "REQ-028",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "term"
+    },
+    {
+      "qid": "В-07",
+      "text": "Кто и когда заполнит раздел «3.5. Callback to the core banking system»?",
+      "why": "Вместо содержания раздела стоит заглушка «TBD.».",
+      "addressee": "analyst",
+      "options": [
+        "Автор документа — до начала разработки",
+        "Другая команда — указать ответственного и срок",
+        "Раздел не нужен — удалить"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-008"
+      ],
+      "req_ids": [],
+      "quote": {
+        "text": "3.5. Callback to the core banking system",
+        "line_start": 82,
+        "line_end": 82,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.5. Callback to the core banking system",
+        "rid": "",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario"
+    },
+    {
+      "qid": "В-08",
+      "text": "Какую схему номеров использовать для требований без номера?",
+      "why": "Номер из документа есть только у 17 из 44 требований.",
+      "addressee": "analyst",
+      "options": [
+        "Продолжить существующую нумерацию на все разделы",
+        "Свой префикс для каждого раздела (НФТ-, ДАН-, API-)"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-001"
+      ],
+      "req_ids": [
+        "REQ-001",
+        "REQ-008",
+        "REQ-023"
+      ],
+      "quote": {
+        "text": "The API lets the mobile app upload images of the applicant's identity document (ID card of the Republic of Kazakhstan or passport) and a selfie during remote onboarding, submit them for verification and query the verification status.",
+        "line_start": 13,
+        "line_end": 13,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 1. Purpose",
+        "rid": "REQ-001",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "owner"
+    }
+  ],
+  "fix_first": [
+    {
+      "action": "Метод GET используется для изменения данных. Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.",
+      "finding_ids": [
+        "D-005"
+      ]
+    },
+    {
+      "action": "Чувствительные данные передаются в адресной строке запроса. Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы.",
+      "finding_ids": [
+        "D-002"
+      ]
+    },
+    {
+      "action": "Код ответа 409 возвращается, но не описан. Добавьте описание кода 409: при каком условии он возвращается и пример тела ответа; или уберите упоминание.",
+      "finding_ids": [
+        "D-003"
+      ]
+    },
+    {
+      "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «within 3 seconds для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
+      "finding_ids": [
+        "D-004"
+      ]
+    },
+    {
+      "action": "Код ответа 202 возвращается, но не описан. Добавьте описание кода 202: при каком условии он возвращается и пример тела ответа; или уберите упоминание.",
+      "finding_ids": [
+        "D-006"
+      ]
+    },
+    {
+      "action": "Размытая формулировка: «accordingly». Замените «accordingly» проверяемым условием: опишите, что именно должно быть сделано: конкретное действие, его результат и как это проверить.",
+      "finding_ids": [
+        "D-007"
+      ]
+    },
+    {
+      "action": "Раздел «3.5. Callback to the core banking system» не заполнен: вместо содержания заглушка. Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.",
+      "finding_ids": [
+        "D-008"
+      ]
+    }
+  ],
+  "strengths": [],
+  "coverage": [],
+  "verdict": "BLOCKED",
+  "verdict_text": "⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (модель не использовалась: проверены только автоматические правила, итог предварительный)",
+  "verdict_reason": "Найдено блокеров: 1 (Метод GET используется для изменения данных). Пока они не устранены, разработчик и тестировщик будут работать по описанию, которое противоречит себе или общепринятым стандартам, и часть работы придётся переделывать. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.",
+  "tests": [
+    {
+      "tid": "Т-01",
+      "title": "REQ-014: Example: curl -X POST \"$BASE/v1/onboarding/ /documents?iin=000000000000\" \\ -H \"Authorization…",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-014"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-014: «Example: curl -X POST \"$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=00000…».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-02"
+      ],
+      "finding_ids": [
+        "D-002"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-02",
+      "title": "REQ-021: If a document of the same docType and side has already been uploaded in the session, the server…",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-021"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-021: «If a document of the same docType and side has already been uploaded in the session, the server…».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-03"
+      ],
+      "finding_ids": [
+        "D-003"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-03",
+      "title": "REQ-022: The upload endpoint responds within 3 seconds",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-022"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-022: «The upload endpoint responds within 3 seconds.».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-04"
+      ],
+      "finding_ids": [
+        "D-004"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-04",
+      "title": "REQ-027: Submits all uploaded documents for verification",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-027"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-027: «Submits all uploaded documents for verification. The session must contain an ID card (both sides)…».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-05"
+      ],
+      "finding_ids": [
+        "D-006"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-05",
+      "title": "REQ-028: The verification provider is called asynchronously",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-028"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование REQ-028: «The verification provider is called asynchronously. When it responds, the status changes to…».",
+      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
+      "then": "",
+      "blocked_by": [
+        "В-06"
+      ],
+      "finding_ids": [
+        "D-007"
+      ],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-06",
+      "title": "REQ-040: Upload a 2 MB JPEG ID_CARD FRONT",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-040"
+      ],
+      "given": "Session in DRAFT",
+      "when": "Upload a 2 MB JPEG ID_CARD FRONT",
+      "then": "201, status RECEIVED",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-07",
+      "title": "REQ-041: Upload a GIF file",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-041"
+      ],
+      "given": "Session in DRAFT",
+      "when": "Upload a GIF file",
+      "then": "415",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-08",
+      "title": "REQ-042: Repeat POST with the same Idempotency-Key within 24 hours",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-042"
+      ],
+      "given": "Any session",
+      "when": "Repeat POST with the same Idempotency-Key within 24 hours",
+      "then": "Original response, no new document",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-09",
+      "title": "REQ-043: Delete a document",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-043"
+      ],
+      "given": "Session in SUBMITTED",
+      "when": "Delete a document",
+      "then": "400",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    },
+    {
+      "tid": "Т-10",
+      "title": "REQ-044: Upload a 4th selfie",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-044"
+      ],
+      "given": "Session with 3 rejected selfies",
+      "when": "Upload a 4th selfie",
+      "then": "423 Locked for 24 hours",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule"
+    }
+  ],
+  "verdict_after_answers": "",
+  "verdict_after_answers_text": "",
+  "audit": []
+}
