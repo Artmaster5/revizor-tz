@@ -17,7 +17,7 @@ from typing import Any, Callable
 
 from . import answers as ans_mod, baseline as baseline_mod, consistency, checklist as checklist_mod, gapcheck, impact, loader, rules, score, slicer, testgen, verdict
 from .config import agent_commit, agent_dirty, agent_tag, agent_version
-from .llm import Backend, LLMError, LLMUnavailable
+from .llm import Backend, LLMError, LLMTransient, LLMUnavailable
 from .llm.pricing import cost_note, cost_usd
 from .merge import (QuoteStats, SEV_RANK, apply_skeptic, dedupe_model, fold_formal, fold_rules, merge_duplicates, model_finding,
                     number, sort_key)
@@ -87,6 +87,7 @@ class Gate:
         self.heartbeat_s = heartbeat_s
         self._stop = threading.Event()
         self._hb: threading.Thread | None = None
+        self._tls = threading.local()  # last failed model_call entry of this thread (economy second round)
 
     def plan(self, stage_or_group: str, n: int) -> None:
         g = STAGE_GROUP.get(stage_or_group, stage_or_group)
@@ -105,15 +106,24 @@ class Gate:
 
     def _heartbeat(self) -> None:
         while not self._stop.wait(min(1.0, self.heartbeat_s / 3)):
-            now = time.monotonic()
-            with self.lock:
-                silent = now - self.last_print
-                flight = list(self.in_flight.values())
-            if flight and silent >= self.heartbeat_s:
-                stage, start = min(flight, key=lambda x: x[1])
-                g = STAGE_GROUP.get(stage, stage)
-                self._emit(f"  … жду ответа модели: {g}, в работе запросов: {len(flight)}, "
-                           f"самый долгий — {int(now - start)} с")
+            line = self.idle_line(time.monotonic())
+            if line:
+                self._emit(line)
+
+    def idle_line(self, now: float) -> str:
+        """The «still waiting» line after ``heartbeat_s`` silent seconds with a call in flight, else ""."""
+        with self.lock:
+            silent = now - self.last_print
+            flight = list(self.in_flight.values())
+        if not flight or silent < self.heartbeat_s:
+            return ""
+        stage, start = min(flight, key=lambda x: x[1])
+        g = STAGE_GROUP.get(stage, stage)
+        status = getattr(self.backend, "wait_status", "") or ""
+        if status:  # the backend is pausing on its own (provider overloaded): say so instead
+            return f"  … {status} — {g}, шаг идёт {int(now - start)} с"
+        return (f"  … жду ответа модели: {g}, в работе запросов: {len(flight)}, "
+                f"самый долгий — {int(now - start)} с")
 
     def _start_heartbeat(self) -> None:
         with self.lock:
@@ -144,6 +154,16 @@ class Gate:
         if (stage in SET_STAGES or stage == GAPS_STAGE) and self.backend.provider in ("anthropic", "gemini"):
             n = max(n, SET_FIRST_ATTEMPT_TOKENS)
         return n
+
+    def can_call(self) -> bool:
+        """True while a new call may still be sent: the provider answers and the cost cap is not reached."""
+        if self.dead or self.budget_hit:
+            return False
+        if self.max_cost is not None:
+            c = self.cost()
+            if c is not None and c >= self.max_cost:
+                return False
+        return bool(self.backend.can_answer())
 
     # -- the call --------------------------------------------------------------------------
     def call(self, stage: str, user: str) -> dict:
@@ -178,6 +198,7 @@ class Gate:
             entry.update(ok=False, error=e.user_message[:300], detail=str(getattr(e, "detail", "") or "")[:300],
                          seconds=round(time.monotonic() - t0, 2))
             self._log(entry)
+            self._tls.last_failed = entry
             self._done_call(tid, stage, t0, False, "ответ не получен")
             raise
         except BaseException:
@@ -353,7 +374,8 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
                         + "). Агент его не выполнял.")
 
     # 2. slice ---------------------------------------------------------------------------------
-    requirements, skipped, slice_how = _slice(doc, gate, inj, h_reqs, h_skipped, warnings, audit)
+    economy = bool(getattr(backend, "economy", False)) if gate is not None else False
+    requirements, skipped, slice_how = _slice(doc, gate, inj, h_reqs, h_skipped, warnings, audit, economy=economy)
     if gate is not None and gate.dead and gate.answered == 0:
         warnings.append(f"Модель недоступна: {gate.dead}. Отчёт построен без модели, только правилами.")
         audit.append({"type": "decision", "what": "provider_fallback", "reason": gate.dead[:300]})
@@ -401,7 +423,18 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
         for kind, _b, what in jobs:
             gate.plan("review" if kind == "review" else GAPS_STAGE if kind == "gaps" else what, 1)
         say(f"      Отправляю модели {len(jobs)} запросов (одновременно до {gate.backend.concurrency})…")
-        results = _run_jobs(gate, jobs, rule_findings, requirements, inj)
+        results = _run_jobs(gate, jobs, rule_findings, requirements, inj, economy=economy)
+        if economy and gate.dead and gate.answered == 0:
+            # Slicing made no request, so a dead provider (bad key, no quota) shows up only here: fall back to the
+            # rules-only report exactly as a failed slicing call does.
+            warnings.append(f"Модель недоступна: {gate.dead}. Отчёт построен без модели, только правилами.")
+            audit.append({"type": "decision", "what": "provider_fallback", "reason": gate.dead[:300]})
+            gate.close()
+            gate = None
+            model_on = False
+            info.mode = "offline"
+            reviews = _empty_reviews(requirements, model_on)
+    if model_on:
         rev_found = set_found = 0
         rev_failed = set_failed = 0
         for (kind, b, what), (ans, err) in zip(jobs, results):
@@ -801,9 +834,21 @@ def doc_title(doc: SourceDoc) -> str:
     return shorten(head, DOC_TITLE_MAX)
 
 
-def _slice(doc, gate, inj, h_reqs, h_skipped, warnings, audit):
+ECONOMY_SLICE_NOTE = {
+    "gemini": "Нарезка на требования выполнена без модели: бесплатный уровень Gemini считает запросы, а они нужнее "
+              "для проверки.",
+    "": "Нарезка на требования выполнена без модели: включён режим экономии запросов (LLM_ECONOMY).",
+}
+
+
+def _slice(doc, gate, inj, h_reqs, h_skipped, warnings, audit, economy: bool = False):
     if gate is None:
         return h_reqs, h_skipped, "эвристика, без модели"
+    if economy:  # requests are scarce: the heuristic slicer's result is used as is, no model request
+        note = ECONOMY_SLICE_NOTE.get(gate.backend.provider, ECONOMY_SLICE_NOTE[""])
+        warnings.append(note)
+        audit.append({"type": "decision", "what": "slice_heuristic", "reason": "economy"})
+        return h_reqs, h_skipped, "эвристика, без запроса к модели"
     gate.plan("slice", 1)
     try:
         ans = gate.call("slice", slice_user(doc, inj))
@@ -832,22 +877,60 @@ def _slice(doc, gate, inj, h_reqs, h_skipped, warnings, audit):
     return reqs, skipped, "модель"
 
 
-def _run_jobs(gate: Gate, jobs, rule_findings, requirements, inj):
-    def one(job):
+# Economy mode: the order in which review and set jobs are SENT, most valuable first (results are still parsed in
+# the original job order, so ids and the report do not depend on it).
+ECONOMY_ORDER = ("set_consistency", GAPS_STAGE, "review_correctness", "review_completeness", "review_clarity",
+                 COMBINED_STAGE, "set_completeness", "set_standards")
+
+
+def job_stage(job) -> str:
+    kind, _b, what = job
+    if kind == "gaps":
+        return GAPS_STAGE
+    if kind == "review":
+        return what.stage if what else COMBINED_STAGE
+    return what
+
+
+def job_order(jobs, economy: bool) -> list[int]:
+    """Indices of ``jobs`` in sending order: unchanged without economy; by value with it (all batches of a lens
+    together, the original order inside a group)."""
+    if not economy:
+        return list(range(len(jobs)))
+    rank = {st: i for i, st in enumerate(ECONOMY_ORDER)}
+    return sorted(range(len(jobs)), key=lambda i: (rank.get(job_stage(jobs[i]), len(rank)), i))
+
+
+def order_jobs(jobs, economy: bool) -> list:
+    return [jobs[i] for i in job_order(jobs, economy)]
+
+
+def _run_jobs(gate: Gate, jobs, rule_findings, requirements, inj, economy: bool = False):
+    def one3(job):
         kind, b, what = job
+        gate._tls.last_failed = None
         try:
             if kind == "gaps":
-                return _gaps_call(gate, what, requirements, inj), ""
+                return _gaps_call(gate, what, requirements, inj), "", None
             if kind == "review":
                 user = review_user(batch_payload(b), review_hints(rule_findings, b, what), what, inj)
-                return gate.call(what.stage if what else COMBINED_STAGE, user), ""
+                return gate.call(what.stage if what else COMBINED_STAGE, user), "", None
             user = set_user(what, req_list_payload(requirements), set_hints(rule_findings, what), inj)
-            return gate.call(what, user), ""
+            return gate.call(what, user), "", None
         except (LLMError, StageSkipped) as e:
-            return None, _err(e)
+            # a transient failure (overload, timeout, per-minute limit) may be repeated in economy mode
+            if isinstance(e, LLMTransient):
+                return None, _err(e), (getattr(gate._tls, "last_failed", None) or True)
+            return None, _err(e), None
         except Exception as e:  # a bug in parsing must not kill the run
-            return None, f"внутренняя ошибка ({type(e).__name__})"
+            return None, f"внутренняя ошибка ({type(e).__name__})", None
 
+    def one(job):
+        ans, err, _again = one3(job)
+        return ans, err
+
+    if economy:
+        return _run_jobs_economy(gate, jobs, one3)
     workers = max(1, min(gate.backend.concurrency, len(jobs)))
     if workers == 1:
         return [one(j) for j in jobs]
@@ -861,6 +944,43 @@ def _run_jobs(gate: Gate, jobs, rule_findings, requirements, inj):
         for i, fu in futs.items():
             results[i] = fu.result()
     return results
+
+
+def _run_in(gate: Gate, jobs, idxs: list[int], one3) -> dict[int, tuple]:
+    """Run ``jobs[i]`` for ``i`` in ``idxs``, sent in that order; results by index."""
+    workers = max(1, min(gate.backend.concurrency, len(idxs)))
+    if workers == 1:
+        return {i: one3(jobs[i]) for i in idxs}
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futs = {i: ex.submit(one3, jobs[i]) for i in idxs}
+        return {i: fu.result() for i, fu in futs.items()}
+
+
+def _run_jobs_economy(gate: Gate, jobs, one3) -> list[tuple]:
+    """Economy mode: the most valuable steps first; then ONE more round for the steps that got no answer because of
+    a transient failure (overload, timeout, per-minute limit), in the same order, while the provider can answer."""
+    backend = gate.backend
+    order = job_order(jobs, True)
+    backend.set_round(1)
+    try:
+        got = _run_in(gate, jobs, order, one3)
+        again = [i for i in order if got[i][2] is not None]
+        if again and gate.can_call():
+            with gate.lock:
+                for i in again:
+                    entry = got[i][2]
+                    if isinstance(entry, dict):
+                        entry["retried"] = True  # superseded by the repeat: not counted as an unanswered step
+            for i in again:
+                kind, _b, what = jobs[i]
+                gate.plan("review" if kind == "review" else GAPS_STAGE if kind == "gaps" else what, 1)
+            gate._log({"type": "decision", "what": "second_round", "stages": [job_stage(jobs[i]) for i in again]})
+            gate._emit(f"      Повторяю шаги, на которые модель не ответила: {len(again)}")
+            backend.set_round(2)
+            got.update(_run_in(gate, jobs, again, one3))
+    finally:
+        backend.set_round(0)
+    return [(got[i][0], got[i][1]) for i in range(len(jobs))]
 
 
 def _gaps_call(gate: Gate, items: list, requirements: list[Requirement], inj: str) -> dict:

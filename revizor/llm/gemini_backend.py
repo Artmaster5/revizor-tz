@@ -30,10 +30,16 @@ _OVERLOAD_WORDS = ("overloaded", "high demand", "unavailable", "try again later"
 # gets through. Per call: the failed model once more, the spare model twice, then two more rounds over both
 # models after 8 s and 25 s. At most CALL_WAIT_CAP seconds of pauses per call and OVERLOAD_WAIT_S per run
 # (GEMINI_OVERLOAD_WAIT_S); when the run's waiting is spent, every call makes one attempt per model.
+# In the pipeline's economy rounds the run budget is shared: during the first round one call may spend at most
+# FIRST_ROUND_SHARE of what is left (early steps cannot starve the later, more valuable ones); the repeat round
+# of unanswered steps gets two more rounds of attempts and may use the rest.
 SAME_MODEL_PAUSE = 2.0
 ROUND_PAUSES = (8.0, 25.0)
+RETRY_ROUND_PAUSES = (8.0, 25.0, 45.0, 60.0)
 CALL_WAIT_CAP = 75.0
-OVERLOAD_WAIT_S = 300.0
+RETRY_CALL_WAIT_CAP = 150.0
+FIRST_ROUND_SHARE = 1.0 / 6.0
+OVERLOAD_WAIT_S = 600.0
 MAX_DISCOVERY_CANDIDATES = 3
 REVIEW_BATCH_SIZE = 40  # Gemini flash: 1M-token input, up to 65k output — fewer, larger requests
 DEFAULT_BATCH = 12  # prompts.BATCH_SIZE; the review budgets in prompts.MAX_TOKENS are sized for it
@@ -163,6 +169,7 @@ def provider_detail(res: HttpResult, msg: str) -> str:
 class GeminiBackend(Backend):
     provider = "gemini"
     review_batch_size: int | None = REVIEW_BATCH_SIZE
+    economy = True  # the free tier counts requests per day and is often overloaded
 
     def __init__(self, api_key: str, *, model: str = DEFAULT_MODEL, base_url: str = DEFAULT_BASE_URL,
                  timeout: float = 300.0, concurrency: int = 1, max_tokens_override: int | None = None,
@@ -187,6 +194,7 @@ class GeminiBackend(Backend):
         self.dead: dict[str, str] = {}  # model → why it is out for the rest of the run (day quota, 404)
         self.overload_wait_s = max(0.0, float(overload_wait_s))  # per-run ceiling of overload pauses
         self.overload_waited = 0.0
+        self.round = 0  # pipeline round in economy mode (Backend.set_round)
         self.served: dict[str, int] = {}  # model → answers received (HTTP 200)
         self.requests_by_model: dict[str, int] = {}  # model → generateContent requests sent
         self.model_versions: dict[str, str] = {}  # model (alias) → modelVersion from the response
@@ -195,6 +203,21 @@ class GeminiBackend(Backend):
         self._tried: set[str] = set()
         self._discovered_n = 0
         self._model_lock = threading.Lock()
+
+    # -- economy rounds -------------------------------------------------------------------------------
+    def set_round(self, n: int) -> None:
+        self.round = int(n)
+
+    def can_answer(self) -> bool:
+        return bool(self.live_models())
+
+    def _call_wait_cap(self) -> float:
+        """Pauses one call may spend: a share of what is left in the first economy round, more in the repeat."""
+        if self.round == 1:
+            return min(CALL_WAIT_CAP, max(0.0, self._overload_left()) * FIRST_ROUND_SHARE)
+        if self.round == 2:
+            return RETRY_CALL_WAIT_CAP
+        return CALL_WAIT_CAP
 
     # -- what the report sees ------------------------------------------------------------------------
     @property
@@ -367,7 +390,7 @@ class GeminiBackend(Backend):
         for m in others:
             plan += [(m, 0.0), (m, SAME_MODEL_PAUSE)]
         order = [first] + others
-        for pause in ROUND_PAUSES:
+        for pause in (RETRY_ROUND_PAUSES if self.round == 2 else ROUND_PAUSES):
             plan.append((order[-1] if others else first, pause))
             if others:
                 plan.append((first, 0.0))
@@ -386,6 +409,7 @@ class GeminiBackend(Backend):
         waited = 0.0
         last_detail = ""
         exc_daily: LLMUnavailable | None = None
+        call_cap = self._call_wait_cap()
 
         def next_overload_step() -> str | None:
             nonlocal waited
@@ -394,7 +418,7 @@ class GeminiBackend(Backend):
                 if m in self.dead:
                     continue
                 if pause > 0:
-                    if waited + pause > CALL_WAIT_CAP or self._overload_left() < pause:
+                    if waited + pause > call_cap or self._overload_left() < pause:
                         if self._overload_left() < pause:
                             self.add_note("Gemini: время ожидания при перегрузке модели на этот запуск (%d с, "
                                           "GEMINI_OVERLOAD_WAIT_S) израсходовано — дальше каждый шаг делает по одной "
@@ -406,7 +430,12 @@ class GeminiBackend(Backend):
                     with self._lock:
                         self.overload_waited += pause
                     waited += pause
-                    self.sleep(pause)
+                    # shown by the pipeline's heartbeat line (at most one line per ~15 s of silence)
+                    self.wait_status = "Gemini перегружен (503): жду %d с, попытка %d" % (round(pause), sent + 1)
+                    try:
+                        self.sleep(pause)
+                    finally:
+                        self.wait_status = ""
                 return m
             return None
 
@@ -506,7 +535,8 @@ class GeminiBackend(Backend):
                         if m not in names:
                             names.append(m)
                     where = ("на двух моделях" if len(names) > 1 else "на одной модели")
-                    e = LLMTransient("Gemini: %s перегружен%s (%d), попыток %d %s; шаг пропущен."
+                    e = LLMTransient("Gemini: %s перегружен%s (%d), попыток %d %s; шаг пропущен. Это перегрузка "
+                                     "на стороне Google, не ошибка ключа."
                                      % (", ".join("«%s»" % n for n in names), "ы" if len(names) > 1 else "а",
                                         res.status, len(overloads), where),
                                      kind="server", detail=last_detail)

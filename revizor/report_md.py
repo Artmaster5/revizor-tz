@@ -150,7 +150,8 @@ def verdict_after_blockers(result: Result) -> tuple[str, str] | None:
 
 def failed_steps_line(result: Result) -> str:
     """«Модель не ответила на N шагов из M…» from the audit's model calls; "" when every step was answered."""
-    calls = [a for a in result.audit if a.get("type") == "model_call"]
+    # a call marked «retried» was repeated in the economy second round: the repeat stands for the step
+    calls = [a for a in result.audit if a.get("type") == "model_call" and not a.get("retried")]
     failed = sum(1 for a in calls if a.get("ok") is False)
     if not failed:
         return ""

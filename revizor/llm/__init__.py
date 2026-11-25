@@ -20,7 +20,7 @@ from .pricing import stage_usage_rows
 __all__ = [
     "Backend", "Usage", "LLMError", "LLMUnavailable", "LLMTransient", "LLMBadOutput", "LLMRefused",
     "FakeBackend", "STAGE_EFFORT", "stage_usage_rows", "choose_provider", "make_backend", "is_placeholder", "PROVIDERS", "DEFAULT_CACHE_DIR",
-    "review_batch_size_for", "BATCH_SIZE_RANGE",
+    "review_batch_size_for", "BATCH_SIZE_RANGE", "economy_setting",
 ]
 
 PROVIDERS = ("anthropic", "gemini", "openai", "ollama", "offline")
@@ -84,6 +84,17 @@ def review_batch_size_for(provider: str, env: Mapping[str, str]) -> int | None:
         from .gemini_backend import REVIEW_BATCH_SIZE
 
         return REVIEW_BATCH_SIZE
+    return None
+
+
+def economy_setting(env: Mapping[str, str]) -> bool | None:
+    """``LLM_ECONOMY``: on → True (any provider), off → False, auto / absent / unknown → None (the provider's
+    default: on for Gemini, off elsewhere)."""
+    v = str(env.get("LLM_ECONOMY") or "").strip().strip("'\"").strip().lower()
+    if v in ("on", "1", "yes", "true", "да", "вкл"):
+        return True
+    if v in ("off", "0", "no", "false", "нет", "выкл"):
+        return False
     return None
 
 
@@ -154,6 +165,9 @@ def make_backend(provider: str, env: Mapping[str, str], *, model: str | None = N
     bs = _batch_size(env)
     if bs:
         backend.review_batch_size = bs
+    eco = economy_setting(env)
+    if eco is not None:
+        backend.economy = eco
     return backend
 
 

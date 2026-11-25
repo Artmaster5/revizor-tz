@@ -117,11 +117,12 @@ python main.py --input docs/requirements.md --output reports/report.md --context
 | `LLM_PROVIDER` | `auto`, `anthropic`, `gemini`, `openai`, `ollama`, `offline` |
 | `GEMINI_API_KEY` (или `GOOGLE_API_KEY`), `GEMINI_MODEL` | Gemini; модель по умолчанию `gemini-flash-latest`. Устаревшее имя (например `gemini-1.5-flash` из образца организаторов) агент сам заменит на действующее |
 | `GEMINI_FALLBACK_MODEL` | запасная модель Gemini на случай перегрузки основной; по умолчанию `gemini-flash-lite-latest`; пусто или `off` — выключить |
-| `GEMINI_OVERLOAD_WAIT_S` | сколько секунд за прогон можно ждать перегруженный Gemini; по умолчанию 300; `0` — не ждать |
+| `GEMINI_OVERLOAD_WAIT_S` | сколько секунд за прогон можно ждать перегруженный Gemini; по умолчанию 600; `0` — не ждать. В первом круге один шаг тратит не больше шестой части остатка, повтор неотвеченных шагов может взять остальное |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Anthropic; модель по умолчанию `claude-haiku-5-5` |
 | `ANTHROPIC_EFFORT`, `ANTHROPIC_EFFORT_STAGES` | глубина рассуждений: общая или по этапам |
 | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_BASE_URL` | OpenAI или совместимый сервер |
 | `OLLAMA_BASE_URL`, `OLLAMA_MODEL` | локальная модель, ключ не нужен |
+| `LLM_ECONOMY` | режим экономии запросов: самые ценные шаги первыми (противоречия, критик, линзы, затем полнота и стандарты), нарезка без модели, шаги без ответа из-за перегрузки повторяются один раз. `auto` (по умолчанию) — только для Gemini, `on` — для любого провайдера, `off` — выключен |
 | `LLM_BATCH_SIZE` | сколько требований в одном запросе (1–200). По умолчанию 12, для Gemini 40: бесплатный уровень считает запросы |
 | `LLM_CONCURRENCY`, `LLM_TIMEOUT`, `LLM_MAX_TOKENS` | одновременные запросы, ожидание ответа, потолок длины ответа |
 | `REVIZOR_MAX_COST_USD` | то же, что `--max-cost` |

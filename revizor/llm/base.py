@@ -221,6 +221,12 @@ class Backend:
     # Requirements per review request (one request per batch and lens). None = prompts.BATCH_SIZE (12).
     # A provider with a large context sets more (fewer requests); LLM_BATCH_SIZE overrides it for every provider.
     review_batch_size: int | None = None
+    # «Requests are scarce» (free tiers that count requests per day): the pipeline then sends the most valuable
+    # steps first, slices without the model and repeats steps that got no answer once. LLM_ECONOMY overrides it.
+    economy: bool = False
+    # What the backend is waiting for right now («Gemini перегружен (503): жду 25 с, попытка 3»), or "".
+    # The pipeline's heartbeat line shows it; set only by backends that pause on their own.
+    wait_status: str = ""
 
     def __init__(self, *, model: str = "", effort: str = "", concurrency: int = 1, cache: Any = None,
                  use_cache: bool = True, max_attempts: int = 4,
@@ -269,6 +275,15 @@ class Backend:
     def effort_applies(self) -> bool:
         """True when this backend sends the effort to the provider (a lower effort can then shorten thinking)."""
         return self._raw_takes_effort
+
+    # -- economy mode hooks (no-ops unless a backend overrides them)
+    def set_round(self, n: int) -> None:
+        """The pipeline's round of review/set jobs in economy mode: 1 = first pass, 2 = repeat of the steps that
+        got no answer, 0 = outside the rounds. A backend with its own waiting budget may share it by round."""
+
+    def can_answer(self) -> bool:
+        """False when the backend knows it cannot answer any more in this run (e.g. every model out of quota)."""
+        return True
 
     # -- small helpers
     @property
