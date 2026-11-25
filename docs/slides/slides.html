@@ -113,7 +113,7 @@ tr.grp td{background:var(--accent-soft)}
       <div class="kicker">Проверка требований</div>
       <h1>Ревизор ТЗ</h1>
       <p class="lead">Проверяет документ с требованиями до начала разработки: находит дефекты, задаёт вопросы автору, пишет отчёт.</p>
-      <div class="cmd"><b>$</b> python main.py --input requirements.md</div>
+      <div class="cmd"><b>$</b> python main.py --input docs/requirements.md<br>&nbsp;&nbsp;&nbsp;&nbsp;--output reports/report.md</div>
       <div class="author">{{author}}</div>
     </div>
     <div class="right">
@@ -260,7 +260,7 @@ tr.grp td{background:var(--accent-soft)}
       <div class="stat"><div class="v">{{run_usd}} · {{run_kzt}}</div><div class="l">цена одного прогона</div></div>
       <div class="stat"><div class="v">{{run_minutes_analyst}}</div><div class="l">труда аналитика за те же деньги</div></div>
       <div class="stat"><div class="v">{{run_time}}</div><div class="l">время прогона</div></div>
-      <div class="stat"><div class="v">{{break_even}}</div><div class="l">окупаемость</div></div>
+      <div class="stat"><div class="v">{{break_even}}</div><div class="l">порог окупаемости: расчёт при допущениях, не замер</div></div>
     </div>
     <div class="pilot">
       <h3>Пилот на двух неделях</h3>

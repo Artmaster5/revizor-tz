@@ -56,9 +56,9 @@
   },
   "run": {
     "agent_name": "Ревизор ТЗ",
-    "agent_version": "1.0.0 (v1.1.1-dirty)",
-    "started_at": "2026-11-26T02:20:13+05:00",
-    "duration_s": 0.09,
+    "agent_version": "1.0.0 (v1.1.1)",
+    "started_at": "2026-11-26T03:00:12+05:00",
+    "duration_s": 0.08,
     "mode": "offline",
     "provider": "offline",
     "model": "",
@@ -98,7 +98,7 @@
     "critical_demoted": 0,
     "agent_commit": "0d071fd",
     "agent_tag": "v1.1.1",
-    "agent_dirty": true,
+    "agent_dirty": false,
     "doc_title": "Уведомление о расходах по карте"
   },
   "diagnostic": null,

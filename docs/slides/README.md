@@ -4,8 +4,9 @@
 
 1. Сделайте картинки отчёта (нужен Google Chrome):
    `python tools/shots.py reports/report.md --out-dir /tmp/shots`
-2. Скопируйте `docs/slides/numbers.example.json` в `docs/slides/numbers.json`, уберите строку `"_example": true`
-   и замените все значения на настоящие (в них не должно остаться слова «ПРИМЕР»).
+2. Числа сданных слайдов уже лежат в `docs/slides/numbers.json`. Для своих чисел скопируйте
+   `docs/slides/numbers.example.json` в новый файл, уберите строку `"_example": true` и замените все значения
+   на настоящие (в них не должно остаться слова «ПРИМЕР»); путь к новому файлу передайте в `--numbers`.
    Ключ `img_report_top` — имя картинки, например `report_top.png`.
 3. Соберите PDF:
    `python tools/build_slides.py --numbers docs/slides/numbers.json --shots-dir /tmp/shots --out presentation.pdf`

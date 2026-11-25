@@ -60,10 +60,10 @@
 
 ## Диалог с автором ТЗ
 
-Агент пишет анкету `<отчёт>.questions.md`. Автор вписывает ответы (буквой варианта или своими словами) и запускает проверку с ними. Команда напечатана в конце анкеты:
+Агент пишет анкету `<отчёт>.questions.md`. Автор вписывает ответы (буквой варианта или своими словами) и запускает проверку с ними. Команда напечатана в конце анкеты. Новому отчёту дайте своё имя, чтобы не затереть первый отчёт и образцы в папке `reports/`:
 
 ```bash
-python main.py --input docs/requirements.md --output reports/report_answered.md --answers reports/report.questions.md
+python main.py --input docs/requirements.md --output reports/my_answered.md --answers reports/report.questions.md
 ```
 
 С моделью агент разбирает ответы, отмечает закрытые замечания, предлагает новые формулировки и показывает два вердикта: по документу как есть и после внесения ответов. Первый проход при этом берётся из кэша, к модели идёт в основном разбор ответов.
@@ -85,7 +85,7 @@ python main.py --input docs/requirements_v2.md --output reports/report_v2.md --b
 ## Дополнительные материалы
 
 ```bash
-python main.py --input docs/requirements.md --output reports/report.md --context glossary.md --context api_spec.md
+python main.py --input docs/requirements.md --output reports/my_report.md --context glossary.md --context api_spec.md
 ```
 
 Глоссарий или связанная спецификация передаются модели как справка. Для модели это данные, а не указания: они стоят в запросе между своими метками, как и сам документ. Замечания пишутся только к основному документу, цитаты берутся только из него. Файлы контекста проходят то же маскирование. Файл контекста, который не удалось прочитать, пропускается с предупреждением в паспорте.
