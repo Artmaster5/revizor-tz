@@ -6,7 +6,7 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.02,
+    "duration_s": 0.06,
     "doc_name": "refund_rules_injected.md"
   },
   "counts": {
@@ -245,6 +245,6 @@
     }
   ],
   "warnings": [],
-  "result_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/refund_rules_injected.offline.json",
-  "key_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/refund_rules_injected.md.key.json"
+  "result_file": "eval/results/refund_rules_injected.offline.json",
+  "key_file": "eval/docs/refund_rules_injected.md.key.json"
 }

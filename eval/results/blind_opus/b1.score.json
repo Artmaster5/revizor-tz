@@ -1,0 +1,694 @@
+{
+  "document": "b1_autopay.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-opus-5-5",
+    "mode": "full",
+    "cost_usd": 3.49931,
+    "cost_note": "по тарифу claude-opus-5-5: $4 / $20 за 1 млн токенов (вход / выход)",
+    "duration_s": 487.55,
+    "doc_name": "b1_autopay.md"
+  },
+  "counts": {
+    "requirements": 68,
+    "findings_open": 65,
+    "advisory": 9
+  },
+  "recall": {
+    "overall": {
+      "total": 21,
+      "strict": 12,
+      "loose": 20,
+      "strict_share": 0.5714285714285714,
+      "loose_share": 0.9523809523809523
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 4,
+        "strict": 2,
+        "loose": 4,
+        "strict_share": 0.5,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 10,
+        "strict": 7,
+        "loose": 9,
+        "strict_share": 0.7,
+        "loose_share": 0.9
+      },
+      "MINOR": {
+        "total": 7,
+        "strict": 3,
+        "loose": 7,
+        "strict_share": 0.42857142857142855,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 21,
+        "strict": 12,
+        "loose": 20,
+        "strict_share": 0.5714285714285714,
+        "loose_share": 0.9523809523809523
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 10,
+    "tool_higher": 2,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "B1-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "День ежемесячного списания в Ф-3 допускается от 1 до 31, а в API параметр dayOfMonth принимает только 1–28.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-026"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B1-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Повтор запроса debit при тайм-ауте процессинга без ключа идемпотентности может привести к двойному списанию с карты клиента.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-023",
+        "D-067",
+        "D-083"
+      ],
+      "loose_fids": [
+        "D-009",
+        "D-023",
+        "D-067",
+        "D-083",
+        "D-086"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-03",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Требование подтверждать каждое списание SMS-кодом противоречит цели автоплатежа — оплата без участия клиента и автоматическое списание в 09:00.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-031"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B1-04",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Удаление автоплатежа вместе с историей списаний противоречит требованию хранить историю 5 лет по требованию регулятора.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-058"
+      ],
+      "loose_fids": [
+        "D-058"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Повторные попытки при нехватке средств заданы как «в течение дня» без числа попыток, интервала и времени окончания.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-035"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B1-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не определено поведение для дней 29–31 в месяцах, где таких дней нет (февраль, 30-дневные месяцы).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-026"
+      ],
+      "loose_fids": [
+        "D-026"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "B1-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описано поведение автоплатежа при блокировке, истечении срока или перевыпуске карты списания.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-020"
+      ],
+      "loose_fids": [
+        "D-020"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Нефункциональное требование «быстро и надёжно, выдерживать пиковые нагрузки» не содержит чисел и не проверяемо.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-076"
+      ],
+      "loose_fids": [
+        "D-009",
+        "D-076"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Разрешено списание с карты в долларах или евро при сумме автоплатежа в тенге, но не описаны курс, момент конвертации и комиссия.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-023"
+      ],
+      "loose_fids": [
+        "D-023"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-10",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Цель «уведомлять за сутки до списания» не поддержана ни одним функциональным требованием и не отражена в sequence-диаграмме.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-049"
+      ],
+      "loose_fids": [
+        "D-049"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-11",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Статусы автоплатежа не согласованы: в требованиях есть «Ошибка списания», а в API поле status допускает только ACTIVE и PAUSED.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-040",
+        "D-093"
+      ],
+      "loose_fids": [
+        "D-035",
+        "D-037",
+        "D-040",
+        "D-093"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-12",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Код 409 используется в логике метода, но не описан в разделе статусов: нет тела ответа и кода ошибки.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-113"
+      ],
+      "loose_fids": [
+        "D-113"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-13",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Критерий приёмки ставит статус «Ошибка списания» сразу после первой неуспешной попытки, а Ф-6 — только после трёх неуспешных дней подряд.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-035",
+        "D-037",
+        "D-040"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B1-14",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Критерии приёмки покрывают только создание и одно списание; для Ф-2, Ф-3, Ф-7–Ф-12 критериев нет.",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B1-15",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В функциональное требование вынесено проектное решение: хранение расписания в Redis в виде cron-строки и опрос раз в минуту.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-060"
+      ],
+      "loose_fids": [
+        "D-060"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-16",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Идентификатор Ф-8 использован дважды для двух разных требований.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-014",
+        "D-054",
+        "D-055"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B1-17",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Один объект называется по-разному: «автоплатёж», «регулярный платёж», «подписка».",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-009",
+        "D-012",
+        "D-031",
+        "D-040",
+        "D-044",
+        "D-045",
+        "D-046"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B1-18",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Ф-7 объединяет несколько требований: изменение суммы, дня и карты, паузу и возобновление, просмотр истории.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-009",
+        "D-045"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B1-19",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Версия документа не указана.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-105"
+      ],
+      "loose_fids": [
+        "D-105"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B1-20",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Ожидаемый результат критерия приёмки «Автоплатёж корректно создан» не проверяем.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-099",
+        "D-100"
+      ],
+      "loose_fids": [
+        "D-099",
+        "D-100"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "B1-21",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "BPMN ссылается на Ф-5 как на повторную попытку, хотя повторы описаны в Ф-6, а Ф-5 — подтверждение SMS.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-014"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-010",
+      "severity": "MAJOR",
+      "title": "Нет методов API для списка автоплатежей и истории",
+      "line": 34,
+      "good_anchor": "Методы изменения, паузы и удаления описываются в отдельной спецификации PAY-2185."
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-020",
+      "severity": "MAJOR",
+      "title": "Ф-1 требует активную карту, а API проверяет только принадлежность",
+      "line": 44,
+      "good_anchor": "2. Проверить, что карта `cardId` принадлежит клиенту; иначе вернуть 403.",
+      "confirms": [
+        "B1-07"
+      ]
+    },
+    {
+      "fid": "D-040",
+      "severity": "MAJOR",
+      "title": "Не описано, что происходит с автоплатежом в статусе «Ошибка списания»",
+      "line": 49,
+      "good_anchor": "У клиента не может быть двух активных автоплатежей на один и тот же код поставщика и лицевой счёт.",
+      "confirms": [
+        "B1-11"
+      ]
+    },
+    {
+      "fid": "D-076",
+      "severity": "MAJOR",
+      "title": "Нет измеримых требований к производительности и критерия нагрузочного теста",
+      "line": 66,
+      "good_anchor": "Нагрузочный тест проводится на стенде PREPROD: 50 000 автоплатежей с одной датой списания.",
+      "confirms": [
+        "B1-08"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Название в заголовке и в сведениях о документе расходятся",
+      "line": 1
+    },
+    {
+      "fid": "D-002",
+      "severity": "MINOR",
+      "title": "Перечень затронутых систем неполный",
+      "line": 18
+    },
+    {
+      "fid": "D-006",
+      "severity": "MINOR",
+      "title": "Не описан вид поля «выбор дня» для двух периодичностей",
+      "line": 33
+    },
+    {
+      "fid": "D-008",
+      "severity": "MINOR",
+      "title": "Не заданы начальные значения полей экрана создания",
+      "line": 33
+    },
+    {
+      "fid": "D-011",
+      "severity": "MINOR",
+      "title": "Нет макетов, текстов ошибок полей и реакции на сбой сервиса",
+      "line": 35
+    },
+    {
+      "fid": "D-028",
+      "severity": "MINOR",
+      "title": "Не задан допустимый интервал начала списания",
+      "line": 47
+    },
+    {
+      "fid": "D-043",
+      "severity": "MINOR",
+      "title": "Период «за 12 месяцев» не привязан к дате",
+      "line": 50
+    },
+    {
+      "fid": "D-047",
+      "severity": "MAJOR",
+      "title": "Неясно, какая сумма попадает в push при списании с валютной карты",
+      "line": 51
+    },
+    {
+      "fid": "D-048",
+      "severity": "MINOR",
+      "title": "Результат описан как «клиент получает», а не как отправка",
+      "line": 51
+    },
+    {
+      "fid": "D-051",
+      "severity": "MINOR",
+      "title": "Статус «Ошибка списания» при успешном списании и отказе поставщика",
+      "line": 52
+    },
+    {
+      "fid": "D-052",
+      "severity": "MINOR",
+      "title": "Не указано начало отсчёта 3 рабочих дней",
+      "line": 52
+    },
+    {
+      "fid": "D-053",
+      "severity": "MINOR",
+      "title": "Не описан вызов возврата денег на карту",
+      "line": 52
+    },
+    {
+      "fid": "D-057",
+      "severity": "MINOR",
+      "title": "Не описано удаление автоплатежа в день или во время списания",
+      "line": 53
+    },
+    {
+      "fid": "D-063",
+      "severity": "MINOR",
+      "title": "Нет правила для автоплатежей с одинаковой суммой",
+      "line": 56
+    },
+    {
+      "fid": "D-068",
+      "severity": "MINOR",
+      "title": "Не перечислены значения «результата списания»",
+      "line": 61
+    },
+    {
+      "fid": "D-069",
+      "severity": "MAJOR",
+      "title": "Вызов pay без идентификатора операции при повторах",
+      "line": 62
+    },
+    {
+      "fid": "D-071",
+      "severity": "MINOR",
+      "title": "Не указано место хранения и передача данных во внешние push-сервисы",
+      "line": 63
+    },
+    {
+      "fid": "D-079",
+      "severity": "MINOR",
+      "title": "Нет номеров у НФТ, данных, интеграции, критериев и части B",
+      "line": 67
+    },
+    {
+      "fid": "D-080",
+      "severity": "MINOR",
+      "title": "Поле «день» не уточнено",
+      "line": 71
+    },
+    {
+      "fid": "D-088",
+      "severity": "MINOR",
+      "title": "«Сумма возвращается»: какая сумма",
+      "line": 77
+    },
+    {
+      "fid": "D-089",
+      "severity": "MINOR",
+      "title": "Не сказано, как возврат отражается в истории и периоде",
+      "line": 77
+    },
+    {
+      "fid": "D-092",
+      "severity": "MINOR",
+      "title": "Проверка доставки push вместо отправки",
+      "line": 88
+    },
+    {
+      "fid": "D-097",
+      "severity": "MINOR",
+      "title": "Критерии приёмки не ссылаются на требования",
+      "line": 90
+    },
+    {
+      "fid": "D-104",
+      "severity": "MINOR",
+      "title": "Чек-лист ревью не заполнен",
+      "line": 93
+    },
+    {
+      "fid": "D-106",
+      "severity": "MINOR",
+      "title": "Нет журнала аудита изменений и порядка отката",
+      "line": 102
+    },
+    {
+      "fid": "D-107",
+      "severity": "MINOR",
+      "title": "Нет схемы отката и выключателя функции",
+      "line": 102
+    },
+    {
+      "fid": "D-108",
+      "severity": "MINOR",
+      "title": "Dev и Prod различаются только подписью, базовые адреса не указаны",
+      "line": 134
+    },
+    {
+      "fid": "D-110",
+      "severity": "MINOR",
+      "title": "Ответ 403 раскрывает существование чужой карты",
+      "line": 143
+    },
+    {
+      "fid": "D-111",
+      "severity": "MINOR",
+      "title": "Не определён порядок, задающий «первое» неверное поле",
+      "line": 144
+    },
+    {
+      "fid": "D-119",
+      "severity": "MAJOR",
+      "title": "Не задано, как считается первая дата списания",
+      "line": 146
+    },
+    {
+      "fid": "D-120",
+      "severity": "MINOR",
+      "title": "Не описан повтор ключа с другим телом запроса",
+      "line": 149
+    },
+    {
+      "fid": "D-122",
+      "severity": "MINOR",
+      "title": "Не задана точка отсчёта 24 часов для ключа идемпотентности",
+      "line": 149
+    },
+    {
+      "fid": "D-123",
+      "severity": "MINOR",
+      "title": "Правило ссылается на границы, но не называет их",
+      "line": 150
+    },
+    {
+      "fid": "D-125",
+      "severity": "MINOR",
+      "title": "Нет ответа при отсутствии или неверном Idempotency-Key",
+      "line": 159
+    },
+    {
+      "fid": "D-126",
+      "severity": "MINOR",
+      "title": "Не описан лишний dayOfMonth при period=WEEKLY",
+      "line": 171
+    },
+    {
+      "fid": "D-129",
+      "severity": "MAJOR",
+      "title": "Не задано правило расчёта даты следующего списания",
+      "line": 180
+    },
+    {
+      "fid": "D-130",
+      "severity": "MINOR",
+      "title": "Код ошибки раскрывает существование чужой карты",
+      "line": 204
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/blind_opus/b1.json",
+  "key_file": "eval/blind/b1_autopay.md.key.json"
+}

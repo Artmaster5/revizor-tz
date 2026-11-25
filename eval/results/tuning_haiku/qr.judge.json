@@ -1,0 +1,777 @@
+{
+ "defects": [
+  {
+   "id": "K-01",
+   "key_severity": "CRITICAL",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-053"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "QR-5 обещает зачисление в день оплаты, а QR-9 — на следующий рабочий день",
+   "reason": "Прямо названо противоречие двух сроков с последствиями для расчётов; программа сослалась на D-106, но настоящее доказательство — D-053.",
+   "title": "Срок зачисления выручки: «в день оплаты» (QR-5) и «на следующий рабочий день» (QR-9)"
+  },
+  {
+   "id": "K-02",
+   "key_severity": "CRITICAL",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-116"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Ссылка на чек содержит номер телефона покупателя и сумму в открытом виде... Чек открывается без входа",
+   "reason": "Названы утечка через адрес, открытие без входа и предложен непредсказуемый токен против перебора.",
+   "title": "Номер телефона покупателя в URL чека, чек открывается без авторизации"
+  },
+  {
+   "id": "K-03",
+   "key_severity": "CRITICAL",
+   "origin": null,
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-020"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "QR действует 5 минут... QR-3 держит счёт до 10 минут. Не сказано, принимать ли оплату, пришедшую на 6–10-й минуте",
+   "reason": "Тот же дефект и та же судьба оплаты в окне 6–10 минут; программа дала лишь «место» из-за слов, по смыслу найдено.",
+   "title": "Срок жизни QR 5 минут против автоотмены через 10 минут; судьба оплаты между ними не определена"
+  },
+  {
+   "id": "K-04",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-008"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Общее ограничение запрещает оплату больше 999 999 ₸..., а QR-1 разрешает до 1 000 000 ₸ включительно",
+   "reason": "Ровно дефект ключа с граничным значением; программа дала «место», по смыслу найдено.",
+   "title": "Верхняя граница суммы: до 999 999 ₸ в общих ограничениях и до 1 000 000 ₸ включительно в QR-1"
+  },
+  {
+   "id": "K-05",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-054"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Комиссия 0,95% от 10 000 ₸ составляет 95 ₸... Пример даёт 9 900 ₸, то есть комиссию 1%",
+   "reason": "Полное совпадение с ключом.",
+   "title": "Пример зачисления не соответствует комиссии 0,95%"
+  },
+  {
+   "id": "K-06",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-033"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Слово «мгновенно» без числового порога... Приёмка становится субъективной",
+   "reason": "Совпадает с ключом.",
+   "title": "«Мгновенно» — непроверяемый срок обновления статуса"
+  },
+  {
+   "id": "K-07",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-056"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "QR-6 описывает возврат как задачу кассира, а QR-7 прямо запрещает кассиру оформлять возвраты",
+   "reason": "Совпадает с ключом.",
+   "title": "QR-6 даёт кассиру оформлять возвраты, QR-7 это запрещает"
+  },
+  {
+   "id": "K-08",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-065"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "кассир может сделать несколько возвратов по полной сумме и вернуть покупателю больше, чем он заплатил",
+   "reason": "Совпадает с ключом.",
+   "title": "Ограничена только сумма одного частичного возврата, но не их сумма"
+  },
+  {
+   "id": "K-09",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-095"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Одна история описывает историю платежей, выгрузку в Excel, настройку push и добавление кассиров",
+   "reason": "Названа неатомарность и отсутствие критериев для трёх функций, предложено разделить.",
+   "title": "История QR-8 не атомарна: четыре разные функции в одной истории"
+  },
+  {
+   "id": "K-10",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-102",
+    "D-103"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, где задаётся адрес... Обычная почта не гарантирует конфиденциальность, а адрес бухгалтера не подтверждён",
+   "reason": "Отчёт говорит про источник адреса и утечку, но не говорит главного: рассылка бухгалтеру не следует из истории и её никто не заказывал; программа ставила «найден».",
+   "title": "Критерий про еженедельную отправку отчёта на e-mail не следует из истории"
+  },
+  {
+   "id": "K-11",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-136",
+    "D-135",
+    "D-134"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "QR-12 написан как техническая фраза, а не как история с ролью и результатом, и не содержит критериев",
+   "reason": "Названы отсутствие роли и критериев (D-136), навязанный способ реализации (D-135) и неопределённый состав данных (D-134).",
+   "title": "QR-12 — техническая задача без роли, ценности и критериев приёмки"
+  },
+  {
+   "id": "K-12",
+   "key_severity": "MAJOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-141"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Без измеримого критерия каждый разработчик и тестировщик решит по-своему, что удобно",
+   "reason": "Главное — непроверяемость — названо; размытая роль «пользователь» и тавтология цели не упомянуты, но суть дефекта ясна.",
+   "title": "QR-13 «удобный интерфейс, чтобы было удобно» — непроверяемая история с размытой ролью"
+  },
+  {
+   "id": "K-13",
+   "key_severity": "MINOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-025"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«5 на 5» может означать 5 миллиметров, 5 сантиметров или 5 дюймов",
+   "reason": "Совпадает с ключом (уровень завышен до MAJOR).",
+   "title": "Размер наклейки «5 на 5» без единицы измерения"
+  },
+  {
+   "id": "K-14",
+   "key_severity": "MINOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-082"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Смена не определена: нельзя проверить ограничение",
+   "reason": "Главное — «Оператор» вместо термина «Кассир» из глоссария — отчёт не замечает (D-088 лишь использует слово «оператор»); найдена только вторая часть ключа — неопределённая «смена». Программа ставила «найден» по случайному совпадению слов.",
+   "title": "Термин «Оператор» вместо определённого в глоссарии «Кассир»"
+  },
+  {
+   "id": "K-15",
+   "key_severity": "MINOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-123"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "ссылка на макет, которого нет в пакете и в списке связанных документов",
+   "reason": "Совпадает с ключом (уровень завышен до CRITICAL).",
+   "title": "Ссылка на макет М-12, которого нет среди связанных документов"
+  },
+  {
+   "id": "K-16",
+   "key_severity": "MINOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-145"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Раздел заявлен в структуре, но содержит только заглушку. Непонятно, входит ли офлайн-режим в эту версию",
+   "reason": "Совпадает с ключом.",
+   "title": "Эпик «Офлайн-режим» пустой"
+  },
+  {
+   "id": "K-17",
+   "key_severity": "MINOR",
+   "origin": null,
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-110",
+    "D-053"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "QR-9 не имеет критериев приёмки",
+   "reason": "Сказано об отсутствии критериев и (в D-053) о противоречии с QR-5, но не сказано, что QR-9 вообще не история: нет роли и цели, это дубль темы QR-5; программа ставила «найден».",
+   "title": "QR-9 записана не в формате истории и дублирует тему QR-5"
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-001",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Команда как владелец бэклога — обычная практика; дефекта нет."
+  },
+  {
+   "fid": "D-002",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Бэклог историй не обязан содержать модель данных, есть ссылка на ТЗ v1.2."
+  },
+  {
+   "fid": "D-003",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Судьба комиссии при возврате действительно не описана; это деньги продавца."
+  },
+  {
+   "fid": "D-009",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Для статического QR покупатель вводит сумму сам, проверка лимита на этом пути не описана."
+  },
+  {
+   "fid": "D-010",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Маркированные критерии у пронумерованных историй — нормальная форма; пустое замечание."
+  },
+  {
+   "fid": "D-012",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-015",
+   "reason": "Дробная сумма уже входит в D-015."
+  },
+  {
+   "fid": "D-013",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Общий упрёк «нет нефункциональных требований» к бэклогу историй со ссылкой на ТЗ; как MAJOR завышено."
+  },
+  {
+   "fid": "D-015",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Поведение при вводе суммы вне диапазона действительно не описано; мелочь."
+  },
+  {
+   "fid": "D-021",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Статус счёта по истечении срока действительно не назван; связано с K-03, но отдельный пункт."
+  },
+  {
+   "fid": "D-022",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Язык сообщений — мелкое уточнение, не MAJOR."
+  },
+  {
+   "fid": "D-024",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Судьба старого QR после «Создать заново» не описана, есть риск двойной оплаты; ключ упоминает это лишь как следствие K-03."
+  },
+  {
+   "fid": "D-029",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Описание экрана «Мои QR» — не задача бэклога историй."
+  },
+  {
+   "fid": "D-030",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Какое название магазина показывать — мелкое уточнение, не MAJOR."
+  },
+  {
+   "fid": "D-036",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Способ получения события от банка — вопрос ТЗ/архитектуры, для бэклога историй MAJOR завышен."
+  },
+  {
+   "fid": "D-039",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Точка отсчёта 10 минут естественно читается как момент выставления; мелочь, не MAJOR."
+  },
+  {
+   "fid": "D-042",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Поток оплаты по статическому QR (счёт, статус, таймер) действительно не описан."
+  },
+  {
+   "fid": "D-043",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Выключатель, версия API и откат — вне бэклога; цитаты (строки 44, 74) к сути не относятся."
+  },
+  {
+   "fid": "D-046",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Критиковано хорошее место ключа (строка 50): отказ банка покупателя по отменённому счёту — наблюдаемый результат."
+  },
+  {
+   "fid": "D-047",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Общий упрёк «по нескольку утверждений» задевает хорошие места ключа (строки 50, 75, 102); кусок про строку 79 дублирует D-095."
+  },
+  {
+   "fid": "D-048",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа (строка 50): оплата после отмены уже отклоняется; часть про автоотмену дублирует D-020."
+  },
+  {
+   "fid": "D-049",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Сбой зачисления продавцу — редкая ветка, как MAJOR завышено."
+  },
+  {
+   "fid": "D-051",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Граница суток для «в день оплаты» — мелкое уточнение; к тому же сам срок спорный (K-01)."
+  },
+  {
+   "fid": "D-057",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "После 30 дней возврат очевидно недоступен; уточнение интерфейса, не MAJOR."
+  },
+  {
+   "fid": "D-058",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Граница 30-го дня действительно не уточнена; мелочь, уровень MINOR верный."
+  },
+  {
+   "fid": "D-061",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Журнал аудита отмен и возвратов действительно не описан; мелочь."
+  },
+  {
+   "fid": "D-067",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа (строка 68): получатель возврата задан однозначно; ветка отказа — не дефект этого критерия."
+  },
+  {
+   "fid": "D-070",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа (строка 68); замечание неверно читает критерий как обещание за чужой банк."
+  },
+  {
+   "fid": "D-071",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Сам отчёт признаёт, что ограничения перечислены в критериях; пустое замечание."
+  },
+  {
+   "fid": "D-072",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Видна ли кассиру выручка за текущий день — реальная неясность прав."
+  },
+  {
+   "fid": "D-073",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-072",
+   "reason": "То же место и та же неясность «прошлые дни / выручка»."
+  },
+  {
+   "fid": "D-074",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Уточнение интерфейса к запрету; сам отчёт называет это не смыслом правила."
+  },
+  {
+   "fid": "D-079",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа (строка 75): параметры PIN заданы полностью; это мнение, а не дефект."
+  },
+  {
+   "fid": "D-081",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа (строка 75): «вход кассира» прямо говорит, кого блокируют."
+  },
+  {
+   "fid": "D-086",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Сам отчёт признаёт, что поведение очевидно."
+  },
+  {
+   "fid": "D-088",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Счета живут 5–10 минут, конец смены почти не создаёт проблемы; термин «Оператор» при этом не замечен."
+  },
+  {
+   "fid": "D-091",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-095",
+   "reason": "Несоответствие названия QR-8 содержанию уже сказано в D-095."
+  },
+  {
+   "fid": "D-093",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-095",
+   "reason": "Та же неатомарность QR-8 с той же рекомендацией разделить."
+  },
+  {
+   "fid": "D-097",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-095",
+   "reason": "Отсутствие критериев для Excel, push и кассиров уже сказано в D-095."
+  },
+  {
+   "fid": "D-098",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«Платёж» и «оплата» в одном документе — реальная мелкая терминологическая неряшливость."
+  },
+  {
+   "fid": "D-099",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В истории неясно, сумма до или после комиссии; мелкая реальная неоднозначность."
+  },
+  {
+   "fid": "D-100",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Часовой пояс и формат времени в истории не заданы; мелочь."
+  },
+  {
+   "fid": "D-101",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Период истории по умолчанию — уточнение интерфейса, сам отчёт это признаёт."
+  },
+  {
+   "fid": "D-104",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Период еженедельного отчёта не задан — реально, но мелко; MAJOR завышен."
+  },
+  {
+   "fid": "D-106",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Как возвраты и комиссия входят в дневную сумму зачисления — реальный денежный пробел."
+  },
+  {
+   "fid": "D-107",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Календарь рабочих дней — мелкое уточнение, не MAJOR."
+  },
+  {
+   "fid": "D-111",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-107",
+   "reason": "Рабочий день и часовой пояс уже сказаны в D-107 и D-051."
+  },
+  {
+   "fid": "D-113",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Откуда берётся телефон покупателя для SMS — реальный пробел."
+  },
+  {
+   "fid": "D-114",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Рекомендует закрепить phone и amount в ссылке как обязательные — прямо противоречит D-116 и усугубляет K-02; срок SMS дублирует D-115."
+  },
+  {
+   "fid": "D-115",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Срок отправки SMS действительно не задан; мелочь."
+  },
+  {
+   "fid": "D-118",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Общий список внешних систем — не дефект бэклога историй."
+  },
+  {
+   "fid": "D-119",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Основание и срок хранения телефона покупателя — реальный вопрос персональных данных, отдельный от K-02."
+  },
+  {
+   "fid": "D-121",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-123",
+   "reason": "Состав страницы чека задаётся макетом М-12; то же, что D-123."
+  },
+  {
+   "fid": "D-127",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа (строка 102): минимизация данных задана явно; MAJOR — придирка."
+  },
+  {
+   "fid": "D-130",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Какая именно настройка отключает push — мелкая реальная неясность."
+  },
+  {
+   "fid": "D-131",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Значение по умолчанию для push — мелочь, не MAJOR."
+  },
+  {
+   "fid": "D-133",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Защита от дублей при передаче в ОФД — реальный, хоть и технический, пробел."
+  },
+  {
+   "fid": "D-138",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Связь чека покупателя с фискальными данными ОФД не описана — реальный пробел."
+  },
+  {
+   "fid": "D-140",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-134",
+   "reason": "Состав данных для ОФД уже сказан в D-134."
+  },
+  {
+   "fid": "D-144",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-013",
+   "reason": "Отсутствие нефункциональных требований уже сказано в D-013; пустой эпик — в D-145."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-046",
+   "line": 50
+  },
+  {
+   "fid": "D-047",
+   "line": "50,75,102"
+  },
+  {
+   "fid": "D-048",
+   "line": 50
+  },
+  {
+   "fid": "D-067",
+   "line": 68
+  },
+  {
+   "fid": "D-070",
+   "line": 68
+  },
+  {
+   "fid": "D-079",
+   "line": 75
+  },
+  {
+   "fid": "D-081",
+   "line": 75
+  },
+  {
+   "fid": "D-127",
+   "line": 102
+  }
+ ],
+ "praised_defects": [],
+ "critical": {
+  "key_critical": {
+   "K-01": "D-053 CRITICAL",
+   "K-02": "D-116 CRITICAL",
+   "K-03": "D-020 CRITICAL"
+  },
+  "key_critical_all_given_critical": true,
+  "tool_critical": [
+   {
+    "fid": "D-008",
+    "justified": true,
+    "note": "прямое противоречие границ (ключ MAJOR)"
+   },
+   {
+    "fid": "D-020",
+    "justified": true
+   },
+   {
+    "fid": "D-053",
+    "justified": true
+   },
+   {
+    "fid": "D-054",
+    "justified": true,
+    "note": "ошибка в деньгах продавца (ключ MAJOR)"
+   },
+   {
+    "fid": "D-056",
+    "justified": true,
+    "note": "прямое противоречие прав (ключ MAJOR)"
+   },
+   {
+    "fid": "D-065",
+    "justified": true,
+    "note": "потеря денег (ключ MAJOR)"
+   },
+   {
+    "fid": "D-116",
+    "justified": true
+   },
+   {
+    "fid": "D-123",
+    "justified": false,
+    "note": "неприложенный макет — MINOR в ключе, завышено"
+   }
+  ],
+  "tool_critical_count": 8,
+  "justified": 7,
+  "inflated": 1
+ },
+ "totals": {
+  "key_defects": 17,
+  "found": 14,
+  "partial": 3,
+  "not_found": 0,
+  "by_severity": {
+   "CRITICAL": {
+    "found": 3,
+    "partial": 0,
+    "not_found": 0
+   },
+   "MAJOR": {
+    "found": 8,
+    "partial": 1,
+    "not_found": 0
+   },
+   "MINOR": {
+    "found": 3,
+    "partial": 2,
+    "not_found": 0
+   }
+  },
+  "extra_findings": 59,
+  "false_alarm": 20,
+  "overrated": 11,
+  "duplicate": 9,
+  "real_not_in_key": 19,
+  "good_place_hits": 8,
+  "praised_defects": 0,
+  "report_findings": 79
+ }
+}

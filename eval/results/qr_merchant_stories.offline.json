@@ -2,8 +2,8 @@
   "format": "revizor-report/1",
   "summary": {
     "tests": {
-      "ready": 3,
-      "blocked": 6
+      "ready": 5,
+      "blocked": 0
     },
     "answers": null,
     "verdict_after_answers": "",
@@ -51,12 +51,13 @@
   },
   "run": {
     "agent_name": "Ревизор ТЗ",
-    "agent_version": "1.0.0",
-    "started_at": "2026-11-25T18:01:57+05:00",
-    "duration_s": 0.04,
+    "agent_version": "1.0.0 (v1.1.1-dirty)",
+    "started_at": "2026-11-26T02:20:21+05:00",
+    "duration_s": 0.08,
     "mode": "offline",
     "provider": "offline",
     "model": "",
+    "model_version": "",
     "effort": "",
     "doc_name": "qr_merchant_stories.md",
     "doc_format": "md",
@@ -79,16 +80,21 @@
     "skeptic_kept": 0,
     "skeptic_rejected": 0,
     "skeptic_merged": 0,
-    "manual_minutes_estimate": 269,
+    "manual_minutes_estimate": null,
     "warnings": [],
     "injection_suspected": false,
     "masked_values": 0,
     "score": 99,
     "score_formula": "10 × 9,87 (средняя ясность 56 треб.) − 0 (штраф за замечания к набору: 8×0 + 3×0 + 1×0 = 0) = 99",
-    "rules_version": "1.0",
+    "rules_version": "1.1",
     "doc_words": 744,
     "context_files": [],
-    "dup_merged": 0
+    "dup_merged": 0,
+    "critical_demoted": 0,
+    "agent_commit": "0d071fd",
+    "agent_tag": "v1.1.1",
+    "agent_dirty": true,
+    "doc_title": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR»)"
   },
   "diagnostic": null,
   "requirements": [
@@ -3193,6 +3199,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -3239,6 +3250,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
     },
     {
@@ -3285,6 +3301,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -3330,6 +3351,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
     },
     {
@@ -3375,6 +3401,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
     },
     {
@@ -3420,6 +3451,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
     },
     {
@@ -3465,6 +3501,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
     },
     {
@@ -3510,6 +3551,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -3556,6 +3602,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
     }
   ],
@@ -3591,7 +3642,16 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "term"
+      "gap": "term",
+      "impact": {
+        "closes": [
+          "D-001"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 99,
+        "index_delta": 0
+      }
     },
     {
       "qid": "В-02",
@@ -3622,7 +3682,16 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "value"
+      "gap": "value",
+      "impact": {
+        "closes": [
+          "D-002"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 99,
+        "index_delta": 0
+      }
     },
     {
       "qid": "В-03",
@@ -3653,7 +3722,16 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "term"
+      "gap": "term",
+      "impact": {
+        "closes": [
+          "D-003"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 99,
+        "index_delta": 0
+      }
     }
   ],
   "fix_first": [
@@ -3690,28 +3768,19 @@
         "REQ-006"
       ],
       "given": "Система работает в обычном режиме; проверяется требование REQ-006: «Сумма одной оплаты по любому QR — от 100 до 999 999 ₸».",
-      "when": "Ввести или передать значения на границе допустимого: 100, 999999 ₸.",
+      "when": "Ввести или передать значения на границе допустимого: 100, 999999 ₸. (шаг значения не задан: взяты соседние целые.)",
       "then": "Значения принимаются без ошибки (требование REQ-006 допускает их).",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": [
+        "100",
+        "999999"
+      ]
     },
     {
       "tid": "Т-02",
-      "title": "REQ-006: значения сразу за границей 99, 1000000 ₸",
-      "kind": "boundary",
-      "req_ids": [
-        "REQ-006"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-006: «Сумма одной оплаты по любому QR — от 100 до 999 999 ₸».",
-      "when": "Ввести или передать значения сразу за границей: 99, 1000000 ₸.",
-      "then": "",
-      "blocked_by": [],
-      "finding_ids": [],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-03",
       "title": "QR-1: граничные допустимые значения 100, 1000000 ₸",
       "kind": "boundary",
       "req_ids": [
@@ -3719,13 +3788,18 @@
       ],
       "given": "Система работает в обычном режиме; проверяется требование QR-1: «Сумма — целое число тенге от 100 до 1 000 000 ₸ включительно».",
       "when": "Ввести или передать значения на границе допустимого: 100, 1000000 ₸.",
-      "then": "Значения принимаются без ошибки (требование QR-1 допускает их).",
+      "then": "Значения принимаются без ошибки: по требованию QR-1 допустимо «от 100 до 1 000 000 ₸ включительно».",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": true,
+      "values": [
+        "100",
+        "1000000"
+      ]
     },
     {
-      "tid": "Т-04",
+      "tid": "Т-03",
       "title": "QR-1: значения сразу за границей 99, 1000001 ₸",
       "kind": "boundary",
       "req_ids": [
@@ -3733,95 +3807,465 @@
       ],
       "given": "Система работает в обычном режиме; проверяется требование QR-1: «Сумма — целое число тенге от 100 до 1 000 000 ₸ включительно».",
       "when": "Ввести или передать значения сразу за границей: 99, 1000001 ₸.",
-      "then": "",
+      "then": "Значения не принимаются как допустимые: по требованию QR-1 допустимо только «от 100 до 1 000 000 ₸ включительно».",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": true,
+      "values": [
+        "100",
+        "1000000"
+      ]
     },
     {
-      "tid": "Т-05",
+      "tid": "Т-04",
       "title": "QR-2: граничные допустимые значения 5",
       "kind": "boundary",
       "req_ids": [
         "REQ-015"
       ],
       "given": "Система работает в обычном режиме; проверяется требование QR-2: «Наклейка печатается из раздела «Мои QR» в PDF размером не менее 5 на 5».",
-      "when": "Ввести или передать значения на границе допустимого: 5.",
-      "then": "Значения принимаются без ошибки (требование QR-2 допускает их).",
+      "when": "Ввести или передать значения на границе допустимого: 5. (шаг значения не задан: взяты соседние целые.)",
+      "then": "Значения принимаются без ошибки: по требованию QR-2 допустимо «не менее 5».",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": true,
+      "values": [
+        "5"
+      ]
     },
     {
-      "tid": "Т-06",
+      "tid": "Т-05",
       "title": "QR-2: значения сразу за границей 4",
       "kind": "boundary",
       "req_ids": [
         "REQ-015"
       ],
       "given": "Система работает в обычном режиме; проверяется требование QR-2: «Наклейка печатается из раздела «Мои QR» в PDF размером не менее 5 на 5».",
-      "when": "Ввести или передать значения сразу за границей: 4.",
-      "then": "",
+      "when": "Ввести или передать значения сразу за границей: 4. (шаг значения не задан: взяты соседние целые.)",
+      "then": "Значения не принимаются как допустимые: по требованию QR-2 допустимо только «не менее 5».",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-07",
-      "title": "QR-3: Статус оплаты обновляется на экране кассира мгновенно",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-019"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование QR-3: «Статус оплаты обновляется на экране кассира мгновенно.».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-01"
-      ],
-      "finding_ids": [
-        "D-001"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-08",
-      "title": "QR-3: Если оплата не поступила в течение 10 минут, счёт отменяется автоматически",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-021"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование QR-3: «Если оплата не поступила в течение 10 минут, счёт отменяется автоматически.».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-02"
-      ],
-      "finding_ids": [
-        "D-002"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-09",
-      "title": "QR-13: Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-055"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование QR-13: «Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно.».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-03"
-      ],
-      "finding_ids": [
-        "D-003"
-      ],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": true,
+      "values": [
+        "5"
+      ]
     }
   ],
   "verdict_after_answers": "",
   "verdict_after_answers_text": "",
-  "audit": []
+  "audit": [
+    {
+      "type": "test_unverifiable",
+      "items": [
+        {
+          "req_ids": [
+            "REQ-006"
+          ],
+          "what": "REQ-006: значения сразу за границей 99, 1000000 ₸",
+          "blocked_by": [],
+          "answered": [],
+          "finding_ids": [],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-019"
+          ],
+          "what": "QR-3: Статус оплаты обновляется на экране кассира мгновенно",
+          "blocked_by": [
+            "В-01"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-001"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-021"
+          ],
+          "what": "QR-3: Если оплата не поступила в течение 10 минут, счёт отменяется автоматически",
+          "blocked_by": [
+            "В-02"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-002"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-055"
+          ],
+          "what": "QR-13: Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно",
+          "blocked_by": [
+            "В-03"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-003"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        }
+      ]
+    }
+  ],
+  "checklist": [],
+  "gap_map": [
+    {
+      "id": "ST1",
+      "group": "Состояния",
+      "title": "Состояния переключателей и статусов",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "ST2",
+      "group": "Состояния",
+      "title": "Смена состояния посреди периода",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "ST3",
+      "group": "Состояния",
+      "title": "Начальное состояние",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP1",
+      "group": "Отказы и альтернативные пути",
+      "title": "Ошибки на шагах основного сценария",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP2",
+      "group": "Отказы и альтернативные пути",
+      "title": "Ветки ошибок на схемах",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP3",
+      "group": "Отказы и альтернативные пути",
+      "title": "Недоступность соседних систем",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP4",
+      "group": "Отказы и альтернативные пути",
+      "title": "Сообщения клиенту",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL1",
+      "group": "Значения, деньги и время",
+      "title": "Числовые параметры: единицы и границы",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL2",
+      "group": "Значения, деньги и время",
+      "title": "Валюта и округление",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL3",
+      "group": "Значения, деньги и время",
+      "title": "Время и периоды",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL4",
+      "group": "Значения, деньги и время",
+      "title": "Полнота перечней",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL5",
+      "group": "Значения, деньги и время",
+      "title": "Изменения задним числом",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL6",
+      "group": "Значения, деньги и время",
+      "title": "Несколько однотипных объектов",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL7",
+      "group": "Значения, деньги и время",
+      "title": "Шаг и точность чисел",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL8",
+      "group": "Значения, деньги и время",
+      "title": "Значение по умолчанию",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF1",
+      "group": "Интерфейсы между системами",
+      "title": "Надёжность интерфейса",
+      "status": "na",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "в документе нет описания программного интерфейса"
+    },
+    {
+      "id": "IF2",
+      "group": "Интерфейсы между системами",
+      "title": "Ошибки интерфейса",
+      "status": "na",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "в документе нет описания программного интерфейса"
+    },
+    {
+      "id": "IF3",
+      "group": "Интерфейсы между системами",
+      "title": "Права доступа в интерфейсе",
+      "status": "na",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "в документе нет описания программного интерфейса"
+    },
+    {
+      "id": "IF4",
+      "group": "Интерфейсы между системами",
+      "title": "Интеграции",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "DT1",
+      "group": "Данные и экран",
+      "title": "Модель данных",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "UI1",
+      "group": "Данные и экран",
+      "title": "Экран",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN1",
+      "group": "Согласованность документа",
+      "title": "Название задачи",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN2",
+      "group": "Согласованность документа",
+      "title": "Перечни систем и участников",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN3",
+      "group": "Согласованность документа",
+      "title": "Термины",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN4",
+      "group": "Согласованность документа",
+      "title": "Цель и требования",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN5",
+      "group": "Согласованность документа",
+      "title": "Экран, функции и интерфейс",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR1",
+      "group": "Адресуемость и проверяемость",
+      "title": "Номера требований",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR2",
+      "group": "Адресуемость и проверяемость",
+      "title": "Критерии приёмки",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR3",
+      "group": "Адресуемость и проверяемость",
+      "title": "Проверяемость через действие системы",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR4",
+      "group": "Адресуемость и проверяемость",
+      "title": "Нефункциональные требования",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD1",
+      "group": "Данные клиентов и карт",
+      "title": "Персональные данные",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD2",
+      "group": "Данные клиентов и карт",
+      "title": "Где хранятся и кому передаются данные",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD3",
+      "group": "Данные клиентов и карт",
+      "title": "Данные карт",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD4",
+      "group": "Данные клиентов и карт",
+      "title": "Что видно посторонним",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD5",
+      "group": "Данные клиентов и карт",
+      "title": "Журнал аудита и откат",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    }
+  ]
 }

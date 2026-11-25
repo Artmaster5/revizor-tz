@@ -6,7 +6,7 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.04,
+    "duration_s": 0.08,
     "doc_name": "loan_prescoring_tz.txt"
   },
   "counts": {
@@ -310,6 +310,6 @@
     }
   ],
   "warnings": [],
-  "result_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/loan_prescoring_tz.offline.json",
-  "key_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/loan_prescoring_tz.txt.key.json"
+  "result_file": "eval/results/loan_prescoring_tz.offline.json",
+  "key_file": "eval/docs/loan_prescoring_tz.txt.key.json"
 }

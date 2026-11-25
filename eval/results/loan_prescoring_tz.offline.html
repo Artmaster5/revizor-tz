@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
+<meta name="color-scheme" content="light dark">
+<title>Ревизор ТЗ — ТЕХНИЧЕСКОЕ ЗАДАНИЕ</title>
+<style>
+:root{--bg:#f6f7f9;--paper:#fff;--ink:#1f2933;--muted:#5f6b7a;--line:#d9dee5;--zebra:#f4f6f9;--link:#0b5cad;
+--accent:#0f6b4f;--accent-soft:#e8f3ee;--code:#eef1f5;--crit:#b42318;--crit-bg:#fdecea;--maj:#9a5b00;--maj-bg:#fff2d6;
+--min:#146c3a;--min-bg:#e3f5ea;--shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#10151b;--paper:#171d25;--ink:#e6eaef;--muted:#9aa6b4;--line:#2d3744;
+--zebra:#1b222b;--link:#7db4ff;--accent:#5fd0a2;--accent-soft:#16302a;--code:#222b36;--crit:#ff8a80;--crit-bg:#3b1d1b;
+--maj:#ffc266;--maj-bg:#3a2d12;--min:#7ee2a6;--min-bg:#16301f;--shadow:none}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.65 -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.doc{max-width:920px;margin:0 auto;padding:28px 20px 56px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:30px 34px 38px;box-shadow:var(--shadow)}
+h1,h2,h3,h4,h5,h6{line-height:1.3;margin:1.7em 0 .55em;font-weight:650;color:var(--ink)}
+h1{font-size:1.75rem;margin-top:0;letter-spacing:-.01em}
+h2{font-size:1.38rem;padding-bottom:.3em;border-bottom:2px solid var(--line);margin-top:2.2em}
+h3{font-size:1.12rem}h4{font-size:1rem}h5,h6{font-size:.95rem;color:var(--muted)}
+h2,h3,h4,[id]{scroll-margin-top:64px}
+p{margin:.65em 0}
+a{color:var(--link);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--link) 35%,transparent)}
+a:hover{border-bottom-color:var(--link)}
+a[id]:empty{border:0}
+code{font:.88em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--code);padding:.1em .38em;border-radius:4px;overflow-wrap:break-word}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto;line-height:1.45}
+pre code{background:none;padding:0}
+hr{border:0;border-top:1px solid var(--line);margin:1.8em 0}
+ul,ol{margin:.5em 0;padding-left:1.45em}
+li{margin:.22em 0}li>ul,li>ol{margin:.2em 0}
+blockquote{margin:.9em 0;padding:.5em 1em;border-left:4px solid var(--line);background:var(--zebra);color:var(--ink);border-radius:0 8px 8px 0}
+blockquote p{margin:.35em 0}
+blockquote.verdict{border:1px solid var(--accent);border-left:6px solid var(--accent);background:var(--accent-soft);
+padding:1em 1.3em;margin:1.1em 0 1.4em;font-size:1.04rem;border-radius:10px}
+blockquote.verdict-blocked{border-color:var(--crit);background:var(--crit-bg)}
+blockquote.verdict-conditional{border-color:var(--maj);background:var(--maj-bg)}
+.tablewrap{overflow-x:auto;margin:1em 0;border:1px solid var(--line);border-radius:8px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.9rem;line-height:1.45}
+th,td{border:1px solid var(--line);padding:6px 10px;vertical-align:top;text-align:left;overflow-wrap:break-word}
+.tablewrap th:first-child,.tablewrap td:first-child{border-left:0}.tablewrap th:last-child,.tablewrap td:last-child{border-right:0}
+thead th{background:var(--zebra);font-weight:650;border-top:0}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:var(--zebra)}
+.a-right{text-align:right;font-variant-numeric:tabular-nums}.a-center{text-align:center}
+.sev{display:inline-block;font:700 .72em/1.5 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.03em;padding:0 .55em;border-radius:99px;
+vertical-align:.08em;border:1px solid transparent;white-space:nowrap}
+.sev-critical{color:var(--crit);background:var(--crit-bg);border-color:color-mix(in srgb,var(--crit) 35%,transparent)}
+.sev-major{color:var(--maj);background:var(--maj-bg);border-color:color-mix(in srgb,var(--maj) 40%,transparent)}
+.sev-minor{color:var(--min);background:var(--min-bg);border-color:color-mix(in srgb,var(--min) 35%,transparent)}
+.card{margin:1.1em 0;padding:.7em 1.1em .8em;border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;background:var(--paper)}
+.card>p:first-of-type,.card>strong:first-child{margin-top:.2em}
+.card-critical{border-left-color:var(--crit)}.card-major{border-left-color:var(--maj)}.card-minor{border-left-color:var(--min)}
+details{margin:.8em 0;padding:.4em .9em;border:1px solid var(--line);border-radius:8px}
+details>summary{cursor:pointer;font-weight:600}
+nav.toc{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+nav.toc>details{max-width:920px;margin:0 auto;border:0;border-radius:0;padding:0 20px;position:relative}
+nav.toc summary{padding:10px 0;color:var(--muted);font-size:.92rem;list-style:none}
+nav.toc summary::-webkit-details-marker{display:none}
+nav.toc summary::before{content:"\2630";margin-right:.6em;color:var(--accent)}
+nav.toc ol{position:absolute;left:20px;right:20px;top:100%;margin:0;padding:10px 14px 12px 36px;list-style:decimal;
+background:var(--paper);border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;box-shadow:var(--shadow);
+max-height:70vh;overflow:auto;font-size:.93rem}
+nav.toc li{margin:.18em 0}
+footer{max-width:920px;margin:18px auto 0;padding:0 20px;color:var(--muted);font-size:.82rem;text-align:center}
+@media (max-width:640px){body{font-size:15px}.doc{padding:14px 10px 40px}.sheet{padding:18px 14px 26px;border-radius:8px}
+h1{font-size:1.4rem}h2{font-size:1.2rem}nav.toc>details{padding:0 10px}nav.toc ol{left:10px;right:10px}}
+@page{size:A4;margin:14mm}
+@media print{
+html,body{background:#fff!important;color:#000!important;font-size:10.5pt;line-height:1.5}
+.doc{max-width:none;padding:0}.sheet{border:0;box-shadow:none;padding:0;border-radius:0;background:#fff}
+nav.toc,footer{display:none!important}
+a{color:#000;border:0;text-decoration:none}
+a[href^="http"]::after,a[href^="mailto"]::after{content:" (" attr(href) ")";font-size:.85em;word-break:break-all}
+.tablewrap{overflow:visible;border:0}
+table{font-size:8.6pt}thead{display:table-header-group}
+tr,.card,blockquote,pre,.sev{break-inside:avoid;page-break-inside:avoid}
+tbody tr:nth-child(even),thead th,blockquote,code,pre,.card,details{background:none!important}
+blockquote,blockquote.verdict{border:1px solid #888;border-left:4px solid #444;border-radius:0}
+.card{border:1px solid #bbb;border-left:4px solid #666;border-radius:0}
+.sev{border-color:currentColor;background:none!important}
+.sev-critical{color:#a00}.sev-major{color:#8a5200}.sev-minor{color:#0a5a2e}
+h1,h2,h3,h4{break-after:avoid;page-break-after:avoid}
+h2{border-bottom:1px solid #888;margin-top:1.6em}
+[id]{scroll-margin-top:0}
+}
+</style>
+</head>
+<body>
+<nav class="toc" aria-label="Содержание"><details><summary>Содержание</summary><ol>
+<li><a href="#s1">1. Паспорт прогона</a></li>
+<li><a href="#s2">2. Как агент нарезал требования</a></li>
+<li><a href="#s3">3. Проверка каждого требования</a></li>
+<li><a href="#s4">4. Проверка всего набора требований</a></li>
+<li><a href="#s5">5. Сводка</a></li>
+<li><a href="#s6">6. Итог</a></li>
+<li><a href="#s7">7. Уточняющие вопросы к автору ТЗ</a></li>
+<li><a href="#s8">8. Черновики приёмочных тестов</a></li>
+<li><a href="#app">Приложение. Как получен отчёт</a></li>
+</ol></details></nav>
+<main class="doc"><article class="sheet">
+<h1>Отчёт о статической проверке требований</h1>
+<p><strong>Документ:</strong> <code>loan_prescoring_tz.txt</code> · проверен 26.11.2026 02:20 (UTC+05:00) · без модели — только автоматические правила</p>
+<blockquote class="verdict verdict-conditional">
+<p><strong>Итог:</strong> ⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (итог предварительный)<br>
+Замечаний 7: блокеров 0 · существенных 3 · мелких 4 · вопросов автору 7 · требований 56<br>
+Индекс готовности документа: <strong>92 из 100</strong> — готов, предварительно. Вердикт определяют блокеры, а не индекс.<br>
+⚠️ Без модели смысл не проверялся: противоречия и пропущенные сценарии не искались.</p>
+</blockquote>
+<p><strong>Блокеров нет.</strong> Существенных замечаний: 3 — <a href="#d-003">D-003</a>, <a href="#d-005">D-005</a>, <a href="#d-006">D-006</a>.</p>
+<p><strong>Сначала спросить автора:</strong></p>
+<ol>
+<li><a href="#v-01">В-01</a> В каких единицах хранить, передавать и сравнивать суммы? — индекс +4</li>
+<li><a href="#v-04">В-04</a> Что имелось в виду под «раздел 9.4»? — индекс +2</li>
+<li><a href="#v-02">В-02</a> Для какой доли случаев и при какой нагрузке должен выполняться срок «не… — индекс +1</li>
+<li><a href="#v-03">В-03</a> Что конкретно означает «быстро» в этом требовании? — индекс +1</li>
+<li><a href="#v-05">В-05</a> Какую версию и дату присвоить документу? — индекс +1</li>
+</ol>
+<p><strong>Что исправить в первую очередь:</strong></p>
+<ol>
+<li>Денежные суммы в разных единицах: тиын и тенге. Выберите одну единицу для… (<a href="#d-003">D-003</a>)</li>
+<li>Ограничение по времени без условий измерения. Допишите условия измерения: «не… (<a href="#d-005">D-005</a>)</li>
+<li>Размытая формулировка: «быстро». Замените «быстро» проверяемым условием… (<a href="#d-006">D-006</a>)</li>
+</ol>
+<p>Прогон: 0,1 с · $0, модель не вызывалась.</p>
+<p><strong>Разделы:</strong> <a href="#s1">1. Паспорт прогона</a> · <a href="#s2">2. Как агент нарезал требования</a> · <a href="#s3">3. Проверка каждого требования</a> · <a href="#s4">4. Проверка всего набора требований</a> · <a href="#s5">5. Сводка</a> · <a href="#s6">6. Итог</a> · <a href="#s7">7. Уточняющие вопросы к автору ТЗ</a> · <a href="#s8">8. Черновики приёмочных тестов</a> · <a href="#app">Приложение. Как получен отчёт</a></p>
+<h2 id="s1">1. Паспорт прогона</h2>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Поле</th><th class="a-left">Значение</th></tr></thead><tbody>
+<tr><td class="a-left">Документ</td><td class="a-left"><code>loan_prescoring_tz.txt</code> · обычный текст · 10,0 КБ · 128 строк · 811 слов · SHA-256 <code>00859c30b2d9</code> · «ТЕХНИЧЕСКОЕ ЗАДАНИЕ»</td></tr>
+<tr><td class="a-left">Дата и время прогона</td><td class="a-left">26.11.2026 02:20 (UTC+05:00)</td></tr>
+<tr><td class="a-left">Модель</td><td class="a-left">без модели</td></tr>
+<tr><td class="a-left">Версия агента</td><td class="a-left">v1.0.0 (тег <code>v1.1.1</code>) · коммит <code>0d071fd</code> + незакоммиченные правки · набор правил 1.1</td></tr>
+<tr><td class="a-left">Режим</td><td class="a-left">без модели: только автоматические правила</td></tr>
+<tr><td class="a-left">Время анализа</td><td class="a-left">0,1 с</td></tr>
+<tr><td class="a-left">Стоимость прогона</td><td class="a-left">$0 (модель не вызывалась)</td></tr>
+<tr><td class="a-left">Проверка цитат</td><td class="a-left">подтверждено 12, отброшено 0</td></tr>
+<tr><td class="a-left">Перепроверка</td><td class="a-left">не выполнялась (без модели)</td></tr>
+<tr><td class="a-left">Защита данных</td><td class="a-left">значений, похожих на номера карт, ИИН/БИН, адреса почты или телефоны, не найдено</td></tr>
+</tbody></table></div>
+<h2 id="s2">2. Как агент нарезал требования</h2>
+<p>Требования выделены эвристикой (без модели); номера REQ-… присвоены программой по порядку документа. Найдено 56 требований. Формулировка — точная цитата; длинная обрезана, только если полный текст есть в карточке раздела 3. Ясность каждого требования — в матрице раздела 3.</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">ID (в документе)</th><th class="a-left">Тип</th><th class="a-left">Формулировка (цитата)</th><th class="a-left">Где</th></tr></thead><tbody>
+<tr><td class="a-left"><a href="#req-001">REQ-001</a> 1.1</td><td class="a-left">функциональное</td><td class="a-left">1.1. Модуль ПреСкор выполняет предварительную оценку заявки на беззалоговый потребительский кредит в тенге до передачи заявки в основной кредитный конвейер.</td><td class="a-left">строки 15–16</td></tr>
+<tr><td class="a-left"><a href="#req-002">REQ-002</a> 1.2</td><td class="a-left">функциональное</td><td class="a-left">1.2. Цель доработки — снизить число заявок, поступающих кредитным экспертам, не менее чем на 30% от среднемесячного уровня октября 2026 года.</td><td class="a-left">строки 17–18</td></tr>
+<tr><td class="a-left"><a href="#req-003">REQ-003</a> 1.3</td><td class="a-left">функциональное</td><td class="a-left">1.3. Каналы подачи заявки: мобильное приложение и фронт-система отделений.</td><td class="a-left">строка 19</td></tr>
+<tr><td class="a-left"><a href="#req-004">REQ-004</a> 2.1</td><td class="a-left">функциональное</td><td class="a-left">2.1. Заявка — запрос клиента на кредит с уникальным идентификатором application_id.</td><td class="a-left">строка 23</td></tr>
+<tr><td class="a-left"><a href="#req-005">REQ-005</a> 2.2</td><td class="a-left">функциональное</td><td class="a-left">2.2. Кредитный отчёт — отчёт кредитного бюро о действующих и закрытых займах клиента.</td><td class="a-left">строка 24</td></tr>
+<tr><td class="a-left"><a href="#req-006">REQ-006</a> 2.3</td><td class="a-left">функциональное</td><td class="a-left">2.3. КДН — коэффициент долговой нагрузки: сумма ежемесячных платежей клиента по всем действующим займам и по запрашиваемому кредиту, делённая на среднемесячный доход.</td><td class="a-left">строки 25–26</td></tr>
+<tr><td class="a-left"><a href="#req-007">REQ-007</a> 2.4</td><td class="a-left">функциональное</td><td class="a-left">2.4. Предварительное решение — один из трёх исходов:</td><td class="a-left">строка 27</td></tr>
+<tr><td class="a-left"><a href="#req-008">REQ-008</a></td><td class="a-left">прочее</td><td class="a-left">ПРОПУСТИТЬ заявка передаётся в кредитный конвейер;</td><td class="a-left">строка 28</td></tr>
+<tr><td class="a-left"><a href="#req-009">REQ-009</a></td><td class="a-left">прочее</td><td class="a-left">ОТКАЗ заявка закрывается без передачи в конвейер;</td><td class="a-left">строка 29</td></tr>
+<tr><td class="a-left"><a href="#req-010">REQ-010</a></td><td class="a-left">прочее</td><td class="a-left">РУЧНАЯ_ПРОВЕРКА заявка передаётся кредитному эксперту.</td><td class="a-left">строка 30</td></tr>
+<tr><td class="a-left"><a href="#req-011">REQ-011</a> 3.1</td><td class="a-left">функциональное</td><td class="a-left">3.1. Возраст заявителя на дату подачи заявки — от 21 года до 63 лет включительно. Возраст определяется по дате рождения, закодированной в первых шести цифрах ИИН.</td><td class="a-left">строки 34–35</td></tr>
+<tr><td class="a-left"><a href="#req-012">REQ-012</a> 3.2</td><td class="a-left">функциональное</td><td class="a-left">3.2. Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до 60 месяцев включительно, целым числом месяцев.</td><td class="a-left">строки 36–37</td></tr>
+<tr><td class="a-left"><a href="#req-013">REQ-013</a> 3.3</td><td class="a-left">функциональное</td><td class="a-left">3.3. Среднемесячный доход за последние 6 месяцев по выписке о пенсионных взносах — не ниже 85 000 тенге.</td><td class="a-left">строки 38–39</td></tr>
+<tr><td class="a-left"><a href="#req-014">REQ-014</a> 3.4</td><td class="a-left">функциональное</td><td class="a-left">3.4. КДН с учётом запрашиваемого кредита не должен превышать 0,5. При КДН выше 0,5 выносится решение ОТКАЗ.</td><td class="a-left">строки 40–41</td></tr>
+<tr><td class="a-left"><a href="#req-015">REQ-015</a> 3.5</td><td class="a-left">функциональное</td><td class="a-left">3.5. Заявитель должен иметь стабильный доход и положительную кредитную историю.</td><td class="a-left">строка 42</td></tr>
+<tr><td class="a-left"><a href="#req-016">REQ-016</a> 3.6</td><td class="a-left">функциональное</td><td class="a-left">3.6. Наличие в кредитном отчёте просрочки более 30 календарных дней по любому действующему займу — решение ОТКАЗ.</td><td class="a-left">строки 43–44</td></tr>
+<tr><td class="a-left"><a href="#req-017">REQ-017</a> 3.7</td><td class="a-left">функциональное</td><td class="a-left">3.7. КДН округляется до двух знаков после запятой по правилам математического округления до сравнения с пороговыми значениями.</td><td class="a-left">строки 45–46</td></tr>
+<tr><td class="a-left"><a href="#req-018">REQ-018</a> 4.1</td><td class="a-left">процесс</td><td class="a-left">4.1. Модуль проверяет стоп-факторы, запрашивает кредитный отчёт, рассчитывает КДН, сохраняет результат в хранилище и отправляет клиенту SMS с решением.</td><td class="a-left">строки 50–51</td></tr>
+<tr><td class="a-left"><a href="#req-019">REQ-019</a> 4.2</td><td class="a-left">процесс</td><td class="a-left">4.2. Стоп-факторы проверяются в порядке, указанном в таблице 5.1. При срабатывании первого стоп-фактора дальнейшие проверки не выполняются.</td><td class="a-left">строки 52–53</td></tr>
+<tr><td class="a-left"><a href="#req-020">REQ-020</a> 4.3</td><td class="a-left">процесс</td><td class="a-left">4.3. Заявки клиентов старше 65 лет направляются на РУЧНАЯ_ПРОВЕРКА независимо от прочих условий.</td><td class="a-left">строки 54–55</td></tr>
+<tr><td class="a-left"><a href="#req-021">REQ-021</a> 4.4</td><td class="a-left">процесс</td><td class="a-left">4.4. Расчёт КДН выполняется хранимой процедурой PL/SQL в схеме CREDIT_CORE.</td><td class="a-left">строка 56</td></tr>
+<tr><td class="a-left"><a href="#req-022">REQ-022</a> 4.5</td><td class="a-left">процесс</td><td class="a-left">4.5. Модуль должен исключать ошибочные отказы платёжеспособным клиентам.</td><td class="a-left">строка 57</td></tr>
+<tr><td class="a-left"><a href="#req-023">REQ-023</a> 4.6</td><td class="a-left">процесс</td><td class="a-left">4.6. Пример расчёта: доход 300 000 тенге, платежи по действующим займам 90 000 тенге, платёж по запрашиваемому кредиту 70 000 тенге; КДН = 0,53; решение — ПРОПУСТИТЬ.</td><td class="a-left">строки 58–59</td></tr>
+<tr><td class="a-left"><a href="#req-024">REQ-024</a> 5.1</td><td class="a-left">функциональное</td><td class="a-left">5.1. Стоп-факторы и решения (проверяются сверху вниз):</td><td class="a-left">строка 63</td></tr>
+<tr><td class="a-left"><a href="#req-025">REQ-025</a></td><td class="a-left">прочее</td><td class="a-left">N: 1 | Условие: Возраст вне диапазона п. 3.1 | Решение: ОТКАЗ</td><td class="a-left">строка 66</td></tr>
+<tr><td class="a-left"><a href="#req-026">REQ-026</a></td><td class="a-left">прочее</td><td class="a-left">N: 2 | Условие: Сумма или срок вне диапазона п. 3.2 | Решение: ОТКАЗ</td><td class="a-left">строка 67</td></tr>
+<tr><td class="a-left"><a href="#req-027">REQ-027</a></td><td class="a-left">прочее</td><td class="a-left">N: 3 | Условие: Просрочка более 30 дней (п. 3.6) | Решение: ОТКАЗ</td><td class="a-left">строка 68</td></tr>
+<tr><td class="a-left"><a href="#req-028">REQ-028</a></td><td class="a-left">прочее</td><td class="a-left">N: 4 | Условие: Доход ниже порога п. 3.3 | Решение: ОТКАЗ</td><td class="a-left">строка 69</td></tr>
+<tr><td class="a-left"><a href="#req-029">REQ-029</a></td><td class="a-left">прочее</td><td class="a-left">N: 5 | Условие: КДН от 0,50 до 0,60 включительно | Решение: РУЧНАЯ_ПРОВЕРКА</td><td class="a-left">строка 70</td></tr>
+<tr><td class="a-left"><a href="#req-030">REQ-030</a></td><td class="a-left">прочее</td><td class="a-left">N: 6 | Условие: КДН выше 0,60 | Решение: ОТКАЗ</td><td class="a-left">строка 71</td></tr>
+<tr><td class="a-left"><a href="#req-031">REQ-031</a></td><td class="a-left">прочее</td><td class="a-left">N: 7 | Условие: Ни одно условие не выполнено | Решение: ПРОПУСТИТЬ</td><td class="a-left">строка 72</td></tr>
+<tr><td class="a-left"><a href="#req-032">REQ-032</a> 6.1</td><td class="a-left">функциональное</td><td class="a-left">6.1. Повторное поступление заявки с тем же application_id не создаёт новой оценки: модуль возвращает ранее вынесенное предварительное решение без повторного запроса в бюро.</td><td class="a-left">строки 76–77</td></tr>
+<tr><td class="a-left"><a href="#req-033">REQ-033</a> 6.2</td><td class="a-left">функциональное</td><td class="a-left">6.2. Если ИИН заявителя не проходит проверку контрольного разряда, модуль возвращает ошибку INVALID_IIN и не выносит предварительного решения.</td><td class="a-left">строки 78–79</td></tr>
+<tr><td class="a-left"><a href="#req-034">REQ-034</a> 6.3</td><td class="a-left">функциональное</td><td class="a-left">6.3. Если кредитное бюро не ответило, заявка обрабатывается по имеющимся данным.</td><td class="a-left">строка 80</td></tr>
+<tr><td class="a-left"><a href="#req-035">REQ-035</a> 6.4</td><td class="a-left">функциональное</td><td class="a-left">6.4. Повторная подача заявки после отказа — TBD.</td><td class="a-left">строка 81</td></tr>
+<tr><td class="a-left"><a href="#req-036">REQ-036</a> 7.1</td><td class="a-left">данные</td><td class="a-left">7.1. Модуль сохраняет по каждой заявке:</td><td class="a-left">строка 85</td></tr>
+<tr><td class="a-left"><a href="#req-037">REQ-037</a></td><td class="a-left">данные</td><td class="a-left">Поле: application_id | Тип: строка | Единица: — | Описание: идентификатор заявки</td><td class="a-left">строка 88</td></tr>
+<tr><td class="a-left"><a href="#req-038">REQ-038</a></td><td class="a-left">данные</td><td class="a-left">Поле: iin_hash | Тип: строка | Единица: — | Описание: хеш ИИН (SHA-256 с солью)</td><td class="a-left">строка 89</td></tr>
+<tr><td class="a-left"><a href="#req-039">REQ-039</a></td><td class="a-left">данные</td><td class="a-left">Поле: requested_amount | Тип: целое | Единица: тыс. тенге | Описание: запрашиваемая сумма</td><td class="a-left">строка 90</td></tr>
+<tr><td class="a-left"><a href="#req-040">REQ-040</a></td><td class="a-left">данные</td><td class="a-left">Поле: term_months | Тип: целое | Единица: месяц | Описание: срок кредита</td><td class="a-left">строка 91</td></tr>
+<tr><td class="a-left"><a href="#req-041">REQ-041</a></td><td class="a-left">данные</td><td class="a-left">Поле: dti | Тип: десятичное | Единица: — | Описание: КДН, два знака после запятой</td><td class="a-left">строка 92</td></tr>
+<tr><td class="a-left"><a href="#req-042">REQ-042</a></td><td class="a-left">данные</td><td class="a-left">Поле: decision | Тип: строка | Единица: — | Описание: предварительное решение</td><td class="a-left">строка 93</td></tr>
+<tr><td class="a-left"><a href="#req-043">REQ-043</a></td><td class="a-left">данные</td><td class="a-left">Поле: rules_version | Тип: строка | Единица: — | Описание: версия набора правил скоринга</td><td class="a-left">строка 94</td></tr>
+<tr><td class="a-left"><a href="#req-044">REQ-044</a> 7.2</td><td class="a-left">данные</td><td class="a-left">7.2. Записи журнала решений хранятся 5 лет с даты вынесения решения, затем удаляются.</td><td class="a-left">строка 96</td></tr>
+<tr><td class="a-left"><a href="#req-045">REQ-045</a> 7.3</td><td class="a-left">данные</td><td class="a-left">7.3. Для разбора инцидентов в журнал событий записываются ИИН, ФИО, номер телефона заявителя и полный ответ кредитного бюро.</td><td class="a-left">строки 97–98</td></tr>
+<tr><td class="a-left"><a href="#req-046">REQ-046</a> 8.1</td><td class="a-left">интеграция</td><td class="a-left">8.1. Фронт-системы вызывают модуль синхронно. Сумма кредита передаётся в тиынах.</td><td class="a-left">строка 102</td></tr>
+<tr><td class="a-left"><a href="#req-047">REQ-047</a> 8.2</td><td class="a-left">интеграция</td><td class="a-left">8.2. Ответ модуля содержит поле decision со значениями APPROVE, DECLINE или MANUAL.</td><td class="a-left">строка 103</td></tr>
+<tr><td class="a-left"><a href="#req-048">REQ-048</a> 8.3</td><td class="a-left">интеграция</td><td class="a-left">8.3. Формат обмена и коды ошибок — см. п. 9.4.</td><td class="a-left">строка 104</td></tr>
+<tr><td class="a-left"><a href="#req-049">REQ-049</a> 9.1</td><td class="a-left">нефункциональное</td><td class="a-left">9.1. Время ответа модуля — не более 2 секунд.</td><td class="a-left">строка 108</td></tr>
+<tr><td class="a-left"><a href="#req-050">REQ-050</a> 9.2</td><td class="a-left">нефункциональное</td><td class="a-left">9.2. Модуль должен работать быстро и не создавать неудобств клиенту.</td><td class="a-left">строка 109</td></tr>
+<tr><td class="a-left"><a href="#req-051">REQ-051</a> 9.3</td><td class="a-left">нефункциональное</td><td class="a-left">9.3. Доступность модуля — не ниже 99,5% за календарный месяц без учёта согласованных регламентных окон.</td><td class="a-left">строки 110–111</td></tr>
+<tr><td class="a-left"><a href="#req-052">REQ-052</a></td><td class="a-left">критерий приёмки</td><td class="a-left">N: 1 | Исходные данные: Возраст 20 лет, остальные условия выполнены | Ожидаемый результат: ОТКАЗ</td><td class="a-left">строка 116</td></tr>
+<tr><td class="a-left"><a href="#req-053">REQ-053</a></td><td class="a-left">критерий приёмки</td><td class="a-left">N: 2 | Исходные данные: Сумма 5 000 000 тенге, срок 60 месяцев | Ожидаемый результат: проверка суммы и срока пройдена</td><td class="a-left">строка 117</td></tr>
+<tr><td class="a-left"><a href="#req-054">REQ-054</a></td><td class="a-left">критерий приёмки</td><td class="a-left">N: 3 | Исходные данные: КДН 0,55 | Ожидаемый результат: РУЧНАЯ_ПРОВЕРКА</td><td class="a-left">строка 118</td></tr>
+<tr><td class="a-left"><a href="#req-055">REQ-055</a></td><td class="a-left">критерий приёмки</td><td class="a-left">N: 4 | Исходные данные: Повторная заявка того же ИИН в течение 24 часов | Ожидаемый результат: ОТКАЗ с кодом DUPLICATE</td><td class="a-left">строка 119</td></tr>
+<tr><td class="a-left"><a href="#req-056">REQ-056</a></td><td class="a-left">критерий приёмки</td><td class="a-left">N: 5 | Исходные данные: Повторный вызов с тем же application_id | Ожидаемый результат: прежнее решение без запроса в бюро</td><td class="a-left">строка 120</td></tr>
+</tbody></table></div>
+<p><strong>Не считал требованиями: 18 блоков.</strong></p>
+<ul>
+<li>пояснение: название и шапка документа, до первого нумерованного раздела · строки 1, 5</li>
+<li>заголовок: заголовок раздела · строки 4, 13, 21, 32, 48, 61, 74, 83, 100, 106, 113, 122</li>
+<li>сведения о документе: сведения о документе (версия, дата, статус) · строка 7 — «Версия документа: 0.9 Дата: ..2026 Статус: на согласовании Связанные…»</li>
+<li>пустой шаблон: строка шаблона: значения не заполнены или оставлены варианты выбора · строки 125, 126, 127</li>
+</ul>
+<h2 id="s3">3. Проверка каждого требования</h2>
+<p>Без модели каждое требование проверено только автоматическими правилами (размытые слова, заглушки, сроки без условий, незакрытые перечни, несколько требований в одном пункте и др.); смысловые критерии не проверялись (❔).<br>
+Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4. Карточки ниже — только у требований, к которым есть замечания.</p>
+<a id="s3-matrix"></a><p><strong>Матрица «требование × критерий»</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-center">Полнота</th><th class="a-center">Однозн.</th><th class="a-center">Непротив.</th><th class="a-center">Провер.</th><th class="a-center">Реализ.</th><th class="a-center">Необх.</th><th class="a-center">Атом.</th><th class="a-right">Ясность</th></tr></thead><tbody>
+<tr><td class="a-left"><a href="#req-001">REQ-001</a> 1.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-035">REQ-035</a> 6.4</td><td class="a-center"><a href="#d-002">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,2</td></tr>
+<tr><td class="a-left"><a href="#req-046">REQ-046</a> 8.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-048">REQ-048</a> 8.3</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-004">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
+<tr><td class="a-left"><a href="#req-049">REQ-049</a> 9.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+<tr><td class="a-left"><a href="#req-050">REQ-050</a> 9.2</td><td class="a-center">❔</td><td class="a-center"><a href="#d-006">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+</tbody></table></div>
+<p>Не проверены ни по одному критерию (во всех клетках было бы ❔): 50 требований — <a href="#req-002">REQ-002</a>, <a href="#req-003">REQ-003</a>, <a href="#req-004">REQ-004</a>, <a href="#req-005">REQ-005</a>, <a href="#req-006">REQ-006</a>, <a href="#req-007">REQ-007</a>, <a href="#req-008">REQ-008</a>, <a href="#req-009">REQ-009</a>, <a href="#req-010">REQ-010</a>, <a href="#req-011">REQ-011</a>, <a href="#req-012">REQ-012</a>, <a href="#req-013">REQ-013</a>, <a href="#req-014">REQ-014</a>, <a href="#req-015">REQ-015</a>, <a href="#req-016">REQ-016</a>, <a href="#req-017">REQ-017</a>, <a href="#req-018">REQ-018</a>, <a href="#req-019">REQ-019</a>, <a href="#req-020">REQ-020</a>, <a href="#req-021">REQ-021</a>, <a href="#req-022">REQ-022</a>, <a href="#req-023">REQ-023</a>, <a href="#req-024">REQ-024</a>, <a href="#req-025">REQ-025</a>, <a href="#req-026">REQ-026</a>, <a href="#req-027">REQ-027</a>, <a href="#req-028">REQ-028</a>, <a href="#req-029">REQ-029</a>, <a href="#req-030">REQ-030</a>, <a href="#req-031">REQ-031</a>, <a href="#req-032">REQ-032</a>, <a href="#req-033">REQ-033</a>, <a href="#req-034">REQ-034</a>, <a href="#req-036">REQ-036</a>, <a href="#req-037">REQ-037</a>, <a href="#req-038">REQ-038</a>, <a href="#req-039">REQ-039</a>, <a href="#req-040">REQ-040</a>, <a href="#req-041">REQ-041</a>, <a href="#req-042">REQ-042</a>, <a href="#req-043">REQ-043</a>, <a href="#req-044">REQ-044</a>, <a href="#req-045">REQ-045</a>, <a href="#req-047">REQ-047</a>, <a href="#req-051">REQ-051</a>, <a href="#req-052">REQ-052</a>, <a href="#req-053">REQ-053</a>, <a href="#req-054">REQ-054</a>, <a href="#req-055">REQ-055</a>, <a href="#req-056">REQ-056</a>.</p>
+<p>Пустых клеток (не проверено): 386.</p>
+<h3 id="req-001">REQ-001 · 1.1 · 1. ОБЩИЕ СВЕДЕНИЯ · строки 15–16</h3>
+<blockquote>
+<p>1.1. Модуль ПреСкор выполняет предварительную оценку заявки на беззалоговый потребительский кредит в тенге до передачи заявки в основной кредитный конвейер.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-003">D-003</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-035">REQ-035 · 6.4 · 6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ · строка 81</h3>
+<blockquote>
+<p>6.4. Повторная подача заявки после отказа — TBD.</p>
+</blockquote>
+<p>Ясность 9,2 — ясное · ⚠️ Полнота <a href="#d-002">D-002</a> 🟢 · прочие без модели не проверялись</p>
+<div class="card card-minor"><a id="d-002"></a>
+<p><strong>D-002 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Заглушка вместо значения: «TBD». Вместо содержания стоит заглушка «TBD». Пока значение не определено, эту часть нельзя ни реализовать, ни проверить: каждый подставит своё, и расхождение обнаружится только на приёмке.</p>
+<ul>
+<li>Где: строка 81 (цитата выше). Как исправить: Впишите значение. Если оно ещё неизвестно — укажите, кто и к какой дате его определит, и не начинайте работу над этой частью до решения.</li>
+<li>Вопрос автору <a href="#v-06">В-06</a>; источник: правило <code>placeholder</code></li>
+</ul>
+</div>
+<h3 id="req-046">REQ-046 · 8.1 · 8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ · строка 102</h3>
+<blockquote>
+<p>8.1. Фронт-системы вызывают модуль синхронно. Сумма кредита передаётся в тиынах.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-003">D-003</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-048">REQ-048 · 8.3 · 8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ · строка 104</h3>
+<blockquote>
+<p>8.3. Формат обмена и коды ошибок — см. п. 9.4.</p>
+</blockquote>
+<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#d-004">D-004</a> 🟢 · прочие без модели не проверялись</p>
+<h3 id="req-049">REQ-049 · 9.1 · 9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ · строка 108</h3>
+<blockquote>
+<p>9.1. Время ответа модуля — не более 2 секунд.</p>
+</blockquote>
+<p>Ясность 7,5 — есть замечания · ⚠️ Провер. <a href="#d-005">D-005</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="d-005"></a>
+<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
+<p>Задан срок «не более 2 секунд», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.</p>
+<ul>
+<li>Цитата: строка 108 (цитата выше)</li>
+<li>Как исправить: Допишите условия измерения: «не более 2 секунд для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан.</li>
+<li>Вопрос автору <a href="#v-02">В-02</a>; источник: правило <code>time-without-conditions</code></li>
+</ul>
+</div>
+<h3 id="req-050">REQ-050 · 9.2 · 9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ · строка 109</h3>
+<blockquote>
+<p>9.2. Модуль должен работать быстро и не создавать неудобств клиенту.</p>
+</blockquote>
+<p>Ясность 7,5 — есть замечания · ⚠️ Однозн. <a href="#d-006">D-006</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="d-006"></a>
+<p><strong>D-006 · 🟡 <span class="sev sev-major">MAJOR</span> · Однозначность.</strong> Размытая формулировка: «быстро»</p>
+<p>Слово «быстро» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.</p>
+<ul>
+<li>Цитата: строка 109 (цитата выше)</li>
+<li>Как исправить: Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.</li>
+<li>Вопрос автору <a href="#v-03">В-03</a>; источник: правило <code>vague-word</code></li>
+</ul>
+</div>
+<a id="s3-clean"></a><p><strong>Требования без замечаний (50)</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-left">Где</th><th class="a-left">Начало текста (полностью — в <a href="#s2">разделе 2</a>)</th></tr></thead><tbody>
+<tr><td class="a-left"><a id="req-002"></a>REQ-002 1.2</td><td class="a-left">строки 17–18</td><td class="a-left">1.2. Цель доработки — снизить число…</td></tr>
+<tr><td class="a-left"><a id="req-003"></a>REQ-003 1.3</td><td class="a-left">строка 19</td><td class="a-left">1.3. Каналы подачи заявки: мобильное…</td></tr>
+<tr><td class="a-left"><a id="req-004"></a>REQ-004 2.1</td><td class="a-left">строка 23</td><td class="a-left">2.1. Заявка — запрос клиента на кредит…</td></tr>
+<tr><td class="a-left"><a id="req-005"></a>REQ-005 2.2</td><td class="a-left">строка 24</td><td class="a-left">2.2. Кредитный отчёт — отчёт…</td></tr>
+<tr><td class="a-left"><a id="req-006"></a>REQ-006 2.3</td><td class="a-left">строки 25–26</td><td class="a-left">2.3. КДН — коэффициент долговой…</td></tr>
+<tr><td class="a-left"><a id="req-007"></a>REQ-007 2.4</td><td class="a-left">строка 27</td><td class="a-left">2.4. Предварительное решение — один из…</td></tr>
+<tr><td class="a-left"><a id="req-008"></a>REQ-008</td><td class="a-left">строка 28</td><td class="a-left">ПРОПУСТИТЬ заявка передаётся в…</td></tr>
+<tr><td class="a-left"><a id="req-009"></a>REQ-009</td><td class="a-left">строка 29</td><td class="a-left">ОТКАЗ заявка закрывается без передачи…</td></tr>
+<tr><td class="a-left"><a id="req-010"></a>REQ-010</td><td class="a-left">строка 30</td><td class="a-left">РУЧНАЯ_ПРОВЕРКА заявка передаётся…</td></tr>
+<tr><td class="a-left"><a id="req-011"></a>REQ-011 3.1</td><td class="a-left">строки 34–35</td><td class="a-left">3.1. Возраст заявителя на дату подачи…</td></tr>
+<tr><td class="a-left"><a id="req-012"></a>REQ-012 3.2</td><td class="a-left">строки 36–37</td><td class="a-left">3.2. Запрашиваемая сумма — от 100 000…</td></tr>
+<tr><td class="a-left"><a id="req-013"></a>REQ-013 3.3</td><td class="a-left">строки 38–39</td><td class="a-left">3.3. Среднемесячный доход за последние…</td></tr>
+<tr><td class="a-left"><a id="req-014"></a>REQ-014 3.4</td><td class="a-left">строки 40–41</td><td class="a-left">3.4. КДН с учётом запрашиваемого…</td></tr>
+<tr><td class="a-left"><a id="req-015"></a>REQ-015 3.5</td><td class="a-left">строка 42</td><td class="a-left">3.5. Заявитель должен иметь стабильный…</td></tr>
+<tr><td class="a-left"><a id="req-016"></a>REQ-016 3.6</td><td class="a-left">строки 43–44</td><td class="a-left">3.6. Наличие в кредитном отчёте…</td></tr>
+<tr><td class="a-left"><a id="req-017"></a>REQ-017 3.7</td><td class="a-left">строки 45–46</td><td class="a-left">3.7. КДН округляется до двух знаков…</td></tr>
+<tr><td class="a-left"><a id="req-018"></a>REQ-018 4.1</td><td class="a-left">строки 50–51</td><td class="a-left">4.1. Модуль проверяет стоп-факторы…</td></tr>
+<tr><td class="a-left"><a id="req-019"></a>REQ-019 4.2</td><td class="a-left">строки 52–53</td><td class="a-left">4.2. Стоп-факторы проверяются в…</td></tr>
+<tr><td class="a-left"><a id="req-020"></a>REQ-020 4.3</td><td class="a-left">строки 54–55</td><td class="a-left">4.3. Заявки клиентов старше 65 лет…</td></tr>
+<tr><td class="a-left"><a id="req-021"></a>REQ-021 4.4</td><td class="a-left">строка 56</td><td class="a-left">4.4. Расчёт КДН выполняется хранимой…</td></tr>
+<tr><td class="a-left"><a id="req-022"></a>REQ-022 4.5</td><td class="a-left">строка 57</td><td class="a-left">4.5. Модуль должен исключать ошибочные…</td></tr>
+<tr><td class="a-left"><a id="req-023"></a>REQ-023 4.6</td><td class="a-left">строки 58–59</td><td class="a-left">4.6. Пример расчёта: доход 300 000…</td></tr>
+<tr><td class="a-left"><a id="req-024"></a>REQ-024 5.1</td><td class="a-left">строка 63</td><td class="a-left">5.1. Стоп-факторы и решения…</td></tr>
+<tr><td class="a-left"><a id="req-025"></a>REQ-025</td><td class="a-left">строка 66</td><td class="a-left">N: 1 | Условие: Возраст вне диапазона…</td></tr>
+<tr><td class="a-left"><a id="req-026"></a>REQ-026</td><td class="a-left">строка 67</td><td class="a-left">N: 2 | Условие: Сумма или срок вне…</td></tr>
+<tr><td class="a-left"><a id="req-027"></a>REQ-027</td><td class="a-left">строка 68</td><td class="a-left">N: 3 | Условие: Просрочка более 30…</td></tr>
+<tr><td class="a-left"><a id="req-028"></a>REQ-028</td><td class="a-left">строка 69</td><td class="a-left">N: 4 | Условие: Доход ниже порога п…</td></tr>
+<tr><td class="a-left"><a id="req-029"></a>REQ-029</td><td class="a-left">строка 70</td><td class="a-left">N: 5 | Условие: КДН от 0,50 до 0,60…</td></tr>
+<tr><td class="a-left"><a id="req-030"></a>REQ-030</td><td class="a-left">строка 71</td><td class="a-left">N: 6 | Условие: КДН выше 0,60 |…</td></tr>
+<tr><td class="a-left"><a id="req-031"></a>REQ-031</td><td class="a-left">строка 72</td><td class="a-left">N: 7 | Условие: Ни одно условие не…</td></tr>
+<tr><td class="a-left"><a id="req-032"></a>REQ-032 6.1</td><td class="a-left">строки 76–77</td><td class="a-left">6.1. Повторное поступление заявки с…</td></tr>
+<tr><td class="a-left"><a id="req-033"></a>REQ-033 6.2</td><td class="a-left">строки 78–79</td><td class="a-left">6.2. Если ИИН заявителя не проходит…</td></tr>
+<tr><td class="a-left"><a id="req-034"></a>REQ-034 6.3</td><td class="a-left">строка 80</td><td class="a-left">6.3. Если кредитное бюро не ответило…</td></tr>
+<tr><td class="a-left"><a id="req-036"></a>REQ-036 7.1</td><td class="a-left">строка 85</td><td class="a-left">7.1. Модуль сохраняет по каждой заявке:</td></tr>
+<tr><td class="a-left"><a id="req-037"></a>REQ-037</td><td class="a-left">строка 88</td><td class="a-left">Поле: application_id | Тип: строка |…</td></tr>
+<tr><td class="a-left"><a id="req-038"></a>REQ-038</td><td class="a-left">строка 89</td><td class="a-left">Поле: iin_hash | Тип: строка |…</td></tr>
+<tr><td class="a-left"><a id="req-039"></a>REQ-039</td><td class="a-left">строка 90</td><td class="a-left">Поле: requested_amount | Тип: целое |…</td></tr>
+<tr><td class="a-left"><a id="req-040"></a>REQ-040</td><td class="a-left">строка 91</td><td class="a-left">Поле: term_months | Тип: целое |…</td></tr>
+<tr><td class="a-left"><a id="req-041"></a>REQ-041</td><td class="a-left">строка 92</td><td class="a-left">Поле: dti | Тип: десятичное | Единица…</td></tr>
+<tr><td class="a-left"><a id="req-042"></a>REQ-042</td><td class="a-left">строка 93</td><td class="a-left">Поле: decision | Тип: строка |…</td></tr>
+<tr><td class="a-left"><a id="req-043"></a>REQ-043</td><td class="a-left">строка 94</td><td class="a-left">Поле: rules_version | Тип: строка |…</td></tr>
+<tr><td class="a-left"><a id="req-044"></a>REQ-044 7.2</td><td class="a-left">строка 96</td><td class="a-left">7.2. Записи журнала решений хранятся 5…</td></tr>
+<tr><td class="a-left"><a id="req-045"></a>REQ-045 7.3</td><td class="a-left">строки 97–98</td><td class="a-left">7.3. Для разбора инцидентов в журнал…</td></tr>
+<tr><td class="a-left"><a id="req-047"></a>REQ-047 8.2</td><td class="a-left">строка 103</td><td class="a-left">8.2. Ответ модуля содержит поле…</td></tr>
+<tr><td class="a-left"><a id="req-051"></a>REQ-051 9.3</td><td class="a-left">строки 110–111</td><td class="a-left">9.3. Доступность модуля — не ниже…</td></tr>
+<tr><td class="a-left"><a id="req-052"></a>REQ-052</td><td class="a-left">строка 116</td><td class="a-left">N: 1 | Исходные данные: Возраст 20…</td></tr>
+<tr><td class="a-left"><a id="req-053"></a>REQ-053</td><td class="a-left">строка 117</td><td class="a-left">N: 2 | Исходные данные: Сумма 5 000…</td></tr>
+<tr><td class="a-left"><a id="req-054"></a>REQ-054</td><td class="a-left">строка 118</td><td class="a-left">N: 3 | Исходные данные: КДН 0,55 |…</td></tr>
+<tr><td class="a-left"><a id="req-055"></a>REQ-055</td><td class="a-left">строка 119</td><td class="a-left">N: 4 | Исходные данные: Повторная…</td></tr>
+<tr><td class="a-left"><a id="req-056"></a>REQ-056</td><td class="a-left">строка 120</td><td class="a-left">N: 5 | Исходные данные: Повторный…</td></tr>
+</tbody></table></div>
+<h2 id="s4">4. Проверка всего набора требований</h2>
+<p>Здесь замечания к документу в целом: противоречия между разделами, пропуски, стандарты, термины, нумерация. Без модели — только то, что находят автоматические правила.</p>
+<h3>4.1 Полнота набора</h3>
+<div class="card card-minor"><a id="d-007"></a>
+<p><strong>D-007 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена. В таблице перечислены участники, но нет ни ФИО, ни подписей, ни дат. Это таблица согласования: документ формально никем не согласован, и непонятно, кто отвечает за требования и чья редакция действует.</p>
+<ul>
+<li>Где: строка 122: «СОГЛАСОВАНИЕ»; строка 124: «Подразделение ФИО Дата». Как исправить: Заполните таблицу: укажите подразделения, ФИО ответственных и дату согласования.</li>
+<li>Вопрос автору <a href="#v-07">В-07</a>; источник: правило <code>empty-table</code></li>
+</ul>
+</div>
+<h3>4.2 Взаимная непротиворечивость</h3>
+<div class="card card-major"><a id="d-003"></a>
+<p><strong>D-003 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
+<p>Одни суммы заданы в единицах «тиын», другие — в «тенге», а правило пересчёта нигде не записано. Разработчик может сохранить сумму в одних единицах, а сравнить её с порогом в других — ошибка в 100 раз, которую не заметят до первого реального платежа.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 102, <a href="#req-046">REQ-046</a>: «Сумма кредита передаётся в тиынах»</li>
+<li>строки 15–16, <a href="#req-001">REQ-001</a>: «Модуль ПреСкор выполняет предварительную оценку заявки на беззалоговый потребительский кредит в тенге до передачи заявки в основной кредитный конвейер»</li>
+</ul></li>
+<li>Как исправить: Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.</li>
+<li>Вопрос автору <a href="#v-01">В-01</a>; источник: правило <code>unit-mix</code></li>
+</ul>
+</div>
+<div class="card card-minor"><a id="d-004"></a>
+<p><strong>D-004 · 🟢 <span class="sev sev-minor">MINOR</span> · Взаимная непротиворечивость.</strong> Ссылка на несуществующий объект: раздел 9.4. Текст ссылается на «раздел 9.4», но в документе такого нет. Читатель не может открыть то, на что опирается требование, и каждый додумает содержание по-своему.</p>
+<ul>
+<li>Где: строка 104, <a href="#req-048">REQ-048</a>: «Формат обмена и коды ошибок — см. п. 9.4». Как исправить: Исправьте ссылку на существующий раздел, таблицу или требование, либо добавьте «раздел 9.4» в документ.</li>
+<li>Вопрос автору <a href="#v-04">В-04</a>; источник: правило <code>dangling-reference</code></li>
+</ul>
+</div>
+<h3>4.3 Реализуемость, стандарты и безопасность</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<h3>4.4 Понятность и термины</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<h3>4.5 Прослеживаемость</h3>
+<div class="card card-minor"><a id="d-001"></a>
+<p><strong>D-001 · 🟢 <span class="sev sev-minor">MINOR</span> · Прослеживаемость.</strong> В шапке документа не заполнено поле «Дата». В документе версия или дата оставлены незаполненными. Нельзя понять, какая редакция актуальна: замечания ревью, задачи и тесты нельзя привязать к конкретной версии, а изменения требований — отследить.</p>
+<ul>
+<li>Где: строка 8: «Дата: ..2026». Как исправить: Добавьте в начало документа номер версии (например, 1.0), дату, автора и таблицу истории изменений.</li>
+<li>Вопрос автору <a href="#v-05">В-05</a>; источник: правило <code>no-version</code></li>
+</ul>
+<p>Покрытие требований критериями приёмки строит модель; без неё оно не оценивалось.</p>
+</div>
+<h3 id="s4-gaps">Карта полноты: контрольные вопросы к документу</h3>
+<p>Агент обязан ответить на каждый из 35 вопросов — так ни один типовой пробел не пропускается молча. Карта сама не меняет индексы и итог: на них влияют только связанные замечания.</p>
+<p>Итого: описано 0 · пробелов 0 · не относится 3 · не оценено 32.</p>
+<p>Без модели на остальные 32 вопросов никто не отвечал; их список — в JSON-версии отчёта (поле <code>gap_map</code>).</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Вопрос</th><th class="a-left">Ответ</th><th class="a-left">На чём основан ответ</th></tr></thead><tbody>
+<tr><td class="a-left">IF1. Надёжность интерфейса</td><td class="a-left">— не относится</td><td class="a-left">в документе нет описания программного интерфейса</td></tr>
+<tr><td class="a-left">IF2. Ошибки интерфейса</td><td class="a-left">— не относится</td><td class="a-left">в документе нет описания программного интерфейса</td></tr>
+<tr><td class="a-left">IF3. Права доступа в интерфейсе</td><td class="a-left">— не относится</td><td class="a-left">в документе нет описания программного интерфейса</td></tr>
+</tbody></table></div>
+<h3 id="s4-obs">Наблюдения (проверьте сами, на итог не влияют)</h3>
+<p>Эти признаки находятся словарными правилами низкой точности: часто это нормальная формулировка. Они не входят в число дефектов, индексы и вердикт.</p>
+<ul>
+<li><a id="n-01"></a><strong>Н-01</strong> · строки 25–26 · <a href="#req-006">REQ-006</a> · Обобщение «всем» без границ: «КДН — коэффициент долговой нагрузки: сумма ежемесячных платежей клиента по всем действующим займам и по запрашиваемому… (цитата сокращена)»</li>
+<li><a id="n-02"></a><strong>Н-02</strong> · строка 40 · <a href="#req-014">REQ-014</a> · Требование сформулировано через отрицание («не должен»): «КДН с учётом запрашиваемого кредита не должен превышать 0,5»</li>
+<li><a id="n-03"></a><strong>Н-03</strong> · строка 80 · <a href="#req-034">REQ-034</a> · Неясно, к чему относится «данным»: «Если кредитное бюро не ответило, заявка обрабатывается по имеющимся данным»</li>
+</ul>
+<h2 id="s5">5. Сводка</h2>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Показатель</th><th class="a-right">Значение</th></tr></thead><tbody>
+<tr><td class="a-left">Требований всего</td><td class="a-right">56</td></tr>
+<tr><td class="a-left">— без замечаний</td><td class="a-right">50</td></tr>
+<tr><td class="a-left">— с замечаниями</td><td class="a-right">6</td></tr>
+<tr><td class="a-left">Замечаний всего</td><td class="a-right">7</td></tr>
+<tr><td class="a-left">— 🔴 <span class="sev sev-critical">CRITICAL</span> (блокеры)</td><td class="a-right">0</td></tr>
+<tr><td class="a-left">— 🟡 <span class="sev sev-major">MAJOR</span> (существенные)</td><td class="a-right">3</td></tr>
+<tr><td class="a-left">— 🟢 <span class="sev sev-minor">MINOR</span> (мелкие)</td><td class="a-right">4</td></tr>
+<tr><td class="a-left">Наблюдений (на итог не влияют)</td><td class="a-right">3</td></tr>
+<tr><td class="a-left">Вопросов автору</td><td class="a-right">7</td></tr>
+<tr><td class="a-left">Контрольных вопросов к документу</td><td class="a-right">35, из них пробелов 0</td></tr>
+<tr><td class="a-left">Тестов можно написать уже сейчас</td><td class="a-right">19</td></tr>
+<tr><td class="a-left">Тестов нельзя написать без ответа автора</td><td class="a-right">2</td></tr>
+</tbody></table></div>
+<p><strong>Замечания по критериям качества</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Критерий</th><th class="a-right">Замечаний</th><th class="a-left">Основание</th></tr></thead><tbody>
+<tr><td class="a-left">Полнота</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
+<tr><td class="a-left">Однозначность</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2</td></tr>
+<tr><td class="a-left">Проверяемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6</td></tr>
+<tr><td class="a-left">Полнота набора</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
+<tr><td class="a-left">Взаимная непротиворечивость</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4</td></tr>
+<tr><td class="a-left">Прослеживаемость</td><td class="a-right">1</td><td class="a-left">IEEE 830-1998 п. 4.3.8 (Traceable)</td></tr>
+</tbody></table></div>
+<p><strong>Индекс готовности документа</strong></p>
+<p><strong>92 из 100 — готов</strong> (предварительно: применены только правила). Шкала: 85 и выше — готов, 60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов.</p>
+<p>Как посчитан: 10 × 9,85 (средняя ясность 56 треб.) − 6 (штраф за замечания к набору: 8×0 + 3×1 + 1×3 = 6) = 92. Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
+<p>Требования по ясности: ясное — 52 · есть замечания — 4 · нужна доработка — 0 · в таком виде использовать нельзя — 0.</p>
+<p>Плотность: 0,12 дефекта на одно требование · 8,6 на 1000 слов документа. Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.</p>
+<p><strong>Критичные дефекты:</strong> нет.</p>
+<p><strong>Время и стоимость:</strong> 0,1 с, $0 (модель не вызывалась).</p>
+<h2 id="s6">6. Итог</h2>
+<p><strong>⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (модель не использовалась: проверены только автоматические правила, итог предварительный)</strong></p>
+<p>Блокеров нет, но есть 3 существенных замечания: без ответов автора разработчик и тестировщик могут понять эти места по-разному. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.</p>
+<p><strong>Что исправить в первую очередь</strong></p>
+<ol>
+<li>Денежные суммы в разных единицах: тиын и тенге. (<a href="#d-003">D-003</a>)</li>
+<li>Ограничение по времени без условий измерения. (<a href="#d-005">D-005</a>)</li>
+<li>Размытая формулировка: «быстро». (<a href="#d-006">D-006</a>)</li>
+</ol>
+<p><strong>Что в документе уже хорошо</strong></p>
+<p>Без модели сильные стороны документа не оцениваются.</p>
+<h2 id="s7">7. Уточняющие вопросы к автору ТЗ</h2>
+<p>7 вопросов составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
+<h3>Важные (3)</h3>
+<div class="card"><a id="v-01"></a>
+<p><strong>В-01.</strong> В каких единицах хранить, передавать и сравнивать суммы? (кому: архитектор или разработчик; к <a href="#d-003">D-003</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 96</li>
+</ul>
+</div>
+<div class="card"><a id="v-02"></a>
+<p><strong>В-02.</strong> Для какой доли случаев и при какой нагрузке должен выполняться срок «не более 2 секунд»? (кому: владелец продукта (бизнес); к <a href="#d-005">D-005</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+</ul>
+</div>
+<div class="card"><a id="v-03"></a>
+<p><strong>В-03.</strong> Что конкретно означает «быстро» в этом требовании? (кому: аналитик — автор документа; к <a href="#d-006">D-006</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+</ul>
+</div>
+<h3>Желательные (4)</h3>
+<div class="card"><a id="v-04"></a>
+<p><strong>В-04.</strong> Что имелось в виду под «раздел 9.4»? (кому: аналитик — автор документа; к <a href="#d-004">D-004</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 94</li>
+</ul>
+</div>
+<div class="card"><a id="v-05"></a>
+<p><strong>В-05.</strong> Какую версию и дату присвоить документу? (кому: аналитик — автор документа; к <a href="#d-001">D-001</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+</ul>
+</div>
+<div class="card"><a id="v-06"></a>
+<p><strong>В-06.</strong> Чем заменить заглушку «TBD»? (кому: владелец продукта (бизнес); к <a href="#d-002">D-002</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+</ul>
+</div>
+<div class="card"><a id="v-07"></a>
+<p><strong>В-07.</strong> Кто должен быть в этой таблице? (кому: владелец продукта (бизнес); к <a href="#d-007">D-007</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+</ul>
+</div>
+<h2 id="s8">8. Черновики приёмочных тестов</h2>
+<p>Можно написать уже сейчас: 19 · Нельзя написать без ответа автора: 2. Полные тексты (Дано / Когда / Тогда) — в файле <code>*.tests.md</code> рядом с отчётом.</p>
+<ul>
+<li>Готовы: <a id="t-01"></a>Т-01 (<a href="#req-011">REQ-011</a>), <a id="t-02"></a>Т-02 (<a href="#req-011">REQ-011</a>), <a id="t-03"></a>Т-03 (<a href="#req-012">REQ-012</a>), <a id="t-04"></a>Т-04 (<a href="#req-012">REQ-012</a>), <a id="t-05"></a>Т-05 (<a href="#req-012">REQ-012</a>), <a id="t-06"></a>Т-06 (<a href="#req-012">REQ-012</a>), <a id="t-07"></a>Т-07 (<a href="#req-013">REQ-013</a>), <a id="t-08"></a>Т-08 (<a href="#req-013">REQ-013</a>), <a id="t-09"></a>Т-09 (<a href="#req-014">REQ-014</a>), <a id="t-10"></a>Т-10 (<a href="#req-016">REQ-016</a>), <a id="t-11"></a>Т-11 (<a href="#req-016">REQ-016</a>), <a id="t-12"></a>Т-12 (<a href="#req-027">REQ-027</a>), <a id="t-13"></a>Т-13 (<a href="#req-027">REQ-027</a>), <a id="t-14"></a>Т-14 (<a href="#req-029">REQ-029</a>), <a id="t-15"></a>Т-15 (<a href="#req-029">REQ-029</a>), <a id="t-16"></a>Т-16 (<a href="#req-033">REQ-033</a>), <a id="t-17"></a>Т-17 (<a href="#req-034">REQ-034</a>), <a id="t-20"></a>Т-20 (<a href="#req-051">REQ-051</a>), <a id="t-21"></a>Т-21 (<a href="#req-051">REQ-051</a>).</li>
+<li>Ждут ответа <a href="#v-02">В-02</a>: <a id="t-18"></a>Т-18, <a id="t-19"></a>Т-19.</li>
+</ul>
+<h2 id="app">Приложение. Как получен отчёт</h2>
+<p><strong>Метод.</strong></p>
+<ol>
+<li>Документ читается и делится на блоки (абзацы, пункты, строки таблиц); номера строк берутся из исходного текста. Значения, похожие на номера карт и ИИН, маскируются до любой обработки.</li>
+<li>Блоки делятся на требования и служебные части эвристикой; номера REQ-… присваивает программа.</li>
+<li>Автоматические правила (набор 1.1: 27 основных и 8 слабых «наблюдений») ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, схемы без веток ошибок, подсадной текст для ИИ.</li>
+<li>Модель не использовалась: проверки по смыслу (противоречия, пропущенные сценарии, пограничные случаи) не выполнялись.</li>
+<li>Каждую цитату программа ищет в тексте документа; замечание без найденной цитаты выбрасывается, в отчёт попадает исходный текст, а не пересказ. Номера, индексы, вердикт и отметки в матрице считает программа; перед записью отчёта она проверяет, что его части не противоречат друг другу.</li>
+</ol>
+<p><strong>Честно о границах.</strong> Это первый проход, который экономит время проверяющего; решение остаётся за человеком. Опубликованные замеры ИИ-проверки требований показывают, что лучшие модели находят примерно половину настоящих проблем и ошибочно помечают около одного требования из десяти. Поэтому цитаты сверяет программа, а полнота агента измеряется на контрольных документах, которых он раньше не видел. В этом прогоне модель не работала, поэтому найдено заведомо меньше.</p>
+<p><strong>Ограничения этого прогона</strong></p>
+<ul>
+<li>Модель не использовалась: найдено только то, что выявляют правила по формальным признакам.</li>
+<li>Рисунки и схемы-картинки не проверяются: учитывается только текст.</li>
+<li>Агент не знает внутренних стандартов банка и не видит связанных документов, если их не передали через --context.</li>
+</ul>
+<p><strong>Подробности прогона</strong> — в файле <code>*.diagnostic.md</code> рядом с отчётом: расход по этапам, отклонённые перепроверкой (0), объединённые повторы (0), выброшенные без подтверждённой цитаты (0). Журнал решений — в JSON-версии (поле <code>audit</code>, только хэши текстов): 0 обращений к модели, 0 решений программы.</p>
+</article></main>
+<footer>Отчёт сформирован программой «Ревизор ТЗ». Решение остаётся за человеком.</footer>
+</body>
+</html>

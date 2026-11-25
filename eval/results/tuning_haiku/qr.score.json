@@ -1,0 +1,591 @@
+{
+  "document": "qr_merchant_stories.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.040499,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 282.1,
+    "doc_name": "qr_merchant_stories.md"
+  },
+  "counts": {
+    "requirements": 41,
+    "findings_open": 79,
+    "advisory": 6
+  },
+  "recall": {
+    "overall": {
+      "total": 17,
+      "strict": 15,
+      "loose": 17,
+      "strict_share": 0.8823529411764706,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 2,
+        "loose": 3,
+        "strict_share": 0.6666666666666666,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 9,
+        "strict": 8,
+        "loose": 9,
+        "strict_share": 0.8888888888888888,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 5,
+        "strict": 5,
+        "loose": 5,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {}
+  },
+  "severity_agreement": {
+    "same": 7,
+    "tool_higher": 7,
+    "tool_lower": 1
+  },
+  "defects": [
+    {
+      "id": "K-01",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Срок зачисления выручки: «в день оплаты» (QR-5) и «на следующий рабочий день» (QR-9)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-106"
+      ],
+      "loose_fids": [
+        "D-049",
+        "D-051",
+        "D-053",
+        "D-106",
+        "D-107",
+        "D-110",
+        "D-111"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "K-02",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Номер телефона покупателя в URL чека, чек открывается без авторизации",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-116",
+        "D-121"
+      ],
+      "loose_fids": [
+        "D-116",
+        "D-119",
+        "D-121"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-03",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Срок жизни QR 5 минут против автоотмены через 10 минут; судьба оплаты между ними не определена",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-020",
+        "D-039",
+        "D-042",
+        "D-043"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-04",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Верхняя граница суммы: до 999 999 ₸ в общих ограничениях и до 1 000 000 ₸ включительно в QR-1",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-008",
+        "D-009",
+        "D-010",
+        "D-013",
+        "D-015"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-05",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Пример зачисления не соответствует комиссии 0,95%",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-054"
+      ],
+      "loose_fids": [
+        "D-003",
+        "D-054"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-06",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "«Мгновенно» — непроверяемый срок обновления статуса",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-033"
+      ],
+      "loose_fids": [
+        "D-033",
+        "D-036"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-07",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "QR-6 даёт кассиру оформлять возвраты, QR-7 это запрещает",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-056"
+      ],
+      "loose_fids": [
+        "D-043",
+        "D-047",
+        "D-056",
+        "D-072",
+        "D-073",
+        "D-074"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-08",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Ограничена только сумма одного частичного возврата, но не их сумма",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-065"
+      ],
+      "loose_fids": [
+        "D-003",
+        "D-047",
+        "D-065"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-09",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "История QR-8 не атомарна: четыре разные функции в одной истории",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-095",
+        "D-097"
+      ],
+      "loose_fids": [
+        "D-047",
+        "D-095",
+        "D-097"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-10",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Критерий про еженедельную отправку отчёта на e-mail не следует из истории",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-102"
+      ],
+      "loose_fids": [
+        "D-095",
+        "D-102",
+        "D-103",
+        "D-104"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-11",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "QR-12 — техническая задача без роли, ценности и критериев приёмки",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-136"
+      ],
+      "loose_fids": [
+        "D-134",
+        "D-133",
+        "D-136",
+        "D-138",
+        "D-140"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-12",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "QR-13 «удобный интерфейс, чтобы было удобно» — непроверяемая история с размытой ролью",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-141"
+      ],
+      "loose_fids": [
+        "D-047",
+        "D-141"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-13",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Размер наклейки «5 на 5» без единицы измерения",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-025"
+      ],
+      "loose_fids": [
+        "D-025",
+        "D-029"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-14",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Термин «Оператор» вместо определённого в глоссарии «Кассир»",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-088"
+      ],
+      "loose_fids": [
+        "D-082",
+        "D-086",
+        "D-088"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-15",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Ссылка на макет М-12, которого нет среди связанных документов",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-123"
+      ],
+      "loose_fids": [
+        "D-123"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-16",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Эпик «Офлайн-режим» пустой",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-144",
+        "D-145"
+      ],
+      "loose_fids": [
+        "D-144",
+        "D-145"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-17",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "QR-9 записана не в формате истории и дублирует тему QR-5",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-110"
+      ],
+      "loose_fids": [
+        "D-053",
+        "D-110",
+        "D-111"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-003",
+      "severity": "MAJOR",
+      "title": "Комиссия при возврате покупателю не описана",
+      "line": 14,
+      "good_anchor": "Деньги возвращаются на счёт, с которого покупатель платил."
+    },
+    {
+      "fid": "D-048",
+      "severity": "MAJOR",
+      "title": "Оплата в момент отмены или автоотмены не описана",
+      "line": 50,
+      "good_anchor": "Когда кассир нажимает «Отменить», Тогда счёт переходит в статус «Отменён»"
+    },
+    {
+      "fid": "D-067",
+      "severity": "MAJOR",
+      "title": "Не описана ветка отказа банка при возврате",
+      "line": 68,
+      "good_anchor": "Деньги возвращаются на счёт, с которого покупатель платил."
+    },
+    {
+      "fid": "D-070",
+      "severity": "MAJOR",
+      "title": "Результат проверяется у банка покупателя, а не в системе",
+      "line": 68,
+      "good_anchor": "Деньги возвращаются на счёт, с которого покупатель платил."
+    },
+    {
+      "fid": "D-081",
+      "severity": "MAJOR",
+      "title": "Не определено, кого блокирует 15-минутная блокировка входа",
+      "line": 75,
+      "good_anchor": "Вход кассира — по PIN-коду из 4 цифр; после 5 неверных попыток подряд вход блокируется на 15 минут."
+    },
+    {
+      "fid": "D-127",
+      "severity": "MAJOR",
+      "title": "Термин «данных покупателя» не определён",
+      "line": 102,
+      "good_anchor": "Push содержит сумму и время оплаты и не содержит данных покупателя."
+    }
+  ],
+  "false_alarms_exempt": [],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Владелец указан командой, а не ответственным лицом",
+      "line": 5
+    },
+    {
+      "fid": "D-002",
+      "severity": "MINOR",
+      "title": "В документе нет модели данных с полями и типами",
+      "line": 6
+    },
+    {
+      "fid": "D-012",
+      "severity": "MINOR",
+      "title": "Не описан ввод дробной суммы",
+      "line": 19
+    },
+    {
+      "fid": "D-021",
+      "severity": "MAJOR",
+      "title": "Статус счёта после истечения срока не назван",
+      "line": 29
+    },
+    {
+      "fid": "D-022",
+      "severity": "MAJOR",
+      "title": "Не заданы язык и тексты сообщений для ряда ситуаций",
+      "line": 29
+    },
+    {
+      "fid": "D-024",
+      "severity": "MAJOR",
+      "title": "Не описано, что происходит со старым QR после «Создать заново»",
+      "line": 29
+    },
+    {
+      "fid": "D-030",
+      "severity": "MAJOR",
+      "title": "Неясно, какое название магазина показывать покупателю",
+      "line": 36
+    },
+    {
+      "fid": "D-046",
+      "severity": "MAJOR",
+      "title": "Результат проверяется через решение чужого банка",
+      "line": 50
+    },
+    {
+      "fid": "D-057",
+      "severity": "MAJOR",
+      "title": "Не описано, что происходит после 30 дней",
+      "line": 66
+    },
+    {
+      "fid": "D-058",
+      "severity": "MINOR",
+      "title": "Граница срока возврата не уточнена",
+      "line": 66
+    },
+    {
+      "fid": "D-061",
+      "severity": "MINOR",
+      "title": "Не описан журнал аудита: кто отменил счёт или оформил возврат",
+      "line": 66
+    },
+    {
+      "fid": "D-071",
+      "severity": "MINOR",
+      "title": "Фраза «распоряжаться деньгами» не расшифрована",
+      "line": 71
+    },
+    {
+      "fid": "D-079",
+      "severity": "MINOR",
+      "title": "4-значный PIN с повторяемой блокировкой слабо защищён",
+      "line": 75
+    },
+    {
+      "fid": "D-091",
+      "severity": "MINOR",
+      "title": "Заголовок QR-8 называет только отчёт, а описывает несколько функций",
+      "line": 78
+    },
+    {
+      "fid": "D-093",
+      "severity": "MINOR",
+      "title": "Цель не объясняет часть функций",
+      "line": 79
+    },
+    {
+      "fid": "D-098",
+      "severity": "MINOR",
+      "title": "«Платёж» и «оплата» — одно понятие под двумя словами",
+      "line": 79
+    },
+    {
+      "fid": "D-101",
+      "severity": "MINOR",
+      "title": "Не описан период истории по умолчанию",
+      "line": 82
+    },
+    {
+      "fid": "D-099",
+      "severity": "MINOR",
+      "title": "Слово «сумма» может означать два значения",
+      "line": 82
+    },
+    {
+      "fid": "D-100",
+      "severity": "MINOR",
+      "title": "Не указан часовой пояс и формат даты и времени",
+      "line": 82
+    },
+    {
+      "fid": "D-113",
+      "severity": "MAJOR",
+      "title": "Не определён источник номера телефона для SMS с чеком",
+      "line": 94
+    },
+    {
+      "fid": "D-114",
+      "severity": "MINOR",
+      "title": "Формат ссылки и срок отправки SMS заданы неточно",
+      "line": 94
+    },
+    {
+      "fid": "D-115",
+      "severity": "MINOR",
+      "title": "Не задан срок отправки SMS после оплаты",
+      "line": 94
+    },
+    {
+      "fid": "D-118",
+      "severity": "MINOR",
+      "title": "Внешние системы не перечислены ни в одном месте",
+      "line": 94
+    },
+    {
+      "fid": "D-130",
+      "severity": "MINOR",
+      "title": "Неясно, какая настройка уведомлений",
+      "line": 103
+    },
+    {
+      "fid": "D-131",
+      "severity": "MAJOR",
+      "title": "Не задано, включены ли push-уведомления по умолчанию",
+      "line": 103
+    },
+    {
+      "fid": "D-135",
+      "severity": "MINOR",
+      "title": "Способ интеграции задан без причины",
+      "line": 106
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/tuning_haiku/qr.json",
+  "key_file": "eval/docs/qr_merchant_stories.md.key.json"
+}

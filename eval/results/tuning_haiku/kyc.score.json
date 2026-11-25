@@ -1,0 +1,563 @@
+{
+  "document": "kyc_upload_api_en.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.040197,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 283.03,
+    "doc_name": "kyc_upload_api_en.md"
+  },
+  "counts": {
+    "requirements": 42,
+    "findings_open": 60,
+    "advisory": 9
+  },
+  "recall": {
+    "overall": {
+      "total": 18,
+      "strict": 14,
+      "loose": 18,
+      "strict_share": 0.7777777777777778,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 2,
+        "loose": 3,
+        "strict_share": 0.6666666666666666,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 11,
+        "strict": 8,
+        "loose": 11,
+        "strict_share": 0.7272727272727273,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 4,
+        "loose": 4,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {}
+  },
+  "severity_agreement": {
+    "same": 9,
+    "tool_higher": 4,
+    "tool_lower": 1
+  },
+  "defects": [
+    {
+      "id": "K-01",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Срок хранения изображений: удаление через 90 дней (6.1) против хранения весь срок отношений + 5 лет (7.2)",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-114"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-02",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Эндпоинт статуса без авторизации возвращает ФИО, ИИН, дату рождения и номер документа",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-008",
+        "D-056",
+        "D-057"
+      ],
+      "loose_fids": [
+        "D-008",
+        "D-007",
+        "D-056",
+        "D-057",
+        "D-109"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-03",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "ИИН передаётся в query-параметре URL",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-014"
+      ],
+      "loose_fids": [
+        "D-014"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "K-04",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Максимальный размер файла: 10 MB в 3.1 и 8 000 KB в разделе 5",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-007",
+        "D-026"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-05",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Допустимые форматы: JPEG/PNG в 3.1 и ответе 415, но JPEG/PNG/HEIC в лимитах",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-035"
+      ],
+      "loose_fids": [
+        "D-035"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-06",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Код 409 используется, но не описан среди ответов",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-044",
+        "D-046"
+      ],
+      "loose_fids": [
+        "D-044",
+        "D-046",
+        "D-067"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-07",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Ссылка на несуществующий пункт 4.3",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-094"
+      ],
+      "loose_fids": [
+        "D-039",
+        "D-094"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-08",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Статус APPROVED не входит в перечень статусов (там VERIFIED)",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-060",
+        "D-080",
+        "D-126"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-09",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Удаление документа методом GET нарушает семантику HTTP",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-061"
+      ],
+      "loose_fids": [
+        "D-061"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-10",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Время ответа 3 секунды без условий измерения",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-048",
+        "D-049"
+      ],
+      "loose_fids": [
+        "D-048",
+        "D-049"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-11",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Поведение при сбое провайдера верификации не определено («handled accordingly»)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-081"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-081"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-12",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "AC-5 проверяет блокировку 423 после трёх отклонённых селфи, которой нет в требованиях",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-044",
+        "D-130",
+        "D-136"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-13",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "«Within acceptable limits» для бликов и размытия — неизмеримо",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-094"
+      ],
+      "loose_fids": [
+        "D-094"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-14",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Раздел обратного вызова в АБС не заполнен (TBD)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-084"
+      ],
+      "loose_fids": [
+        "D-084"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-15",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Лимит частоты без периода времени",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-109"
+      ],
+      "loose_fids": [
+        "D-109"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-16",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Пример запроса использует docType=PHOTO, которого нет в допустимых значениях",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-028"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-028"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-17",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Требование предписывает реализацию проверки живости (конкретная библиотека и пул из 8 потоков)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-103",
+        "D-104"
+      ],
+      "loose_fids": [
+        "D-097",
+        "D-098",
+        "D-099",
+        "D-103",
+        "D-104"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-18",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "П. 2.6 объединяет четыре разных требования к клиенту",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-003",
+        "D-019"
+      ],
+      "loose_fids": [
+        "D-003",
+        "D-007",
+        "D-019"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-005",
+      "severity": "MAJOR",
+      "title": "Не задан ответ сервера на HTTP-запрос",
+      "line": 17,
+      "good_anchor": "All endpoints are served over HTTPS only, TLS 1.2 or higher; plain HTTP requests are rejected without redirect."
+    },
+    {
+      "fid": "D-069",
+      "severity": "MAJOR",
+      "title": "Неясно, ровно одно селфи или хотя бы одно",
+      "line": 78,
+      "good_anchor": "The session must contain an ID card (both sides) or a passport, and one selfie; otherwise `400` with"
+    },
+    {
+      "fid": "D-086",
+      "severity": "MAJOR",
+      "title": "Не описан отказ при разрешении ниже минимума",
+      "line": 88,
+      "good_anchor": "Minimum resolution of a document image is 1280×720 pixels; a selfie is at least 640×480 pixels."
+    },
+    {
+      "fid": "D-087",
+      "severity": "MAJOR",
+      "title": "Неясно, как проверять минимальное разрешение",
+      "line": 88,
+      "good_anchor": "Minimum resolution of a document image is 1280×720 pixels; a selfie is at least 640×480 pixels."
+    },
+    {
+      "fid": "D-119",
+      "severity": "MAJOR",
+      "title": "Неясно, какие «смены статуса» попадают в журнал аудита",
+      "line": 109,
+      "good_anchor": "Every upload, deletion and status change is written to the audit log with sessionId, documentId, operation and timestamp"
+    }
+  ],
+  "false_alarms_exempt": [],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Требования без номеров, связь с бизнес-требованиями не прослеживается",
+      "line": 9
+    },
+    {
+      "fid": "D-002",
+      "severity": "MINOR",
+      "title": "Нет описания отката и выключателя функции",
+      "line": 13
+    },
+    {
+      "fid": "D-004",
+      "severity": "MINOR",
+      "title": "Не указано основание обработки и согласие на обработку селфи и документов",
+      "line": 13
+    },
+    {
+      "fid": "D-009",
+      "severity": "MAJOR",
+      "title": "Нет ответов 401, 403 и 404 для загрузки, удаления и отправки",
+      "line": 18
+    },
+    {
+      "fid": "D-010",
+      "severity": "MAJOR",
+      "title": "Срок жизни токена 15 минут не согласован с длительностью онбординга",
+      "line": 18
+    },
+    {
+      "fid": "D-012",
+      "severity": "MAJOR",
+      "title": "Нет ответа на POST без Idempotency-Key",
+      "line": 20
+    },
+    {
+      "fid": "D-016",
+      "severity": "MAJOR",
+      "title": "Не определено, какие ошибки повторять и что делать после трёх неудач",
+      "line": 22
+    },
+    {
+      "fid": "D-021",
+      "severity": "MAJOR",
+      "title": "Загрузка документа вне статуса DRAFT не описана",
+      "line": 28
+    },
+    {
+      "fid": "D-030",
+      "severity": "MINOR",
+      "title": "Не перечислены статусы документа",
+      "line": 48
+    },
+    {
+      "fid": "D-031",
+      "severity": "MINOR",
+      "title": "Тело ответа 400 не описано",
+      "line": 49
+    },
+    {
+      "fid": "D-063",
+      "severity": "MAJOR",
+      "title": "Не описан ответ на удаление несуществующего документа",
+      "line": 74
+    },
+    {
+      "fid": "D-068",
+      "severity": "MAJOR",
+      "title": "Не описан повторный или неверный вызов submit",
+      "line": 78
+    },
+    {
+      "fid": "D-071",
+      "severity": "MINOR",
+      "title": "Слово all без границ в описании отправки",
+      "line": 78
+    },
+    {
+      "fid": "D-072",
+      "severity": "MINOR",
+      "title": "Код ответа 202 возвращается, но не описан",
+      "line": 78
+    },
+    {
+      "fid": "D-089",
+      "severity": "MINOR",
+      "title": "Не указано, включены ли границы разрешения",
+      "line": 88
+    },
+    {
+      "fid": "D-107",
+      "severity": "MAJOR",
+      "title": "Не сказано, считаются ли удалённые документы в лимите 20 загрузок",
+      "line": 99
+    },
+    {
+      "fid": "D-108",
+      "severity": "MAJOR",
+      "title": "Критерии приёмки не проверяют границы и большинство отказов",
+      "line": 99
+    },
+    {
+      "fid": "D-118",
+      "severity": "MINOR",
+      "title": "Не указано, где хранятся данные и кому передаются за пределы банка",
+      "line": 105
+    },
+    {
+      "fid": "D-120",
+      "severity": "MINOR",
+      "title": "Не описано поведение при сбое записи в журнал аудита",
+      "line": 109
+    },
+    {
+      "fid": "D-121",
+      "severity": "MINOR",
+      "title": "Неясно, какой статус и какой documentId имеются в виду",
+      "line": 109
+    },
+    {
+      "fid": "D-122",
+      "severity": "MINOR",
+      "title": "Не описаны выключатель функции, порядок отката и запрет на данные в журнале",
+      "line": 109
+    },
+    {
+      "fid": "D-127",
+      "severity": "MAJOR",
+      "title": "Критерии приёмки покрывают только 5 из 42 требований",
+      "line": 117
+    },
+    {
+      "fid": "D-128",
+      "severity": "MINOR",
+      "title": "Ожидаемый результат повторного запроса описан нечётко",
+      "line": 118
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/tuning_haiku/kyc.json",
+  "key_file": "eval/docs/kyc_upload_api_en.md.key.json"
+}

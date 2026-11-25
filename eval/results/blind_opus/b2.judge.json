@@ -1,0 +1,597 @@
+{
+ "defects": [
+  {
+   "id": "B2-01",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-012"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "AC-02 при остатке 60 000 ₸ ожидает успешное изъятие 15 000 ₸ и остаток 45 000 ₸ ... запрос надо отклонить",
+   "reason": "Тот же конфликт AC-02 с REQ-03 с верным исправлением; «место» у программы — из-за формы слов, не согласен. D-013 программа тоже привязала, но он о другом (арест в REQ-03)."
+  },
+  {
+   "id": "B2-02",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-047"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Нигде не сказано, откуда удерживается разница: из остатка депозита, из суммы зачисления или из начисленного, но ещё не капитализированного вознаграждения",
+   "reason": "Пересчёт по REQ-16 нельзя реализовать — это и есть дефект; часть про выделение доли начисленного на изымаемую сумму в самом замечании слабее, её дополняет связанный вопрос В-08, поэтому всё вместе засчитываю как найденное."
+  },
+  {
+   "id": "B2-03",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-019"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "REQ-05 и таблица ошибок задают код WITHDRAWAL_COUNT_EXCEEDED. AC-05 ожидает код MONTHLY_LIMIT, которого нет в таблице",
+   "reason": "Ровно разнобой кодов из ключа; программа поставила «место» (вероятно, привязав D-051), но D-019 прямо его называет — не согласен."
+  },
+  {
+   "id": "B2-04",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-082"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, для какой доли запросов действует порог в 2 секунды и при какой нагрузке",
+   "reason": "Перцентиль и нагрузка названы прямо; уровень на ступень выше ключа."
+  },
+  {
+   "id": "B2-05",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "not_found",
+   "finding_ids": [],
+   "tool_severity": null,
+   "evidence": "",
+   "reason": "Программа засчитала D-004, но он про неопределённую «сумму под арестом» и лишь цитирует строку 131; про синоним «минимальный баланс» вместо «неснижаемый остаток» в отчёте ничего нет — не согласен."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-001",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Автор ролью и отсутствие согласующих — оформление, не дефект требований."
+  },
+  {
+   "fid": "D-002",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Источники данных и исполнитель начисления — решение проектирования интеграций; в документе противоречий нет."
+  },
+  {
+   "fid": "D-003",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Выключатель и откат — вне предмета документа требований."
+  },
+  {
+   "fid": "D-004",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«Сумма под арестом» не определена и не связана со статусом «Арестован» — реальный пробел (про синоним «минимальный баланс» не говорит)."
+  },
+  {
+   "fid": "D-005",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Входит ли начисленное, но не капитализированное вознаграждение в остаток — не определено."
+  },
+  {
+   "fid": "D-007",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Закрытый/заблокированный счёт зачисления не покрыт ни термином, ни ошибкой — мелкий реальный пробел."
+  },
+  {
+   "fid": "D-008",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Расхождение «текущий счёт» в термине и условие ошибки только по владельцу и валюте реально, но деньги остаются у клиента; MAJOR завышен."
+  },
+  {
+   "fid": "D-009",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Пункты связные; дробить не требуется."
+  },
+  {
+   "fid": "D-010",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Целое число тенге» однозначно задаёт шаг 1 ₸."
+  },
+  {
+   "fid": "D-011",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет критериев приёмки для границ, ставки 12 %, REQ-16/17, аудита, VALIDATION_ERROR — реальный пробел покрытия."
+  },
+  {
+   "fid": "D-013",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "REQ-03 говорит только о 50 000 ₸, а таблица и термин вычитают ещё арест — реальная нестыковка, ключ её не содержит."
+  },
+  {
+   "fid": "D-015",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Учитываются ли изъятия в отделении в лимите 2 в месяц — реальный вопрос, раз отделение вне границ, а лимит по депозиту."
+  },
+  {
+   "fid": "D-016",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "«Третий запрос» — неточная формулировка, но REQ-04 рядом её однозначно поясняет; MAJOR завышен."
+  },
+  {
+   "fid": "D-020",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Неизвестный исход проводки (таймаут АБС) не описан; текст POSTING_FAILED может обмануть клиента."
+  },
+  {
+   "fid": "D-024",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Включённость границ окна 23:50–00:10 не задана; мелкий реальный пробел."
+  },
+  {
+   "fid": "D-026",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Повтор requestId с другими параметрами не описан — реальный пробел идемпотентности."
+  },
+  {
+   "fid": "D-027",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Начало отсчёта 72 часов не задано; мелочь на верном уровне MINOR."
+  },
+  {
+   "fid": "D-030",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Если идемпотентность хранит и 503/502, повтор после окна с тем же ключом снова вернёт ошибку — реальная нестыковка REQ-08 и REQ-10."
+  },
+  {
+   "fid": "D-031",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Где хранить результаты и счётчик — решение проектирования."
+  },
+  {
+   "fid": "D-032",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«UUID» в REQ-10 и «UUID v4» в API — мелкая, но реальная нестыковка."
+  },
+  {
+   "fid": "D-033",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Клиент получает push» вместе с AC-15 понятно как отправку; придирка."
+  },
+  {
+   "fid": "D-034",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«4 цифры» и «4 символа» для одного хвоста номера — мелкий реальный разнобой, уровень MINOR верен."
+  },
+  {
+   "fid": "D-035",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Текст push, язык и запасной канал — шаблонное замечание."
+  },
+  {
+   "fid": "D-037",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Резидентность данных и push-провайдеры — вне предмета документа."
+  },
+  {
+   "fid": "D-039",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Срок хранения журнала естественно считается от записи; придирка."
+  },
+  {
+   "fid": "D-040",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Счёт зачисления не входит в поля журнала аудита — реальный мелкий пробел для разбора споров."
+  },
+  {
+   "fid": "D-041",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-003",
+   "reason": "Тот же выключатель и откат, что в D-003."
+  },
+  {
+   "fid": "D-042",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Остаток депозита — весь баланс; двусмысленности для начисления нет."
+  },
+  {
+   "fid": "D-043",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-011",
+   "reason": "Те же недостающие критерии для ставки 12 %, порога и капитализации, что в D-011."
+  },
+  {
+   "fid": "D-046",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-011",
+   "reason": "Нет критерия для пересчёта REQ-16 — уже в D-011."
+  },
+  {
+   "fid": "D-050",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Порядок начисления за последний день и капитализации не задан; мелкий реальный пробел."
+  },
+  {
+   "fid": "D-051",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«В этом месяце» в таблице ошибок однозначно читается по REQ-04/05."
+  },
+  {
+   "fid": "D-053",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-024",
+   "reason": "Те же границы окна, что в D-024."
+  },
+  {
+   "fid": "D-054",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Retry-After — пожелание дизайна; документ сам задаёт время повтора."
+  },
+  {
+   "fid": "D-057",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-011",
+   "reason": "Те же непокрытые VALIDATION_ERROR, счёт не в тенге и аудит, что в D-011."
+  },
+  {
+   "fid": "D-058",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Имя ошибочного поля в ответе — пожелание, не дефект."
+  },
+  {
+   "fid": "D-059",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Ответ при отсутствующем/истёкшем токене не описан — мелкий реальный пробел."
+  },
+  {
+   "fid": "D-060",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "429 и тайм-ауты клиента — общий шаблон, не дефект этого документа."
+  },
+  {
+   "fid": "D-062",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Правило «ошибка содержит code из таблицы» не покрывает 404 для чужого депозита — реальная нестыковка."
+  },
+  {
+   "fid": "D-064",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Нумерация правил раздела API — оформление."
+  },
+  {
+   "fid": "D-065",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-026",
+   "reason": "Тот же повтор requestId с другими параметрами, что в D-026."
+  },
+  {
+   "fid": "D-066",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Разница типа amount в запросе и ответе описана явно; документ в порядке."
+  },
+  {
+   "fid": "D-067",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Ответ задан примером и описанием сумм; тестировщику этого достаточно."
+  },
+  {
+   "fid": "D-069",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Порядок проверок при нескольких нарушениях не задан — реальный пробел."
+  },
+  {
+   "fid": "D-070",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Что показывать без текущего счёта в тенге — реальный, но мелкий вопрос интерфейса; MAJOR завышен."
+  },
+  {
+   "fid": "D-072",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Кнопка при пустой сумме и невыбранном счёте не описана — мелкий реальный пробел."
+  },
+  {
+   "fid": "D-073",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Макеты и способ показа ошибок — пожелание, не дефект требований."
+  },
+  {
+   "fid": "D-074",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Кнопки подтверждения и отмены подразумеваются экраном подтверждения."
+  },
+  {
+   "fid": "D-075",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Обрыв сети после подтверждения и повтор с тем же requestId не описаны — реальный пробел."
+  },
+  {
+   "fid": "D-076",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Нюанс «остаток на конец дня против остатка после изъятия» есть, но смысл 7.4 ясен; MAJOR завышен."
+  },
+  {
+   "fid": "D-079",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Текст предупреждения — деталь; содержание («новая ставка») задано."
+  },
+  {
+   "fid": "D-080",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Клиента не предупреждают о пересчёте процентов по REQ-16 при раннем изъятии — реальный пробел."
+  },
+  {
+   "fid": "D-081",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Откуда экран берёт доступную сумму, список счетов и ставку — API не описан."
+  },
+  {
+   "fid": "D-087",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Не определено, как считать доступность 99,9 % — мелкий реальный пробел проверяемости."
+  },
+  {
+   "fid": "D-088",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет колонки связи AC с требованиями — мелкий реальный пробел трассировки (перечень непокрытого повторяет D-011)."
+  },
+  {
+   "fid": "D-090",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-011",
+   "reason": "Повтор после 72 часов без критерия — уже в D-011."
+  },
+  {
+   "fid": "D-091",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-024",
+   "reason": "Границы окна в критериях — то же, что D-024."
+  },
+  {
+   "fid": "D-092",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Счёта» в AC-11 однозначно — счёт зачисления; придирка к термину."
+  },
+  {
+   "fid": "D-093",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-011",
+   "reason": "Счёт не в тенге без критерия — уже в D-011 и D-057."
+  },
+  {
+   "fid": "D-094",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Остаток не изменился» в AC-14 читается как остаток депозита; придирка."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-016",
+   "severity": "MAJOR",
+   "anchor": "Считаются только исполненные изъятия; отклонённые запросы в лимит не входят.",
+   "note": "Использует хорошее место как сторону «противоречия»; реальна лишь неточность «третий запрос»."
+  },
+  {
+   "fid": "D-020",
+   "severity": "MAJOR",
+   "anchor": "Если проводка не прошла, ни депозит, ни счёт не изменяются",
+   "note": "Справедливое дополнение: случай неизвестного результата."
+  },
+  {
+   "fid": "D-026",
+   "severity": "MAJOR",
+   "anchor": "Повтор запроса с тем же requestId в течение 72 часов ...",
+   "note": "Справедливое дополнение хорошего места."
+  },
+  {
+   "fid": "D-030",
+   "severity": "MAJOR",
+   "anchor": "Повтор запроса с тем же requestId в течение 72 часов ...",
+   "note": "Справедливо: хранение ответов об ошибке ломает повтор после окна."
+  },
+  {
+   "fid": "D-024",
+   "severity": "MINOR",
+   "anchor": "регламентного окна ... с 23:50 до 00:10",
+   "note": "Справедливое уточнение границ (плюс повторы D-053, D-091)."
+  },
+  {
+   "fid": "D-054",
+   "severity": "MINOR",
+   "anchor": "регламентного окна ... с 23:50 до 00:10",
+   "note": "Пожелание Retry-After к хорошему месту — ложная тревога."
+  },
+  {
+   "fid": "D-004",
+   "severity": "MAJOR",
+   "anchor": "Доступная сумма — остаток минус неснижаемый остаток минус сумма под арестом",
+   "note": "Справедливо: составная часть формулы не определена."
+  },
+  {
+   "fid": "D-005",
+   "severity": "MAJOR",
+   "anchor": "Доступная сумма — ...",
+   "note": "Справедливо: не ясно, что входит в «остаток»."
+  }
+ ],
+ "praised_defects": [],
+ "critical": {
+  "key_critical": [
+   {
+    "id": "B2-01",
+    "tool_gave_critical": true,
+    "finding": "D-012"
+   }
+  ],
+  "tool_critical": [
+   {
+    "fid": "D-012",
+    "justified": true,
+    "note": "Прямое противоречие AC-02 и REQ-03."
+   }
+  ],
+  "summary": "Единственный CRITICAL ключа получил CRITICAL; единственный CRITICAL инструмента обоснован."
+ },
+ "totals": {
+  "overall": {
+   "found": 4,
+   "not_found": 1
+  },
+  "by_severity": {
+   "CRITICAL": {
+    "found": 1
+   },
+   "MAJOR": {
+    "found": 2
+   },
+   "MINOR": {
+    "found": 1,
+    "not_found": 1
+   }
+  },
+  "origin_own": {
+   "found": 4,
+   "not_found": 1
+  },
+  "extra": {
+   "false_alarm": 23,
+   "real_not_in_key": 24,
+   "overrated": 4,
+   "duplicate": 9
+  },
+  "extra_by_severity": {
+   "MINOR": {
+    "false_alarm": 23,
+    "real_not_in_key": 16,
+    "duplicate": 9
+   },
+   "MAJOR": {
+    "real_not_in_key": 8,
+    "overrated": 4
+   }
+  },
+  "open_findings_total": 64
+ }
+}

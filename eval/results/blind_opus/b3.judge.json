@@ -1,0 +1,694 @@
+{
+ "defects": [
+  {
+   "id": "B3-01",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-025"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "В п. 4.2 суточный лимит на отправителя — 1 000 000 тенге. В п. 7.3 ... 500 000 тенге",
+   "reason": "Прямое противоречие названо; программа сослалась на D-090 (это про сутки), настоящая находка — D-025.",
+   "title": "Суточный лимит переводов в другие банки задан дважды с разными значениями: 1 000 000 тенге в п. 4.2 и 500 000 тенге в п. 7.3."
+  },
+  {
+   "id": "B3-02",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-066"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "деньги клиента бессрочно остаются у банка... Сроков и способа возврата нет. Судьба комиссии не указана",
+   "reason": "Все три части ключа названы.",
+   "title": "При отказе банка получателя деньги остаются на транзитном счёте до обращения клиента: нет автоматического возврата, срока и правила для комиссии."
+  },
+  {
+   "id": "B3-03",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-016"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "по правилу выйдет 950 тенге, по примеру — 475 тенге",
+   "reason": "Точное совпадение.",
+   "title": "Правило комиссии (0,95 % от суммы перевода) противоречит примеру 9.2, где комиссия считается только с части сверх бесплатного лимита."
+  },
+  {
+   "id": "B3-04",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-036"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, какие данные получателя показываются: ФИО полностью, имя и первая буква фамилии",
+   "reason": "Названы состав и маскирование.",
+   "title": "Не определено, какие данные получателя показываются отправителю и в каком виде (маскирование имени)."
+  },
+  {
+   "id": "B3-05",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-072"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, как часто и сколько раз запрашивать статус и что делать, если ответа так и нет",
+   "reason": "Названы повторы и исход, но сам «разумный срок» без числа как проблема не назван (только в цитате); программа дала «найден», я — частично.",
+   "title": "Тайм-аут ответа СМП задан как «в разумный срок», без числа, количества повторных запросов статуса и конечного исхода."
+  },
+  {
+   "id": "B3-06",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-097"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Нет процента доступности, периода измерения, допустимого времени восстановления (RTO)",
+   "reason": "Совпадает.",
+   "title": "Требование «высокая доступность и устойчивость к сбоям» без чисел."
+  },
+  {
+   "id": "B3-07",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-030",
+    "D-029"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, какие форматы принимаются: +7, 8, 10 цифр, пробелы, скобки... Номер, который нормализован неверно, попадёт в СМП",
+   "reason": "Нормализация (D-030) и проверка ввода (D-029) названы.",
+   "title": "Формат номера телефона не определён: «в любом удобном формате» без правил нормализации и проверки (+7, 8, пробелы, длина)."
+  },
+  {
+   "id": "B3-08",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-057"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "первый может быть в статусе «В обработке» и позже зачислиться. Получатель получит деньги дважды",
+   "reason": "Совпадает, с идемпотентностью.",
+   "title": "Кнопка «Отправить ещё раз» при отсутствии подтверждения создаёт риск двойного перевода: нет защиты от дубликатов и проверки статуса первого перевода."
+  },
+  {
+   "id": "B3-09",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-023"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "за календарные сутки (с 00:00 по времени Астаны) или за скользящие 24 часа",
+   "reason": "Совпадает.",
+   "title": "Не определено, что такое «сутки» для лимита: календарный день или скользящие 24 часа."
+  },
+  {
+   "id": "B3-10",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-042",
+    "D-045"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "деньги и комиссия сначала списываются, а лимит проверяется потом; Списание дублирует п. 5.6",
+   "reason": "Покрыты все части, включая повтор списания в 5.6.",
+   "title": "Порядок шагов в п. 5.5 (создание и списание до проверки лимита) противоречит п. 4.4, где при превышении лимита перевод не создаётся; п. 5.6 повторно описывает списание."
+  },
+  {
+   "id": "B3-11",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-095"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Новым можно считать номер, которому клиент ещё не переводил, или пару «номер + банк»",
+   "reason": "Совпадает.",
+   "title": "Термин «новый получатель», от которого зависит запрос SMS-кода, не определён."
+  },
+  {
+   "id": "B3-12",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-109"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Требование диктует реализацию: СУБД PostgreSQL, имя таблицы, индекс и партиционирование",
+   "reason": "Совпадает.",
+   "title": "В требования вынесено проектное решение: таблица PostgreSQL, индекс и партиционирование."
+  },
+  {
+   "id": "B3-13",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-040"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "В разделе 5 номер 5.3 повторяется, а 5.4 пропущен",
+   "reason": "Совпадает.",
+   "title": "Номер пункта 5.3 повторяется дважды, пункт 5.4 пропущен."
+  },
+  {
+   "id": "B3-14",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-063"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Список причин открыт («и т. д.»), поэтому тексты сообщений и их проверка будут у всех разными",
+   "reason": "Совпадает, плюс таблица кодов.",
+   "title": "Перечень причин отклонения открыт («и т. д.»): неизвестен полный список причин и тексты для клиента."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-001",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный, вне ключа: наш банк в списке банков СМП при исключении внутренних переводов (1.2)."
+  },
+  {
+   "fid": "D-002",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Списание возможно с карточного или текущего счёта» — перечень понятен, придирка."
+  },
+  {
+   "fid": "D-003",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-052",
+   "reason": "То же, что D-052 (идёт ли комиссия через транзитный счёт)."
+  },
+  {
+   "fid": "D-004",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Сам инструмент признаёт, что отказ описан в разделе 6; определение термина в порядке."
+  },
+  {
+   "fid": "D-005",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: нет статуса между списанием и передачей в СМП и при сбое передачи."
+  },
+  {
+   "fid": "D-008",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: какие статусы входят в месячную сумму для тарифа."
+  },
+  {
+   "fid": "D-019",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: к какому месяцу относится перевод на стыке."
+  },
+  {
+   "fid": "D-020",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Пакетная претензия к «составным» пунктам, включая хорошее место 8.3; пользы нет."
+  },
+  {
+   "fid": "D-021",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: сообщение при сумме больше 300 000."
+  },
+  {
+   "fid": "D-022",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: тиыны в сумме."
+  },
+  {
+   "fid": "D-028",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Какой остаток показывать — мелкая неясность; MAJOR завышен."
+  },
+  {
+   "fid": "D-034",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "5 секунд — хорошее место ключа; придирка к точке отсчёта."
+  },
+  {
+   "fid": "D-035",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: основной банк не назначен."
+  },
+  {
+   "fid": "D-041",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-040",
+   "reason": "Дословный повтор D-040 (нумерация 5.3/5.4)."
+  },
+  {
+   "fid": "D-048",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: чек формируется в 5.5 до ответа СМП, а выдаётся после зачисления."
+  },
+  {
+   "fid": "D-049",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-022",
+   "reason": "То же, что D-022 (тиыны/шаг суммы)."
+  },
+  {
+   "fid": "D-052",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: 5.6 — на транзит только сумма, 6.2 — с транзита возвращается и комиссия."
+  },
+  {
+   "fid": "D-053",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Клиент получает push» — обычная формулировка, придирка."
+  },
+  {
+   "fid": "D-054",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: «подтверждение» в разных смыслах, включая 5.8."
+  },
+  {
+   "fid": "D-055",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: язык сообщений, выключенные push."
+  },
+  {
+   "fid": "D-062",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: неизвестный ответ СМП."
+  },
+  {
+   "fid": "D-064",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Возврат за 1 минуту — хорошее место ключа; точка отсчёта очевидна."
+  },
+  {
+   "fid": "D-078",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: три имени одного состояния."
+  },
+  {
+   "fid": "D-079",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-053",
+   "reason": "То же, что D-053 («клиент получает push»)."
+  },
+  {
+   "fid": "D-080",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: содержимое push/SMS."
+  },
+  {
+   "fid": "D-081",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-080",
+   "reason": "То же, что D-080 (содержимое push на заблокированном экране)."
+  },
+  {
+   "fid": "D-082",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: недоступность антифрода."
+  },
+  {
+   "fid": "D-084",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: момент антифрод-проверки относительно списания."
+  },
+  {
+   "fid": "D-086",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: канал уведомления контакт-центра."
+  },
+  {
+   "fid": "D-087",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: неверный ПИН/отмена."
+  },
+  {
+   "fid": "D-088",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Выбор между биометрией и ПИН — общая политика приложения, придирка."
+  },
+  {
+   "fid": "D-089",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: в разделе 11 нет экранов данных получателя и подтверждения."
+  },
+  {
+   "fid": "D-090",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-023",
+   "reason": "То же, что D-023 (календарные сутки или 24 часа), только для 7.3."
+  },
+  {
+   "fid": "D-094",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: ошибки SMS-кода."
+  },
+  {
+   "fid": "D-101",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: прочие ПДн в журнале."
+  },
+  {
+   "fid": "D-103",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Маска «первые 4 и последние 2» — хорошее место ключа."
+  },
+  {
+   "fid": "D-104",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: аудит переключателя и просмотров."
+  },
+  {
+   "fid": "D-105",
+   "severity": "CRITICAL",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Записке не обязателен раздел приёмки, есть примеры; CRITICAL необоснован."
+  },
+  {
+   "fid": "D-107",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "В примере 9.5 комиссии может не быть; придирка."
+  },
+  {
+   "fid": "D-111",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: при хранении только маски не работают поиск по номеру и правило «нового получателя»."
+  },
+  {
+   "fid": "D-113",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: срок хранения истории."
+  },
+  {
+   "fid": "D-116",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-029",
+   "reason": "То же, что D-029 (реакция на неверный номер)."
+  },
+  {
+   "fid": "D-118",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Требование макетов — общее пожелание, не дефект записки."
+  },
+  {
+   "fid": "D-119",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: доступ к контактам."
+  },
+  {
+   "fid": "D-121",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: счёт по умолчанию, нет счёта в тенге."
+  },
+  {
+   "fid": "D-122",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: причина отклонения на экране результата."
+  },
+  {
+   "fid": "D-123",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: реестр СМП не получен."
+  },
+  {
+   "fid": "D-124",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Сверка «за предыдущий календарный день» — хорошее место ключа; уточнение даты события мелкое, MAJOR завышен."
+  },
+  {
+   "fid": "D-126",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: что значит «разбирается»."
+  },
+  {
+   "fid": "D-128",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: отсчёт 24 часов."
+  },
+  {
+   "fid": "D-129",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: условие перехода от пилота ко всем."
+  },
+  {
+   "fid": "D-130",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: как отличать сотрудников."
+  },
+  {
+   "fid": "D-131",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: начальные счётчики при запуске."
+  },
+  {
+   "fid": "D-132",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: переводы, не переданные в СМП, при выключении."
+  },
+  {
+   "fid": "D-136",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: состав результата антифрода."
+  },
+  {
+   "fid": "D-137",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: в 10.2 нет причины отклонения и результата антифрода, на которые опираются 6.7 и 14.3."
+  },
+  {
+   "fid": "D-138",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: комиссия и лимиты при возврате ошибочного перевода (хорошее место 14.4 не критикует)."
+  },
+  {
+   "fid": "D-139",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный: запуск не привязан к оферте."
+  },
+  {
+   "fid": "D-140",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Реальный мелкий: нет версии и дат согласования."
+  },
+  {
+   "fid": "D-141",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Состав согласующих — не дефект требований."
+  },
+  {
+   "fid": "D-142",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Строка подписи принята за пустой раздел — неверное прочтение."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-020",
+   "place": "8.3"
+  },
+  {
+   "fid": "D-034",
+   "place": "5.2 тайм-аут 5 секунд"
+  },
+  {
+   "fid": "D-064",
+   "place": "6.2 возврат за 1 минуту"
+  },
+  {
+   "fid": "D-103",
+   "place": "8.3 маска"
+  },
+  {
+   "fid": "D-124",
+   "place": "12.1 сверка"
+  },
+  {
+   "fid": "D-002",
+   "place": "1.4 (вторая фраза)"
+  }
+ ],
+ "praised_defects": [],
+ "critical": {
+  "key_critical": {
+   "B3-01": "CRITICAL (D-025) — да",
+   "B3-02": "CRITICAL (D-066) — да"
+  },
+  "tool_critical": {
+   "D-016": "обосновано (деньги, противоречие)",
+   "D-025": "обосновано",
+   "D-042": "обосновано (списание до проверки лимита)",
+   "D-057": "обосновано (двойное списание)",
+   "D-066": "обосновано (деньги застревают)",
+   "D-105": "завышено (нет обязательного раздела приёмки в записке)"
+  }
+ },
+ "totals": {
+  "overall": {
+   "found": 13,
+   "partial": 1
+  },
+  "CRITICAL": {
+   "found": 2
+  },
+  "MAJOR": {
+   "found": 8,
+   "partial": 1
+  },
+  "MINOR": {
+   "found": 3
+  },
+  "extra": {
+   "real_not_in_key": 39,
+   "false_alarm": 13,
+   "duplicate": 7,
+   "overrated": 2
+  }
+ }
+}

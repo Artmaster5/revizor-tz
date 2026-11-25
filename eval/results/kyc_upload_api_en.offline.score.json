@@ -6,29 +6,29 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.03,
+    "duration_s": 0.07,
     "doc_name": "kyc_upload_api_en.md"
   },
   "counts": {
     "requirements": 44,
-    "findings_open": 8,
+    "findings_open": 7,
     "advisory": 9
   },
   "recall": {
     "overall": {
       "total": 18,
       "strict": 5,
-      "loose": 7,
+      "loose": 6,
       "strict_share": 0.2777777777777778,
-      "loose_share": 0.3888888888888889
+      "loose_share": 0.3333333333333333
     },
     "by_severity": {
       "CRITICAL": {
         "total": 3,
         "strict": 0,
-        "loose": 1,
+        "loose": 0,
         "strict_share": 0.0,
-        "loose_share": 0.3333333333333333
+        "loose_share": 0.0
       },
       "MAJOR": {
         "total": 11,
@@ -72,12 +72,10 @@
       "origin": "",
       "title": "Эндпоинт статуса без авторизации возвращает ФИО, ИИН, дату рождения и номер документа",
       "strict": false,
-      "loose": true,
-      "status": "loose",
+      "loose": false,
+      "status": "missed",
       "strict_fids": [],
-      "loose_fids": [
-        "D-001"
-      ],
+      "loose_fids": [],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -129,10 +127,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-003"
+        "D-002"
       ],
       "loose_fids": [
-        "D-003"
+        "D-002"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -172,10 +170,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-005"
+        "D-004"
       ],
       "loose_fids": [
-        "D-005"
+        "D-004"
       ],
       "tool_severity": "CRITICAL",
       "severity_agreement": "tool_higher"
@@ -189,10 +187,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-004"
+        "D-003"
       ],
       "loose_fids": [
-        "D-004"
+        "D-003"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -206,10 +204,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-007"
+        "D-006"
       ],
       "loose_fids": [
-        "D-007"
+        "D-006"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -249,10 +247,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-008"
+        "D-007"
       ],
       "loose_fids": [
-        "D-008"
+        "D-007"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -280,7 +278,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-002"
+        "D-001"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -316,13 +314,13 @@
   "false_alarms_exempt": [],
   "unmatched": [
     {
-      "fid": "D-006",
+      "fid": "D-005",
       "severity": "MAJOR",
       "title": "Код ответа 202 возвращается, но не описан",
       "line": 78
     }
   ],
   "warnings": [],
-  "result_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/kyc_upload_api_en.offline.json",
-  "key_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/kyc_upload_api_en.md.key.json"
+  "result_file": "eval/results/kyc_upload_api_en.offline.json",
+  "key_file": "eval/docs/kyc_upload_api_en.md.key.json"
 }

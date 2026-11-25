@@ -59,4 +59,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input /Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/qr_merchant_stories.md --output /Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/qr_merchant_stories.offline.md --answers /Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/qr_merchant_stories.offline.questions.md`
+Когда ответите, запустите: `python main.py --input eval/docs/qr_merchant_stories.md --output eval/results/qr_merchant_stories.offline.md --answers eval/results/qr_merchant_stories.offline.questions.md`

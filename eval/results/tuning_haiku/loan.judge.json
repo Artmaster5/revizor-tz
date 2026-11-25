@@ -1,0 +1,627 @@
+{
+ "defects": [
+  {
+   "id": "K-01",
+   "key_severity": "CRITICAL",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-019"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "По п. 3.1 и стоп-фактору 1 заявитель старше 63 лет получает ОТКАЗ. По п. 4.3 клиент старше 65 лет идёт на РУЧНАЯ_ПРОВЕРКА",
+   "reason": "Названы оба пункта, конфликт и непокрытый интервал 64–65; программа поставила «место» только из-за отсутствия слова «противоречие»."
+  },
+  {
+   "id": "K-02",
+   "key_severity": "CRITICAL",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-028"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Пункт 3.4 говорит, что при КДН выше 0,5 выносится ОТКАЗ. Таблица 5.1 (строка 5) для КДН от 0,50 до 0,60 даёт РУЧНАЯ_ПРОВЕРКА",
+   "reason": "Тот же конфликт с примером 0,55; нюанс ровно 0,50 не назван, но суть совпадает; программа занизила до «место» из-за ключевых слов."
+  },
+  {
+   "id": "K-03",
+   "key_severity": "CRITICAL",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-074",
+    "D-077"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Если обрабатывать по имеющимся данным, то по строке 7 таблицы заявка получит ПРОПУСТИТЬ... потере денег банка",
+   "reason": "Названы и отсутствие решения, и отсутствие срока ожидания, и риск потерь."
+  },
+  {
+   "id": "K-04",
+   "key_severity": "MAJOR",
+   "program_mark": "место",
+   "verdict": "not_found",
+   "finding_ids": [],
+   "tool_severity": null,
+   "evidence": "",
+   "reason": "D-060 на той же строке говорит лишь, что в примере не заданы прочие условия; что КДН 0,53 по правилам даёт ОТКАЗ/РУЧНУЮ_ПРОВЕРКУ, а не ПРОПУСТИТЬ, нигде не сказано — программа ошибочно засчитала место."
+  },
+  {
+   "id": "K-05",
+   "key_severity": "MAJOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-097",
+    "D-094"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Пункт 3.2 задаёт сумму в тенге, таблица 7.1 хранит её в тыс. тенге, а п. 8.1 принимает её в тиынах... Правила пересчёта в документе нет",
+   "reason": "Все три единицы и отсутствие пересчёта названы."
+  },
+  {
+   "id": "K-06",
+   "key_severity": "MAJOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-011"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "исходы называются ПРОПУСТИТЬ, ОТКАЗ и РУЧНАЯ_ПРОВЕРКА, а в п. 8.2 значения APPROVE, DECLINE и MANUAL. Таблица соответствия не задана",
+   "reason": "Суть совпадает; смысловой подвох APPROVE≠одобрение не отмечен, но основной дефект понятен."
+  },
+  {
+   "id": "K-07",
+   "key_severity": "MAJOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-101"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Раздел 9 заканчивается на п. 9.3, пункта 9.4 нет. Формат запроса и ответа, а также коды ошибок не описаны нигде",
+   "reason": "Точное совпадение."
+  },
+  {
+   "id": "K-08",
+   "key_severity": "MAJOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-090"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "открытые ИИН, ФИО, телефон и полный ответ бюро попадут в журнал событий",
+   "reason": "Точное совпадение; программа также привязала D-083 (стойкость хеша) — это другая проблема, в доказательства не взята."
+  },
+  {
+   "id": "K-09",
+   "key_severity": "MAJOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-079"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Пункт 6.4 о повторной подаче после отказа содержит заглушку TBD",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "K-10",
+   "key_severity": "MAJOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-079"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Критерий приёмки 4 ожидает ОТКАЗ с кодом DUPLICATE... Такого правила нет ни в одном требовании",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "K-11",
+   "key_severity": "MAJOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-107",
+    "D-105"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Срок задан без доли случаев... без нагрузки и без точек начала и конца замера",
+   "reason": "Перцентиль, нагрузка и связь с ожиданием бюро (D-105) названы."
+  },
+  {
+   "id": "K-12",
+   "key_severity": "MAJOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-056",
+    "D-055"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Полностью исключить ошибки модели нельзя, и тест не даст однозначного результата",
+   "reason": "Непроверяемость и недостижимость названы."
+  },
+  {
+   "id": "K-13",
+   "key_severity": "MAJOR",
+   "program_mark": "место",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-030"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Требование задаёт обязательное условие, но не говорит, что происходит, если оно не выполнено",
+   "reason": "D-030 говорит о другом (нет решения при невыполнении); неопределённость терминов есть только в вопросе В-11 — по брифу это partial."
+  },
+  {
+   "id": "K-14",
+   "key_severity": "MINOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-021",
+    "D-042"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "В каждом из этих пунктов под одним номером записано несколько отдельных правил",
+   "reason": "D-021 прямо включает п. 4.1, D-042 — что SMS не описан; программа сослалась на D-039 (интеграции), это не то."
+  },
+  {
+   "id": "K-15",
+   "key_severity": "MINOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-050"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Требование задаёт способ реализации, а не результат",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "K-16",
+   "key_severity": "MINOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-110",
+    "D-113"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Слово «быстро» не задаёт ни срока, ни порога",
+   "reason": "Размытость и дублирование п. 9.1 названы (уровень завышен)."
+  },
+  {
+   "id": "K-17",
+   "key_severity": "MINOR",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-001"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "В шапке документа не заполнено поле «Дата»",
+   "reason": "Совпадает."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-003",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Выключателя и отката на передачу всех заявок в конвейер действительно нет; пункт общий, но уместный."
+  },
+  {
+   "fid": "D-004",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Среднемесячный уровень октября» однозначен; ключ считает это место хорошим."
+  },
+  {
+   "fid": "D-005",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Мобильное приложение скорее всего входит во «фронт-системы»; мелкая неясность, не MAJOR."
+  },
+  {
+   "fid": "D-007",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Клиент без кредитной истории действительно не описан."
+  },
+  {
+   "fid": "D-008",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Кредитное бюро» и «кредитный отчёт» — разные объекты, путаницы нет."
+  },
+  {
+   "fid": "D-009",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Способ расчёта платежа по запрашиваемому кредиту не задан, а КДН от него зависит."
+  },
+  {
+   "fid": "D-013",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Нумерация вариантов решения — придирка, на поведение не влияет."
+  },
+  {
+   "fid": "D-014",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "П. 2.4 уже говорит, что происходит с заявкой; инструмент сам признаёт, что решат одинаково."
+  },
+  {
+   "fid": "D-015",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Формулировка определения исхода, а не требование к системе; придирка."
+  },
+  {
+   "fid": "D-017",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "По первым шести цифрам ИИН век рождения не определить — реальный дефект."
+  },
+  {
+   "fid": "D-020",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа (п. 3.2); шаг суммы — надуманная проблема."
+  },
+  {
+   "fid": "D-023",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет решения при отсутствии выписки или стаже меньше 6 месяцев."
+  },
+  {
+   "fid": "D-027",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Для п. 3.3 источник назван; неясен лишь доход для КДН — мелочь при MAJOR."
+  },
+  {
+   "fid": "D-034",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-074",
+   "reason": "То же самое про недоступность бюро."
+  },
+  {
+   "fid": "D-035",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа; «по действующему займу» читается как текущая просрочка."
+  },
+  {
+   "fid": "D-036",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Порядок в п. 4.1 ставит стоп-факторы до запроса отчёта, а фактор 3 и КДН требуют отчёта — реальная нестыковка."
+  },
+  {
+   "fid": "D-039",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Интеграции с бюро, выпиской, конвейером и SMS-шлюзом не описаны."
+  },
+  {
+   "fid": "D-040",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-021",
+   "reason": "Та же претензия к п. 4.1 одной фразой."
+  },
+  {
+   "fid": "D-041",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Основание (согласие) на запрос кредитного отчёта не указано."
+  },
+  {
+   "fid": "D-043",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-045",
+   "reason": "То же про состав SMS и раскрытие решения."
+  },
+  {
+   "fid": "D-044",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Отправляет SMS» — действие системы; доставку никто не требует."
+  },
+  {
+   "fid": "D-045",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Состав SMS с решением не определён, риск раскрытия реален."
+  },
+  {
+   "fid": "D-051",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Место хранения и состав данных для внешних участников не указаны; общий пункт, привязан к случайной строке."
+  },
+  {
+   "fid": "D-057",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-056",
+   "reason": "То же про п. 4.5."
+  },
+  {
+   "fid": "D-060",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Сидит на дефекте K-04, но не видит его: проблема примера не в недостающих условиях, а в неверном решении."
+  },
+  {
+   "fid": "D-062",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Поведение при дробном сроке и пустом поле не задано; мелочь."
+  },
+  {
+   "fid": "D-070",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Какая версия правил применяется при смене — не сказано."
+  },
+  {
+   "fid": "D-080",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Срок хранения считается от даты решения, а такого поля в 7.1 нет."
+  },
+  {
+   "fid": "D-083",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Солёный SHA-256 от 12-значного ИИН перебирается; реальный риск."
+  },
+  {
+   "fid": "D-085",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-083",
+   "reason": "Тот же хеш ИИН и та же соль."
+  },
+  {
+   "fid": "D-086",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Формат строки версии — деталь реализации."
+  },
+  {
+   "fid": "D-087",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-003",
+   "reason": "Тот же выключатель и откат."
+  },
+  {
+   "fid": "D-088",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«Журнал решений» не определён, срок для журнала событий не задан."
+  },
+  {
+   "fid": "D-089",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Срок фактического удаления после 5 лет не задан; мелочь."
+  },
+  {
+   "fid": "D-098",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Поведение при тайм-ауте фронта не описано."
+  },
+  {
+   "fid": "D-109",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-107",
+   "reason": "Нагрузка для замера 2 секунд уже требуется в D-107."
+  },
+  {
+   "fid": "D-117",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа (доступность 99,5%); «согласованные окна» — нормальная формулировка."
+  },
+  {
+   "fid": "D-119",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа; требование к доступности проверяемо."
+  },
+  {
+   "fid": "D-120",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Пять критериев приёмки не покрывают большинство правил и границ."
+  },
+  {
+   "fid": "D-122",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Критерий 2 проверяет конкретную проверку и проверяем; небольшое неудобство, не MAJOR."
+  },
+  {
+   "fid": "D-131",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«ОТКАЗ с кодом DUPLICATE» смешивает решение и код ошибки."
+  },
+  {
+   "fid": "D-135",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Правила 24 часов в требованиях нет вовсе; часовой пояс — придирка."
+  },
+  {
+   "fid": "D-136",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-001",
+   "reason": "Пустая дата и согласование уже в D-001/D-137."
+  },
+  {
+   "fid": "D-137",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Документ в статусе «на согласовании», пустая таблица подписей ожидаема."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-004",
+   "severity": "MINOR",
+   "line": 17,
+   "good_anchor": "снизить число заявок... не менее чем на"
+  },
+  {
+   "fid": "D-020",
+   "severity": "MAJOR",
+   "line": 36,
+   "good_anchor": "Запрашиваемая сумма — от 100 000 до 5 000 000 тенге"
+  },
+  {
+   "fid": "D-035",
+   "severity": "MAJOR",
+   "line": 43,
+   "good_anchor": "Наличие в кредитном отчёте просрочки более 30 календарных дней"
+  },
+  {
+   "fid": "D-117",
+   "severity": "MAJOR",
+   "line": 110,
+   "good_anchor": "Доступность модуля — не ниже 99,5%"
+  },
+  {
+   "fid": "D-119",
+   "severity": "MAJOR",
+   "line": 110,
+   "good_anchor": "Доступность модуля — не ниже 99,5%"
+  }
+ ],
+ "praised_defects": [],
+ "critical": {
+  "key_critical": {
+   "K-01": "CRITICAL (D-019)",
+   "K-02": "CRITICAL (D-028)",
+   "K-03": "CRITICAL (D-074)"
+  },
+  "all_key_critical_got_critical": true,
+  "tool_critical": [
+   {
+    "fid": "D-019",
+    "justified": true,
+    "why": "прямое противоречие"
+   },
+   {
+    "fid": "D-028",
+    "justified": true,
+    "why": "прямое противоречие в кредитном решении"
+   },
+   {
+    "fid": "D-074",
+    "justified": true,
+    "why": "сломан основной поток, кредитные потери"
+   },
+   {
+    "fid": "D-079",
+    "justified": false,
+    "why": "незаполненное правило и тест без требования — MAJOR, не CRITICAL"
+   },
+   {
+    "fid": "D-090",
+    "justified": true,
+    "why": "раскрытие персональных данных и банковской тайны (на грани; ключ — MAJOR)"
+   },
+   {
+    "fid": "D-101",
+    "justified": true,
+    "why": "нет обязательной части — формата обмена (на грани; ключ — MAJOR)"
+   }
+  ],
+  "inflated_count": 1
+ },
+ "totals": {
+  "defects": 17,
+  "found": 15,
+  "partial": 1,
+  "not_found": 1,
+  "by_severity": {
+   "CRITICAL": {
+    "found": 3,
+    "partial": 0,
+    "not_found": 0
+   },
+   "MAJOR": {
+    "found": 8,
+    "partial": 1,
+    "not_found": 1
+   },
+   "MINOR": {
+    "found": 4,
+    "partial": 0,
+    "not_found": 0
+   }
+  },
+  "extra_findings": 44,
+  "false_alarm": 14,
+  "overrated": 3,
+  "duplicate": 8,
+  "real_not_in_key": 19,
+  "good_place_hits": 5,
+  "praised_defects": 0,
+  "open_findings_total": 65
+ }
+}

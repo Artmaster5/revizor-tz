@@ -1,0 +1,740 @@
+{
+ "defects": [
+  {
+   "id": "B4-01",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-020"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Если покупку вернули после начисления, выполнить оба правила нельзя. По US-02 клиент оставит себе кэшбэк за возвращённый товар",
+   "reason": "Прямо то же противоречие BR-3 и US-02, с денежным последствием."
+  },
+  {
+   "id": "B4-02",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-073"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "По стандарту HTTP метод GET только читает данные и не должен ничего менять... прокси, кэши и функции предзагрузки могут повторить",
+   "reason": "Совпадает полностью."
+  },
+  {
+   "id": "B4-03",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-063"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Неясно также, входят ли баллы в лимит 30 000 KZT и можно ли их выплатить",
+   "reason": "Названа только часть про приветственный бонус в лимите; главный вопрос «лимит на клиента или на карту» нигде не поднят. Программа поставила «найден» по D-016, но D-016 о другом (частичное начисление при превышении лимита)."
+  },
+  {
+   "id": "B4-04",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-013"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Ставка 0,5 % даёт дробные суммы, например 0,5 % от 1 999 KZT = 9,995... правило округления не указано",
+   "reason": "Совпадает; уровень занижен до MINOR."
+  },
+  {
+   "id": "B4-05",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-024"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "У покупки в валюте есть несколько сумм... Курсом может быть курс платёжной системы или курс банка",
+   "reason": "Совпадает: от какой суммы и по какому курсу."
+  },
+  {
+   "id": "B4-06",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-022"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Категорию можно брать по коду MCC..., по справочнику продавцов банка или по названию продавца",
+   "reason": "Совпадает полностью; программа дала только «место», хотя смысл тот же."
+  },
+  {
+   "id": "B4-07",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-036"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "US-01 разрешает выбирать и менять категории только с 1-го по 5-е число. Раздел API разрешает менять их в любой момент",
+   "reason": "Прямо названо противоречие; программа сослалась на D-035 (часовой пояс), но настоящее попадание — D-036."
+  },
+  {
+   "id": "B4-08",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-023",
+    "D-066"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Покупка 1 ноября в 02:00 по Алматы (UTC+5) — это 31 октября 21:00 UTC, то есть октябрь. Критерий US-06 относит её к ноябрю",
+   "reason": "Основная часть в D-023; вторая часть (дата авторизации или проводки для месяца) — в D-066."
+  },
+  {
+   "id": "B4-09",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-092"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Слово «quickly» (быстро) не задаёт время загрузки, перцентиль и условия измерения",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "B4-10",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-075",
+    "D-051",
+    "D-008"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Для выплаты денег объявлен только код 401. Не сказано, что вернуть при нулевом балансе...; ключ идемпотентности; на какой счёт",
+   "reason": "Счёт, ошибки (включая нулевой баланс) и защита от повтора — всё названо."
+  },
+  {
+   "id": "B4-11",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "НЕТ",
+   "verdict": "found",
+   "finding_ids": [
+    "D-064"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, каким каналом отправляется сводка..., когда... и что в ней указано... Разработчик не может реализовать историю",
+   "reason": "Тот же дефект; программа не нашла из-за ключевых слов, по смыслу совпадает."
+  },
+  {
+   "id": "B4-12",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-029",
+    "D-028"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "BR-7 требует считать кэшбэк ночным пакетным заданием... US-02 и NFR-2 требуют... не позже чем через 60 секунд. Оба требования одновременно выполнить нельзя",
+   "reason": "Несовместимость (D-029) и технология в бизнес-правиле (D-028) названы."
+  },
+  {
+   "id": "B4-13",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-048"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Номер US-04 присвоен и выплате кэшбэка, и приветственному бонусу",
+   "reason": "Совпадает; программа дала «место» из-за слов."
+  },
+  {
+   "id": "B4-14",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-063"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "бонусные баллы, которых нет ни в глоссарии, ни в API... Непонятно, это отдельная программа лояльности или 1 000 KZT кэшбэка",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "B4-15",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-046"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Нет меры, по которой экран считается интуитивным и читаемым",
+   "reason": "Совпадает."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-001",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Шаблон про утверждающих и историю версий; владелец и версия указаны."
+  },
+  {
+   "fid": "D-002",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Шаблон про выключатель и откат; к требованиям этого документа не относится."
+  },
+  {
+   "fid": "D-003",
+   "severity": "CRITICAL",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Скрытая строка для ИИ реальна, и ключ ждёт, что её отметят; но это не дефект требований уровня CRITICAL."
+  },
+  {
+   "fid": "D-004",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-003",
+   "reason": "Та же строка 10, тот же смысл."
+  },
+  {
+   "fid": "D-005",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "База «активного клиента» для цели 1.2 не определена — мелкое, реальное."
+  },
+  {
+   "fid": "D-006",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«В любой момент» в цели 1.3 не измеримо — мелкое, реальное."
+  },
+  {
+   "fid": "D-007",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В API нет поля баланса кешбэка, нужного для выплаты — реальный пробел."
+  },
+  {
+   "fid": "D-010",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-012",
+   "reason": "Тот же вопрос «completed — авторизация или проводка»."
+  },
+  {
+   "fid": "D-012",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Определение «completed purchase» не сходится с начислением при авторизации — реально."
+  },
+  {
+   "fid": "D-014",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Формат ставки в ответе categories не задан — реально."
+  },
+  {
+   "fid": "D-015",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет правила для покупки, переходящей через лимит — реально, деньги."
+  },
+  {
+   "fid": "D-016",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-015",
+   "reason": "То же частичное начисление при превышении лимита."
+  },
+  {
+   "fid": "D-017",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-020",
+   "reason": "Судьба кешбэка при возврате после начисления — то же противоречие BR-3/US-02."
+  },
+  {
+   "fid": "D-019",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-020",
+   "reason": "То же, что D-017 и D-020."
+  },
+  {
+   "fid": "D-025",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-024",
+   "reason": "Та же валютная сумма и курс."
+  },
+  {
+   "fid": "D-027",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Не заданы время запуска и поведение при сбое ночного расчёта — мелкое, реальное."
+  },
+  {
+   "fid": "D-030",
+   "severity": "CRITICAL",
+   "verdict": "duplicate",
+   "duplicate_of": "D-029",
+   "reason": "То же противоречие ночного расчёта и 60 секунд, тоже CRITICAL."
+  },
+  {
+   "fid": "D-031",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Не описано, что видит клиент без подходящей карты — мелкое, реальное."
+  },
+  {
+   "fid": "D-032",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Не сказано, как формируется список доступных категорий — мелкое, реальное."
+  },
+  {
+   "fid": "D-033",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Пустой выбор и сбой сохранения не описаны — мелкое, реальное."
+  },
+  {
+   "fid": "D-034",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Часовой пояс окна 1–5 числа не задан — реально."
+  },
+  {
+   "fid": "D-035",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-034",
+   "reason": "Тот же часовой пояс окна выбора."
+  },
+  {
+   "fid": "D-037",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-029",
+   "reason": "«Сразу после оплаты» — часть того же расхождения со сроком, что D-029."
+  },
+  {
+   "fid": "D-038",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-015",
+   "reason": "Превышение лимита и округление уже названы в D-015 и D-013."
+  },
+  {
+   "fid": "D-039",
+   "severity": "CRITICAL",
+   "verdict": "duplicate",
+   "duplicate_of": "D-020",
+   "reason": "Окончательный кешбэк без сторно при возврате — та же суть, что D-020, тоже CRITICAL."
+  },
+  {
+   "fid": "D-040",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-020",
+   "reason": "Судьба кешбэка при отмене и возврате — то же, что D-020."
+  },
+  {
+   "fid": "D-041",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Формальная придирка к составным пунктам; дефекта нет."
+  },
+  {
+   "fid": "D-042",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«Текущий месяц» на экране без часового пояса — реально."
+  },
+  {
+   "fid": "D-043",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Пустое состояние и ошибка загрузки экрана не описаны — мелкое, реальное."
+  },
+  {
+   "fid": "D-044",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Какую сумму показывать для валютной покупки — реально."
+  },
+  {
+   "fid": "D-045",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Какая дата (авторизации или проводки) показывается — реально."
+  },
+  {
+   "fid": "D-047",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-046",
+   "reason": "То же непроверяемое «intuitive»."
+  },
+  {
+   "fid": "D-049",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-048",
+   "reason": "Тот же дубль US-04."
+  },
+  {
+   "fid": "D-050",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-075",
+   "reason": "Ошибка выплаты и повтор уже в D-075 и D-051."
+  },
+  {
+   "fid": "D-052",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-075",
+   "reason": "Недоступность Core banking уже в D-075."
+  },
+  {
+   "fid": "D-053",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-008",
+   "reason": "Тот же вопрос о счёте выплаты."
+  },
+  {
+   "fid": "D-056",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Как и когда выплата видна в истории — мелкое, реальное."
+  },
+  {
+   "fid": "D-058",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-063",
+   "reason": "Те же неопределённые бонусные баллы."
+  },
+  {
+   "fid": "D-059",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Что с бонусом при возврате первой покупки — реально."
+  },
+  {
+   "fid": "D-060",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Два прочтения «first eligible purchase of at least 5 000» — реально."
+  },
+  {
+   "fid": "D-061",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "От какой даты считать 30 дней — мелкое, реальное."
+  },
+  {
+   "fid": "D-062",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-061",
+   "reason": "Та же точка отсчёта 30 дней."
+  },
+  {
+   "fid": "D-065",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-064",
+   "reason": "Та же US-05 без содержания."
+  },
+  {
+   "fid": "D-067",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-066",
+   "reason": "Авторизация или проводка для границы месяца — уже в D-066."
+  },
+  {
+   "fid": "D-068",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Строки 88 и 89 — разные примеры; сам отчёт в D-023 говорит, что это не дубль."
+  },
+  {
+   "fid": "D-069",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-066",
+   "reason": "То же для второго примера."
+  },
+  {
+   "fid": "D-070",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-013",
+   "reason": "То же округление."
+  },
+  {
+   "fid": "D-072",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«this month» для списка категорий без часового пояса — мелкое, реальное."
+  },
+  {
+   "fid": "D-074",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет значения month по умолчанию — мелкое, реальное."
+  },
+  {
+   "fid": "D-076",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-051",
+   "reason": "Та же идемпотентность выплаты."
+  },
+  {
+   "fid": "D-077",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-051",
+   "reason": "Та же идемпотентность выплаты."
+  },
+  {
+   "fid": "D-079",
+   "severity": "CRITICAL",
+   "verdict": "duplicate",
+   "duplicate_of": "D-073",
+   "reason": "Тот же GET для сохранения, тоже CRITICAL."
+  },
+  {
+   "fid": "D-080",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "total до или после лимита неясно (remainingCap «не меньше 0» намекает, что total может быть больше лимита) — реально."
+  },
+  {
+   "fid": "D-081",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-080",
+   "reason": "То же total до/после лимита."
+  },
+  {
+   "fid": "D-082",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Пагинация items не задана — мелкое, реальное."
+  },
+  {
+   "fid": "D-083",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "По какой дате сортировать — мелкое, реальное."
+  },
+  {
+   "fid": "D-084",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "ISO 8601 со смещением однозначно задаёт момент; фиксированное смещение не нужно."
+  },
+  {
+   "fid": "D-085",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-044",
+   "reason": "Та же сумма в KZT для валютной покупки (поле API за строкой экрана)."
+  },
+  {
+   "fid": "D-087",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "items[].cashback до или после лимита — реально, суммы строк и total могут не сойтись."
+  },
+  {
+   "fid": "D-088",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-087",
+   "reason": "То же поле cashback и лимит."
+  },
+  {
+   "fid": "D-089",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-074",
+   "reason": "Тот же отсутствующий month."
+  },
+  {
+   "fid": "D-090",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«Будущий месяц» без часового пояса — мелкое, реальное."
+  },
+  {
+   "fid": "D-091",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-090",
+   "reason": "То же самое."
+  },
+  {
+   "fid": "D-093",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-092",
+   "reason": "То же «load quickly»."
+  },
+  {
+   "fid": "D-094",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-092",
+   "reason": "То же «load quickly»."
+  },
+  {
+   "fid": "D-096",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Как считать 99 % при недоступности процессинга — мелкое, реальное."
+  },
+  {
+   "fid": "D-098",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Какое время писать в аудит — мелкое уточнение на хорошем месте ключа."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-098",
+   "good_anchor": "NFR-3 audit log",
+   "note": "мелкое уточнение, не отрицает качество места"
+  }
+ ],
+ "praised_defects": [],
+ "critical": {
+  "key_critical": {
+   "B4-01": "D-020 CRITICAL — да",
+   "B4-02": "D-073 CRITICAL — да"
+  },
+  "tool_critical": {
+   "D-003": "завышено: скрытая строка для ИИ — не противоречие и не поломка потока",
+   "D-020": "оправдано: противоречие, деньги",
+   "D-023": "оправдано: прямое противоречие BR-5 и US-06",
+   "D-029": "оправдано: прямое противоречие BR-7 и NFR-2",
+   "D-030": "уровень оправдан, но это повтор D-029",
+   "D-036": "оправдано: противоречие US-01 и API",
+   "D-039": "уровень оправдан (потеря денег), но это повтор D-020",
+   "D-073": "оправдано: неправильное применение HTTP",
+   "D-079": "уровень оправдан, но это повтор D-073"
+  },
+  "all_key_critical_got_critical": true,
+  "inflated_tool_critical": [
+   "D-003"
+  ],
+  "duplicate_tool_critical": [
+   "D-030",
+   "D-039",
+   "D-079"
+  ]
+ },
+ "totals": {
+  "defects": 15,
+  "found": 14,
+  "partial": 1,
+  "not_found": 0,
+  "by_severity": {
+   "CRITICAL": {
+    "found": 2,
+    "partial": 0,
+    "not_found": 0
+   },
+   "MAJOR": {
+    "found": 9,
+    "partial": 1,
+    "not_found": 0
+   },
+   "MINOR": {
+    "found": 3,
+    "partial": 0,
+    "not_found": 0
+   }
+  },
+  "origin_organisers": "в ключе нет дефектов с origin=organisers",
+  "extra": {
+   "real_not_in_key": 28,
+   "duplicate": 33,
+   "false_alarm": 5,
+   "overrated": 1
+  },
+  "praised_defects": [],
+  "good_place_hits": 1
+ }
+}

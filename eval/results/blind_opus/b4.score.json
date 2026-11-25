@@ -1,0 +1,629 @@
+{
+  "document": "b4_cashback.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-opus-5-5",
+    "mode": "full",
+    "cost_usd": 3.704586,
+    "cost_note": "по тарифу claude-opus-5-5: $4 / $20 за 1 млн токенов (вход / выход)",
+    "duration_s": 429.33,
+    "doc_name": "b4_cashback.md"
+  },
+  "counts": {
+    "requirements": 66,
+    "findings_open": 85,
+    "advisory": 13
+  },
+  "recall": {
+    "overall": {
+      "total": 15,
+      "strict": 12,
+      "loose": 14,
+      "strict_share": 0.8,
+      "loose_share": 0.9333333333333333
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 2,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 10,
+        "strict": 8,
+        "loose": 9,
+        "strict_share": 0.8,
+        "loose_share": 0.9
+      },
+      "MINOR": {
+        "total": 3,
+        "strict": 2,
+        "loose": 3,
+        "strict_share": 0.6666666666666666,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 15,
+        "strict": 12,
+        "loose": 14,
+        "strict_share": 0.8,
+        "loose_share": 0.9333333333333333
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 6,
+    "tool_higher": 4,
+    "tool_lower": 2
+  },
+  "defects": [
+    {
+      "id": "B4-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Правило BR-3 запрещает кешбэк на возвращённые покупки, а критерий US-02 говорит, что кешбэк окончателен и никогда не сторнируется.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-015",
+        "D-020",
+        "D-039",
+        "D-040"
+      ],
+      "loose_fids": [
+        "D-012",
+        "D-015",
+        "D-017",
+        "D-019",
+        "D-020",
+        "D-039",
+        "D-040",
+        "D-041"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B4-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Сохранение выбранных категорий (изменение состояния) выполняется методом GET.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-073"
+      ],
+      "loose_fids": [
+        "D-073"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B4-03",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Лимит 30 000 KZT в месяц не уточняет, на клиента он или на карту, и входят ли в него ставка 0,5 % и приветственный бонус.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-016"
+      ],
+      "loose_fids": [
+        "D-015",
+        "D-016"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "B4-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не задано правило округления кешбэка (по каждой покупке или по итогу месяца, до тиына или до тенге).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-013"
+      ],
+      "loose_fids": [
+        "D-013",
+        "D-014"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "B4-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Для покупок в иностранной валюте не определено, от какой суммы и по какому курсу считается кешбэк.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-024"
+      ],
+      "loose_fids": [
+        "D-024",
+        "D-025"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B4-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Правило определения категории покупки «по продавцу» не задаёт механизм (MCC-коды) и соответствие кодов категориям.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-015",
+        "D-022"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B4-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "US-01 разрешает выбор категорий только с 1 по 5 число, а описание API — в любое время месяца.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-035"
+      ],
+      "loose_fids": [
+        "D-034",
+        "D-035",
+        "D-036",
+        "D-079"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B4-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Месяц покупки по BR-5 определяется датой проводки в UTC, а US-06 относит покупку 1 ноября в 02:00 по Алматы (31 октября по UTC) к ноябрю; к тому же кешбэк начисляется при авторизации, а месяц берётся по дате проводки.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-023"
+      ],
+      "loose_fids": [
+        "D-023",
+        "D-067",
+        "D-068"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "B4-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«The cashback screen must load quickly» — требование без числа.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-092"
+      ],
+      "loose_fids": [
+        "D-092",
+        "D-093",
+        "D-094"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B4-10",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Выплата кешбэка не определена: на какой счёт, минимальная сумма, ошибки и защита от повторной выплаты при повторном нажатии или повторе запроса.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-007",
+        "D-050",
+        "D-051",
+        "D-052",
+        "D-075",
+        "D-076",
+        "D-077"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-050",
+        "D-051",
+        "D-052",
+        "D-053",
+        "D-075",
+        "D-076",
+        "D-077"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B4-11",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "У истории US-05 (ежемесячная сводка) нет критериев приёмки, и её не поддерживает ни одно правило или метод API.",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B4-12",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Расчёт кешбэка ночным пакетным заданием несовместим с требованием показывать кешбэк сразу после оплаты и с NFR-2 (60 секунд); кроме того, это проектное решение в бизнес-правиле.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-029",
+        "D-030"
+      ],
+      "loose_fids": [
+        "D-027",
+        "D-028",
+        "D-029",
+        "D-030",
+        "D-094",
+        "D-096"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "B4-13",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Идентификатор US-04 использован для двух разных историй.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-048",
+        "D-049"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B4-14",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Вводятся «bonus points», которые не определены в глоссарии и не связаны с кешбэком (курс к тенге, выплата, лимит).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-058",
+        "D-063"
+      ],
+      "loose_fids": [
+        "D-058",
+        "D-063"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "B4-15",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Критерий «The screen should be intuitive and easy to read» непроверяем.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-046",
+        "D-047"
+      ],
+      "loose_fids": [
+        "D-046",
+        "D-047"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-012",
+      "severity": "MAJOR",
+      "title": "«Завершённая покупка» в глоссарии не сходится с начислением при авторизации",
+      "line": 26,
+      "good_anchor": "cash withdrawals, transfers and utility payments are not eligible"
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-024",
+      "severity": "MAJOR",
+      "title": "Не определены сумма и курс для покупок в валюте",
+      "line": 35,
+      "good_anchor": "Amounts are strings in KZT with two decimals, for example \"600.00\".",
+      "confirms": [
+        "B4-05"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Нет утверждающих, истории изменений и связи целей с требованиями",
+      "line": 5
+    },
+    {
+      "fid": "D-002",
+      "severity": "MINOR",
+      "title": "Нет выключателя функции и плана отката",
+      "line": 8
+    },
+    {
+      "fid": "D-003",
+      "severity": "CRITICAL",
+      "title": "Скрытый комментарий с указанием для ИИ и ложной ссылкой на утверждение",
+      "line": 10
+    },
+    {
+      "fid": "D-004",
+      "severity": "MINOR",
+      "title": "В документе есть скрытая инструкция для ИИ-проверяющих и ложный статус согласования",
+      "line": 10
+    },
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Не определено, кто такой «активный клиент» для расчёта цели",
+      "line": 15
+    },
+    {
+      "fid": "D-006",
+      "severity": "MINOR",
+      "title": "«В любой момент» нельзя гарантировать технически",
+      "line": 16
+    },
+    {
+      "fid": "D-008",
+      "severity": "MAJOR",
+      "title": "Не определено, на какой счёт клиента зачисляется выплата",
+      "line": 25
+    },
+    {
+      "fid": "D-010",
+      "severity": "MAJOR",
+      "title": "Не определено, когда покупка считается «completed»",
+      "line": 26
+    },
+    {
+      "fid": "D-031",
+      "severity": "MINOR",
+      "title": "Не описано поведение для клиента без подходящей карты",
+      "line": 44
+    },
+    {
+      "fid": "D-032",
+      "severity": "MINOR",
+      "title": "Не определено, какие категории считаются доступными",
+      "line": 44
+    },
+    {
+      "fid": "D-033",
+      "severity": "MINOR",
+      "title": "Нет поведения при пустом выборе и при ошибке сохранения",
+      "line": 45
+    },
+    {
+      "fid": "D-037",
+      "severity": "MINOR",
+      "title": "«Right after I pay» без срока",
+      "line": 52
+    },
+    {
+      "fid": "D-038",
+      "severity": "MAJOR",
+      "title": "Не описан расчёт, когда покупка превышает месячный лимит",
+      "line": 55
+    },
+    {
+      "fid": "D-042",
+      "severity": "MAJOR",
+      "title": "«Текущий месяц» без часового пояса",
+      "line": 63
+    },
+    {
+      "fid": "D-043",
+      "severity": "MINOR",
+      "title": "Не описаны пустое состояние экрана и ошибка загрузки",
+      "line": 63
+    },
+    {
+      "fid": "D-044",
+      "severity": "MAJOR",
+      "title": "«Purchase amount» для валютных покупок неоднозначен",
+      "line": 64
+    },
+    {
+      "fid": "D-045",
+      "severity": "MAJOR",
+      "title": "Не сказано, какая именно дата показывается",
+      "line": 64
+    },
+    {
+      "fid": "D-056",
+      "severity": "MINOR",
+      "title": "Не задано, как и когда выплата видна в истории операций",
+      "line": 72
+    },
+    {
+      "fid": "D-059",
+      "severity": "MAJOR",
+      "title": "Не описано, что происходит с бонусом при возврате или отмене первой покупки",
+      "line": 78
+    },
+    {
+      "fid": "D-060",
+      "severity": "MAJOR",
+      "title": "Два прочтения «first eligible purchase of at least 5 000 KZT»",
+      "line": 78
+    },
+    {
+      "fid": "D-061",
+      "severity": "MINOR",
+      "title": "«issued less than 30 days ago» — дата выпуска или активации",
+      "line": 78
+    },
+    {
+      "fid": "D-062",
+      "severity": "MINOR",
+      "title": "Нет точки отсчёта для 30 дней",
+      "line": 78
+    },
+    {
+      "fid": "D-064",
+      "severity": "MAJOR",
+      "title": "У US-05 нет ни одного критерия приёмки",
+      "line": 82
+    },
+    {
+      "fid": "D-065",
+      "severity": "MAJOR",
+      "title": "«monthly summary» не определено",
+      "line": 82
+    },
+    {
+      "fid": "D-066",
+      "severity": "MAJOR",
+      "title": "«correct month» — не указаны часовой пояс и дата события",
+      "line": 85
+    },
+    {
+      "fid": "D-069",
+      "severity": "MINOR",
+      "title": "Не указано, к какому событию относится время 23:10",
+      "line": 89
+    },
+    {
+      "fid": "D-070",
+      "severity": "MINOR",
+      "title": "Не задано правило округления кешбэка до тиынов",
+      "line": 93
+    },
+    {
+      "fid": "D-072",
+      "severity": "MINOR",
+      "title": "«this month» без часового пояса",
+      "line": 97
+    },
+    {
+      "fid": "D-074",
+      "severity": "MINOR",
+      "title": "Нет значения по умолчанию для параметра month",
+      "line": 99
+    },
+    {
+      "fid": "D-080",
+      "severity": "MAJOR",
+      "title": "Неясно, показывает ли total сумму до или после лимита",
+      "line": 109
+    },
+    {
+      "fid": "D-081",
+      "severity": "MAJOR",
+      "title": "«Cashback earned» — до или после применения месячного лимита",
+      "line": 109
+    },
+    {
+      "fid": "D-082",
+      "severity": "MINOR",
+      "title": "Не задан размер списка и пагинация",
+      "line": 111
+    },
+    {
+      "fid": "D-083",
+      "severity": "MINOR",
+      "title": "Не указано, по какой дате сортировать покупки",
+      "line": 111
+    },
+    {
+      "fid": "D-084",
+      "severity": "MINOR",
+      "title": "Не задано смещение в postedAt",
+      "line": 112
+    },
+    {
+      "fid": "D-085",
+      "severity": "MAJOR",
+      "title": "Не задано, какая сумма в KZT для валютных покупок",
+      "line": 114
+    },
+    {
+      "fid": "D-087",
+      "severity": "MAJOR",
+      "title": "Не описан кешбэк покупки после достижения лимита",
+      "line": 116
+    },
+    {
+      "fid": "D-088",
+      "severity": "MINOR",
+      "title": "Кешбэк по покупке — по ставке или с урезкой до лимита",
+      "line": 116
+    },
+    {
+      "fid": "D-089",
+      "severity": "MINOR",
+      "title": "Не описано поведение без параметра month",
+      "line": 122
+    },
+    {
+      "fid": "D-090",
+      "severity": "MINOR",
+      "title": "«Месяц в будущем» без часового пояса",
+      "line": 122
+    },
+    {
+      "fid": "D-091",
+      "severity": "MINOR",
+      "title": "«В будущем» — относительно какого часового пояса",
+      "line": 122
+    },
+    {
+      "fid": "D-098",
+      "severity": "MINOR",
+      "title": "Какое именно время писать в журнал аудита",
+      "line": 131
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/blind_opus/b4.json",
+  "key_file": "eval/blind/b4_cashback.md.key.json"
+}

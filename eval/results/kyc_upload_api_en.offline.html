@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
+<meta name="color-scheme" content="light dark">
+<title>Ревизор ТЗ — Remote Onboarding — Identity Document Upload API</title>
+<style>
+:root{--bg:#f6f7f9;--paper:#fff;--ink:#1f2933;--muted:#5f6b7a;--line:#d9dee5;--zebra:#f4f6f9;--link:#0b5cad;
+--accent:#0f6b4f;--accent-soft:#e8f3ee;--code:#eef1f5;--crit:#b42318;--crit-bg:#fdecea;--maj:#9a5b00;--maj-bg:#fff2d6;
+--min:#146c3a;--min-bg:#e3f5ea;--shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#10151b;--paper:#171d25;--ink:#e6eaef;--muted:#9aa6b4;--line:#2d3744;
+--zebra:#1b222b;--link:#7db4ff;--accent:#5fd0a2;--accent-soft:#16302a;--code:#222b36;--crit:#ff8a80;--crit-bg:#3b1d1b;
+--maj:#ffc266;--maj-bg:#3a2d12;--min:#7ee2a6;--min-bg:#16301f;--shadow:none}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.65 -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.doc{max-width:920px;margin:0 auto;padding:28px 20px 56px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:30px 34px 38px;box-shadow:var(--shadow)}
+h1,h2,h3,h4,h5,h6{line-height:1.3;margin:1.7em 0 .55em;font-weight:650;color:var(--ink)}
+h1{font-size:1.75rem;margin-top:0;letter-spacing:-.01em}
+h2{font-size:1.38rem;padding-bottom:.3em;border-bottom:2px solid var(--line);margin-top:2.2em}
+h3{font-size:1.12rem}h4{font-size:1rem}h5,h6{font-size:.95rem;color:var(--muted)}
+h2,h3,h4,[id]{scroll-margin-top:64px}
+p{margin:.65em 0}
+a{color:var(--link);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--link) 35%,transparent)}
+a:hover{border-bottom-color:var(--link)}
+a[id]:empty{border:0}
+code{font:.88em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--code);padding:.1em .38em;border-radius:4px;overflow-wrap:break-word}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto;line-height:1.45}
+pre code{background:none;padding:0}
+hr{border:0;border-top:1px solid var(--line);margin:1.8em 0}
+ul,ol{margin:.5em 0;padding-left:1.45em}
+li{margin:.22em 0}li>ul,li>ol{margin:.2em 0}
+blockquote{margin:.9em 0;padding:.5em 1em;border-left:4px solid var(--line);background:var(--zebra);color:var(--ink);border-radius:0 8px 8px 0}
+blockquote p{margin:.35em 0}
+blockquote.verdict{border:1px solid var(--accent);border-left:6px solid var(--accent);background:var(--accent-soft);
+padding:1em 1.3em;margin:1.1em 0 1.4em;font-size:1.04rem;border-radius:10px}
+blockquote.verdict-blocked{border-color:var(--crit);background:var(--crit-bg)}
+blockquote.verdict-conditional{border-color:var(--maj);background:var(--maj-bg)}
+.tablewrap{overflow-x:auto;margin:1em 0;border:1px solid var(--line);border-radius:8px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.9rem;line-height:1.45}
+th,td{border:1px solid var(--line);padding:6px 10px;vertical-align:top;text-align:left;overflow-wrap:break-word}
+.tablewrap th:first-child,.tablewrap td:first-child{border-left:0}.tablewrap th:last-child,.tablewrap td:last-child{border-right:0}
+thead th{background:var(--zebra);font-weight:650;border-top:0}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:var(--zebra)}
+.a-right{text-align:right;font-variant-numeric:tabular-nums}.a-center{text-align:center}
+.sev{display:inline-block;font:700 .72em/1.5 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.03em;padding:0 .55em;border-radius:99px;
+vertical-align:.08em;border:1px solid transparent;white-space:nowrap}
+.sev-critical{color:var(--crit);background:var(--crit-bg);border-color:color-mix(in srgb,var(--crit) 35%,transparent)}
+.sev-major{color:var(--maj);background:var(--maj-bg);border-color:color-mix(in srgb,var(--maj) 40%,transparent)}
+.sev-minor{color:var(--min);background:var(--min-bg);border-color:color-mix(in srgb,var(--min) 35%,transparent)}
+.card{margin:1.1em 0;padding:.7em 1.1em .8em;border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;background:var(--paper)}
+.card>p:first-of-type,.card>strong:first-child{margin-top:.2em}
+.card-critical{border-left-color:var(--crit)}.card-major{border-left-color:var(--maj)}.card-minor{border-left-color:var(--min)}
+details{margin:.8em 0;padding:.4em .9em;border:1px solid var(--line);border-radius:8px}
+details>summary{cursor:pointer;font-weight:600}
+nav.toc{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+nav.toc>details{max-width:920px;margin:0 auto;border:0;border-radius:0;padding:0 20px;position:relative}
+nav.toc summary{padding:10px 0;color:var(--muted);font-size:.92rem;list-style:none}
+nav.toc summary::-webkit-details-marker{display:none}
+nav.toc summary::before{content:"\2630";margin-right:.6em;color:var(--accent)}
+nav.toc ol{position:absolute;left:20px;right:20px;top:100%;margin:0;padding:10px 14px 12px 36px;list-style:decimal;
+background:var(--paper);border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;box-shadow:var(--shadow);
+max-height:70vh;overflow:auto;font-size:.93rem}
+nav.toc li{margin:.18em 0}
+footer{max-width:920px;margin:18px auto 0;padding:0 20px;color:var(--muted);font-size:.82rem;text-align:center}
+@media (max-width:640px){body{font-size:15px}.doc{padding:14px 10px 40px}.sheet{padding:18px 14px 26px;border-radius:8px}
+h1{font-size:1.4rem}h2{font-size:1.2rem}nav.toc>details{padding:0 10px}nav.toc ol{left:10px;right:10px}}
+@page{size:A4;margin:14mm}
+@media print{
+html,body{background:#fff!important;color:#000!important;font-size:10.5pt;line-height:1.5}
+.doc{max-width:none;padding:0}.sheet{border:0;box-shadow:none;padding:0;border-radius:0;background:#fff}
+nav.toc,footer{display:none!important}
+a{color:#000;border:0;text-decoration:none}
+a[href^="http"]::after,a[href^="mailto"]::after{content:" (" attr(href) ")";font-size:.85em;word-break:break-all}
+.tablewrap{overflow:visible;border:0}
+table{font-size:8.6pt}thead{display:table-header-group}
+tr,.card,blockquote,pre,.sev{break-inside:avoid;page-break-inside:avoid}
+tbody tr:nth-child(even),thead th,blockquote,code,pre,.card,details{background:none!important}
+blockquote,blockquote.verdict{border:1px solid #888;border-left:4px solid #444;border-radius:0}
+.card{border:1px solid #bbb;border-left:4px solid #666;border-radius:0}
+.sev{border-color:currentColor;background:none!important}
+.sev-critical{color:#a00}.sev-major{color:#8a5200}.sev-minor{color:#0a5a2e}
+h1,h2,h3,h4{break-after:avoid;page-break-after:avoid}
+h2{border-bottom:1px solid #888;margin-top:1.6em}
+[id]{scroll-margin-top:0}
+}
+</style>
+</head>
+<body>
+<nav class="toc" aria-label="Содержание"><details><summary>Содержание</summary><ol>
+<li><a href="#s1">1. Паспорт прогона</a></li>
+<li><a href="#s2">2. Как агент нарезал требования</a></li>
+<li><a href="#s3">3. Проверка каждого требования</a></li>
+<li><a href="#s4">4. Проверка всего набора требований</a></li>
+<li><a href="#s5">5. Сводка</a></li>
+<li><a href="#s6">6. Итог</a></li>
+<li><a href="#s7">7. Уточняющие вопросы к автору ТЗ</a></li>
+<li><a href="#s8">8. Черновики приёмочных тестов</a></li>
+<li><a href="#app">Приложение. Как получен отчёт</a></li>
+</ol></details></nav>
+<main class="doc"><article class="sheet">
+<h1>Отчёт о статической проверке требований</h1>
+<p><strong>Документ:</strong> <code>kyc_upload_api_en.md</code> · проверен 26.11.2026 02:20 (UTC+05:00) · без модели — только автоматические правила</p>
+<blockquote class="verdict verdict-blocked">
+<p><strong>Итог:</strong> ⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (итог предварительный)<br>
+Замечаний 7: блокеров 1 · существенных 6 · мелких 0 · вопросов автору 7 · требований 44<br>
+Индекс готовности документа: <strong>78 из 100</strong> — готов после правок, предварительно. Вердикт определяют блокеры, а не индекс.<br>
+⚠️ Без модели смысл не проверялся: противоречия и пропущенные сценарии не искались.</p>
+</blockquote>
+<p><strong>Блокеры — исправить до начала работы (1):</strong></p>
+<ol>
+<li><a href="#d-004">D-004</a> Метод GET используется для изменения данных — нарушение протокола, строка 72</li>
+</ol>
+<p><strong>Сначала спросить автора:</strong></p>
+<ol>
+<li><a href="#v-01">В-01</a> Какой HTTP-метод использовать для этого изменения? — снимет блокер <a href="#d-004">D-004</a></li>
+<li><a href="#v-02">В-02</a> Как передавать идентификатор карты и другие чувствительные значения? — индекс +3</li>
+<li><a href="#v-03">В-03</a> Возвращает ли сервис код 409? — индекс +3</li>
+<li><a href="#v-04">В-04</a> Возвращает ли сервис код 202? — индекс +3</li>
+<li><a href="#v-05">В-05</a> Кто и когда заполнит раздел «3.5. Callback to the core banking system»? — индекс +3</li>
+</ol>
+<p><strong>Что исправить в первую очередь:</strong></p>
+<ol>
+<li>Используйте PUT или PATCH для изменения настройки (POST — для создания новой… (<a href="#d-004">D-004</a>)</li>
+<li>Чувствительные данные передаются в адресной строке запроса. Передавайте такие… (<a href="#d-001">D-001</a>)</li>
+<li>Код ответа 409 возвращается, но не описан. Добавьте описание кода 409: при… (<a href="#d-002">D-002</a>)</li>
+<li>Ограничение по времени без условий измерения. Допишите условия измерения… (<a href="#d-003">D-003</a>)</li>
+<li>Код ответа 202 возвращается, но не описан. Добавьте описание кода 202: при… (<a href="#d-005">D-005</a>)</li>
+</ol>
+<p>Прогон: 0,1 с · $0, модель не вызывалась.</p>
+<p><strong>Разделы:</strong> <a href="#s1">1. Паспорт прогона</a> · <a href="#s2">2. Как агент нарезал требования</a> · <a href="#s3">3. Проверка каждого требования</a> · <a href="#s4">4. Проверка всего набора требований</a> · <a href="#s5">5. Сводка</a> · <a href="#s6">6. Итог</a> · <a href="#s7">7. Уточняющие вопросы к автору ТЗ</a> · <a href="#s8">8. Черновики приёмочных тестов</a> · <a href="#app">Приложение. Как получен отчёт</a></p>
+<h2 id="s1">1. Паспорт прогона</h2>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Поле</th><th class="a-left">Значение</th></tr></thead><tbody>
+<tr><td class="a-left">Документ</td><td class="a-left"><code>kyc_upload_api_en.md</code> · Markdown · 5,4 КБ · 121 строка · 817 слов · SHA-256 <code>4cf9a9852dac</code> · «Remote Onboarding — Identity Document Upload API»</td></tr>
+<tr><td class="a-left">Дата и время прогона</td><td class="a-left">26.11.2026 02:20 (UTC+05:00)</td></tr>
+<tr><td class="a-left">Модель</td><td class="a-left">без модели</td></tr>
+<tr><td class="a-left">Версия агента</td><td class="a-left">v1.0.0 (тег <code>v1.1.1</code>) · коммит <code>0d071fd</code> + незакоммиченные правки · набор правил 1.1</td></tr>
+<tr><td class="a-left">Режим</td><td class="a-left">без модели: только автоматические правила</td></tr>
+<tr><td class="a-left">Время анализа</td><td class="a-left">0,1 с</td></tr>
+<tr><td class="a-left">Стоимость прогона</td><td class="a-left">$0 (модель не вызывалась)</td></tr>
+<tr><td class="a-left">Проверка цитат</td><td class="a-left">подтверждено 17, отброшено 0</td></tr>
+<tr><td class="a-left">Перепроверка</td><td class="a-left">не выполнялась (без модели)</td></tr>
+<tr><td class="a-left">Защита данных</td><td class="a-left">значений, похожих на номера карт, ИИН/БИН, адреса почты или телефоны, не найдено</td></tr>
+</tbody></table></div>
+<h2 id="s2">2. Как агент нарезал требования</h2>
+<p>Требования выделены эвристикой (без модели); номера REQ-… присвоены программой по порядку документа. Найдено 44 требования. Формулировка — точная цитата; длинная обрезана, только если полный текст есть в карточке раздела 3. Ясность каждого требования — в матрице раздела 3.</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">ID (в документе)</th><th class="a-left">Тип</th><th class="a-left">Формулировка (цитата)</th><th class="a-left">Где</th></tr></thead><tbody>
+<tr><td class="a-left"><a href="#req-001">REQ-001</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">The API lets the mobile app upload images of the applicant's identity document (ID card of the Republic of Kazakhstan or passport) and a selfie during remote onboarding, submit them for verification and query the verification status.</td><td class="a-left">строка 13</td></tr>
+<tr><td class="a-left"><a href="#req-002">REQ-002</a> 2.1</td><td class="a-left">интерфейс (API)</td><td class="a-left">2.1. All endpoints are served over HTTPS only, TLS 1.2 or higher; plain HTTP requests are rejected without redirect.</td><td class="a-left">строка 17</td></tr>
+<tr><td class="a-left"><a href="#req-003">REQ-003</a> 2.2</td><td class="a-left">интерфейс (API)</td><td class="a-left">2.2. Every request carries Authorization: Bearer &lt;access_token&gt; issued to the onboarding session. The access token lifetime is 15 minutes.</td><td class="a-left">строка 18</td></tr>
+<tr><td class="a-left"><a href="#req-004">REQ-004</a> 2.3</td><td class="a-left">интерфейс (API)</td><td class="a-left">2.3. All timestamps are ISO 8601 strings in UTC, e.g. 2026-11-12T09:30:00Z.</td><td class="a-left">строка 19</td></tr>
+<tr><td class="a-left"><a href="#req-005">REQ-005</a> 2.4</td><td class="a-left">интерфейс (API)</td><td class="a-left">2.4. Every POST request must carry an Idempotency-Key header (UUID v4). A repeated request with the same key within 24 hours returns the original response and does not create a new upload.</td><td class="a-left">строка 20</td></tr>
+<tr><td class="a-left"><a href="#req-006">REQ-006</a> 2.5</td><td class="a-left">интерфейс (API)</td><td class="a-left">2.5. The applicant is identified by IIN (12 digits). Test IIN for examples: 000000000000.</td><td class="a-left">строка 21</td></tr>
+<tr><td class="a-left"><a href="#req-007">REQ-007</a> 2.6</td><td class="a-left">интерфейс (API)</td><td class="a-left">2.6. The client app compresses images, strips EXIF location data, shows a progress bar and retries failed uploads up to 3 times.</td><td class="a-left">строка 22</td></tr>
+<tr><td class="a-left"><a href="#req-008">REQ-008</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Uploads one document image. Request body: multipart/form-data.</td><td class="a-left">строка 28</td></tr>
+<tr><td class="a-left"><a href="#req-009">REQ-009</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: sessionId | In: path | Type: string (UUID) | Required: yes | Rules: Onboarding session id</td><td class="a-left">строка 32</td></tr>
+<tr><td class="a-left"><a href="#req-010">REQ-010</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: iin | In: query | Type: string | Required: yes | Rules: Applicant IIN, 12 digits</td><td class="a-left">строка 33</td></tr>
+<tr><td class="a-left"><a href="#req-011">REQ-011</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: docType | In: form | Type: string | Required: yes | Rules: ID_CARD, PASSPORT, SELFIE</td><td class="a-left">строка 34</td></tr>
+<tr><td class="a-left"><a href="#req-012">REQ-012</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: side | In: form | Type: string | Required: for ID_CARD only | Rules: FRONT or BACK</td><td class="a-left">строка 35</td></tr>
+<tr><td class="a-left"><a href="#req-013">REQ-013</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: file | In: form | Type: binary | Required: yes | Rules: JPEG or PNG, max 10 MB</td><td class="a-left">строка 36</td></tr>
+<tr><td class="a-left"><a href="#req-014">REQ-014</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Example: curl -X POST "$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000" \ -H "Authorization: Bearer $TOKEN" -H "Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002" \ -F docType=PHOTO -F file=@selfie.jpg</td><td class="a-left">строки 38–44</td></tr>
+<tr><td class="a-left"><a href="#req-015">REQ-015</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Responses:</td><td class="a-left">строка 46</td></tr>
+<tr><td class="a-left"><a href="#req-016">REQ-016</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">201 Created — upload accepted: {"documentId": "d-001", "status": "RECEIVED"}</td><td class="a-left">строка 48</td></tr>
+<tr><td class="a-left"><a href="#req-017">REQ-017</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">400 Bad Request — a parameter is missing or invalid</td><td class="a-left">строка 49</td></tr>
+<tr><td class="a-left"><a href="#req-018">REQ-018</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">413 Payload Too Large — the file exceeds the size limit</td><td class="a-left">строка 50</td></tr>
+<tr><td class="a-left"><a href="#req-019">REQ-019</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">415 Unsupported Media Type — the file is not JPEG or PNG</td><td class="a-left">строка 51</td></tr>
+<tr><td class="a-left"><a href="#req-020">REQ-020</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">422 Unprocessable Entity — image quality is insufficient, see 4.3</td><td class="a-left">строка 52</td></tr>
+<tr><td class="a-left"><a href="#req-021">REQ-021</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">If a document of the same docType and side has already been uploaded in the session, the server returns 409.</td><td class="a-left">строка 54</td></tr>
+<tr><td class="a-left"><a href="#req-022">REQ-022</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">The upload endpoint responds within 3 seconds.</td><td class="a-left">строка 56</td></tr>
+<tr><td class="a-left"><a href="#req-023">REQ-023</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Returns the verification status of the session. Authorization is not required for this endpoint so that the web landing page can poll it.</td><td class="a-left">строка 60</td></tr>
+<tr><td class="a-left"><a href="#req-024">REQ-024</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Response 200 OK: {"sessionId": "3f1c9a52-0000-4000-8000-000000000001", "status": "PROCESSING", "fullName": "TEST APPLICANT", "iin": "000000000000", "birthDate": "1990-01-01", "documentNumber": "000000000"}</td><td class="a-left">строки 62–68</td></tr>
+<tr><td class="a-left"><a href="#req-025">REQ-025</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Session status values: DRAFT, SUBMITTED, PROCESSING, VERIFIED, REJECTED.</td><td class="a-left">строка 70</td></tr>
+<tr><td class="a-left"><a href="#req-026">REQ-026</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Removes a previously uploaded document. A document can be removed only while the session status is DRAFT; otherwise the server returns 400.</td><td class="a-left">строка 74</td></tr>
+<tr><td class="a-left"><a href="#req-027">REQ-027</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Submits all uploaded documents for verification. The session must contain an ID card (both sides) or a passport, and one selfie; otherwise 400 with {"error": "INCOMPLETE_SET"}. On success the status becomes SUBMITTED and the server returns 202 Accepted.</td><td class="a-left">строка 78</td></tr>
+<tr><td class="a-left"><a href="#req-028">REQ-028</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">The verification provider is called asynchronously. When it responds, the status changes to PROCESSING and then to APPROVED or REJECTED. If the verification provider fails, the session is handled accordingly.</td><td class="a-left">строка 80</td></tr>
+<tr><td class="a-left"><a href="#req-029">REQ-029</a> 4.1</td><td class="a-left">интерфейс (API)</td><td class="a-left">4.1. Minimum resolution of a document image is 1280×720 pixels; a selfie is at least 640×480 pixels.</td><td class="a-left">строка 88</td></tr>
+<tr><td class="a-left"><a href="#req-030">REQ-030</a> 4.2</td><td class="a-left">интерфейс (API)</td><td class="a-left">4.2. Glare and blur on the document image must be within acceptable limits.</td><td class="a-left">строка 89</td></tr>
+<tr><td class="a-left"><a href="#req-031">REQ-031</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Liveness of the selfie is checked by the FaceCheck SDK 4.2 library on the server in a dedicated thread pool of 8 workers.</td><td class="a-left">строка 91</td></tr>
+<tr><td class="a-left"><a href="#req-032">REQ-032</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Limit: Maximum file size | Value: 8 000 KB</td><td class="a-left">строка 97</td></tr>
+<tr><td class="a-left"><a href="#req-033">REQ-033</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Limit: Supported formats | Value: JPEG, PNG, HEIC</td><td class="a-left">строка 98</td></tr>
+<tr><td class="a-left"><a href="#req-034">REQ-034</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Limit: Uploads per session | Value: at most 20</td><td class="a-left">строка 99</td></tr>
+<tr><td class="a-left"><a href="#req-035">REQ-035</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Limit: Rate limit | Value: 30 requests per applicant</td><td class="a-left">строка 100</td></tr>
+<tr><td class="a-left"><a href="#req-036">REQ-036</a> 6.1</td><td class="a-left">данные</td><td class="a-left">6.1. Document images and selfies are stored for 90 days after the onboarding session ends and are then permanently deleted.</td><td class="a-left">строка 104</td></tr>
+<tr><td class="a-left"><a href="#req-037">REQ-037</a> 6.2</td><td class="a-left">данные</td><td class="a-left">6.2. Images are stored encrypted with AES-256; keys are managed by the bank's HSM.</td><td class="a-left">строка 105</td></tr>
+<tr><td class="a-left"><a href="#req-038">REQ-038</a> 7.1</td><td class="a-left">интерфейс (API)</td><td class="a-left">7.1. Every upload, deletion and status change is written to the audit log with sessionId, documentId, operation and timestamp.</td><td class="a-left">строка 109</td></tr>
+<tr><td class="a-left"><a href="#req-039">REQ-039</a> 7.2</td><td class="a-left">интерфейс (API)</td><td class="a-left">7.2. Original document images are retained for the whole term of the business relationship and for 5 years after it ends, as required by AML regulations.</td><td class="a-left">строка 110</td></tr>
+<tr><td class="a-left"><a href="#req-040">REQ-040</a> AC-1</td><td class="a-left">критерий приёмки</td><td class="a-left">#: AC-1 | Given: Session in DRAFT | When: Upload a 2 MB JPEG ID_CARD FRONT | Then: 201, status RECEIVED</td><td class="a-left">строка 116</td></tr>
+<tr><td class="a-left"><a href="#req-041">REQ-041</a> AC-2</td><td class="a-left">критерий приёмки</td><td class="a-left">#: AC-2 | Given: Session in DRAFT | When: Upload a GIF file | Then: 415</td><td class="a-left">строка 117</td></tr>
+<tr><td class="a-left"><a href="#req-042">REQ-042</a> AC-3</td><td class="a-left">критерий приёмки</td><td class="a-left">#: AC-3 | Given: Any session | When: Repeat POST with the same Idempotency-Key within 24 hours | Then: Original response, no new document</td><td class="a-left">строка 118</td></tr>
+<tr><td class="a-left"><a href="#req-043">REQ-043</a> AC-4</td><td class="a-left">критерий приёмки</td><td class="a-left">#: AC-4 | Given: Session in SUBMITTED | When: Delete a document | Then: 400</td><td class="a-left">строка 119</td></tr>
+<tr><td class="a-left"><a href="#req-044">REQ-044</a> AC-5</td><td class="a-left">критерий приёмки</td><td class="a-left">#: AC-5 | Given: Session with 3 rejected selfies | When: Upload a 4th selfie | Then: 423 Locked for 24 hours</td><td class="a-left">строка 120</td></tr>
+</tbody></table></div>
+<p><strong>Не считал требованиями: 20 блоков.</strong></p>
+<ul>
+<li>заголовок: заголовок раздела · строки 1, 11, 15, 24, 26, 58, 72, 76, 82, 86, 93, 102, 107, 112</li>
+<li>пояснение: вступление под названием документа, до первого раздела · строки 5, 6, 7, 8, 9</li>
+<li>заглушка: заглушка вместо содержания · строка 84 — «TBD.»</li>
+</ul>
+<h2 id="s3">3. Проверка каждого требования</h2>
+<p>Без модели каждое требование проверено только автоматическими правилами (размытые слова, заглушки, сроки без условий, незакрытые перечни, несколько требований в одном пункте и др.); смысловые критерии не проверялись (❔).<br>
+Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4. Карточки ниже — только у требований, к которым есть замечания.</p>
+<a id="s3-matrix"></a><p><strong>Матрица «требование × критерий»</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-center">Полнота</th><th class="a-center">Однозн.</th><th class="a-center">Непротив.</th><th class="a-center">Провер.</th><th class="a-center">Реализ.</th><th class="a-center">Необх.</th><th class="a-center">Атом.</th><th class="a-right">Ясность</th></tr></thead><tbody>
+<tr><td class="a-left"><a href="#req-014">REQ-014</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-001">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-021">REQ-021</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-002">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-022">REQ-022</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+<tr><td class="a-left"><a href="#req-027">REQ-027</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-028">REQ-028</a></td><td class="a-center">❔</td><td class="a-center"><a href="#d-006">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+</tbody></table></div>
+<p>Не проверены ни по одному критерию (во всех клетках было бы ❔): 39 требований — <a href="#req-001">REQ-001</a>, <a href="#req-002">REQ-002</a>, <a href="#req-003">REQ-003</a>, <a href="#req-004">REQ-004</a>, <a href="#req-005">REQ-005</a>, <a href="#req-006">REQ-006</a>, <a href="#req-007">REQ-007</a>, <a href="#req-008">REQ-008</a>, <a href="#req-009">REQ-009</a>, <a href="#req-010">REQ-010</a>, <a href="#req-011">REQ-011</a>, <a href="#req-012">REQ-012</a>, <a href="#req-013">REQ-013</a>, <a href="#req-015">REQ-015</a>, <a href="#req-016">REQ-016</a>, <a href="#req-017">REQ-017</a>, <a href="#req-018">REQ-018</a>, <a href="#req-019">REQ-019</a>, <a href="#req-020">REQ-020</a>, <a href="#req-023">REQ-023</a>, <a href="#req-024">REQ-024</a>, <a href="#req-025">REQ-025</a>, <a href="#req-026">REQ-026</a>, <a href="#req-029">REQ-029</a>, <a href="#req-030">REQ-030</a>, <a href="#req-031">REQ-031</a>, <a href="#req-032">REQ-032</a>, <a href="#req-033">REQ-033</a>, <a href="#req-034">REQ-034</a>, <a href="#req-035">REQ-035</a>, <a href="#req-036">REQ-036</a>, <a href="#req-037">REQ-037</a>, <a href="#req-038">REQ-038</a>, <a href="#req-039">REQ-039</a>, <a href="#req-040">REQ-040</a>, <a href="#req-041">REQ-041</a>, <a href="#req-042">REQ-042</a>, <a href="#req-043">REQ-043</a>, <a href="#req-044">REQ-044</a>.</p>
+<p>Пустых клеток (не проверено): 303.</p>
+<h3 id="req-014">REQ-014 · 3.1. POST /v1/onboarding/{sessionId}/documents · строки 38–44</h3>
+<blockquote>
+<p>Example:<br>
+curl -X POST "$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000" \<br>
+-H "Authorization: Bearer $TOKEN" -H "Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002" \<br>
+-F docType=PHOTO -F file=@selfie.jpg</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Реализ. <a href="#d-001">D-001</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-021">REQ-021 · 3.1. POST /v1/onboarding/{sessionId}/documents · строка 54</h3>
+<blockquote>
+<p>If a document of the same docType and side has already been uploaded in the session, the server returns 409.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-002">D-002</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-022">REQ-022 · 3.1. POST /v1/onboarding/{sessionId}/documents · строка 56</h3>
+<blockquote>
+<p>The upload endpoint responds within 3 seconds.</p>
+</blockquote>
+<p>Ясность 7,5 — есть замечания · ⚠️ Провер. <a href="#d-003">D-003</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="d-003"></a>
+<p><strong>D-003 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
+<p>Задан срок «within 3 seconds», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.</p>
+<ul>
+<li>Цитата: строка 56 (цитата выше)</li>
+<li>Как исправить: Допишите условия измерения: «within 3 seconds для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан.</li>
+<li>Вопрос автору <a href="#v-06">В-06</a>; источник: правило <code>time-without-conditions</code></li>
+</ul>
+</div>
+<h3 id="req-027">REQ-027 · 3.4. POST /v1/onboarding/{sessionId}/submit · строка 78</h3>
+<blockquote>
+<p>Submits all uploaded documents for verification. The session must contain an ID card (both sides) or a passport, and one selfie; otherwise 400 with {"error": "INCOMPLETE_SET"}. On success the status becomes SUBMITTED and the server returns 202 Accepted.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-005">D-005</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-028">REQ-028 · 3.4. POST /v1/onboarding/{sessionId}/submit · строка 80</h3>
+<blockquote>
+<p>The verification provider is called asynchronously. When it responds, the status changes to PROCESSING and then to APPROVED or REJECTED. If the verification provider fails, the session is handled accordingly.</p>
+</blockquote>
+<p>Ясность 7,5 — есть замечания · ⚠️ Однозн. <a href="#d-006">D-006</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="d-006"></a>
+<p><strong>D-006 · 🟡 <span class="sev sev-major">MAJOR</span> · Однозначность.</strong> Размытая формулировка: «accordingly»</p>
+<p>Слово «accordingly» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.</p>
+<ul>
+<li>Цитата: строка 80 (цитата выше)</li>
+<li>Как исправить: Замените «accordingly» проверяемым условием: опишите, что именно должно быть сделано: конкретное действие, его результат и как это проверить.</li>
+<li>Вопрос автору <a href="#v-07">В-07</a>; источник: правило <code>vague-word</code></li>
+</ul>
+</div>
+<a id="s3-clean"></a><p><strong>Требования без замечаний (39)</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-left">Где</th><th class="a-left">Начало текста (полностью — в <a href="#s2">разделе 2</a>)</th></tr></thead><tbody>
+<tr><td class="a-left"><a id="req-001"></a>REQ-001</td><td class="a-left">строка 13</td><td class="a-left">The API lets the mobile app upload…</td></tr>
+<tr><td class="a-left"><a id="req-002"></a>REQ-002 2.1</td><td class="a-left">строка 17</td><td class="a-left">2.1. All endpoints are served over…</td></tr>
+<tr><td class="a-left"><a id="req-003"></a>REQ-003 2.2</td><td class="a-left">строка 18</td><td class="a-left">2.2. Every request carries…</td></tr>
+<tr><td class="a-left"><a id="req-004"></a>REQ-004 2.3</td><td class="a-left">строка 19</td><td class="a-left">2.3. All timestamps are ISO 8601…</td></tr>
+<tr><td class="a-left"><a id="req-005"></a>REQ-005 2.4</td><td class="a-left">строка 20</td><td class="a-left">2.4. Every POST request must carry an…</td></tr>
+<tr><td class="a-left"><a id="req-006"></a>REQ-006 2.5</td><td class="a-left">строка 21</td><td class="a-left">2.5. The applicant is identified by…</td></tr>
+<tr><td class="a-left"><a id="req-007"></a>REQ-007 2.6</td><td class="a-left">строка 22</td><td class="a-left">2.6. The client app compresses images…</td></tr>
+<tr><td class="a-left"><a id="req-008"></a>REQ-008</td><td class="a-left">строка 28</td><td class="a-left">Uploads one document image. Request…</td></tr>
+<tr><td class="a-left"><a id="req-009"></a>REQ-009</td><td class="a-left">строка 32</td><td class="a-left">Parameter: sessionId | In: path |…</td></tr>
+<tr><td class="a-left"><a id="req-010"></a>REQ-010</td><td class="a-left">строка 33</td><td class="a-left">Parameter: iin | In: query | Type…</td></tr>
+<tr><td class="a-left"><a id="req-011"></a>REQ-011</td><td class="a-left">строка 34</td><td class="a-left">Parameter: docType | In: form | Type…</td></tr>
+<tr><td class="a-left"><a id="req-012"></a>REQ-012</td><td class="a-left">строка 35</td><td class="a-left">Parameter: side | In: form | Type…</td></tr>
+<tr><td class="a-left"><a id="req-013"></a>REQ-013</td><td class="a-left">строка 36</td><td class="a-left">Parameter: file | In: form | Type…</td></tr>
+<tr><td class="a-left"><a id="req-015"></a>REQ-015</td><td class="a-left">строка 46</td><td class="a-left">Responses:</td></tr>
+<tr><td class="a-left"><a id="req-016"></a>REQ-016</td><td class="a-left">строка 48</td><td class="a-left">201 Created — upload accepted…</td></tr>
+<tr><td class="a-left"><a id="req-017"></a>REQ-017</td><td class="a-left">строка 49</td><td class="a-left">400 Bad Request — a parameter is…</td></tr>
+<tr><td class="a-left"><a id="req-018"></a>REQ-018</td><td class="a-left">строка 50</td><td class="a-left">413 Payload Too Large — the file…</td></tr>
+<tr><td class="a-left"><a id="req-019"></a>REQ-019</td><td class="a-left">строка 51</td><td class="a-left">415 Unsupported Media Type — the file…</td></tr>
+<tr><td class="a-left"><a id="req-020"></a>REQ-020</td><td class="a-left">строка 52</td><td class="a-left">422 Unprocessable Entity — image…</td></tr>
+<tr><td class="a-left"><a id="req-023"></a>REQ-023</td><td class="a-left">строка 60</td><td class="a-left">Returns the verification status of the…</td></tr>
+<tr><td class="a-left"><a id="req-024"></a>REQ-024</td><td class="a-left">строки 62–68</td><td class="a-left">Response 200 OK: {"sessionId"…</td></tr>
+<tr><td class="a-left"><a id="req-025"></a>REQ-025</td><td class="a-left">строка 70</td><td class="a-left">Session status values: DRAFT…</td></tr>
+<tr><td class="a-left"><a id="req-026"></a>REQ-026</td><td class="a-left">строка 74</td><td class="a-left">Removes a previously uploaded…</td></tr>
+<tr><td class="a-left"><a id="req-029"></a>REQ-029 4.1</td><td class="a-left">строка 88</td><td class="a-left">4.1. Minimum resolution of a document…</td></tr>
+<tr><td class="a-left"><a id="req-030"></a>REQ-030 4.2</td><td class="a-left">строка 89</td><td class="a-left">4.2. Glare and blur on the document…</td></tr>
+<tr><td class="a-left"><a id="req-031"></a>REQ-031</td><td class="a-left">строка 91</td><td class="a-left">Liveness of the selfie is checked by…</td></tr>
+<tr><td class="a-left"><a id="req-032"></a>REQ-032</td><td class="a-left">строка 97</td><td class="a-left">Limit: Maximum file size | Value: 8…</td></tr>
+<tr><td class="a-left"><a id="req-033"></a>REQ-033</td><td class="a-left">строка 98</td><td class="a-left">Limit: Supported formats | Value…</td></tr>
+<tr><td class="a-left"><a id="req-034"></a>REQ-034</td><td class="a-left">строка 99</td><td class="a-left">Limit: Uploads per session | Value: at…</td></tr>
+<tr><td class="a-left"><a id="req-035"></a>REQ-035</td><td class="a-left">строка 100</td><td class="a-left">Limit: Rate limit | Value: 30 requests…</td></tr>
+<tr><td class="a-left"><a id="req-036"></a>REQ-036 6.1</td><td class="a-left">строка 104</td><td class="a-left">6.1. Document images and selfies are…</td></tr>
+<tr><td class="a-left"><a id="req-037"></a>REQ-037 6.2</td><td class="a-left">строка 105</td><td class="a-left">6.2. Images are stored encrypted with…</td></tr>
+<tr><td class="a-left"><a id="req-038"></a>REQ-038 7.1</td><td class="a-left">строка 109</td><td class="a-left">7.1. Every upload, deletion and status…</td></tr>
+<tr><td class="a-left"><a id="req-039"></a>REQ-039 7.2</td><td class="a-left">строка 110</td><td class="a-left">7.2. Original document images are…</td></tr>
+<tr><td class="a-left"><a id="req-040"></a>REQ-040 AC-1</td><td class="a-left">строка 116</td><td class="a-left">#: AC-1 | Given: Session in DRAFT |…</td></tr>
+<tr><td class="a-left"><a id="req-041"></a>REQ-041 AC-2</td><td class="a-left">строка 117</td><td class="a-left">#: AC-2 | Given: Session in DRAFT |…</td></tr>
+<tr><td class="a-left"><a id="req-042"></a>REQ-042 AC-3</td><td class="a-left">строка 118</td><td class="a-left">#: AC-3 | Given: Any session | When…</td></tr>
+<tr><td class="a-left"><a id="req-043"></a>REQ-043 AC-4</td><td class="a-left">строка 119</td><td class="a-left">#: AC-4 | Given: Session in SUBMITTED…</td></tr>
+<tr><td class="a-left"><a id="req-044"></a>REQ-044 AC-5</td><td class="a-left">строка 120</td><td class="a-left">#: AC-5 | Given: Session with 3…</td></tr>
+</tbody></table></div>
+<h2 id="s4">4. Проверка всего набора требований</h2>
+<p>Здесь замечания к документу в целом: противоречия между разделами, пропуски, стандарты, термины, нумерация. Без модели — только то, что находят автоматические правила.</p>
+<h3>4.1 Полнота набора</h3>
+<div class="card card-major"><a id="d-007"></a>
+<p><strong>D-007 · 🟡 <span class="sev sev-major">MAJOR</span> · Полнота набора.</strong> Раздел «3.5. Callback to the core banking system» не заполнен: вместо содержания заглушка</p>
+<p>Вместо содержания раздела стоит заглушка «TBD.». Значит, эта часть требований не готова: по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел формально есть.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 82: «3.5. Callback to the core banking system»</li>
+<li>строка 84: «TBD.»</li>
+</ul></li>
+<li>Как исправить: Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.</li>
+<li>Вопрос автору <a href="#v-05">В-05</a>; источник: правило <code>empty-section</code></li>
+</ul>
+</div>
+<h3>4.2 Взаимная непротиворечивость</h3>
+<div class="card card-major"><a id="d-002"></a>
+<p><strong>D-002 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код ответа 409 возвращается, но не описан</p>
+<p>В тексте код 409 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа. Разработчик не знает, когда его возвращать, а тестировщик — что проверять.</p>
+<ul>
+<li>Цитата: строка 54, <a href="#req-021">REQ-021</a>: «If a document of the same docType and side has already been uploaded in the session, the server returns 409»</li>
+<li>Как исправить: Добавьте описание кода 409: при каком условии он возвращается и пример тела ответа; или уберите упоминание.</li>
+<li>Вопрос автору <a href="#v-03">В-03</a>; источник: правило <code>status-mismatch</code></li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-005"></a>
+<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код ответа 202 возвращается, но не описан</p>
+<p>В тексте код 202 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа. Как в <a href="#d-002">D-002</a>.</p>
+<ul>
+<li>Цитата: строка 78, <a href="#req-027">REQ-027</a>: «On success the status becomes SUBMITTED and the server returns 202 Accepted»</li>
+<li>Как исправить: Добавьте описание кода 202: при каком условии он возвращается и пример тела ответа; или уберите упоминание.</li>
+<li>Вопрос автору <a href="#v-04">В-04</a>; источник: правило <code>status-mismatch</code></li>
+</ul>
+</div>
+<h3>4.3 Реализуемость, стандарты и безопасность</h3>
+<div class="card card-major"><a id="d-001"></a>
+<p><strong>D-001 · 🟡 <span class="sev sev-major">MAJOR</span> · Реализуемость, стандарты и безопасность.</strong> Чувствительные данные передаются в адресной строке запроса</p>
+<p>Параметры «iin» передаются в строке запроса (query). Адрес запроса целиком попадает в журналы веб-серверов и прокси, историю браузера и системы мониторинга — идентификаторы карт, счетов, телефонов и токены окажутся там в открытом виде. Это противоречит требованиям к защите платёжных и персональных данных (PCI DSS).</p>
+<ul>
+<li>Цитата: строки 41–43, <a href="#req-014">REQ-014</a>: «curl -X POST "$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000" \ -H "Authorization: Bearer $TOKEN" -H "Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002" \ -F docType=PHOTO -F file=@selfie.jpg»</li>
+<li>Как исправить: Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы.</li>
+<li>Вопрос автору <a href="#v-02">В-02</a>; источник: правило <code>sensitive-in-query</code></li>
+</ul>
+</div>
+<div class="card card-critical"><a id="d-004"></a>
+<p><strong>D-004 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Реализуемость, стандарты и безопасность.</strong> Метод GET используется для изменения данных</p>
+<p>Запрос описан как GET, но по пути или описанию он сохраняет или меняет данные («/v1/onboarding/{sessionId}/documents/{d…»). По стандарту HTTP (RFC 9110, п. 9.2.1) GET — безопасный метод, он только читает. Браузеры, прокси и кэши вправе повторять и кэшировать такие запросы, а параметры попадают в адресную строку и журналы: изменение может выполниться повторно или без ведома клиента.</p>
+<ul>
+<li>Цитата: строка 72: «3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete»</li>
+<li>Как исправить: Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.</li>
+<li>Почему блокер: нарушение стандарта протокола</li>
+<li>Вопрос автору <a href="#v-01">В-01</a>; источник: правило <code>get-mutation</code></li>
+</ul>
+</div>
+<h3>4.4 Понятность и термины</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<h3>4.5 Прослеживаемость</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<p>Покрытие требований критериями приёмки строит модель; без неё оно не оценивалось.</p>
+<h3 id="s4-gaps">Карта полноты: контрольные вопросы к документу</h3>
+<p>Агент обязан ответить на каждый из 35 вопросов — так ни один типовой пробел не пропускается молча. Карта сама не меняет индексы и итог: на них влияют только связанные замечания.</p>
+<p>Итого: описано 0 · пробелов 0 · не относится 0 · не оценено 35.</p>
+<p>Без модели на остальные 35 вопросов никто не отвечал; их список — в JSON-версии отчёта (поле <code>gap_map</code>).</p>
+<h3 id="s4-obs">Наблюдения (проверьте сами, на итог не влияют)</h3>
+<p>Эти признаки находятся словарными правилами низкой точности: часто это нормальная формулировка. Они не входят в число дефектов, индексы и вердикт.</p>
+<ul>
+<li><a id="n-01"></a><strong>Н-01</strong> · строка 17 · <a href="#req-002">REQ-002</a> · Обобщение «All» без границ: «All endpoints are served over HTTPS only, TLS 1.2 or higher; plain HTTP requests are rejected without redirect»</li>
+<li><a id="n-02"></a><strong>Н-02</strong> · строка 18 · <a href="#req-003">REQ-003</a> · Обобщение «Every» без границ: «Every request carries Authorization: Bearer &lt;access_token&gt; issued to the onboarding session»</li>
+<li><a id="n-03"></a><strong>Н-03</strong> · строка 19 · <a href="#req-004">REQ-004</a> · Обобщение «All» без границ: «All timestamps are ISO 8601 strings in UTC, e.g. 2026-11-12T09:30:00Z»</li>
+<li><a id="n-04"></a><strong>Н-04</strong> · строка 20 · <a href="#req-005">REQ-005</a> · Обобщение «Every» без границ: «Every POST request must carry an Idempotency-Key header (UUID v4)»</li>
+<li><a id="n-05"></a><strong>Н-05</strong> · строка 74 · <a href="#req-026">REQ-026</a> · В одном пункте несколько утверждений: «Removes a previously uploaded document. A document can be removed only while the session status is DRAFT; otherwise… (цитата сокращена)»</li>
+<li><a id="n-06"></a><strong>Н-06</strong> · строка 78 · <a href="#req-027">REQ-027</a> · В одном пункте несколько утверждений: «Submits all uploaded documents for verification. The session must contain an ID card (both sides) or a passport, and… (цитата сокращена)»</li>
+<li><a id="n-07"></a><strong>Н-07</strong> · строка 78 · <a href="#req-027">REQ-027</a> · Обобщение «all» без границ: «Submits all uploaded documents for verification»</li>
+<li><a id="n-08"></a><strong>Н-08</strong> · строка 80 · <a href="#req-028">REQ-028</a> · В одном пункте несколько утверждений: «The verification provider is called asynchronously. When it responds, the status changes to PROCESSING and then to… (цитата сокращена)»</li>
+<li><a id="n-09"></a><strong>Н-09</strong> · строка 109 · <a href="#req-038">REQ-038</a> · Обобщение «Every» без границ: «Every upload, deletion and status change is written to the audit log with sessionId, documentId, operation and timestamp»</li>
+</ul>
+<h2 id="s5">5. Сводка</h2>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Показатель</th><th class="a-right">Значение</th></tr></thead><tbody>
+<tr><td class="a-left">Требований всего</td><td class="a-right">44</td></tr>
+<tr><td class="a-left">— без замечаний</td><td class="a-right">39</td></tr>
+<tr><td class="a-left">— с замечаниями</td><td class="a-right">5</td></tr>
+<tr><td class="a-left">Замечаний всего</td><td class="a-right">7</td></tr>
+<tr><td class="a-left">— 🔴 <span class="sev sev-critical">CRITICAL</span> (блокеры)</td><td class="a-right">1</td></tr>
+<tr><td class="a-left">— 🟡 <span class="sev sev-major">MAJOR</span> (существенные)</td><td class="a-right">6</td></tr>
+<tr><td class="a-left">— 🟢 <span class="sev sev-minor">MINOR</span> (мелкие)</td><td class="a-right">0</td></tr>
+<tr><td class="a-left">Наблюдений (на итог не влияют)</td><td class="a-right">9</td></tr>
+<tr><td class="a-left">Вопросов автору</td><td class="a-right">7</td></tr>
+<tr><td class="a-left">Контрольных вопросов к документу</td><td class="a-right">35, из них пробелов 0</td></tr>
+<tr><td class="a-left">Тестов можно написать уже сейчас</td><td class="a-right">5</td></tr>
+<tr><td class="a-left">Тестов нельзя написать без ответа автора</td><td class="a-right">0</td></tr>
+</tbody></table></div>
+<p><strong>Замечания по критериям качества</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Критерий</th><th class="a-right">Замечаний</th><th class="a-left">Основание</th></tr></thead><tbody>
+<tr><td class="a-left">Однозначность</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2</td></tr>
+<tr><td class="a-left">Проверяемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6</td></tr>
+<tr><td class="a-left">Полнота набора</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
+<tr><td class="a-left">Взаимная непротиворечивость</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4</td></tr>
+<tr><td class="a-left">Реализуемость, стандарты и безопасность</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)</td></tr>
+</tbody></table></div>
+<p><strong>Индекс готовности документа</strong></p>
+<p><strong>78 из 100 — готов после правок</strong> (предварительно: применены только правила). Шкала: 85 и выше — готов, 60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов.</p>
+<p>Как посчитан: 10 × 9,80 (средняя ясность 44 треб.) − 20 (штраф за замечания к набору: 8×1 + 3×4 + 1×0 = 20) = 78. Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
+<p>Требования по ясности: ясное — 39 · есть замечания — 5 · нужна доработка — 0 · в таком виде использовать нельзя — 0.</p>
+<p>Плотность: 0,16 дефекта на одно требование · 8,6 на 1000 слов документа. Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.</p>
+<p><strong>Критичные дефекты:</strong> <a href="#d-004">D-004</a> — с основаниями и строками перечислены в начале отчёта.</p>
+<p><strong>Время и стоимость:</strong> 0,1 с, $0 (модель не вызывалась).</p>
+<h2 id="s6">6. Итог</h2>
+<p><strong>⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (модель не использовалась: проверены только автоматические правила, итог предварительный)</strong></p>
+<p>Найдено блокеров: 1 (Метод GET используется для изменения данных). Пока они не устранены, разработчик и тестировщик будут работать по описанию, которое противоречит себе или общепринятым стандартам, и часть работы придётся переделывать. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.</p>
+<p><strong>Что исправить в первую очередь</strong></p>
+<ol>
+<li>Метод GET используется для изменения данных. (<a href="#d-004">D-004</a>)</li>
+<li>Чувствительные данные передаются в адресной строке запроса. (<a href="#d-001">D-001</a>)</li>
+<li>Код ответа 409 возвращается, но не описан. (<a href="#d-002">D-002</a>)</li>
+<li>Ограничение по времени без условий измерения. (<a href="#d-003">D-003</a>)</li>
+<li>Код ответа 202 возвращается, но не описан. (<a href="#d-005">D-005</a>)</li>
+<li>Размытая формулировка: «accordingly». (<a href="#d-006">D-006</a>)</li>
+<li>Раздел «3.5. Callback to the core banking system» не заполнен: вместо содержания заглушка. (<a href="#d-007">D-007</a>)</li>
+</ol>
+<p><strong>Что в документе уже хорошо</strong></p>
+<p>Без модели сильные стороны документа не оцениваются.</p>
+<h2 id="s7">7. Уточняющие вопросы к автору ТЗ</h2>
+<p>Если автор ответит на блокирующие вопросы и внесёт правки, вердикт станет: <strong>⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (предварительно)</strong>.</p>
+<p>Чтобы снять все блокеры, нужны ответы на вопросы: <a href="#v-01">В-01</a>.</p>
+<p>7 вопросов составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
+<h3>Блокирующие (1)</h3>
+<div class="card"><a id="v-01"></a>
+<p><strong>В-01.</strong> Какой HTTP-метод использовать для этого изменения? (кому: архитектор или разработчик; к <a href="#d-004">D-004</a>)</p>
+<ul>
+<li>Варианты: а) PUT — полная замена настройки; б) PATCH — изменение отдельных полей; в) POST — создание новой записи</li>
+<li>Что изменит ответ в итоге: закроет 1 из 1 блокера, вердикт станет: «Начинать можно только после ответов на вопросы и исправления существенных замечаний» · индекс готовности 78 → 86</li>
+</ul>
+</div>
+<h3>Важные (6)</h3>
+<div class="card"><a id="v-02"></a>
+<p><strong>В-02.</strong> Как передавать идентификатор карты и другие чувствительные значения? (кому: информационная безопасность; к <a href="#d-001">D-001</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 81</li>
+</ul>
+</div>
+<div class="card"><a id="v-03"></a>
+<p><strong>В-03.</strong> Возвращает ли сервис код 409? (кому: архитектор или разработчик; к <a href="#d-002">D-002</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 81</li>
+</ul>
+</div>
+<div class="card"><a id="v-04"></a>
+<p><strong>В-04.</strong> Возвращает ли сервис код 202? (кому: архитектор или разработчик; к <a href="#d-005">D-005</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 81</li>
+</ul>
+</div>
+<div class="card"><a id="v-05"></a>
+<p><strong>В-05.</strong> Кто и когда заполнит раздел «3.5. Callback to the core banking system»? (кому: аналитик — автор документа; к <a href="#d-007">D-007</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 81</li>
+</ul>
+</div>
+<div class="card"><a id="v-06"></a>
+<p><strong>В-06.</strong> Для какой доли случаев и при какой нагрузке должен выполняться срок «within 3 seconds»? (кому: владелец продукта (бизнес); к <a href="#d-003">D-003</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 79</li>
+</ul>
+</div>
+<div class="card"><a id="v-07"></a>
+<p><strong>В-07.</strong> Что конкретно означает «accordingly» в этом требовании? (кому: аналитик — автор документа; к <a href="#d-006">D-006</a>)</p>
+<ul>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 79</li>
+</ul>
+</div>
+<h2 id="s8">8. Черновики приёмочных тестов</h2>
+<p>Можно написать уже сейчас: 5 · Нельзя написать без ответа автора: 0. Полные тексты (Дано / Когда / Тогда) — в файле <code>*.tests.md</code> рядом с отчётом.</p>
+<ul>
+<li>Готовы: <a id="t-01"></a>Т-01 (<a href="#req-040">REQ-040</a>), <a id="t-02"></a>Т-02 (<a href="#req-041">REQ-041</a>), <a id="t-03"></a>Т-03 (<a href="#req-042">REQ-042</a>), <a id="t-04"></a>Т-04 (<a href="#req-043">REQ-043</a>), <a id="t-05"></a>Т-05 (<a href="#req-044">REQ-044</a>).</li>
+</ul>
+<h2 id="app">Приложение. Как получен отчёт</h2>
+<p><strong>Метод.</strong></p>
+<ol>
+<li>Документ читается и делится на блоки (абзацы, пункты, строки таблиц); номера строк берутся из исходного текста. Значения, похожие на номера карт и ИИН, маскируются до любой обработки.</li>
+<li>Блоки делятся на требования и служебные части эвристикой; номера REQ-… присваивает программа.</li>
+<li>Автоматические правила (набор 1.1: 27 основных и 8 слабых «наблюдений») ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, схемы без веток ошибок, подсадной текст для ИИ.</li>
+<li>Модель не использовалась: проверки по смыслу (противоречия, пропущенные сценарии, пограничные случаи) не выполнялись.</li>
+<li>Каждую цитату программа ищет в тексте документа; замечание без найденной цитаты выбрасывается, в отчёт попадает исходный текст, а не пересказ. Номера, индексы, вердикт и отметки в матрице считает программа; перед записью отчёта она проверяет, что его части не противоречат друг другу.</li>
+</ol>
+<p><strong>Честно о границах.</strong> Это первый проход, который экономит время проверяющего; решение остаётся за человеком. Опубликованные замеры ИИ-проверки требований показывают, что лучшие модели находят примерно половину настоящих проблем и ошибочно помечают около одного требования из десяти. Поэтому цитаты сверяет программа, а полнота агента измеряется на контрольных документах, которых он раньше не видел. В этом прогоне модель не работала, поэтому найдено заведомо меньше.</p>
+<p><strong>Ограничения этого прогона</strong></p>
+<ul>
+<li>Модель не использовалась: найдено только то, что выявляют правила по формальным признакам.</li>
+<li>Рисунки и схемы-картинки не проверяются: учитывается только текст.</li>
+<li>Агент не знает внутренних стандартов банка и не видит связанных документов, если их не передали через --context.</li>
+</ul>
+<p><strong>Подробности прогона</strong> — в файле <code>*.diagnostic.md</code> рядом с отчётом: расход по этапам, отклонённые перепроверкой (0), объединённые повторы (0), выброшенные без подтверждённой цитаты (0). Журнал решений — в JSON-версии (поле <code>audit</code>, только хэши текстов): 0 обращений к модели, 0 решений программы.</p>
+</article></main>
+<footer>Отчёт сформирован программой «Ревизор ТЗ». Решение остаётся за человеком.</footer>
+</body>
+</html>

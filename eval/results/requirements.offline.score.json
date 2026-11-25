@@ -6,36 +6,36 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.04,
+    "duration_s": 0.09,
     "doc_name": "requirements.md"
   },
   "counts": {
-    "requirements": 59,
-    "findings_open": 19,
+    "requirements": 58,
+    "findings_open": 22,
     "advisory": 2
   },
   "recall": {
     "overall": {
       "total": 52,
-      "strict": 13,
+      "strict": 14,
       "loose": 25,
-      "strict_share": 0.25,
+      "strict_share": 0.2692307692307692,
       "loose_share": 0.4807692307692308
     },
     "by_severity": {
       "CRITICAL": {
-        "total": 4,
-        "strict": 2,
-        "loose": 2,
-        "strict_share": 0.5,
-        "loose_share": 0.5
+        "total": 5,
+        "strict": 3,
+        "loose": 3,
+        "strict_share": 0.6,
+        "loose_share": 0.6
       },
       "MAJOR": {
-        "total": 31,
+        "total": 30,
         "strict": 5,
-        "loose": 14,
-        "strict_share": 0.16129032258064516,
-        "loose_share": 0.45161290322580644
+        "loose": 13,
+        "strict_share": 0.16666666666666666,
+        "loose_share": 0.43333333333333335
       },
       "MINOR": {
         "total": 17,
@@ -55,15 +55,15 @@
       },
       "own": {
         "total": 42,
-        "strict": 6,
+        "strict": 7,
         "loose": 16,
-        "strict_share": 0.14285714285714285,
+        "strict_share": 0.16666666666666666,
         "loose_share": 0.38095238095238093
       }
     }
   },
   "severity_agreement": {
-    "same": 12,
+    "same": 13,
     "tool_higher": 1,
     "tool_lower": 0
   },
@@ -103,10 +103,11 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-008"
+        "D-010"
       ],
       "loose_fids": [
-        "D-008"
+        "D-010",
+        "D-011"
       ],
       "tool_severity": "CRITICAL",
       "severity_agreement": "same"
@@ -120,11 +121,11 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-017"
+        "D-020"
       ],
       "loose_fids": [
-        "D-016",
-        "D-017"
+        "D-019",
+        "D-020"
       ],
       "tool_severity": "CRITICAL",
       "severity_agreement": "same"
@@ -138,10 +139,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-003"
+        "D-005"
       ],
       "loose_fids": [
-        "D-003"
+        "D-005"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -152,12 +153,10 @@
       "origin": "own",
       "title": "Цель «в момент покупки» не сходится с «проведёнными» покупками",
       "strict": false,
-      "loose": true,
-      "status": "loose",
+      "loose": false,
+      "status": "missed",
       "strict_fids": [],
-      "loose_fids": [
-        "D-001"
-      ],
+      "loose_fids": [],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -170,10 +169,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-019"
+        "D-022"
       ],
       "loose_fids": [
-        "D-019"
+        "D-022"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -200,12 +199,12 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-012",
-        "D-013"
+        "D-015",
+        "D-016"
       ],
       "loose_fids": [
-        "D-012",
-        "D-013"
+        "D-015",
+        "D-016"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -219,10 +218,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-014"
+        "D-017"
       ],
       "loose_fids": [
-        "D-014"
+        "D-017"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -236,12 +235,12 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-016"
+        "D-019"
       ],
       "loose_fids": [
-        "D-016",
-        "D-017",
-        "D-018"
+        "D-019",
+        "D-020",
+        "D-021"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "tool_higher"
@@ -256,7 +255,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-017"
+        "D-020"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -271,7 +270,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-008"
+        "D-010"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -282,12 +281,10 @@
       "origin": "own",
       "title": "Нет метода чтения настроек и суммы за месяц — экран не построить",
       "strict": false,
-      "loose": true,
-      "status": "loose",
+      "loose": false,
+      "status": "missed",
       "strict_fids": [],
-      "loose_fids": [
-        "D-001"
-      ],
+      "loose_fids": [],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -301,7 +298,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-003"
+        "D-005"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -316,7 +313,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-003"
+        "D-005"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -409,7 +406,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-002"
+        "D-004"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -424,7 +421,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-003"
+        "D-005"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -452,7 +449,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-001"
+        "D-003"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -472,19 +469,19 @@
     },
     {
       "id": "D-28",
-      "severity": "MAJOR",
+      "severity": "CRITICAL",
       "origin": "organisers",
       "title": "Раздел «Тестирование требований» пуст",
       "strict": true,
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-004"
+        "D-006"
       ],
       "loose_fids": [
-        "D-004"
+        "D-006"
       ],
-      "tool_severity": "MAJOR",
+      "tool_severity": "CRITICAL",
       "severity_agreement": "same"
     },
     {
@@ -519,10 +516,12 @@
       "origin": "own",
       "title": "Безопасность: данные карты и суммы на заблокированном экране; cardId в адресной строке GET; требований ИБ нет",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-003"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -535,13 +534,13 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-009",
-        "D-010"
+        "D-012",
+        "D-013"
       ],
       "loose_fids": [
-        "D-008",
-        "D-009",
-        "D-010"
+        "D-010",
+        "D-012",
+        "D-013"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -565,12 +564,10 @@
       "origin": "own",
       "title": "Дизайн UI: нет текстов ошибок, состояния поля при выключенном переключателе, подтверждения, сбоя сети, макетов",
       "strict": false,
-      "loose": true,
-      "status": "loose",
+      "loose": false,
+      "status": "missed",
       "strict_fids": [],
-      "loose_fids": [
-        "D-001"
-      ],
+      "loose_fids": [],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -579,13 +576,17 @@
       "severity": "MAJOR",
       "origin": "own",
       "title": "BPMN и Sequence — одна строка, только успешный путь",
-      "strict": false,
-      "loose": false,
-      "status": "missed",
-      "strict_fids": [],
-      "loose_fids": [],
-      "tool_severity": "",
-      "severity_agreement": ""
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-002"
+      ],
+      "loose_fids": [
+        "D-002"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
     },
     {
       "id": "D-36",
@@ -622,10 +623,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-002"
+        "D-004"
       ],
       "loose_fids": [
-        "D-002"
+        "D-004"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -636,10 +637,12 @@
       "origin": "own",
       "title": "«Передать… и сумму»: порог, расходы за месяц или сумма покупки",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-003"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -662,12 +665,10 @@
       "origin": "own",
       "title": "Одно и то же названо разными словами, глоссария нет",
       "strict": false,
-      "loose": true,
-      "status": "loose",
+      "loose": false,
+      "status": "missed",
       "strict_fids": [],
-      "loose_fids": [
-        "D-001"
-      ],
+      "loose_fids": [],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -680,10 +681,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-015"
+        "D-018"
       ],
       "loose_fids": [
-        "D-015"
+        "D-018"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -710,10 +711,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-006"
+        "D-008"
       ],
       "loose_fids": [
-        "D-006"
+        "D-008"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -727,10 +728,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-007"
+        "D-009"
       ],
       "loose_fids": [
-        "D-007"
+        "D-009"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -771,7 +772,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-019"
+        "D-022"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -795,10 +796,12 @@
       "origin": "own",
       "title": "Два названия одной задачи",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-001"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -831,7 +834,7 @@
   ],
   "false_alarms": [
     {
-      "fid": "D-011",
+      "fid": "D-014",
       "severity": "MAJOR",
       "title": "Чувствительные данные передаются в адресной строке запроса",
       "line": 142,
@@ -840,7 +843,7 @@
   ],
   "false_alarms_exempt": [
     {
-      "fid": "D-003",
+      "fid": "D-005",
       "severity": "MAJOR",
       "title": "Денежные суммы в разных единицах: тиын и тенге",
       "line": 49,
@@ -850,7 +853,7 @@
       ]
     },
     {
-      "fid": "D-019",
+      "fid": "D-022",
       "severity": "MAJOR",
       "title": "В описании кода 403 сказано, что возвращается 404",
       "line": 188,
@@ -862,13 +865,13 @@
   ],
   "unmatched": [
     {
-      "fid": "D-005",
+      "fid": "D-007",
       "severity": "MINOR",
       "title": "Чек-лист ревью не заполнен",
       "line": 67
     }
   ],
   "warnings": [],
-  "result_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/requirements.offline.json",
-  "key_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/requirements.md.key.json"
+  "result_file": "eval/results/requirements.offline.json",
+  "key_file": "eval/docs/requirements.md.key.json"
 }

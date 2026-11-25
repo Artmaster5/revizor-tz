@@ -1,0 +1,575 @@
+{
+  "document": "loan_prescoring_tz.txt",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.044146,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 310.96,
+    "doc_name": "loan_prescoring_tz.txt"
+  },
+  "counts": {
+    "requirements": 53,
+    "findings_open": 65,
+    "advisory": 3
+  },
+  "recall": {
+    "overall": {
+      "total": 17,
+      "strict": 13,
+      "loose": 17,
+      "strict_share": 0.7647058823529411,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 1,
+        "loose": 3,
+        "strict_share": 0.3333333333333333,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 10,
+        "strict": 8,
+        "loose": 10,
+        "strict_share": 0.8,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 4,
+        "loose": 4,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {}
+  },
+  "severity_agreement": {
+    "same": 7,
+    "tool_higher": 6,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "K-01",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Верхняя граница возраста: 63 года в п. 3.1 и «старше 65 лет» в п. 4.3",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-017",
+        "D-019"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-02",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Порог КДН: отказ при КДН выше 0,5 (п. 3.4) против ручной проверки при 0,50–0,60 (таблица 5.1)",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-028"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-03",
+      "severity": "CRITICAL",
+      "origin": "",
+      "title": "Не определено решение при недоступности кредитного бюро",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-074",
+        "D-077"
+      ],
+      "loose_fids": [
+        "D-074",
+        "D-077"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-04",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Пример расчёта в п. 4.6 противоречит правилу КДН",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-060"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-05",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Единицы суммы кредита: тыс. тенге в данных, тиыны в интеграции, тенге в п. 3.2",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-094",
+        "D-097"
+      ],
+      "loose_fids": [
+        "D-020",
+        "D-094",
+        "D-097"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-06",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Коды решения названы по-разному: ПРОПУСТИТЬ/ОТКАЗ/РУЧНАЯ_ПРОВЕРКА и APPROVE/DECLINE/MANUAL",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-011"
+      ],
+      "loose_fids": [
+        "D-011",
+        "D-015"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-07",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Ссылка на несуществующий п. 9.4",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-101"
+      ],
+      "loose_fids": [
+        "D-101"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-08",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Персональные данные и полный кредитный отчёт пишутся в журнал событий открытым видом",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-083",
+        "D-090"
+      ],
+      "loose_fids": [
+        "D-083",
+        "D-085",
+        "D-090"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-09",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Правило повторной подачи после отказа не описано (TBD)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-079"
+      ],
+      "loose_fids": [
+        "D-079"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-10",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Критерий приёмки 4 (код DUPLICATE за 24 часа) не опирается ни на одно требование",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-079"
+      ],
+      "loose_fids": [
+        "D-079",
+        "D-131",
+        "D-135",
+        "D-136"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-11",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Время ответа 2 секунды без условий измерения",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-105",
+        "D-107",
+        "D-109"
+      ],
+      "loose_fids": [
+        "D-105",
+        "D-107",
+        "D-109"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-12",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "Требование «исключать ошибочные отказы» непроверяемо и невыполнимо",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-055",
+        "D-056"
+      ],
+      "loose_fids": [
+        "D-055",
+        "D-056",
+        "D-057"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-13",
+      "severity": "MAJOR",
+      "origin": "",
+      "title": "«Стабильный доход» и «положительная кредитная история» не определены",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-030"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K-14",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "П. 4.1 объединяет пять разных действий в одном требовании",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-039"
+      ],
+      "loose_fids": [
+        "D-008",
+        "D-021",
+        "D-023",
+        "D-036",
+        "D-039",
+        "D-041"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-15",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Требование предписывает реализацию (хранимая процедура PL/SQL), а не результат",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-050"
+      ],
+      "loose_fids": [
+        "D-050",
+        "D-051"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K-16",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "«Работать быстро и не создавать неудобств» — непроверяемая формулировка",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-110"
+      ],
+      "loose_fids": [
+        "D-021",
+        "D-110",
+        "D-113"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K-17",
+      "severity": "MINOR",
+      "origin": "",
+      "title": "Дата документа не заполнена",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-001"
+      ],
+      "loose_fids": [
+        "D-001"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-020",
+      "severity": "MAJOR",
+      "title": "Не задан шаг суммы кредита",
+      "line": 36,
+      "good_anchor": "Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до"
+    },
+    {
+      "fid": "D-034",
+      "severity": "MAJOR",
+      "title": "Просрочка не проверяется при недоступном кредитном бюро",
+      "line": 43,
+      "good_anchor": "Наличие в кредитном отчёте просрочки более 30 календарных дней по любому действующему"
+    },
+    {
+      "fid": "D-035",
+      "severity": "MAJOR",
+      "title": "Не определён момент, на который считается просрочка",
+      "line": 43,
+      "good_anchor": "Наличие в кредитном отчёте просрочки более 30 календарных дней по любому действующему"
+    },
+    {
+      "fid": "D-117",
+      "severity": "MAJOR",
+      "title": "Регламентные окна не определены: список и порядок согласования не указаны",
+      "line": 110,
+      "good_anchor": "Доступность модуля — не ниже 99,5% за календарный месяц без учёта согласованных"
+    },
+    {
+      "fid": "D-119",
+      "severity": "MAJOR",
+      "title": "Доступность 99,5% нельзя измерить: нет признака простоя и способа замера",
+      "line": 110,
+      "good_anchor": "Доступность модуля — не ниже 99,5% за календарный месяц без учёта согласованных"
+    },
+    {
+      "fid": "D-122",
+      "severity": "MAJOR",
+      "title": "Ожидаемый результат не задаёт решение, а описывает промежуточную проверку",
+      "line": 117,
+      "good_anchor": "Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до"
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-097",
+      "severity": "MAJOR",
+      "title": "Сумма кредита в тенге, тыс. тенге и тиынах без правила пересчёта",
+      "line": 102,
+      "good_anchor": "Запрашиваемая сумма — от 100 000 до 5 000 000 тенге включительно, срок кредита — от 6 до",
+      "confirms": [
+        "K-05"
+      ]
+    },
+    {
+      "fid": "D-101",
+      "severity": "CRITICAL",
+      "title": "Формат обмена и коды ошибок отсутствуют: ссылка на несуществующий п. 9.4",
+      "line": 104,
+      "good_anchor": "Если ИИН заявителя не проходит проверку контрольного разряда, модуль возвращает ошибку",
+      "confirms": [
+        "K-07"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-003",
+      "severity": "MINOR",
+      "title": "Нет выключателя функции и плана отката на прежний процесс",
+      "line": 15
+    },
+    {
+      "fid": "D-004",
+      "severity": "MINOR",
+      "title": "Базовый период для цели 30% не ясен",
+      "line": 17
+    },
+    {
+      "fid": "D-005",
+      "severity": "MAJOR",
+      "title": "Мобильное приложение не отнесено к вызывающей стороне в п. 8.1",
+      "line": 19
+    },
+    {
+      "fid": "D-007",
+      "severity": "MAJOR",
+      "title": "Не описано решение для заявителя, у которого нет кредитной истории",
+      "line": 24
+    },
+    {
+      "fid": "D-009",
+      "severity": "MAJOR",
+      "title": "Не определён расчёт платежа по запрашиваемому кредиту",
+      "line": 25
+    },
+    {
+      "fid": "D-013",
+      "severity": "MINOR",
+      "title": "Варианты решения в п. 2.4 и поля таблицы 7.1 не имеют номеров",
+      "line": 27
+    },
+    {
+      "fid": "D-014",
+      "severity": "MINOR",
+      "title": "Не описан статус заявки после каждого решения",
+      "line": 29
+    },
+    {
+      "fid": "D-027",
+      "severity": "MAJOR",
+      "title": "Не указано, какие виды дохода учитываются для проверки и для КДН",
+      "line": 38
+    },
+    {
+      "fid": "D-040",
+      "severity": "MINOR",
+      "title": "Процесс в п. 4.1 описан одной фразой без альтернативных веток",
+      "line": 50
+    },
+    {
+      "fid": "D-043",
+      "severity": "MAJOR",
+      "title": "Решение передаётся клиенту в SMS без защиты",
+      "line": 51
+    },
+    {
+      "fid": "D-042",
+      "severity": "MINOR",
+      "title": "Не описано содержание SMS и поведение при ошибке отправки",
+      "line": 51
+    },
+    {
+      "fid": "D-044",
+      "severity": "MINOR",
+      "title": "Доставку SMS клиенту система не может подтвердить",
+      "line": 51
+    },
+    {
+      "fid": "D-045",
+      "severity": "MAJOR",
+      "title": "Состав SMS с решением не задан: видны ли сумма, КДН и причина отказа",
+      "line": 51
+    },
+    {
+      "fid": "D-062",
+      "severity": "MINOR",
+      "title": "Не описан ввод сроком не целым числом или пустой ввод",
+      "line": 67
+    },
+    {
+      "fid": "D-070",
+      "severity": "MINOR",
+      "title": "Не определено, по какой версии правил оценивать заявки при её смене",
+      "line": 77
+    },
+    {
+      "fid": "D-080",
+      "severity": "MAJOR",
+      "title": "В перечне полей нет даты вынесения решения",
+      "line": 85
+    },
+    {
+      "fid": "D-086",
+      "severity": "MINOR",
+      "title": "Формат версии правил не задан",
+      "line": 94
+    },
+    {
+      "fid": "D-087",
+      "severity": "MINOR",
+      "title": "Не описан выключатель модуля и порядок отката версии правил",
+      "line": 94
+    },
+    {
+      "fid": "D-088",
+      "severity": "MAJOR",
+      "title": "Неясно, какие записи попадают под срок хранения",
+      "line": 96
+    },
+    {
+      "fid": "D-089",
+      "severity": "MINOR",
+      "title": "Не задан срок удаления после пяти лет",
+      "line": 96
+    },
+    {
+      "fid": "D-098",
+      "severity": "MINOR",
+      "title": "Не описано, что делать, если расчёт не уложился в тайм-аут фронт-системы",
+      "line": 102
+    },
+    {
+      "fid": "D-120",
+      "severity": "MAJOR",
+      "title": "Критерии приёмки покрывают 5 из 53 требований, часть правил не проверяется",
+      "line": 113
+    },
+    {
+      "fid": "D-137",
+      "severity": "MINOR",
+      "title": "Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена",
+      "line": 122
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/tuning_haiku/loan.json",
+  "key_file": "eval/docs/loan_prescoring_tz.txt.key.json"
+}

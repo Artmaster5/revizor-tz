@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
+<meta name="color-scheme" content="light dark">
+<title>Ревизор ТЗ — Уведомление о расходах по карте</title>
+<style>
+:root{--bg:#f6f7f9;--paper:#fff;--ink:#1f2933;--muted:#5f6b7a;--line:#d9dee5;--zebra:#f4f6f9;--link:#0b5cad;
+--accent:#0f6b4f;--accent-soft:#e8f3ee;--code:#eef1f5;--crit:#b42318;--crit-bg:#fdecea;--maj:#9a5b00;--maj-bg:#fff2d6;
+--min:#146c3a;--min-bg:#e3f5ea;--shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#10151b;--paper:#171d25;--ink:#e6eaef;--muted:#9aa6b4;--line:#2d3744;
+--zebra:#1b222b;--link:#7db4ff;--accent:#5fd0a2;--accent-soft:#16302a;--code:#222b36;--crit:#ff8a80;--crit-bg:#3b1d1b;
+--maj:#ffc266;--maj-bg:#3a2d12;--min:#7ee2a6;--min-bg:#16301f;--shadow:none}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.65 -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.doc{max-width:920px;margin:0 auto;padding:28px 20px 56px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:30px 34px 38px;box-shadow:var(--shadow)}
+h1,h2,h3,h4,h5,h6{line-height:1.3;margin:1.7em 0 .55em;font-weight:650;color:var(--ink)}
+h1{font-size:1.75rem;margin-top:0;letter-spacing:-.01em}
+h2{font-size:1.38rem;padding-bottom:.3em;border-bottom:2px solid var(--line);margin-top:2.2em}
+h3{font-size:1.12rem}h4{font-size:1rem}h5,h6{font-size:.95rem;color:var(--muted)}
+h2,h3,h4,[id]{scroll-margin-top:64px}
+p{margin:.65em 0}
+a{color:var(--link);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--link) 35%,transparent)}
+a:hover{border-bottom-color:var(--link)}
+a[id]:empty{border:0}
+code{font:.88em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--code);padding:.1em .38em;border-radius:4px;overflow-wrap:break-word}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto;line-height:1.45}
+pre code{background:none;padding:0}
+hr{border:0;border-top:1px solid var(--line);margin:1.8em 0}
+ul,ol{margin:.5em 0;padding-left:1.45em}
+li{margin:.22em 0}li>ul,li>ol{margin:.2em 0}
+blockquote{margin:.9em 0;padding:.5em 1em;border-left:4px solid var(--line);background:var(--zebra);color:var(--ink);border-radius:0 8px 8px 0}
+blockquote p{margin:.35em 0}
+blockquote.verdict{border:1px solid var(--accent);border-left:6px solid var(--accent);background:var(--accent-soft);
+padding:1em 1.3em;margin:1.1em 0 1.4em;font-size:1.04rem;border-radius:10px}
+blockquote.verdict-blocked{border-color:var(--crit);background:var(--crit-bg)}
+blockquote.verdict-conditional{border-color:var(--maj);background:var(--maj-bg)}
+.tablewrap{overflow-x:auto;margin:1em 0;border:1px solid var(--line);border-radius:8px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.9rem;line-height:1.45}
+th,td{border:1px solid var(--line);padding:6px 10px;vertical-align:top;text-align:left;overflow-wrap:break-word}
+.tablewrap th:first-child,.tablewrap td:first-child{border-left:0}.tablewrap th:last-child,.tablewrap td:last-child{border-right:0}
+thead th{background:var(--zebra);font-weight:650;border-top:0}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:var(--zebra)}
+.a-right{text-align:right;font-variant-numeric:tabular-nums}.a-center{text-align:center}
+.sev{display:inline-block;font:700 .72em/1.5 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.03em;padding:0 .55em;border-radius:99px;
+vertical-align:.08em;border:1px solid transparent;white-space:nowrap}
+.sev-critical{color:var(--crit);background:var(--crit-bg);border-color:color-mix(in srgb,var(--crit) 35%,transparent)}
+.sev-major{color:var(--maj);background:var(--maj-bg);border-color:color-mix(in srgb,var(--maj) 40%,transparent)}
+.sev-minor{color:var(--min);background:var(--min-bg);border-color:color-mix(in srgb,var(--min) 35%,transparent)}
+.card{margin:1.1em 0;padding:.7em 1.1em .8em;border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;background:var(--paper)}
+.card>p:first-of-type,.card>strong:first-child{margin-top:.2em}
+.card-critical{border-left-color:var(--crit)}.card-major{border-left-color:var(--maj)}.card-minor{border-left-color:var(--min)}
+details{margin:.8em 0;padding:.4em .9em;border:1px solid var(--line);border-radius:8px}
+details>summary{cursor:pointer;font-weight:600}
+nav.toc{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+nav.toc>details{max-width:920px;margin:0 auto;border:0;border-radius:0;padding:0 20px;position:relative}
+nav.toc summary{padding:10px 0;color:var(--muted);font-size:.92rem;list-style:none}
+nav.toc summary::-webkit-details-marker{display:none}
+nav.toc summary::before{content:"\2630";margin-right:.6em;color:var(--accent)}
+nav.toc ol{position:absolute;left:20px;right:20px;top:100%;margin:0;padding:10px 14px 12px 36px;list-style:decimal;
+background:var(--paper);border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;box-shadow:var(--shadow);
+max-height:70vh;overflow:auto;font-size:.93rem}
+nav.toc li{margin:.18em 0}
+footer{max-width:920px;margin:18px auto 0;padding:0 20px;color:var(--muted);font-size:.82rem;text-align:center}
+@media (max-width:640px){body{font-size:15px}.doc{padding:14px 10px 40px}.sheet{padding:18px 14px 26px;border-radius:8px}
+h1{font-size:1.4rem}h2{font-size:1.2rem}nav.toc>details{padding:0 10px}nav.toc ol{left:10px;right:10px}}
+@page{size:A4;margin:14mm}
+@media print{
+html,body{background:#fff!important;color:#000!important;font-size:10.5pt;line-height:1.5}
+.doc{max-width:none;padding:0}.sheet{border:0;box-shadow:none;padding:0;border-radius:0;background:#fff}
+nav.toc,footer{display:none!important}
+a{color:#000;border:0;text-decoration:none}
+a[href^="http"]::after,a[href^="mailto"]::after{content:" (" attr(href) ")";font-size:.85em;word-break:break-all}
+.tablewrap{overflow:visible;border:0}
+table{font-size:8.6pt}thead{display:table-header-group}
+tr,.card,blockquote,pre,.sev{break-inside:avoid;page-break-inside:avoid}
+tbody tr:nth-child(even),thead th,blockquote,code,pre,.card,details{background:none!important}
+blockquote,blockquote.verdict{border:1px solid #888;border-left:4px solid #444;border-radius:0}
+.card{border:1px solid #bbb;border-left:4px solid #666;border-radius:0}
+.sev{border-color:currentColor;background:none!important}
+.sev-critical{color:#a00}.sev-major{color:#8a5200}.sev-minor{color:#0a5a2e}
+h1,h2,h3,h4{break-after:avoid;page-break-after:avoid}
+h2{border-bottom:1px solid #888;margin-top:1.6em}
+[id]{scroll-margin-top:0}
+}
+</style>
+</head>
+<body>
+<nav class="toc" aria-label="Содержание"><details><summary>Содержание</summary><ol>
+<li><a href="#s1">1. Паспорт прогона</a></li>
+<li><a href="#s2">2. Как агент нарезал требования</a></li>
+<li><a href="#s3">3. Проверка каждого требования</a></li>
+<li><a href="#s4">4. Проверка всего набора требований</a></li>
+<li><a href="#s5">5. Сводка</a></li>
+<li><a href="#s6">6. Итог</a></li>
+<li><a href="#s7">7. Уточняющие вопросы к автору ТЗ</a></li>
+<li><a href="#s8">8. Черновики приёмочных тестов</a></li>
+<li><a href="#app">Приложение. Как получен отчёт</a></li>
+</ol></details></nav>
+<main class="doc"><article class="sheet">
+<h1>Отчёт о статической проверке требований</h1>
+<p><strong>Документ:</strong> <code>requirements.md</code> · проверен 26.11.2026 02:20 (UTC+05:00) · без модели — только автоматические правила</p>
+<blockquote class="verdict verdict-blocked">
+<p><strong>Итог:</strong> ⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (итог предварительный)<br>
+Замечаний 22: блокеров 3 · существенных 10 · мелких 9 · вопросов автору 21 · требований 58<br>
+Индекс готовности документа: <strong>54 из 100</strong> — нужна существенная доработка, предварительно.<br>
+💬 Ответы автора учтены: 5 из 21. Закрыто замечаний: 4. Итог после внесения ответов не меняется: ответы не закрывают блокер <a href="#d-006">D-006</a>.<br>
+⚠️ Без модели смысл не проверялся: противоречия и пропущенные сценарии не искались.</p>
+</blockquote>
+<p><strong>Блокеры — исправить до начала работы (3):</strong></p>
+<ol>
+<li><a href="#d-006">D-006</a> Раздел «Тестирование требований» не заполнен: вместо содержания заглушка — нет обязательной части, строки 56, 57</li>
+<li><a href="#d-010">D-010</a> Метод GET используется для изменения данных — нарушение протокола, строки 103, 104, 108, 109</li>
+<li><a href="#d-020">D-020</a> Ошибка возвращается с успешным кодом 200 — нарушение протокола, строки 165, 171</li>
+</ol>
+<p><strong>Сначала спросить автора:</strong></p>
+<ol>
+<li><a href="#v-04">В-04</a> Какие ветки, кроме успешной, должны быть на схеме?</li>
+<li><a href="#v-07">В-07</a> Как передавать идентификатор карты и другие чувствительные значения?</li>
+<li><a href="#v-08">В-08</a> Какой тип у параметра «amount»?</li>
+<li><a href="#v-09">В-09</a> Какой тип у параметра «enabled»?</li>
+<li><a href="#v-10">В-10</a> Возвращает ли сервис код 201?</li>
+</ol>
+<p><strong>Что исправить в первую очередь:</strong></p>
+<ol>
+<li>Заполните раздел до начала разработки: для раздела о тестировании — что… (<a href="#d-006">D-006</a>)</li>
+<li>Используйте PUT или PATCH для изменения настройки (POST — для создания новой… (<a href="#d-010">D-010</a>)</li>
+<li>Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом… (<a href="#d-020">D-020</a>)</li>
+<li>Схема процесса показывает только успешный путь. Добавьте на схему ветки, о… (<a href="#d-002">D-002</a>, <a href="#d-003">D-003</a>)</li>
+<li>Ограничение по времени без условий измерения. Допишите условия измерения: «в… (<a href="#d-004">D-004</a>)</li>
+</ol>
+<p>Прогон: 0,1 с · $0, модель не вызывалась.</p>
+<p><strong>Разделы:</strong> <a href="#s1">1. Паспорт прогона</a> · <a href="#s2">2. Как агент нарезал требования</a> · <a href="#s3">3. Проверка каждого требования</a> · <a href="#s4">4. Проверка всего набора требований</a> · <a href="#s5">5. Сводка</a> · <a href="#s6">6. Итог</a> · <a href="#s7">7. Уточняющие вопросы к автору ТЗ</a> · <a href="#s8">8. Черновики приёмочных тестов</a> · <a href="#app">Приложение. Как получен отчёт</a></p>
+<h2 id="s1">1. Паспорт прогона</h2>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Поле</th><th class="a-left">Значение</th></tr></thead><tbody>
+<tr><td class="a-left">Документ</td><td class="a-left"><code>requirements.md</code> · Markdown · 13,2 КБ · 199 строк · 1 001 слово · SHA-256 <code>e7dae55e5453</code> · «Уведомление о расходах по карте»</td></tr>
+<tr><td class="a-left">Дата и время прогона</td><td class="a-left">26.11.2026 02:20 (UTC+05:00)</td></tr>
+<tr><td class="a-left">Модель</td><td class="a-left">без модели</td></tr>
+<tr><td class="a-left">Версия агента</td><td class="a-left">v1.0.0 (тег <code>v1.1.1</code>) · коммит <code>0d071fd</code> + незакоммиченные правки · набор правил 1.1</td></tr>
+<tr><td class="a-left">Режим</td><td class="a-left">без модели: только автоматические правила</td></tr>
+<tr><td class="a-left">Время анализа</td><td class="a-left">0,1 с</td></tr>
+<tr><td class="a-left">Стоимость прогона</td><td class="a-left">$0 (модель не вызывалась)</td></tr>
+<tr><td class="a-left">Проверка цитат</td><td class="a-left">подтверждено 39, отброшено 0</td></tr>
+<tr><td class="a-left">Перепроверка</td><td class="a-left">не выполнялась (без модели)</td></tr>
+<tr><td class="a-left">Защита данных</td><td class="a-left">значений, похожих на номера карт, ИИН/БИН, адреса почты или телефоны, не найдено</td></tr>
+</tbody></table></div>
+<h2 id="s2">2. Как агент нарезал требования</h2>
+<p>Требования выделены эвристикой (без модели); номера REQ-… присвоены программой по порядку документа. Найдено 58 требований. Формулировка — точная цитата; длинная обрезана, только если полный текст есть в карточке раздела 3. Ясность каждого требования — в матрице раздела 3.</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">ID (в документе)</th><th class="a-left">Тип</th><th class="a-left">Формулировка (цитата)</th><th class="a-left">Где</th></tr></thead><tbody>
+<tr><td class="a-left"><a href="#req-001">REQ-001</a></td><td class="a-left">цель</td><td class="a-left">Дать клиенту возможность узнать о достижении личного бюджета в момент покупки.</td><td class="a-left">строка 23</td></tr>
+<tr><td class="a-left"><a href="#req-002">REQ-002</a></td><td class="a-left">функциональное</td><td class="a-left">Мобильное приложение → сервис настроек. Карточный процессинг → учёт расходов → сервис push.</td><td class="a-left">строка 26</td></tr>
+<tr><td class="a-left"><a href="#req-003">REQ-003</a></td><td class="a-left">процесс</td><td class="a-left">Карты → Расходы → Уведомления. На экране видны переключатель, поле «Порог, ₸», сумма за месяц и кнопка «Сохранить». При ошибке ввода сообщение появляется под полем.</td><td class="a-left">строка 29</td></tr>
+<tr><td class="a-left"><a href="#req-004">REQ-004</a></td><td class="a-left">процесс</td><td class="a-left">Проведение покупки → пересчёт расходов → проверка порога → при достижении отправка push → завершение.</td><td class="a-left">строка 34</td></tr>
+<tr><td class="a-left"><a href="#req-005">REQ-005</a> Ф-1</td><td class="a-left">функциональное</td><td class="a-left">Ф-1. Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно. По умолчанию уведомление выключено.</td><td class="a-left">строка 37</td></tr>
+<tr><td class="a-left"><a href="#req-006">REQ-006</a> Ф-2</td><td class="a-left">функциональное</td><td class="a-left">Ф-2. Месяц определяется по дате совершения покупки в Алматы. В расходы входят проведённые покупки. Возврат уменьшает расходы месяца исходной покупки. Переводы и снятие наличных исключаются.</td><td class="a-left">строка 38</td></tr>
+<tr><td class="a-left"><a href="#req-007">REQ-007</a> Ф-3</td><td class="a-left">функциональное</td><td class="a-left">Ф-3. Когда расходы переходят от суммы ниже порога к сумме, равной порогу или выше, клиент получает push. На карту приходится максимум один такой push за календарный месяц.</td><td class="a-left">строка 39</td></tr>
+<tr><td class="a-left"><a href="#req-008">REQ-008</a> Ф-4</td><td class="a-left">функциональное</td><td class="a-left">Ф-4. При изменении порога накопленная сумма сохраняется. Если она ниже нового порога, следующее достижение вызывает push независимо от истории предыдущей настройки.</td><td class="a-left">строка 40</td></tr>
+<tr><td class="a-left"><a href="#req-009">REQ-009</a></td><td class="a-left">процесс</td><td class="a-left">Процессинг → сервис расходов: проведена покупка. Сервис расходов → настройки: получить порог карты. Сервис расходов → push: передать последние четыре цифры карты и сумму при достижении порога.</td><td class="a-left">строка 43</td></tr>
+<tr><td class="a-left"><a href="#req-010">REQ-010</a></td><td class="a-left">нефункциональное</td><td class="a-left">Сервис передаёт push на отправку в течение минуты после получения события.</td><td class="a-left">строка 46</td></tr>
+<tr><td class="a-left"><a href="#req-011">REQ-011</a></td><td class="a-left">данные</td><td class="a-left">Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.</td><td class="a-left">строка 49</td></tr>
+<tr><td class="a-left"><a href="#req-012">REQ-012</a></td><td class="a-left">интеграция</td><td class="a-left">Приложение читает и сохраняет настройки через дочерний документ «Уведомление о расходах по карте — REST API». Повторная доставка одного события процессинга сохраняет исходный итог.</td><td class="a-left">строка 52</td></tr>
+<tr><td class="a-left"><a href="#req-013">REQ-013</a></td><td class="a-left">критерий приёмки</td><td class="a-left">Исходные условия: Расходы 48 500 ₸, порог 50 000 ₸ | Действие: Провести покупку на 1 500 ₸ | Ожидаемый результат: Итог 50 000 ₸ и один push</td><td class="a-left">строка 63</td></tr>
+<tr><td class="a-left"><a href="#req-014">REQ-014</a></td><td class="a-left">критерий приёмки</td><td class="a-left">Исходные условия: Покупка 31 января в 23:58 на 4 000 ₸ | Действие: Провести 1 февраля в 00:03 по Алматы | Ожидаемый результат: Февральский счётчик вырос на 4 000 ₸</td><td class="a-left">строка 64</td></tr>
+<tr><td class="a-left"><a href="#req-015">REQ-015</a></td><td class="a-left">критерий приёмки</td><td class="a-left">Исходные условия: Расходы 19 900 ₸, порог 20 000 ₸ | Действие: Перевести 500 ₸ | Ожидаемый результат: Счётчик показывает 19 900 ₸</td><td class="a-left">строка 65</td></tr>
+<tr><td class="a-left"><a href="#req-016">REQ-016</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Дочерний документ части A: «Уведомление о расходах по карте — REST API».</td><td class="a-left">строка 97</td></tr>
+<tr><td class="a-left"><a href="#req-017">REQ-017</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Description | Значение: Сохранение порога. Функциональные требования: чтение порога</td><td class="a-left">строка 103</td></tr>
+<tr><td class="a-left"><a href="#req-018">REQ-018</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: REST type | Значение: GET</td><td class="a-left">строка 104</td></tr>
+<tr><td class="a-left"><a href="#req-019">REQ-019</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Authorization | Значение: Bearer, сессия владельца карты</td><td class="a-left">строка 105</td></tr>
+<tr><td class="a-left"><a href="#req-020">REQ-020</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Controller | Значение: AlertsController</td><td class="a-left">строка 106</td></tr>
+<tr><td class="a-left"><a href="#req-021">REQ-021</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: URL type | Значение: Dev / Prod</td><td class="a-left">строка 107</td></tr>
+<tr><td class="a-left"><a href="#req-022">REQ-022</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Request URL | Значение: Dev: /alerts/saveLimit . Prod: —</td><td class="a-left">строка 108</td></tr>
+<tr><td class="a-left"><a href="#req-023">REQ-023</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: CURL | Значение: curl -G "$BASE/alerts/saveLimit" -H "Authorization: Bearer $TOKEN" --data 'cardId=demo-42&amp;amount=50000&amp;enabled=1'</td><td class="a-left">строка 109</td></tr>
+<tr><td class="a-left"><a href="#req-024">REQ-024</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Swagger | Значение: —</td><td class="a-left">строка 110</td></tr>
+<tr><td class="a-left"><a href="#req-025">REQ-025</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Gitlab project | Значение: Учебный контур</td><td class="a-left">строка 111</td></tr>
+<tr><td class="a-left"><a href="#req-026">REQ-026</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Framework | Значение: Учебный контур</td><td class="a-left">строка 112</td></tr>
+<tr><td class="a-left"><a href="#req-027">REQ-027</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Author | Значение: Школа тестирования</td><td class="a-left">строка 113</td></tr>
+<tr><td class="a-left"><a href="#req-028">REQ-028</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Поле: Developer | Значение: Команда практикума</td><td class="a-left">строка 114</td></tr>
+<tr><td class="a-left"><a href="#req-029">REQ-029</a></td><td class="a-left">процесс</td><td class="a-left">Проверить пользовательскую сессию.</td><td class="a-left">строка 117</td></tr>
+<tr><td class="a-left"><a href="#req-030">REQ-030</a></td><td class="a-left">процесс</td><td class="a-left">Проверить принадлежность карты клиенту.</td><td class="a-left">строка 118</td></tr>
+<tr><td class="a-left"><a href="#req-031">REQ-031</a></td><td class="a-left">процесс</td><td class="a-left">Проверить сумму и переключатель.</td><td class="a-left">строка 119</td></tr>
+<tr><td class="a-left"><a href="#req-032">REQ-032</a></td><td class="a-left">процесс</td><td class="a-left">Заменить настройку и вернуть результат сохранения.</td><td class="a-left">строка 120</td></tr>
+<tr><td class="a-left"><a href="#req-033">REQ-033</a></td><td class="a-left">процесс</td><td class="a-left">При отклонении суммы вернуть прежнее состояние и результат ERROR.</td><td class="a-left">строка 121</td></tr>
+<tr><td class="a-left"><a href="#req-034">REQ-034</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Целое число тенге, обе границы включены.</td><td class="a-left">строка 124</td></tr>
+<tr><td class="a-left"><a href="#req-035">REQ-035</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Повторное сохранение заменяет действующую настройку.</td><td class="a-left">строка 125</td></tr>
+<tr><td class="a-left"><a href="#req-036">REQ-036</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Изменение порога сохраняет накопленные расходы.</td><td class="a-left">строка 126</td></tr>
+<tr><td class="a-left"><a href="#req-037">REQ-037</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Приложение → AlertsController → хранилище настроек → AlertsController → приложение.</td><td class="a-left">строки 129–131</td></tr>
+<tr><td class="a-left"><a href="#req-038">REQ-038</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: cardId | Format: string | Size: 1–64 | Mandatory: Да | Logic: Карта клиента | Description: Идентификатор карты | DB field: card_id</td><td class="a-left">строка 142</td></tr>
+<tr><td class="a-left"><a href="#req-039">REQ-039</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: amount | Format: integer | Size: 32 bit | Mandatory: Да | Logic: 1 000–1 000 000 | Description: Порог в тенге | DB field: limit_kzt</td><td class="a-left">строка 143</td></tr>
+<tr><td class="a-left"><a href="#req-040">REQ-040</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: enabled | Format: integer | Size: 1 знак | Mandatory: Да | Logic: 0 или 1 | Description: Признак включения | DB field: enabled</td><td class="a-left">строка 144</td></tr>
+<tr><td class="a-left"><a href="#req-041">REQ-041</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Content-Type: application/json .</td><td class="a-left">строка 147</td></tr>
+<tr><td class="a-left"><a href="#req-042">REQ-042</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Тело не используется.</td><td class="a-left">строка 148</td></tr>
+<tr><td class="a-left"><a href="#req-043">REQ-043</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Если результат 200 или 201 — успешный. Если результат 400, 401 и далее — неуспешный.</td><td class="a-left">строка 151</td></tr>
+<tr><td class="a-left"><a href="#req-044">REQ-044</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: result | Format: string | Logic: OK / ERROR | Description: Исход сохранения | DB field: —</td><td class="a-left">строка 155</td></tr>
+<tr><td class="a-left"><a href="#req-045">REQ-045</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: amount | Format: string | Logic: При успехе | Description: Порог в тенге | DB field: limit_kzt</td><td class="a-left">строка 156</td></tr>
+<tr><td class="a-left"><a href="#req-046">REQ-046</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: enabled | Format: string | Logic: «0» или «1» | Description: Признак включения | DB field: enabled</td><td class="a-left">строка 157</td></tr>
+<tr><td class="a-left"><a href="#req-047">REQ-047</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Parameter: message | Format: string | Logic: При ошибке | Description: Описание ошибки | DB field: —</td><td class="a-left">строка 158</td></tr>
+<tr><td class="a-left"><a href="#req-048">REQ-048</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">200. Ответ в случае успешного выполнения метода.</td><td class="a-left">строка 162</td></tr>
+<tr><td class="a-left"><a href="#req-049">REQ-049</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">400. Ответ в случае, если параметры запроса заполнены неверно.</td><td class="a-left">строка 163</td></tr>
+<tr><td class="a-left"><a href="#req-050">REQ-050</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">{"result":"OK","amount":"50000","enabled":"1"} или {"result":"ERROR","message":"Проверьте сумму"}</td><td class="a-left">строки 166–172</td></tr>
+<tr><td class="a-left"><a href="#req-051">REQ-051</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">401. Ответ в случае, если запрос выполнен без необходимой авторизации.</td><td class="a-left">строка 174</td></tr>
+<tr><td class="a-left"><a href="#req-052">REQ-052</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">403. Ответ в случае, если на указанный ресурс доступ запрещен.</td><td class="a-left">строка 175</td></tr>
+<tr><td class="a-left"><a href="#req-053">REQ-053</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">500. Ответ в случае, если произошла внутренняя ошибка сервера.</td><td class="a-left">строка 176</td></tr>
+<tr><td class="a-left"><a href="#req-054">REQ-054</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">{"message":"Некорректный запрос"}</td><td class="a-left">строки 179–181</td></tr>
+<tr><td class="a-left"><a href="#req-055">REQ-055</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">{"message":"Требуется вход"}</td><td class="a-left">строки 184–186</td></tr>
+<tr><td class="a-left"><a href="#req-056">REQ-056</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">Для чужой карты возвращается 404, как и для отсутствующей карты.</td><td class="a-left">строка 189</td></tr>
+<tr><td class="a-left"><a href="#req-057">REQ-057</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">404 {"message":"Карта не найдена"}</td><td class="a-left">строки 190–193</td></tr>
+<tr><td class="a-left"><a href="#req-058">REQ-058</a></td><td class="a-left">интерфейс (API)</td><td class="a-left">{"message":"Ошибка сервиса"}</td><td class="a-left">строки 196–198</td></tr>
+</tbody></table></div>
+<p><strong>Не считал требованиями: 60 блоков.</strong></p>
+<ul>
+<li>заголовок: заголовок раздела · строки 1, 8, 10, 22, 25, 28, 31, 33, 36, 42, 45, 48, 51, 54, 56 и ещё 19</li>
+<li>пояснение: вступление под названием документа, до первого раздела · строка 3 — «Комплект из двух исходных документов. Текст требований не…»</li>
+<li>сведения о документе: служебный раздел документа (сведения, ревью, согласование) · строки 14, 15, 16, 17, 18, 19, 20, 68, 72, 73, 74, 75, 76, 77, 78 и ещё 7</li>
+<li>заглушка: заглушка вместо содержания · строка 57 — «заполняются тестировщиками»</li>
+<li>пустой шаблон: пустая строка таблицы · строка 91 — «| | | |»</li>
+<li>прочее: утверждение об отсутствии («не используются», «нет», «—»): это сведение, а не требование · строка 136 — «Не используются.»</li>
+</ul>
+<h2 id="s3">3. Проверка каждого требования</h2>
+<p>Без модели каждое требование проверено только автоматическими правилами (размытые слова, заглушки, сроки без условий, незакрытые перечни, несколько требований в одном пункте и др.); смысловые критерии не проверялись (❔).<br>
+Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4. Карточки ниже — только у требований, к которым есть замечания.</p>
+<a id="s3-matrix"></a><p><strong>Матрица «требование × критерий»</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-center">Полнота</th><th class="a-center">Однозн.</th><th class="a-center">Непротив.</th><th class="a-center">Провер.</th><th class="a-center">Реализ.</th><th class="a-center">Необх.</th><th class="a-center">Атом.</th><th class="a-right">Ясность</th></tr></thead><tbody>
+<tr><td class="a-left"><a href="#req-004">REQ-004</a></td><td class="a-center"><a href="#d-002">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-005">REQ-005</a> Ф-1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-009">REQ-009</a></td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-010">REQ-010</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-004">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+<tr><td class="a-left"><a href="#req-011">REQ-011</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-017">REQ-017</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-010">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
+<tr><td class="a-left"><a href="#req-018">REQ-018</a></td><td class="a-center"><a href="#d-011">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-010">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,4</td></tr>
+<tr><td class="a-left"><a href="#req-022">REQ-022</a></td><td class="a-center"><a href="#d-012">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-010">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,0</td></tr>
+<tr><td class="a-left"><a href="#req-023">REQ-023</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-010">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
+<tr><td class="a-left"><a href="#req-024">REQ-024</a></td><td class="a-center"><a href="#d-013">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,2</td></tr>
+<tr><td class="a-left"><a href="#req-038">REQ-038</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-014">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-039">REQ-039</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-015">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-040">REQ-040</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-016">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-041">REQ-041</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-017">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
+<tr><td class="a-left"><a href="#req-042">REQ-042</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-017">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
+<tr><td class="a-left"><a href="#req-043">REQ-043</a></td><td class="a-center"><a href="#d-018">⚠️</a></td><td class="a-center">❔</td><td class="a-center"><a href="#d-019">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,0</td></tr>
+<tr><td class="a-left"><a href="#req-045">REQ-045</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-015">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-046">REQ-046</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-016">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-050">REQ-050</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-020">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
+<tr><td class="a-left"><a href="#req-056">REQ-056</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-022">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+</tbody></table></div>
+<p>Не проверены ни по одному критерию (во всех клетках было бы ❔): 38 требований — <a href="#req-001">REQ-001</a>, <a href="#req-002">REQ-002</a>, <a href="#req-003">REQ-003</a>, <a href="#req-006">REQ-006</a>, <a href="#req-007">REQ-007</a>, <a href="#req-008">REQ-008</a>, <a href="#req-012">REQ-012</a>, <a href="#req-013">REQ-013</a>, <a href="#req-014">REQ-014</a>, <a href="#req-015">REQ-015</a>, <a href="#req-016">REQ-016</a>, <a href="#req-019">REQ-019</a>, <a href="#req-020">REQ-020</a>, <a href="#req-021">REQ-021</a>, <a href="#req-025">REQ-025</a>, <a href="#req-026">REQ-026</a>, <a href="#req-027">REQ-027</a>, <a href="#req-028">REQ-028</a>, <a href="#req-029">REQ-029</a>, <a href="#req-030">REQ-030</a>, <a href="#req-031">REQ-031</a>, <a href="#req-032">REQ-032</a>, <a href="#req-033">REQ-033</a>, <a href="#req-034">REQ-034</a>, <a href="#req-035">REQ-035</a>, <a href="#req-036">REQ-036</a>, <a href="#req-037">REQ-037</a>, <a href="#req-044">REQ-044</a>, <a href="#req-047">REQ-047</a>, <a href="#req-048">REQ-048</a>, <a href="#req-049">REQ-049</a>, <a href="#req-051">REQ-051</a>, <a href="#req-052">REQ-052</a>, <a href="#req-053">REQ-053</a>, <a href="#req-054">REQ-054</a>, <a href="#req-055">REQ-055</a>, <a href="#req-057">REQ-057</a>, <a href="#req-058">REQ-058</a>.</p>
+<p>Пустых клеток (не проверено): 383.</p>
+<h3 id="req-004">REQ-004 · BPMN схема процесса · строка 34</h3>
+<blockquote>
+<p>Проведение покупки → пересчёт расходов → проверка порога → при достижении отправка push → завершение.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Полнота <a href="#d-002">D-002</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-005">REQ-005 · Ф-1 · Функциональные требования · строка 37</h3>
+<blockquote>
+<p>Ф-1. Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно. По умолчанию уведомление выключено.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-005">D-005</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-009">REQ-009 · Sequence Diagram · строка 43</h3>
+<blockquote>
+<p>Процессинг → сервис расходов: проведена покупка. Сервис расходов → настройки: получить порог карты. Сервис расходов → push: передать последние четыре цифры карты и сумму при достижении порога.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Полнота <a href="#d-003">D-003</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-010">REQ-010 · Нефункциональные требования · строка 46</h3>
+<blockquote>
+<p>Сервис передаёт push на отправку в течение минуты после получения события.</p>
+</blockquote>
+<p>Ясность 7,5 — есть замечания · ⚠️ Провер. <a href="#d-004">D-004</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="d-004"></a>
+<p><strong>D-004 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
+<p>Задан срок «в течение минуты», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.</p>
+<ul>
+<li>Цитата: строка 46 (цитата выше)</li>
+<li>Как исправить: Допишите условия измерения: «в течение минуты для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан.</li>
+<li>Вопрос автору <a href="#v-05">В-05</a>; источник: правило <code>time-without-conditions</code></li>
+</ul>
+</div>
+<h3 id="req-011">REQ-011 · Требования к данным · строка 49</h3>
+<blockquote>
+<p>Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-005">D-005</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-017">REQ-017 · Общие параметры · строка 103</h3>
+<blockquote>
+<p>Поле: Description | Значение: Сохранение порога. Функциональные требования: чтение порога</p>
+</blockquote>
+<p>Ясность 6,8 — нужна доработка · ⚠️ Реализ. <a href="#d-010">D-010</a> 🔴 · прочие без модели не проверялись</p>
+<h3 id="req-018">REQ-018 · Общие параметры · строка 104</h3>
+<blockquote>
+<p>Поле: REST type | Значение: GET</p>
+</blockquote>
+<p>Ясность 6,4 — нужна доработка · ⚠️ Полнота <a href="#d-011">D-011</a> 🟢; Реализ. <a href="#d-010">D-010</a> 🔴 · прочие без модели не проверялись</p>
+<h3 id="req-022">REQ-022 · Общие параметры · строка 108</h3>
+<blockquote>
+<p>Поле: Request URL | Значение: Dev: /alerts/saveLimit . Prod: —</p>
+</blockquote>
+<p>Ясность 6,0 — нужна доработка · ⚠️ Полнота <a href="#d-012">D-012</a> 🟢; Реализ. <a href="#d-010">D-010</a> 🔴 · прочие без модели не проверялись</p>
+<div class="card card-minor"><a id="d-012"></a>
+<p><strong>D-012 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Заглушка вместо значения: «Prod: —». Вместо содержания стоит заглушка «Prod: —». Пока значение не определено, эту часть нельзя ни реализовать, ни проверить: каждый подставит своё, и расхождение обнаружится только на приёмке.</p>
+<ul>
+<li>Где: строка 108: «Request URL | Dev: /alerts/saveLimit . Prod: —». Как исправить: Впишите значение. Если оно ещё неизвестно — укажите, кто и к какой дате его определит, и не начинайте работу над этой частью до решения.</li>
+<li>Вопрос автору <a href="#v-18">В-18</a>; источник: правило <code>placeholder</code></li>
+</ul>
+</div>
+<h3 id="req-023">REQ-023 · Общие параметры · строка 109</h3>
+<blockquote>
+<p>Поле: CURL | Значение: curl -G "$BASE/alerts/saveLimit" -H "Authorization: Bearer $TOKEN" --data 'cardId=demo-42&amp;amount=50000&amp;enabled=1'</p>
+</blockquote>
+<p>Ясность 6,8 — нужна доработка · ⚠️ Реализ. <a href="#d-010">D-010</a> 🔴 · прочие без модели не проверялись</p>
+<h3 id="req-024">REQ-024 · Общие параметры · строка 110</h3>
+<blockquote>
+<p>Поле: Swagger | Значение: —</p>
+</blockquote>
+<p>Ясность 9,2 — ясное · ⚠️ Полнота <a href="#d-013">D-013</a> 🟢 · прочие без модели не проверялись</p>
+<div class="card card-minor"><a id="d-013"></a>
+<p><strong>D-013 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Не заполнено поле «Swagger». Вместо содержания стоит заглушка «—». Как в <a href="#d-012">D-012</a>.</p>
+<ul>
+<li>Где: строка 110: «Swagger | —». Как исправить: Впишите значение. Дальше — как в <a href="#d-012">D-012</a>.</li>
+<li>Вопрос автору <a href="#v-19">В-19</a>; источник: правило <code>placeholder</code></li>
+</ul>
+</div>
+<h3 id="req-038">REQ-038 · Query-параметры · строка 142</h3>
+<blockquote>
+<p>Parameter: cardId | Format: string | Size: 1–64 | Mandatory: Да | Logic: Карта клиента | Description: Идентификатор карты | DB field: card_id</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Реализ. <a href="#d-014">D-014</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-039">REQ-039 · Query-параметры · строка 143</h3>
+<blockquote>
+<p>Parameter: amount | Format: integer | Size: 32 bit | Mandatory: Да | Logic: 1 000–1 000 000 | Description: Порог в тенге | DB field: limit_kzt</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-015">D-015</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-040">REQ-040 · Query-параметры · строка 144</h3>
+<blockquote>
+<p>Parameter: enabled | Format: integer | Size: 1 знак | Mandatory: Да | Logic: 0 или 1 | Description: Признак включения | DB field: enabled</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-016">D-016</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-041">REQ-041 · Request body · строка 147</h3>
+<blockquote>
+<p>Content-Type: application/json .</p>
+</blockquote>
+<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#d-017">D-017</a> 🟢 · прочие без модели не проверялись</p>
+<h3 id="req-042">REQ-042 · Request body · строка 148</h3>
+<blockquote>
+<p>Тело не используется.</p>
+</blockquote>
+<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#d-017">D-017</a> 🟢 · прочие без модели не проверялись</p>
+<h3 id="req-043">REQ-043 · Ответ · строка 151</h3>
+<blockquote>
+<p>Если результат 200 или 201 — успешный. Если результат 400, 401 и далее — неуспешный.</p>
+</blockquote>
+<p>Ясность 8,0 — есть замечания · ⚠️ Полнота <a href="#d-018">D-018</a> 🟢; Непротив. <a href="#d-019">D-019</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-minor"><a id="d-018"></a>
+<p><strong>D-018 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Незакрытый перечень: «и далее». Перечень заканчивается словами «и далее», поэтому непонятно, что ещё в него входит. Разработчик реализует только названное, а тестировщик не знает, какие ещё случаи проверять.</p>
+<ul>
+<li>Где: строка 151 (цитата выше). Как исправить: Перечислите все значения полностью или назовите правило, по которому их можно определить (например, «все коды 4xx из таблицы статусов» или ссылку на справочник).</li>
+<li>Вопрос автору <a href="#v-21">В-21</a>; источник: правило <code>open-list</code></li>
+</ul>
+</div>
+<h3 id="req-045">REQ-045 · Ответ · строка 156</h3>
+<blockquote>
+<p>Parameter: amount | Format: string | Logic: При успехе | Description: Порог в тенге | DB field: limit_kzt</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-015">D-015</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-046">REQ-046 · Ответ · строка 157</h3>
+<blockquote>
+<p>Parameter: enabled | Format: string | Logic: «0» или «1» | Description: Признак включения | DB field: enabled</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-016">D-016</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="req-050">REQ-050 · 200. Successful — Created · строки 166–172</h3>
+<blockquote>
+<p>{"result":"OK","amount":"50000","enabled":"1"}<br>
+или<br>
+{"result":"ERROR","message":"Проверьте сумму"}</p>
+</blockquote>
+<p>Ясность 6,8 — нужна доработка · ⚠️ Непротив. <a href="#d-020">D-020</a> 🔴 · прочие без модели не проверялись</p>
+<h3 id="req-056">REQ-056 · 403. Unsuccessful — Forbidden · строка 189</h3>
+<blockquote>
+<p>Для чужой карты возвращается 404, как и для отсутствующей карты.</p>
+</blockquote>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#d-022">D-022</a> 🟡 · прочие без модели не проверялись</p>
+<a id="s3-clean"></a><p><strong>Требования без замечаний (38)</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-left">Где</th><th class="a-left">Начало текста (полностью — в <a href="#s2">разделе 2</a>)</th></tr></thead><tbody>
+<tr><td class="a-left"><a id="req-001"></a>REQ-001</td><td class="a-left">строка 23</td><td class="a-left">Дать клиенту возможность узнать о…</td></tr>
+<tr><td class="a-left"><a id="req-002"></a>REQ-002</td><td class="a-left">строка 26</td><td class="a-left">Мобильное приложение → сервис…</td></tr>
+<tr><td class="a-left"><a id="req-003"></a>REQ-003</td><td class="a-left">строка 29</td><td class="a-left">Карты → Расходы → Уведомления. На…</td></tr>
+<tr><td class="a-left"><a id="req-006"></a>REQ-006 Ф-2</td><td class="a-left">строка 38</td><td class="a-left">Ф-2. Месяц определяется по дате…</td></tr>
+<tr><td class="a-left"><a id="req-007"></a>REQ-007 Ф-3</td><td class="a-left">строка 39</td><td class="a-left">Ф-3. Когда расходы переходят от суммы…</td></tr>
+<tr><td class="a-left"><a id="req-008"></a>REQ-008 Ф-4</td><td class="a-left">строка 40</td><td class="a-left">Ф-4. При изменении порога накопленная…</td></tr>
+<tr><td class="a-left"><a id="req-012"></a>REQ-012</td><td class="a-left">строка 52</td><td class="a-left">Приложение читает и сохраняет…</td></tr>
+<tr><td class="a-left"><a id="req-013"></a>REQ-013</td><td class="a-left">строка 63</td><td class="a-left">Исходные условия: Расходы 48 500 ₸…</td></tr>
+<tr><td class="a-left"><a id="req-014"></a>REQ-014</td><td class="a-left">строка 64</td><td class="a-left">Исходные условия: Покупка 31 января в…</td></tr>
+<tr><td class="a-left"><a id="req-015"></a>REQ-015</td><td class="a-left">строка 65</td><td class="a-left">Исходные условия: Расходы 19 900 ₸…</td></tr>
+<tr><td class="a-left"><a id="req-016"></a>REQ-016</td><td class="a-left">строка 97</td><td class="a-left">Дочерний документ части A…</td></tr>
+<tr><td class="a-left"><a id="req-019"></a>REQ-019</td><td class="a-left">строка 105</td><td class="a-left">Поле: Authorization | Значение…</td></tr>
+<tr><td class="a-left"><a id="req-020"></a>REQ-020</td><td class="a-left">строка 106</td><td class="a-left">Поле: Controller | Значение…</td></tr>
+<tr><td class="a-left"><a id="req-021"></a>REQ-021</td><td class="a-left">строка 107</td><td class="a-left">Поле: URL type | Значение: Dev / Prod</td></tr>
+<tr><td class="a-left"><a id="req-025"></a>REQ-025</td><td class="a-left">строка 111</td><td class="a-left">Поле: Gitlab project | Значение…</td></tr>
+<tr><td class="a-left"><a id="req-026"></a>REQ-026</td><td class="a-left">строка 112</td><td class="a-left">Поле: Framework | Значение: Учебный…</td></tr>
+<tr><td class="a-left"><a id="req-027"></a>REQ-027</td><td class="a-left">строка 113</td><td class="a-left">Поле: Author | Значение: Школа…</td></tr>
+<tr><td class="a-left"><a id="req-028"></a>REQ-028</td><td class="a-left">строка 114</td><td class="a-left">Поле: Developer | Значение: Команда…</td></tr>
+<tr><td class="a-left"><a id="req-029"></a>REQ-029</td><td class="a-left">строка 117</td><td class="a-left">Проверить пользовательскую сессию.</td></tr>
+<tr><td class="a-left"><a id="req-030"></a>REQ-030</td><td class="a-left">строка 118</td><td class="a-left">Проверить принадлежность карты клиенту.</td></tr>
+<tr><td class="a-left"><a id="req-031"></a>REQ-031</td><td class="a-left">строка 119</td><td class="a-left">Проверить сумму и переключатель.</td></tr>
+<tr><td class="a-left"><a id="req-032"></a>REQ-032</td><td class="a-left">строка 120</td><td class="a-left">Заменить настройку и вернуть результат…</td></tr>
+<tr><td class="a-left"><a id="req-033"></a>REQ-033</td><td class="a-left">строка 121</td><td class="a-left">При отклонении суммы вернуть прежнее…</td></tr>
+<tr><td class="a-left"><a id="req-034"></a>REQ-034</td><td class="a-left">строка 124</td><td class="a-left">Целое число тенге, обе границы включены.</td></tr>
+<tr><td class="a-left"><a id="req-035"></a>REQ-035</td><td class="a-left">строка 125</td><td class="a-left">Повторное сохранение заменяет…</td></tr>
+<tr><td class="a-left"><a id="req-036"></a>REQ-036</td><td class="a-left">строка 126</td><td class="a-left">Изменение порога сохраняет накопленные…</td></tr>
+<tr><td class="a-left"><a id="req-037"></a>REQ-037</td><td class="a-left">строки 129–131</td><td class="a-left">Приложение → AlertsController →…</td></tr>
+<tr><td class="a-left"><a id="req-044"></a>REQ-044</td><td class="a-left">строка 155</td><td class="a-left">Parameter: result | Format: string |…</td></tr>
+<tr><td class="a-left"><a id="req-047"></a>REQ-047</td><td class="a-left">строка 158</td><td class="a-left">Parameter: message | Format: string |…</td></tr>
+<tr><td class="a-left"><a id="req-048"></a>REQ-048</td><td class="a-left">строка 162</td><td class="a-left">200. Ответ в случае успешного…</td></tr>
+<tr><td class="a-left"><a id="req-049"></a>REQ-049</td><td class="a-left">строка 163</td><td class="a-left">400. Ответ в случае, если параметры…</td></tr>
+<tr><td class="a-left"><a id="req-051"></a>REQ-051</td><td class="a-left">строка 174</td><td class="a-left">401. Ответ в случае, если запрос…</td></tr>
+<tr><td class="a-left"><a id="req-052"></a>REQ-052</td><td class="a-left">строка 175</td><td class="a-left">403. Ответ в случае, если на указанный…</td></tr>
+<tr><td class="a-left"><a id="req-053"></a>REQ-053</td><td class="a-left">строка 176</td><td class="a-left">500. Ответ в случае, если произошла…</td></tr>
+<tr><td class="a-left"><a id="req-054"></a>REQ-054</td><td class="a-left">строки 179–181</td><td class="a-left">{"message":"Некорректный запрос"}</td></tr>
+<tr><td class="a-left"><a id="req-055"></a>REQ-055</td><td class="a-left">строки 184–186</td><td class="a-left">{"message":"Требуется вход"}</td></tr>
+<tr><td class="a-left"><a id="req-057"></a>REQ-057</td><td class="a-left">строки 190–193</td><td class="a-left">404 {"message":"Карта не найдена"}</td></tr>
+<tr><td class="a-left"><a id="req-058"></a>REQ-058</td><td class="a-left">строки 196–198</td><td class="a-left">{"message":"Ошибка сервиса"}</td></tr>
+</tbody></table></div>
+<h2 id="s4">4. Проверка всего набора требований</h2>
+<p>Здесь замечания к документу в целом: противоречия между разделами, пропуски, стандарты, термины, нумерация. Без модели — только то, что находят автоматические правила.</p>
+<h3>4.1 Полнота набора</h3>
+<div class="card card-major"><a id="d-002"></a>
+<p><strong>D-002 · 🟡 <span class="sev sev-major">MAJOR</span> · Полнота набора.</strong> Схема процесса показывает только успешный путь</p>
+<p>Схема описывает только последовательность успешных шагов: на ней нет ни одной ветки ошибки, отказа или альтернативного пути. Разработчик не узнает из схемы, куда идёт процесс при сбое шага, а тестировщик — какие ветки проверять; каждый достроит их по-своему.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 34, <a href="#req-004">REQ-004</a>: «Проведение покупки → пересчёт расходов → проверка порога → при достижении отправка push → завершение.»</li>
+<li>строка 33: «BPMN схема процесса»</li>
+</ul></li>
+<li>Как исправить: Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь.</li>
+<li>Вопрос автору <a href="#v-04">В-04</a>; источник: правило <code>flow-happy-path</code></li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-003"></a>
+<p><strong>D-003 · 🟡 <span class="sev sev-major">MAJOR</span> · Полнота набора.</strong> Схема процесса показывает только успешный путь</p>
+<p>Как в <a href="#d-002">D-002</a>.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 43, <a href="#req-009">REQ-009</a>: «Процессинг → сервис расходов: проведена покупка. Сервис расходов → настройки: получить порог карты. Сервис расходов → push: передать последние четыре цифры карты и сумму при достижении порога.»</li>
+<li>строка 42: «Sequence Diagram»</li>
+</ul></li>
+<li>Как исправить: Как в <a href="#d-002">D-002</a>.</li>
+<li>Вопрос автору <a href="#v-04">В-04</a>; источник: правило <code>flow-happy-path</code></li>
+</ul>
+</div>
+<div class="card card-critical"><a id="d-006"></a>
+<p><strong>D-006 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Полнота набора.</strong> Раздел «Тестирование требований» не заполнен: вместо содержания заглушка</p>
+<p>Вместо содержания раздела стоит заглушка «заполняются тестировщиками». Значит, эта часть требований не готова: по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел формально есть. Это раздел о проверке результата: пока он не заполнен, нет согласованного способа принять работу, поэтому передавать документ в разработку и тестирование нельзя.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 56: «Тестирование требований»</li>
+<li>строка 57: «заполняются тестировщиками»</li>
+</ul></li>
+<li>Как исправить: Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.</li>
+<li>Почему блокер: нет обязательной части документа</li>
+<li>Вопрос автору <a href="#v-02">В-02</a>; источник: правило <code>empty-section</code></li>
+</ul>
+</div>
+<div class="card card-minor"><a id="d-007"></a>
+<p><strong>D-007 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Чек-лист ревью не заполнен. В 28 ячейках таблицы (14 строк) оставлены все варианты ответа, например «Да / Нет». Значит, ревью по чек-листу не проводилось: не видно, кто и что проверил и какие пункты не выполнены.</p>
+<ul>
+<li>Где: строка 67: «Ревью требований»; строка 72: «Техническое требование зафиксировано и покрывает бизнес-требование | Да / Нет | Да / Нет». Как исправить: Проведите ревью по чек-листу: в каждой ячейке оставьте один ответ, для ответов «Нет» впишите в примечания, что будет сделано и кем.</li>
+<li>Вопрос автору <a href="#v-14">В-14</a>; источник: правило <code>unfilled-checklist</code></li>
+</ul>
+</div>
+<div class="card card-minor"><a id="d-009"></a>
+<p><strong>D-009 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Таблица в разделе «Блок согласующих» не заполнена. Таблица есть, но ни одна её строка не заполнена. Это таблица согласования: документ формально никем не согласован, и непонятно, кто отвечает за требования и чья редакция действует.</p>
+<ul>
+<li>Где: строка 87: «Блок согласующих»; строка 89: «Подразделение | ФИО ответственного | Подпись». Как исправить: Заполните таблицу: укажите подразделения, ФИО ответственных и дату согласования.</li>
+<li>Вопрос автору <a href="#v-16">В-16</a>; источник: правило <code>empty-table</code></li>
+</ul>
+</div>
+<div class="card card-minor"><a id="d-011"></a>
+<p><strong>D-011 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> В описании интерфейса не хватает правил надёжности. Интерфейс меняет данные, но в документе не описано: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса. Без этих правил разработчики клиента и сервера по-разному поведут себя при перегрузке, медленном ответе, повторной отправке и одновременной правке одного объекта, а тестировщик не знает, какое поведение ожидать.</p>
+<ul>
+<li>Где: строка 104, <a href="#req-018">REQ-018</a>: «REST type | GET». Как исправить: Добавьте в описание интерфейса: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса — с конкретными значениями (лимит запросов и код ответа при превышении, тайм-аут и число повторов, способ защиты от одновременной правки, ключ идемпотентности, номер версии в пути или заголовке).</li>
+<li>Вопрос автору <a href="#v-17">В-17</a>; источник: правило <code>api-reliability</code></li>
+</ul>
+</div>
+<h3>4.2 Взаимная непротиворечивость</h3>
+<div class="card card-major"><a id="d-005"></a>
+<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
+<p>Одни суммы заданы в единицах «тиын», другие — в «тенге», а правило пересчёта нигде не записано. Разработчик может сохранить сумму в одних единицах, а сравнить её с порогом в других — ошибка в 100 раз, которую не заметят до первого реального платежа.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 49, <a href="#req-011">REQ-011</a>: «Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге»</li>
+<li>строка 37, <a href="#req-005">REQ-005</a>: «Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно»</li>
+</ul></li>
+<li>Как исправить: Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.</li>
+<li>Вопрос автору <a href="#v-06">В-06</a>; источник: правило <code>unit-mix</code></li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-015"></a>
+<p><strong>D-015 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «amount» описан с разными типами: integer и string</p>
+<p>В одной таблице параметр «amount» имеет тип integer, в другой — string. Клиент и сервер разберут значение по-разному: например, число 50000 и строка "50000" по-разному проходят проверку и сравнение, и интеграция сломается на первом же запросе.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 143, <a href="#req-039">REQ-039</a>: «amount | integer | 32 bit | Да | 1 000–1 000 000 | Порог в тенге | limit_kzt»</li>
+<li>строка 156, <a href="#req-045">REQ-045</a>: «amount | string | При успехе | Порог в тенге | limit_kzt»</li>
+</ul></li>
+<li>Как исправить: Выберите для «amount» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места.</li>
+<li>Вопрос автору <a href="#v-08">В-08</a>; источник: правило <code>param-type-mismatch</code></li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-016"></a>
+<p><strong>D-016 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «enabled» описан с разными типами: integer и string</p>
+<p>В одной таблице параметр «enabled» имеет тип integer, в другой — string. Клиент и сервер разберут значение по-разному: например, значение true и строка "true" по-разному проходят проверку и сравнение, и интеграция сломается на первом же запросе.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 144, <a href="#req-040">REQ-040</a>: «enabled | integer | 1 знак | Да | 0 или 1 | Признак включения | enabled»</li>
+<li>строка 157, <a href="#req-046">REQ-046</a>: «enabled | string | «0» или «1» | Признак включения | enabled»</li>
+</ul></li>
+<li>Как исправить: Выберите для «enabled» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места.</li>
+<li>Вопрос автору <a href="#v-09">В-09</a>; источник: правило <code>param-type-mismatch</code></li>
+</ul>
+</div>
+<div class="card card-minor"><a id="d-017"></a>
+<p><strong>D-017 · 🟢 <span class="sev sev-minor">MINOR</span> · Взаимная непротиворечивость.</strong> Указан Content-Type, хотя тела запроса нет. Для запроса задан заголовок Content-Type, но сказано, что тело запроса не используется. Непонятно, нужно ли отправлять тело и в каком виде: одни клиенты пошлют пустое тело с заголовком, другие — параметры в теле, третьи — без заголовка.</p>
+<ul>
+<li>Где: строка 147, <a href="#req-041">REQ-041</a>: «Content-Type: application/json .»; строка 148, <a href="#req-042">REQ-042</a>: «Тело не используется.». Как исправить: Если тело не нужно — уберите Content-Type из описания запроса. Если параметры должны идти в теле — опишите тело (поля и типы) и используйте метод POST, PUT или PATCH.</li>
+<li>Вопрос автору <a href="#v-20">В-20</a>; источник: правило <code>content-type-without-body</code></li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-019"></a>
+<p><strong>D-019 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код ответа 201 назван успешным, но не описан</p>
+<p>В тексте код 201 назван успешным, но в описании ответов для него нет ни условия, ни примера тела ответа. Разработчик не знает, когда его возвращать, а тестировщик — что проверять.</p>
+<ul>
+<li>Цитата: строка 151, <a href="#req-043">REQ-043</a>: «Если результат 200 или 201 — успешный»</li>
+<li>Как исправить: Добавьте описание кода 201: при каком условии он возвращается и пример тела ответа; или уберите упоминание.</li>
+<li>Вопрос автору <a href="#v-10">В-10</a>; источник: правило <code>status-mismatch</code></li>
+</ul>
+</div>
+<div class="card card-critical"><a id="d-020"></a>
+<p><strong>D-020 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Взаимная непротиворечивость.</strong> Ошибка возвращается с успешным кодом 200</p>
+<p>В описании ответа 200 приведён пример с признаком ошибки ("result":"ERROR"). Клиентское приложение, балансировщики и мониторинг по коду 200 решат, что операция прошла успешно, и ошибка останется незамеченной; тестировщик не знает, какой ответ считать правильным.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 165: «200. Successful — Created»</li>
+<li>строка 171, <a href="#req-050">REQ-050</a>: «{"result":"ERROR","message":"Проверьте сумму"}»</li>
+</ul></li>
+<li>Как исправить: Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом значении) с телом ошибки, а в ответ 2xx включайте только успешный результат.</li>
+<li>Почему блокер: нарушение стандарта протокола</li>
+<li>Вопрос автору <a href="#v-03">В-03</a>; источник: правило <code>error-in-success</code></li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-021"></a>
+<p><strong>D-021 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код 200 подписан названием другого кода («Created» — это 201)</p>
+<p>В описании ответа 200 стоит название «Created», которое по стандарту HTTP относится к коду 201. Разработчик может вернуть 201, а тестировщик будет ждать 200.</p>
+<ul>
+<li>Цитата: строка 165: «200. Successful — Created»</li>
+<li>Как исправить: Исправьте подпись: 200 — OK. Если нужен ответ «Created», используйте код 201 и опишите его отдельно.</li>
+<li>Вопрос автору <a href="#v-11">В-11</a>; источник: правило <code>status-mismatch</code></li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-022"></a>
+<p><strong>D-022 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> В описании кода 403 сказано, что возвращается 404</p>
+<p>Раздел описывает ответ 403, но в нём же сказано, что в этом случае возвращается 404. Непонятно, какой код вернёт сервис: разработчик и тестировщик будут ожидать разное, а клиентское приложение может неправильно показать ошибку.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 188: «403. Unsuccessful — Forbidden»</li>
+<li>строка 189, <a href="#req-056">REQ-056</a>: «Для чужой карты возвращается 404, как и для отсутствующей карты»</li>
+</ul></li>
+<li>Как исправить: Оставьте для этого случая один код и опишите его. Если 403 больше не возвращается — удалите его описание; если возвращается в другом случае — назовите этот случай.</li>
+<li>Вопрос автору <a href="#v-12">В-12</a>; источник: правило <code>status-mismatch</code></li>
+</ul>
+</div>
+<h3>4.3 Реализуемость, стандарты и безопасность</h3>
+<div class="card card-critical"><a id="d-010"></a>
+<p><strong>D-010 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Реализуемость, стандарты и безопасность.</strong> Метод GET используется для изменения данных</p>
+<p>Запрос описан как GET, но по пути или описанию он сохраняет или меняет данные («Сохранение», «/alerts/saveLimit», «$BASE/alerts/saveLimit»). По стандарту HTTP (RFC 9110, п. 9.2.1) GET — безопасный метод, он только читает. Браузеры, прокси и кэши вправе повторять и кэшировать такие запросы, а параметры попадают в адресную строку и журналы: изменение может выполниться повторно или без ведома клиента.</p>
+<ul>
+<li>Цитаты:<ul>
+<li>строка 104, <a href="#req-018">REQ-018</a>: «REST type | GET»</li>
+<li>строка 103, <a href="#req-017">REQ-017</a>: «Description | Сохранение порога. Функциональные требования: чтение порога»</li>
+<li>строка 108, <a href="#req-022">REQ-022</a>: «Request URL | Dev: /alerts/saveLimit . Prod: —»</li>
+<li>строка 109, <a href="#req-023">REQ-023</a>: «CURL | curl -G "$BASE/alerts/saveLimit" -H "Authorization: Bearer $TOKEN" --data 'cardId=demo-42&amp;amount=50000&amp;enabled=1'»</li>
+</ul></li>
+<li>Как исправить: Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.</li>
+<li>Почему блокер: нарушение стандарта протокола</li>
+<li>Вопрос автору <a href="#v-01">В-01</a>; источник: правило <code>get-mutation</code></li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-014"></a>
+<p><strong>D-014 · 🟡 <span class="sev sev-major">MAJOR</span> · Реализуемость, стандарты и безопасность.</strong> Чувствительные данные передаются в адресной строке запроса</p>
+<p>Параметры «cardId» передаются в строке запроса (query). Адрес запроса целиком попадает в журналы веб-серверов и прокси, историю браузера и системы мониторинга — идентификаторы карт, счетов, телефонов и токены окажутся там в открытом виде. Это противоречит требованиям к защите платёжных и персональных данных (PCI DSS).</p>
+<ul>
+<li>Цитата: строка 142, <a href="#req-038">REQ-038</a>: «cardId | string | 1–64 | Да | Карта клиента | Идентификатор карты | card_id»</li>
+<li>Как исправить: Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы.</li>
+<li>Вопрос автору <a href="#v-07">В-07</a>; источник: правило <code>sensitive-in-query</code></li>
+</ul>
+</div>
+<h3>4.4 Понятность и термины</h3>
+<div class="card card-minor"><a id="d-001"></a>
+<p><strong>D-001 · 🟢 <span class="sev sev-minor">MINOR</span> · Понятность и термины.</strong> Название в заголовке и в сведениях о документе расходятся. Заголовок документа — «Уведомление о расходах по карте», а в сведениях о документе указано «Месячный порог расходов по карте». Общих слов в названиях меньше половины: непонятно, о какой задаче документ, и при поиске по названию в системе задач или в реестре документов его можно не найти или перепутать с другим.</p>
+<ul>
+<li>Где: строка 1: «Уведомление о расходах по карте»; строка 14: «Наименование задачи | Месячный порог расходов по карте». Как исправить: Приведите название к одному виду во всех местах: в заголовке, в служебных полях и в ссылках.</li>
+<li>Вопрос автору <a href="#v-13">В-13</a>; источник: правило <code>title-mismatch</code></li>
+</ul>
+</div>
+<h3>4.5 Прослеживаемость</h3>
+<div class="card card-minor"><a id="d-008"></a>
+<p><strong>D-008 · 🟢 <span class="sev sev-minor">MINOR</span> · Прослеживаемость.</strong> У документа не указаны версия и дата. В документе версия или дата оставлены незаполненными. Нельзя понять, какая редакция актуальна: замечания ревью, задачи и тесты нельзя привязать к конкретной версии, а изменения требований — отследить.</p>
+<ul>
+<li>Где: строка 68: «Документ (версия/дата) в источнике не заполнен». Как исправить: Добавьте в начало документа номер версии (например, 1.0), дату, автора и таблицу истории изменений.</li>
+<li>Вопрос автору <a href="#v-15">В-15</a>; источник: правило <code>no-version</code></li>
+</ul>
+<p>Покрытие требований критериями приёмки строит модель; без неё оно не оценивалось.</p>
+</div>
+<h3 id="s4-gaps">Карта полноты: контрольные вопросы к документу</h3>
+<p>Агент обязан ответить на каждый из 35 вопросов — так ни один типовой пробел не пропускается молча. Карта сама не меняет индексы и итог: на них влияют только связанные замечания.</p>
+<p>Итого: описано 0 · пробелов 3 · не относится 0 · не оценено 32.</p>
+<p>Без модели на остальные 32 вопросов никто не отвечал; их список — в JSON-версии отчёта (поле <code>gap_map</code>).</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Вопрос</th><th class="a-left">Ответ</th><th class="a-left">На чём основан ответ</th></tr></thead><tbody>
+<tr><td class="a-left">NP2. Ветки ошибок на схемах</td><td class="a-left">⚠️ пробел — <a href="#d-002">D-002</a>, <a href="#d-003">D-003</a></td><td class="a-left">ответ дало автоматическое правило</td></tr>
+<tr><td class="a-left">IF1. Надёжность интерфейса</td><td class="a-left">⚠️ пробел — <a href="#d-011">D-011</a></td><td class="a-left">ответ дало автоматическое правило</td></tr>
+<tr><td class="a-left">CN1. Название задачи</td><td class="a-left">⚠️ пробел — <a href="#d-001">D-001</a></td><td class="a-left">ответ дало автоматическое правило</td></tr>
+</tbody></table></div>
+<h3 id="s4-obs">Наблюдения (проверьте сами, на итог не влияют)</h3>
+<p>Эти признаки находятся словарными правилами низкой точности: часто это нормальная формулировка. Они не входят в число дефектов, индексы и вердикт.</p>
+<ul>
+<li><a id="n-01"></a><strong>Н-01</strong> · строка 38 · <a href="#req-006">REQ-006</a> · В одном пункте несколько утверждений: «Ф-2. Месяц определяется по дате совершения покупки в Алматы. В расходы входят проведённые покупки. Возврат уменьшает… (цитата сокращена)»</li>
+<li><a id="n-02"></a><strong>Н-02</strong> · строка 175 · <a href="#req-052">REQ-052</a> · Требование сформулировано через отрицание («запрещен»): «Ответ в случае, если на указанный ресурс доступ запрещен»</li>
+</ul>
+<h3 id="s4-checklist">Чек-лист ревью из документа: как на него отвечает проверка</h3>
+<p>В документе найден чек-лист ревью (14 пунктов) (строки 72–85), отметки в котором не проставлены. В этом прогоне модель на пункты не отвечала: отметку ставит человек.</p>
+<h2 id="s5">5. Сводка</h2>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Показатель</th><th class="a-right">Значение</th></tr></thead><tbody>
+<tr><td class="a-left">Требований всего</td><td class="a-right">58</td></tr>
+<tr><td class="a-left">— без замечаний</td><td class="a-right">38</td></tr>
+<tr><td class="a-left">— с замечаниями</td><td class="a-right">20</td></tr>
+<tr><td class="a-left">Замечаний всего</td><td class="a-right">22</td></tr>
+<tr><td class="a-left">— 🔴 <span class="sev sev-critical">CRITICAL</span> (блокеры)</td><td class="a-right">3</td></tr>
+<tr><td class="a-left">— 🟡 <span class="sev sev-major">MAJOR</span> (существенные)</td><td class="a-right">10</td></tr>
+<tr><td class="a-left">— 🟢 <span class="sev sev-minor">MINOR</span> (мелкие)</td><td class="a-right">9</td></tr>
+<tr><td class="a-left">Наблюдений (на итог не влияют)</td><td class="a-right">2</td></tr>
+<tr><td class="a-left">Вопросов автору</td><td class="a-right">21</td></tr>
+<tr><td class="a-left">Контрольных вопросов к документу</td><td class="a-right">35, из них пробелов 3</td></tr>
+<tr><td class="a-left">Тестов можно написать уже сейчас</td><td class="a-right">12</td></tr>
+<tr><td class="a-left">Тестов нельзя написать без ответа автора</td><td class="a-right">0</td></tr>
+</tbody></table></div>
+<p><strong>Замечания по критериям качества</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Критерий</th><th class="a-right">Замечаний</th><th class="a-left">Основание</th></tr></thead><tbody>
+<tr><td class="a-left">Полнота</td><td class="a-right">3</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
+<tr><td class="a-left">Проверяемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6</td></tr>
+<tr><td class="a-left">Полнота набора</td><td class="a-right">6</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
+<tr><td class="a-left">Взаимная непротиворечивость</td><td class="a-right">8</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4</td></tr>
+<tr><td class="a-left">Реализуемость, стандарты и безопасность</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)</td></tr>
+<tr><td class="a-left">Понятность и термины</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Comprehensible)</td></tr>
+<tr><td class="a-left">Прослеживаемость</td><td class="a-right">1</td><td class="a-left">IEEE 830-1998 п. 4.3.8 (Traceable)</td></tr>
+</tbody></table></div>
+<p><strong>Индекс готовности документа</strong></p>
+<p><strong>54 из 100 — нужна существенная доработка</strong> (предварительно: применены только правила). Шкала: 85 и выше — готов, 60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов.</p>
+<p>Как посчитан: 10 × 9,39 (средняя ясность 58 треб.) − 40 (штраф за замечания к набору: 8×3 + 3×9 + 1×6 = 57, но не больше 40) = 54. Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
+<p>Требования по ясности: ясное — 41 · есть замечания — 12 · нужна доработка — 5 · в таком виде использовать нельзя — 0.</p>
+<p>Плотность: 0,38 дефекта на одно требование · 22,0 на 1000 слов документа. Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.</p>
+<p><strong>Критичные дефекты:</strong> <a href="#d-006">D-006</a>, <a href="#d-010">D-010</a>, <a href="#d-020">D-020</a> — с основаниями и строками перечислены в начале отчёта.</p>
+<p><strong>Время и стоимость:</strong> 0,1 с, $0 (модель не вызывалась).</p>
+<h2 id="s6">6. Итог</h2>
+<p>По документу как он есть: <strong>⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (модель не использовалась: проверены только автоматические правила, итог предварительный)</strong></p>
+<p>После внесения ответов автора в документ: <strong>⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (модель не использовалась: проверены только автоматические правила, итог предварительный)</strong></p>
+<p>Ответы закрывают замечания только после правки документа: пока текст не изменён, действует первый вердикт.</p>
+<p>Найдено блокеров: 3 (Раздел «Тестирование требований» не заполнен: вместо содержания заглушка; Метод GET используется для изменения данных; Ошибка возвращается с успешным кодом 200). Пока они не устранены, разработчик и тестировщик будут работать по описанию, которое противоречит себе или общепринятым стандартам, и часть работы придётся переделывать. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.</p>
+<p><strong>Что исправить в первую очередь</strong></p>
+<ol>
+<li>Раздел «Тестирование требований» не заполнен: вместо содержания заглушка. (<a href="#d-006">D-006</a>)</li>
+<li>Метод GET используется для изменения данных. (<a href="#d-010">D-010</a>)</li>
+<li>Ошибка возвращается с успешным кодом 200. (<a href="#d-020">D-020</a>)</li>
+<li>Схема процесса показывает только успешный путь. (<a href="#d-002">D-002</a>, <a href="#d-003">D-003</a>)</li>
+<li>Ограничение по времени без условий измерения. (<a href="#d-004">D-004</a>)</li>
+<li>Денежные суммы в разных единицах: тиын и тенге. (<a href="#d-005">D-005</a>)</li>
+</ol>
+<p><strong>Что в документе уже хорошо</strong></p>
+<p>Без модели сильные стороны документа не оцениваются.</p>
+<h2 id="s7">7. Уточняющие вопросы к автору ТЗ</h2>
+<p>Если автор ответит на блокирующие вопросы и внесёт правки, вердикт станет: <strong>⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (предварительно)</strong>.</p>
+<p>Чтобы снять все блокеры, нужны ответы на вопросы: <a href="#v-01">В-01</a>, <a href="#v-02">В-02</a>, <a href="#v-03">В-03</a>.</p>
+<p>21 вопрос составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
+<h3>Диалог с автором</h3>
+<p>Ответы автора учтены: 5 из 21. Закрыто замечаний: 4.<br>
+Ответы записаны; без модели агент не проверяет, закрывает ли ответ замечание, кроме случая, когда выбран вариант из вопроса, составленного по шаблону этого замечания.</p>
+<ul>
+<li><a href="#v-01">В-01</a>: Какой HTTP-метод использовать для этого изменения? → ответ: «PATCH — изменение отдельных полей» → Выбран вариант «PATCH — изменение отдельных полей»: замечания D-010 закрыты ответом; внесите этот вариант в документ.</li>
+<li><a href="#v-02">В-02</a>: Кто и когда заполнит раздел «Тестирование требований»? → ответ: «Раздел заполняет QA-лид до начала разработки; срок — за неделю до старта.» → Ответ учтён, требуется правка текста. Без модели агент не проверяет, закрывает ли ответ замечание: оно остаётся открытым.</li>
+<li><a href="#v-03">В-03</a>: Какой код возвращать, когда операция отклонена? → ответ: «400 Bad Request» → Выбран вариант «400 Bad Request»: замечания D-020 закрыты ответом; внесите этот вариант в документ.</li>
+<li><a href="#v-05">В-05</a>: Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»? → ответ: «95% случаев при обычной нагрузке» → Выбран вариант «95% случаев при обычной нагрузке»: замечания D-004 закрыты ответом; внесите этот вариант в документ.</li>
+<li><a href="#v-06">В-06</a>: В каких единицах хранить, передавать и сравнивать суммы? → ответ: «Везде в тиын, клиенту показывать в тенге» → Выбран вариант «Везде в тиын, клиенту показывать в тенге»: замечания D-005 закрыты ответом; внесите этот вариант в документ.</li>
+</ul>
+<p>Что остаётся открытым: замечаний 18 из 22; вопросы без ответа: <a href="#v-04">В-04</a>, <a href="#v-07">В-07</a>, <a href="#v-08">В-08</a>, <a href="#v-09">В-09</a>, <a href="#v-10">В-10</a>, <a href="#v-11">В-11</a>, <a href="#v-12">В-12</a>, <a href="#v-13">В-13</a>, <a href="#v-14">В-14</a>, <a href="#v-15">В-15</a>, <a href="#v-16">В-16</a>, <a href="#v-17">В-17</a>, <a href="#v-18">В-18</a>, <a href="#v-19">В-19</a>, <a href="#v-20">В-20</a>, <a href="#v-21">В-21</a>.</p>
+<h3>Блокирующие (3)</h3>
+<div class="card"><a id="v-01"></a>
+<p><strong>В-01.</strong> Какой HTTP-метод использовать для этого изменения? (кому: архитектор или разработчик; к <a href="#d-010">D-010</a>)</p>
+<ul>
+<li>Варианты: а) PUT — полная замена настройки; б) PATCH — изменение отдельных полей; в) POST — создание новой записи</li>
+<li>Что изменит ответ в итоге: закроет 1 из 3 блокеров · индекс готовности 54 → 56</li>
+<li>Ответ автора: PATCH — изменение отдельных полей</li>
+<li>Что сделал агент: Выбран вариант «PATCH — изменение отдельных полей»: замечания D-010 закрыты ответом; внесите этот вариант в документ.</li>
+</ul>
+</div>
+<div class="card"><a id="v-02"></a>
+<p><strong>В-02.</strong> Кто и когда заполнит раздел «Тестирование требований»? (кому: аналитик — автор документа; к <a href="#d-006">D-006</a>)</p>
+<ul>
+<li>Варианты: а) Автор документа — до начала разработки; б) Другая команда — указать ответственного и срок; в) Раздел не нужен — удалить</li>
+<li>Что изменит ответ в итоге: закроет 1 из 3 блокеров</li>
+<li>Ответ автора: Раздел заполняет QA-лид до начала разработки; срок — за неделю до старта.</li>
+<li>Что сделал агент: Ответ учтён, требуется правка текста. Без модели агент не проверяет, закрывает ли ответ замечание: оно остаётся открытым.</li>
+</ul>
+</div>
+<div class="card"><a id="v-03"></a>
+<p><strong>В-03.</strong> Какой код возвращать, когда операция отклонена? (кому: архитектор или разработчик; к <a href="#d-020">D-020</a>)</p>
+<ul>
+<li>Варианты: а) 400 Bad Request; б) 422 Unprocessable Content; в) Оставить 200 и описать признак ошибки в контракте (не рекомендуется)</li>
+<li>Что изменит ответ в итоге: закроет 1 из 3 блокеров</li>
+<li>Ответ автора: 400 Bad Request</li>
+<li>Что сделал агент: Выбран вариант «400 Bad Request»: замечания D-020 закрыты ответом; внесите этот вариант в документ.</li>
+</ul>
+</div>
+<h3>Важные (9)</h3>
+<div class="card"><a id="v-04"></a>
+<p><strong>В-04.</strong> Какие ветки, кроме успешной, должны быть на схеме? (кому: аналитик — автор документа; к <a href="#d-002">D-002</a>, <a href="#d-003">D-003</a>)</p>
+</div>
+<div class="card"><a id="v-05"></a>
+<p><strong>В-05.</strong> Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»? (кому: владелец продукта (бизнес); к <a href="#d-004">D-004</a>)</p>
+<ul>
+<li>Варианты: а) 95% случаев при обычной нагрузке; б) 99% случаев при пиковой нагрузке (указать какой); в) Каждый случай без исключений</li>
+<li>Ответ автора: 95% случаев при обычной нагрузке</li>
+<li>Что сделал агент: Выбран вариант «95% случаев при обычной нагрузке»: замечания D-004 закрыты ответом; внесите этот вариант в документ.</li>
+</ul>
+</div>
+<div class="card"><a id="v-06"></a>
+<p><strong>В-06.</strong> В каких единицах хранить, передавать и сравнивать суммы? (кому: архитектор или разработчик; к <a href="#d-005">D-005</a>)</p>
+<ul>
+<li>Варианты: а) Везде в тиын, клиенту показывать в тенге; б) Везде в тенге с двумя знаками после запятой; в) Как сейчас, но с явным правилом пересчёта при сравнении</li>
+<li>Ответ автора: Везде в тиын, клиенту показывать в тенге</li>
+<li>Что сделал агент: Выбран вариант «Везде в тиын, клиенту показывать в тенге»: замечания D-005 закрыты ответом; внесите этот вариант в документ.</li>
+</ul>
+</div>
+<div class="card"><a id="v-07"></a>
+<p><strong>В-07.</strong> Как передавать идентификатор карты и другие чувствительные значения? (кому: информационная безопасность; к <a href="#d-014">D-014</a>)</p>
+</div>
+<div class="card"><a id="v-08"></a>
+<p><strong>В-08.</strong> Какой тип у параметра «amount»? (кому: архитектор или разработчик; к <a href="#d-015">D-015</a>)</p>
+</div>
+<div class="card"><a id="v-09"></a>
+<p><strong>В-09.</strong> Какой тип у параметра «enabled»? (кому: архитектор или разработчик; к <a href="#d-016">D-016</a>)</p>
+</div>
+<div class="card"><a id="v-10"></a>
+<p><strong>В-10.</strong> Возвращает ли сервис код 201? (кому: архитектор или разработчик; к <a href="#d-019">D-019</a>)</p>
+</div>
+<div class="card"><a id="v-11"></a>
+<p><strong>В-11.</strong> Какой код должен возвращаться в этом случае? (кому: архитектор или разработчик; к <a href="#d-021">D-021</a>)</p>
+</div>
+<div class="card"><a id="v-12"></a>
+<p><strong>В-12.</strong> Какой код возвращается в этом случае? (кому: архитектор или разработчик; к <a href="#d-022">D-022</a>)</p>
+</div>
+<h3>Желательные (9)</h3>
+<div class="card"><a id="v-13"></a>
+<p><strong>В-13.</strong> Какое название задачи правильное? (кому: аналитик — автор документа; к <a href="#d-001">D-001</a>)</p>
+</div>
+<div class="card"><a id="v-14"></a>
+<p><strong>В-14.</strong> Кто проводит ревью по чек-листу и когда? (кому: тестирование; к <a href="#d-007">D-007</a>)</p>
+</div>
+<div class="card"><a id="v-15"></a>
+<p><strong>В-15.</strong> Какую версию и дату присвоить документу? (кому: аналитик — автор документа; к <a href="#d-008">D-008</a>)</p>
+</div>
+<div class="card"><a id="v-16"></a>
+<p><strong>В-16.</strong> Кто должен быть в этой таблице? (кому: владелец продукта (бизнес); к <a href="#d-009">D-009</a>)</p>
+</div>
+<div class="card"><a id="v-17"></a>
+<p><strong>В-17.</strong> Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях? (кому: архитектор или разработчик; к <a href="#d-011">D-011</a>)</p>
+</div>
+<div class="card"><a id="v-18"></a>
+<p><strong>В-18.</strong> Чем заменить заглушку «Prod: —»? (кому: владелец продукта (бизнес); к <a href="#d-012">D-012</a>)</p>
+</div>
+<div class="card"><a id="v-19"></a>
+<p><strong>В-19.</strong> Чем заменить заглушку «—»? (кому: владелец продукта (бизнес); к <a href="#d-013">D-013</a>)</p>
+</div>
+<div class="card"><a id="v-20"></a>
+<p><strong>В-20.</strong> Передаются ли параметры в теле запроса? (кому: архитектор или разработчик; к <a href="#d-017">D-017</a>)</p>
+</div>
+<div class="card"><a id="v-21"></a>
+<p><strong>В-21.</strong> Какие именно значения входят в перечень? (кому: аналитик — автор документа; к <a href="#d-018">D-018</a>)</p>
+</div>
+<h2 id="s8">8. Черновики приёмочных тестов</h2>
+<p>Можно написать уже сейчас: 12 · Нельзя написать без ответа автора: 0. Полные тексты (Дано / Когда / Тогда) — в файле <code>*.tests.md</code> рядом с отчётом.</p>
+<ul>
+<li>Готовы: <a id="t-01"></a>Т-01 (<a href="#req-005">REQ-005</a>), <a id="t-02"></a>Т-02 (<a href="#req-005">REQ-005</a>), <a id="t-03"></a>Т-03 (<a href="#req-007">REQ-007</a>), <a id="t-04"></a>Т-04 (<a href="#req-008">REQ-008</a>), <a id="t-05"></a>Т-05 (<a href="#req-013">REQ-013</a>), <a id="t-06"></a>Т-06 (<a href="#req-014">REQ-014</a>), <a id="t-07"></a>Т-07 (<a href="#req-015">REQ-015</a>), <a id="t-08"></a>Т-08 (<a href="#req-048">REQ-048</a>), <a id="t-09"></a>Т-09 (<a href="#req-049">REQ-049</a>), <a id="t-10"></a>Т-10 (<a href="#req-051">REQ-051</a>), <a id="t-11"></a>Т-11 (<a href="#req-052">REQ-052</a>), <a id="t-12"></a>Т-12 (<a href="#req-053">REQ-053</a>).</li>
+</ul>
+<h2 id="app">Приложение. Как получен отчёт</h2>
+<p><strong>Метод.</strong></p>
+<ol>
+<li>Документ читается и делится на блоки (абзацы, пункты, строки таблиц); номера строк берутся из исходного текста. Значения, похожие на номера карт и ИИН, маскируются до любой обработки.</li>
+<li>Блоки делятся на требования и служебные части эвристикой; номера REQ-… присваивает программа.</li>
+<li>Автоматические правила (набор 1.1: 27 основных и 8 слабых «наблюдений») ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, схемы без веток ошибок, подсадной текст для ИИ.</li>
+<li>Модель не использовалась: проверки по смыслу (противоречия, пропущенные сценарии, пограничные случаи) не выполнялись.</li>
+<li>Каждую цитату программа ищет в тексте документа; замечание без найденной цитаты выбрасывается, в отчёт попадает исходный текст, а не пересказ. Номера, индексы, вердикт и отметки в матрице считает программа; перед записью отчёта она проверяет, что его части не противоречат друг другу.</li>
+</ol>
+<p><strong>Честно о границах.</strong> Это первый проход, который экономит время проверяющего; решение остаётся за человеком. Опубликованные замеры ИИ-проверки требований показывают, что лучшие модели находят примерно половину настоящих проблем и ошибочно помечают около одного требования из десяти. Поэтому цитаты сверяет программа, а полнота агента измеряется на контрольных документах, которых он раньше не видел. В этом прогоне модель не работала, поэтому найдено заведомо меньше.</p>
+<p><strong>Ограничения этого прогона</strong></p>
+<ul>
+<li>Модель не использовалась: найдено только то, что выявляют правила по формальным признакам.</li>
+<li>Рисунки и схемы-картинки не проверяются: учитывается только текст.</li>
+<li>Агент не знает внутренних стандартов банка и не видит связанных документов, если их не передали через --context.</li>
+</ul>
+<p><strong>Подробности прогона</strong> — в файле <code>*.diagnostic.md</code> рядом с отчётом: расход по этапам, отклонённые перепроверкой (0), объединённые повторы (0), выброшенные без подтверждённой цитаты (0). Журнал решений — в JSON-версии (поле <code>audit</code>, только хэши текстов): 0 обращений к модели, 5 решений программы.</p>
+</article></main>
+<footer>Отчёт сформирован программой «Ревизор ТЗ». Решение остаётся за человеком.</footer>
+</body>
+</html>

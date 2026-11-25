@@ -39,8 +39,8 @@ check-requirements:
           --provider offline \
           --fail-on critical || status=$?
         # Нечитаемый документ (скан, битый файл) Ревизор описывает в отчёте и
-        # возвращает 0. Для ворот это тоже «не готов», поэтому проверяем поле
-        # diagnostic в JSON-отчёте и возвращаем 4.
+        # при --fail-on сам возвращает 4. Проверка поля diagnostic в JSON-отчёте —
+        # страховка на случай, если --fail-on уберут из команды.
         python -c "import json,sys; sys.exit(4 if json.load(open(sys.argv[1], encoding='utf-8')).get('diagnostic') else 0)" \
           "review-reports/${name}.report.json" || status=4
       done < changed.txt

@@ -1,0 +1,905 @@
+{
+ "defects": [
+  {
+   "id": "B1-01",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-036"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«Ф-3 разрешает выбрать любой день месяца от 1 до 31. Таблица параметров API допускает только 1–28.»",
+   "reason": "Прямо названо расхождение Ф-3 и API; программа не нашла слова «противоречие», но смысл тот же."
+  },
+  {
+   "id": "B1-02",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-115"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "«Если процессинг выполнил списание, но ответ не дошёл за 30 секунд, повторный debit создаст второе списание»",
+   "reason": "Тот же риск двойного списания без ключа операции, уровень CRITICAL."
+  },
+  {
+   "id": "B1-03",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-043"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "«Ф-5 требует SMS-код на каждое списание, цель и критерий приёмки — автоматическое списание»",
+   "reason": "Противоречие с целью названо прямо; программа поставила только «место» из-за слов, по сути найдено."
+  },
+  {
+   "id": "B1-04",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-072"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "«Удаление автоплатежа удаляет историю, которую нужно хранить 5 лет по требованию регулятора»",
+   "reason": "Совпадает с ключом полностью."
+  },
+  {
+   "id": "B1-05",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "not_found",
+   "finding_ids": [],
+   "tool_severity": null,
+   "evidence": "",
+   "reason": "Ни одна находка не говорит, что «в течение дня» не задаёт число попыток и интервал; D-049 цитирует эту фразу, но о противоречии с критерием приёмки. Не согласен с «место»."
+  },
+  {
+   "id": "B1-06",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-036"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«в API указать 1–31 и правило для коротких месяцев, например «если выбранного дня нет в месяце…»»",
+   "reason": "Пробел про 29–31 в коротких месяцах есть только в рекомендации и вопросе В-11 как условный вариант, сама проблема не сформулирована; программа поставила «найден»."
+  },
+  {
+   "id": "B1-07",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-026"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«Заблокированная или закрытая карта пройдёт проверку и создаст автоплатёж, который потом не сможет списать»",
+   "reason": "Находка про проверку при создании; что делать, если карта блокируется, истекает или перевыпускается позже, не сказано. Программа поставила «найден»."
+  },
+  {
+   "id": "B1-08",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-099"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«не задаёт время ответа, число запросов в секунду и критерий прохождения нагрузочного теста»",
+   "reason": "Прямо то же, что в ключе; программа ошибочно считала строку «хорошим местом»."
+  },
+  {
+   "id": "B1-09",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-027"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«Не сказано, какая сумма списывается с карты, по какому курсу и на какую дату»",
+   "reason": "Курс и пересчёт названы; комиссии нет, но суть та же."
+  },
+  {
+   "id": "B1-10",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-004"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«Цель обещает уведомление за сутки до списания, но в функциональных требованиях есть только push после успешного списания»",
+   "reason": "Совпадает с ключом."
+  },
+  {
+   "id": "B1-11",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-133"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "«в API — ACTIVE и PAUSED, в статусах ошибок — «Ошибка списания». Соответствие названий не описано»",
+   "reason": "Сказано лишь, что нет таблицы соответствия, и уровень MINOR «разработчик без труда выберет»; что в API нет значения для «Ошибка списания», не сказано. Находки, на которые сослалась программа (D-051, D-057, D-082, D-108), этого не говорят."
+  },
+  {
+   "id": "B1-12",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-154"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«В разделе статусов описаны только 201, 400, 401, 403 и 500. Тело ответа 409, его code и message не заданы»",
+   "reason": "Совпадает с ключом."
+  },
+  {
+   "id": "B1-13",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-049"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "«Ф-6 даёт три дня повторов, критерий приёмки сразу ставит «Ошибка списания»»",
+   "reason": "Противоречие названо прямо; программа поставила «место». Уровень у инструмента CRITICAL при MAJOR в ключе."
+  },
+  {
+   "id": "B1-14",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "НЕТ",
+   "verdict": "found",
+   "finding_ids": [
+    "D-129"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«Большинство требований API и Ф-7, Ф-9, Ф-11, Ф-12 не имеют приёмочной проверки»",
+   "reason": "Программа не увидела, но находка прямо о малом покрытии критериями приёмки."
+  },
+  {
+   "id": "B1-15",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-080"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "«Ф-10 указывает Redis, cron-строку и опрос раз в минуту. Это решение, а не бизнес-требование»",
+   "reason": "Совпадает с ключом."
+  },
+  {
+   "id": "B1-16",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-065"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "«Есть два требования с номером Ф-8»",
+   "reason": "Совпадает с ключом."
+  },
+  {
+   "id": "B1-17",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-015",
+    "D-056"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "«Регулярный платёж» и «автоплатёж» могут пониматься как разные сущности» / «здесь подпиской»",
+   "reason": "Две находки вместе покрывают оба синонима."
+  },
+  {
+   "id": "B1-18",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-012"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "«В 5 пунктах записано по нескольку утверждений» с цитатой Ф-7",
+   "reason": "Ф-7 прямо процитирован в находке о составных требованиях; автор поймёт, что пункт надо разбить. Не согласен с «место»."
+  },
+  {
+   "id": "B1-19",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-003"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "«В общих сведениях версия документа стоит прочерком»",
+   "reason": "Совпадает с ключом."
+  },
+  {
+   "id": "B1-20",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-138"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«слово «корректно» не задаёт состояние, код ответа или значение полей»",
+   "reason": "Совпадает с ключом."
+  },
+  {
+   "id": "B1-21",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-018"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«BPMN ссылается на Ф-5 (SMS) вместо Ф-6 (повтор)»",
+   "reason": "Совпадает с ключом; программа поставила «место» зря."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-001",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Короткий заголовок и полное наименование задачи — нормальная практика, не дефект."
+  },
+  {
+   "fid": "D-002",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Redis и планировщик действительно не перечислены во «Влиянии на ИС»."
+  },
+  {
+   "fid": "D-005",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-004",
+   "reason": "Тот же пробел предварительного уведомления, что D-004."
+  },
+  {
+   "fid": "D-009",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Поведение экрана после сохранения и при 409/403/500 действительно не описано."
+  },
+  {
+   "fid": "D-010",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-036",
+   "reason": "Набор дней в выборе — повтор расхождения 1–28/1–31 из D-036."
+  },
+  {
+   "fid": "D-011",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Значения полей по умолчанию — деталь макета, не дефект требований."
+  },
+  {
+   "fid": "D-013",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Тексты ошибок по полям действительно не заданы; мелочь."
+  },
+  {
+   "fid": "D-014",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В BPMN нет ветки для паузы/иных статусов — реальный пробел."
+  },
+  {
+   "fid": "D-025",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Целое число тенге» уже задаёт шаг 1 ₸."
+  },
+  {
+   "fid": "D-037",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Придирка к хорошему месту (Ф-4)."
+  },
+  {
+   "fid": "D-038",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Выходные для карточного списания — мелкий вопрос, MAJOR завышен; критикует хорошее место Ф-4."
+  },
+  {
+   "fid": "D-042",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Срок SMS-кода — деталь требования, которое само по себе неверно (D-043); MAJOR завышен."
+  },
+  {
+   "fid": "D-044",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Что после исчерпания трёх повторов debit — реальный пробел."
+  },
+  {
+   "fid": "D-045",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Экран SMS для фонового списания — производное от D-043; MAJOR завышен."
+  },
+  {
+   "fid": "D-051",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Уведомления при ошибке и возврате действительно не описаны."
+  },
+  {
+   "fid": "D-053",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Точка отсчёта 12 месяцев не задана; мелочь."
+  },
+  {
+   "fid": "D-057",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Поведение в паузе и в статусе «Ошибка списания» не описано."
+  },
+  {
+   "fid": "D-058",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "С какого списания действует изменение — реальный пробел."
+  },
+  {
+   "fid": "D-059",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Перечень изменяемых полей и так явный."
+  },
+  {
+   "fid": "D-060",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«Клиент получает push» — проверяемость через действие системы; мелкий реальный пункт."
+  },
+  {
+   "fid": "D-062",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Язык push и выключенный push не заданы; мелочь."
+  },
+  {
+   "fid": "D-064",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Последние 4 цифры карты в push — обычная практика."
+  },
+  {
+   "fid": "D-066",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Неуспешный возврат не описан."
+  },
+  {
+   "fid": "D-067",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Начало срока 3 рабочих дней не задано; мелочь."
+  },
+  {
+   "fid": "D-074",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В UI нет элементов паузы, удаления, истории."
+  },
+  {
+   "fid": "D-075",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Недоступность Redis не описана; мелочь."
+  },
+  {
+   "fid": "D-076",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Догадка о конфигурации Redis; документ отдельно хранит автоплатежи в хранилище."
+  },
+  {
+   "fid": "D-078",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-037",
+   "reason": "Та же придирка о допуске к 09:00."
+  },
+  {
+   "fid": "D-079",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Пропущенный запуск планировщика не описан."
+  },
+  {
+   "fid": "D-082",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Какие статусы «активны» для правила дубля — реальная неясность (PAUSED, «Ошибка списания»); сидит на хорошем месте Ф-11."
+  },
+  {
+   "fid": "D-083",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Очевидно, что очередь продолжается; MAJOR завышен; критикует хорошее место Ф-12."
+  },
+  {
+   "fid": "D-084",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Порядок при равных суммах не задан; мелочь на хорошем месте."
+  },
+  {
+   "fid": "D-086",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Sequence только по успешному пути, нет ответа шлюза."
+  },
+  {
+   "fid": "D-087",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-027",
+   "reason": "Та же валютная конвертация."
+  },
+  {
+   "fid": "D-089",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Состав ответа процессинга — деталь интеграционной спецификации; MAJOR завышен."
+  },
+  {
+   "fid": "D-090",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "RRN не расшифрован; мелочь."
+  },
+  {
+   "fid": "D-092",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-065",
+   "reason": "Следствие двойного Ф-8."
+  },
+  {
+   "fid": "D-098",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Поведение при перегрузке не задано; мелочь."
+  },
+  {
+   "fid": "D-100",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Ключ считает требование доступности хорошим; придирка."
+  },
+  {
+   "fid": "D-102",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Журналы AutopayService — это журналы приложения; ложное прочтение хорошего места."
+  },
+  {
+   "fid": "D-103",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«В открытом виде» понятно; хорошее место."
+  },
+  {
+   "fid": "D-105",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Журнал аудита действий клиента не задан — реальный пробел для банка."
+  },
+  {
+   "fid": "D-106",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Документ работает с токеном карты; PAN/CVV не фигурируют."
+  },
+  {
+   "fid": "D-107",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Одно поле «день» для двух видов периодичности без правила — реальный пункт."
+  },
+  {
+   "fid": "D-108",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет полей для счётчика неуспешных дней и паузы."
+  },
+  {
+   "fid": "D-109",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "«Хранится 5 лет по требованию регулятора» читается как минимум; MAJOR завышен."
+  },
+  {
+   "fid": "D-110",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-089",
+   "reason": "То же — значения результата списания."
+  },
+  {
+   "fid": "D-112",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Согласие клиента на регулярные списания не описано; мелочь."
+  },
+  {
+   "fid": "D-113",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Ключ считает вынос в PAY-2185 хорошим разграничением."
+  },
+  {
+   "fid": "D-114",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "429 и конкурентные изменения — общая гигиена API и область PAY-2185."
+  },
+  {
+   "fid": "D-118",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Неясность «до трёх раз» реальна, но мелкая; MAJOR завышен."
+  },
+  {
+   "fid": "D-120",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Хорошее место по ключу; метод возврата — деталь, MAJOR завышен."
+  },
+  {
+   "fid": "D-121",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Придирка к хорошему месту."
+  },
+  {
+   "fid": "D-124",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-120",
+   "reason": "Тот же сценарий после 24 часов недоступности шлюза."
+  },
+  {
+   "fid": "D-130",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Критерии не ссылаются на номера требований; мелочь."
+  },
+  {
+   "fid": "D-132",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-060",
+   "reason": "То же о «получении push клиентом»."
+  },
+  {
+   "fid": "D-136",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-051",
+   "reason": "Уведомление о неудаче — повтор D-051."
+  },
+  {
+   "fid": "D-141",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Чек-лист не заполнен при подписанных согласованиях — реальный пункт."
+  },
+  {
+   "fid": "D-143",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет схемы отката — реальный пробел."
+  },
+  {
+   "fid": "D-144",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-003",
+   "reason": "Версия документа — повтор D-003."
+  },
+  {
+   "fid": "D-146",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "403 на чужой токен — хорошее место по ключу; перебор токенов надуман."
+  },
+  {
+   "fid": "D-161",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Расчёт nextDebitDate при создании в день списания не задан."
+  },
+  {
+   "fid": "D-163",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Повтор ключа с другим телом — мелкий пункт на хорошем месте, MAJOR завышен."
+  },
+  {
+   "fid": "D-165",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Придирка к хорошему месту об идемпотентности."
+  },
+  {
+   "fid": "D-166",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-163",
+   "reason": "То же, что D-163."
+  },
+  {
+   "fid": "D-167",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Дублирование правила суммы в двух местах; мелочь."
+  },
+  {
+   "fid": "D-169",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Сам инструмент признаёт поведение стандартным."
+  },
+  {
+   "fid": "D-170",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-013",
+   "reason": "Тексты сообщений — повтор D-013."
+  },
+  {
+   "fid": "D-171",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-146",
+   "reason": "То же, что D-146."
+  },
+  {
+   "fid": "D-172",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Состояние после 500 не задано; мелочь."
+  },
+  {
+   "fid": "D-173",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«Временно недоступен» с кодом 500 вместо 503; мелочь."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-037",
+   "good": "Ф-4 09:00 Астаны"
+  },
+  {
+   "fid": "D-038",
+   "good": "Ф-4 09:00 Астаны"
+  },
+  {
+   "fid": "D-082",
+   "good": "Ф-11 уникальность"
+  },
+  {
+   "fid": "D-083",
+   "good": "Ф-12 порядок"
+  },
+  {
+   "fid": "D-084",
+   "good": "Ф-12 порядок"
+  },
+  {
+   "fid": "D-100",
+   "good": "Доступность 99,9 %"
+  },
+  {
+   "fid": "D-102",
+   "good": "Журналы без счёта и токена"
+  },
+  {
+   "fid": "D-103",
+   "good": "Журналы без счёта и токена"
+  },
+  {
+   "fid": "D-113",
+   "good": "Граница с PAY-2185"
+  },
+  {
+   "fid": "D-120",
+   "good": "Очередь к шлюзу 15 мин / 24 ч"
+  },
+  {
+   "fid": "D-121",
+   "good": "Очередь к шлюзу 15 мин / 24 ч"
+  },
+  {
+   "fid": "D-124",
+   "good": "Очередь к шлюзу 15 мин / 24 ч"
+  },
+  {
+   "fid": "D-146",
+   "good": "403 при чужой карте"
+  },
+  {
+   "fid": "D-171",
+   "good": "403 при чужой карте"
+  },
+  {
+   "fid": "D-163",
+   "good": "Idempotency-Key"
+  },
+  {
+   "fid": "D-165",
+   "good": "Idempotency-Key"
+  },
+  {
+   "fid": "D-166",
+   "good": "Idempotency-Key"
+  }
+ ],
+ "praised_defects": [
+  {
+   "strength": "Ф-2 явно разрешает списание с карт в долларах США и евро, поэтому состав допустимых карт понятен.",
+   "defect": "B1-09",
+   "note": "Хвалит место, где ключ видит дефект (нет правила конвертации); при этом сама находка D-027 дефект называет."
+  }
+ ],
+ "critical": {
+  "key_critical": {
+   "B1-01": "MAJOR (D-036) — не CRITICAL",
+   "B1-02": "CRITICAL (D-115)",
+   "B1-03": "CRITICAL (D-043)",
+   "B1-04": "CRITICAL (D-072)"
+  },
+  "key_critical_given_critical": "3 из 4",
+  "tool_critical": {
+   "D-043": "обоснован — прямое противоречие цели",
+   "D-049": "на грани: прямое противоречие критерия и Ф-6, по правилу брифа допустимо, в ключе MAJOR",
+   "D-072": "обоснован — потеря данных, обязательных по регулятору",
+   "D-115": "обоснован — двойное списание денег"
+  },
+  "tool_critical_inflated": 0
+ },
+ "totals": {
+  "defects": 21,
+  "found": 17,
+  "partial": 3,
+  "not_found": 1,
+  "by_severity": {
+   "CRITICAL": {
+    "found": 4,
+    "partial": 0,
+    "not_found": 0
+   },
+   "MAJOR": {
+    "found": 6,
+    "partial": 3,
+    "not_found": 1
+   },
+   "MINOR": {
+    "found": 7,
+    "partial": 0,
+    "not_found": 0
+   }
+  },
+  "organisers": {
+   "found": 0,
+   "partial": 0,
+   "not_found": 0
+  },
+  "findings_total": 91,
+  "findings_used_as_evidence": 20,
+  "extra_findings": 71,
+  "false_alarm": 17,
+  "overrated": 9,
+  "duplicate": 13,
+  "real_not_in_key": 32,
+  "good_place_hits": 17,
+  "praised_defects": 1
+ }
+}

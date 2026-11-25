@@ -6,7 +6,7 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.04,
+    "duration_s": 0.08,
     "doc_name": "qr_merchant_stories.md"
   },
   "counts": {
@@ -289,6 +289,6 @@
   "false_alarms_exempt": [],
   "unmatched": [],
   "warnings": [],
-  "result_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/results/qr_merchant_stories.offline.json",
-  "key_file": "/Users/arturyegizbayev/Dev/projects/bcc-hackathon/fable/agent/eval/docs/qr_merchant_stories.md.key.json"
+  "result_file": "eval/results/qr_merchant_stories.offline.json",
+  "key_file": "eval/docs/qr_merchant_stories.md.key.json"
 }

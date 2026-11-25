@@ -3,18 +3,18 @@
   "summary": {
     "tests": {
       "ready": 5,
-      "blocked": 5
+      "blocked": 0
     },
     "answers": null,
     "verdict_after_answers": "",
     "baseline": null,
     "requirements": 44,
-    "requirements_with_findings": 8,
-    "findings": 8,
+    "requirements_with_findings": 5,
+    "findings": 7,
     "by_severity": {
       "CRITICAL": 1,
       "MAJOR": 6,
-      "MINOR": 1
+      "MINOR": 0
     },
     "by_criterion": {
       "completeness": 0,
@@ -28,16 +28,16 @@
       "set_consistency": 2,
       "set_feasibility": 2,
       "comprehensibility": 0,
-      "traceability": 1
+      "traceability": 0
     },
     "observations": 9,
-    "questions": 8,
+    "questions": 7,
     "questions_by_priority": {
       "blocker": 1,
       "important": 6,
-      "nice": 1
+      "nice": 0
     },
-    "readiness": 77,
+    "readiness": 78,
     "readiness_band": "готов после правок",
     "clarity_bands": {
       "ясное": 39,
@@ -51,12 +51,13 @@
   },
   "run": {
     "agent_name": "Ревизор ТЗ",
-    "agent_version": "1.0.0",
-    "started_at": "2026-11-25T18:01:57+05:00",
-    "duration_s": 0.03,
+    "agent_version": "1.0.0 (v1.1.1-dirty)",
+    "started_at": "2026-11-26T02:20:21+05:00",
+    "duration_s": 0.07,
     "mode": "offline",
     "provider": "offline",
     "model": "",
+    "model_version": "",
     "effort": "",
     "doc_name": "kyc_upload_api_en.md",
     "doc_format": "md",
@@ -73,22 +74,27 @@
     "cache_write_tokens": 0,
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "quotes_confirmed": 20,
+    "quotes_confirmed": 17,
     "quotes_restored": 0,
     "quotes_dropped": 0,
     "skeptic_kept": 0,
     "skeptic_rejected": 0,
     "skeptic_merged": 0,
-    "manual_minutes_estimate": 221,
+    "manual_minutes_estimate": null,
     "warnings": [],
     "injection_suspected": false,
     "masked_values": 0,
-    "score": 77,
-    "score_formula": "10 × 9,78 (средняя ясность 44 треб.) − 21 (штраф за замечания к набору: 8×1 + 3×4 + 1×1 = 21) = 77",
-    "rules_version": "1.0",
+    "score": 78,
+    "score_formula": "10 × 9,80 (средняя ясность 44 треб.) − 20 (штраф за замечания к набору: 8×1 + 3×4 + 1×0 = 20) = 78",
+    "rules_version": "1.1",
     "doc_words": 817,
     "context_files": [],
-    "dup_merged": 0
+    "dup_merged": 0,
+    "critical_demoted": 0,
+    "agent_commit": "0d071fd",
+    "agent_tag": "v1.1.1",
+    "agent_dirty": true,
+    "doc_title": "Remote Onboarding — Identity Document Upload API"
   },
   "diagnostic": null,
   "requirements": [
@@ -1031,7 +1037,7 @@
         }
       },
       "by_model": false,
-      "clarity": 9.6
+      "clarity": 10.0
     },
     {
       "rid": "REQ-002",
@@ -1276,7 +1282,7 @@
         }
       },
       "by_model": false,
-      "clarity": 9.6
+      "clarity": 10.0
     },
     {
       "rid": "REQ-009",
@@ -1473,8 +1479,8 @@
           "note": "не проверялось без модели"
         },
         "feasibility": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Чувствительные данные передаются в адресной строке запроса"
         },
         "necessity": {
           "status": "unchecked",
@@ -1710,8 +1716,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Код ответа 409 возвращается, но не описан"
         },
         "verifiability": {
           "status": "unchecked",
@@ -1801,7 +1807,7 @@
         }
       },
       "by_model": false,
-      "clarity": 9.6
+      "clarity": 10.0
     },
     {
       "rid": "REQ-024",
@@ -1920,8 +1926,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Код ответа 202 возвращается, но не описан"
         },
         "verifiability": {
           "status": "unchecked",
@@ -2541,71 +2547,6 @@
   ],
   "findings": [
     {
-      "scope": "set",
-      "criterion": "traceability",
-      "severity": "MINOR",
-      "title": "У большинства требований нет номеров",
-      "problem": "Номер из документа есть только у 17 из 44 требований. Без номера на требование нельзя сослаться в задаче, тест-кейсе или замечании, и трудно проверить, что каждое требование покрыто тестом. Разделы без номеров: «1. Purpose», «3.1. POST /v1/onboarding/{sessionId}/documents», «3.2. GET /v1/onboarding/{sessionId}/status», «3.3. GET /v1/onboarding/{sessionId}/documents/{documentId}/delete», «3.4. POST /v1/onboarding/{sessionId}/submit», «4. Image quality», «5. Limits».",
-      "recommendation": "Присвойте каждому требованию уникальный номер (например, Ф-5, НФТ-1, ДАН-1, API-3) и ссылайтесь на эти номера в критериях приёмки.",
-      "quotes": [
-        {
-          "text": "The API lets the mobile app upload images of the applicant's identity document (ID card of the Republic of Kazakhstan or passport) and a selfie during remote onboarding, submit them for verification and query the verification status.",
-          "line_start": 13,
-          "line_end": 13,
-          "page": null,
-          "section": "Remote Onboarding — Identity Document Upload API › 1. Purpose",
-          "rid": "REQ-001",
-          "exact": true
-        },
-        {
-          "text": "Uploads one document image. Request body: `multipart/form-data`.",
-          "line_start": 28,
-          "line_end": 28,
-          "page": null,
-          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
-          "rid": "REQ-008",
-          "exact": true
-        },
-        {
-          "text": "Returns the verification status of the session. Authorization is not required for this endpoint so that the web landing page can poll it.",
-          "line_start": 60,
-          "line_end": 60,
-          "page": null,
-          "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.2. GET /v1/onboarding/{sessionId}/status",
-          "rid": "REQ-023",
-          "exact": true
-        }
-      ],
-      "req_ids": [
-        "REQ-001",
-        "REQ-008",
-        "REQ-023"
-      ],
-      "question": {
-        "text": "Какую схему номеров использовать для требований без номера?",
-        "options": [
-          "Продолжить существующую нумерацию на все разделы",
-          "Свой префикс для каждого раздела (НФТ-, ДАН-, API-)"
-        ],
-        "addressee": "analyst",
-        "gap": ""
-      },
-      "source": "rule:missing-ids",
-      "rule_ids": [
-        "missing-ids"
-      ],
-      "stage": "rules",
-      "fid": "D-001",
-      "status": "open",
-      "status_reason": "",
-      "merged_into": "",
-      "question_id": "В-08",
-      "closed_by_answer": false,
-      "fixed_wording": "",
-      "advisory": false,
-      "standard": "IEEE 830-1998 п. 4.3.8 (Traceable)"
-    },
-    {
       "scope": "requirement",
       "criterion": "verifiability",
       "severity": "MINOR",
@@ -2648,6 +2589,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -2693,6 +2639,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -2738,6 +2689,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -2783,6 +2739,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -2821,7 +2782,7 @@
         "sensitive-in-query"
       ],
       "stage": "rules",
-      "fid": "D-002",
+      "fid": "D-001",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -2829,6 +2790,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
     },
     {
@@ -2866,7 +2832,7 @@
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-003",
+      "fid": "D-002",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -2874,6 +2840,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
@@ -2912,14 +2883,19 @@
         "time-without-conditions"
       ],
       "stage": "rules",
-      "fid": "D-004",
+      "fid": "D-003",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-04",
+      "question_id": "В-06",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -2956,7 +2932,7 @@
         "get-mutation"
       ],
       "stage": "rules",
-      "fid": "D-005",
+      "fid": "D-004",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -2964,6 +2940,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "protocol",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
     },
     {
@@ -3009,6 +2990,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)"
     },
     {
@@ -3054,6 +3040,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)"
     },
     {
@@ -3099,6 +3090,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -3136,14 +3132,19 @@
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-006",
+      "fid": "D-005",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-05",
+      "question_id": "В-04",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
@@ -3182,14 +3183,19 @@
         "vague-word"
       ],
       "stage": "rules",
-      "fid": "D-007",
+      "fid": "D-006",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-06",
+      "question_id": "В-07",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
     },
     {
@@ -3235,6 +3241,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)"
     },
     {
@@ -3280,14 +3291,19 @@
         "empty-section"
       ],
       "stage": "rules",
-      "fid": "D-008",
+      "fid": "D-007",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-07",
+      "question_id": "В-05",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
@@ -3333,6 +3349,11 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     }
   ],
@@ -3351,7 +3372,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-005"
+        "D-004"
       ],
       "req_ids": [],
       "quote": {
@@ -3366,7 +3387,16 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "scenario"
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-004"
+        ],
+        "blockers_closed": 1,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 86,
+        "index_delta": 8
+      }
     },
     {
       "qid": "В-02",
@@ -3380,7 +3410,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-002"
+        "D-001"
       ],
       "req_ids": [
         "REQ-014"
@@ -3397,7 +3427,16 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "scenario"
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-001"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 81,
+        "index_delta": 3
+      }
     },
     {
       "qid": "В-03",
@@ -3410,7 +3449,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-003"
+        "D-002"
       ],
       "req_ids": [
         "REQ-021"
@@ -3427,41 +3466,19 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-002"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 81,
+        "index_delta": 3
+      }
     },
     {
       "qid": "В-04",
-      "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «within 3 seconds»?",
-      "why": "Задан срок «within 3 seconds», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать.",
-      "addressee": "business",
-      "options": [
-        "95% случаев при обычной нагрузке",
-        "99% случаев при пиковой нагрузке (указать какой)",
-        "Каждый случай без исключений"
-      ],
-      "priority": "important",
-      "finding_ids": [
-        "D-004"
-      ],
-      "req_ids": [
-        "REQ-022"
-      ],
-      "quote": {
-        "text": "The upload endpoint responds within 3 seconds",
-        "line_start": 56,
-        "line_end": 56,
-        "page": null,
-        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
-        "rid": "REQ-022",
-        "exact": true
-      },
-      "option_effects": [],
-      "answer": "",
-      "answer_effect": "",
-      "gap": "value"
-    },
-    {
-      "qid": "В-05",
       "text": "Возвращает ли сервис код 202?",
       "why": "В тексте код 202 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа.",
       "addressee": "architect",
@@ -3471,7 +3488,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-006"
+        "D-005"
       ],
       "req_ids": [
         "REQ-027"
@@ -3488,10 +3505,97 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-005"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 81,
+        "index_delta": 3
+      }
+    },
+    {
+      "qid": "В-05",
+      "text": "Кто и когда заполнит раздел «3.5. Callback to the core banking system»?",
+      "why": "Вместо содержания раздела стоит заглушка «TBD.».",
+      "addressee": "analyst",
+      "options": [
+        "Автор документа — до начала разработки",
+        "Другая команда — указать ответственного и срок",
+        "Раздел не нужен — удалить"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-007"
+      ],
+      "req_ids": [],
+      "quote": {
+        "text": "3.5. Callback to the core banking system",
+        "line_start": 82,
+        "line_end": 82,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.5. Callback to the core banking system",
+        "rid": "",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-007"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 81,
+        "index_delta": 3
+      }
     },
     {
       "qid": "В-06",
+      "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «within 3 seconds»?",
+      "why": "Задан срок «within 3 seconds», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать.",
+      "addressee": "business",
+      "options": [
+        "95% случаев при обычной нагрузке",
+        "99% случаев при пиковой нагрузке (указать какой)",
+        "Каждый случай без исключений"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-003"
+      ],
+      "req_ids": [
+        "REQ-022"
+      ],
+      "quote": {
+        "text": "The upload endpoint responds within 3 seconds",
+        "line_start": 56,
+        "line_end": 56,
+        "page": null,
+        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.1. POST /v1/onboarding/{sessionId}/documents",
+        "rid": "REQ-022",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "value",
+      "impact": {
+        "closes": [
+          "D-003"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 79,
+        "index_delta": 1
+      }
+    },
+    {
+      "qid": "В-07",
       "text": "Что конкретно означает «accordingly» в этом требовании?",
       "why": "Слово «accordingly» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное.",
       "addressee": "analyst",
@@ -3502,7 +3606,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-007"
+        "D-006"
       ],
       "req_ids": [
         "REQ-028"
@@ -3519,111 +3623,59 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "term"
-    },
-    {
-      "qid": "В-07",
-      "text": "Кто и когда заполнит раздел «3.5. Callback to the core banking system»?",
-      "why": "Вместо содержания раздела стоит заглушка «TBD.».",
-      "addressee": "analyst",
-      "options": [
-        "Автор документа — до начала разработки",
-        "Другая команда — указать ответственного и срок",
-        "Раздел не нужен — удалить"
-      ],
-      "priority": "important",
-      "finding_ids": [
-        "D-008"
-      ],
-      "req_ids": [],
-      "quote": {
-        "text": "3.5. Callback to the core banking system",
-        "line_start": 82,
-        "line_end": 82,
-        "page": null,
-        "section": "Remote Onboarding — Identity Document Upload API › 3. Endpoints › 3.5. Callback to the core banking system",
-        "rid": "",
-        "exact": true
-      },
-      "option_effects": [],
-      "answer": "",
-      "answer_effect": "",
-      "gap": "scenario"
-    },
-    {
-      "qid": "В-08",
-      "text": "Какую схему номеров использовать для требований без номера?",
-      "why": "Номер из документа есть только у 17 из 44 требований.",
-      "addressee": "analyst",
-      "options": [
-        "Продолжить существующую нумерацию на все разделы",
-        "Свой префикс для каждого раздела (НФТ-, ДАН-, API-)"
-      ],
-      "priority": "nice",
-      "finding_ids": [
-        "D-001"
-      ],
-      "req_ids": [
-        "REQ-001",
-        "REQ-008",
-        "REQ-023"
-      ],
-      "quote": {
-        "text": "The API lets the mobile app upload images of the applicant's identity document (ID card of the Republic of Kazakhstan or passport) and a selfie during remote onboarding, submit them for verification and query the verification status.",
-        "line_start": 13,
-        "line_end": 13,
-        "page": null,
-        "section": "Remote Onboarding — Identity Document Upload API › 1. Purpose",
-        "rid": "REQ-001",
-        "exact": true
-      },
-      "option_effects": [],
-      "answer": "",
-      "answer_effect": "",
-      "gap": "owner"
+      "gap": "term",
+      "impact": {
+        "closes": [
+          "D-006"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 79,
+        "index_delta": 1
+      }
     }
   ],
   "fix_first": [
     {
       "action": "Метод GET используется для изменения данных. Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.",
       "finding_ids": [
-        "D-005"
+        "D-004"
       ]
     },
     {
       "action": "Чувствительные данные передаются в адресной строке запроса. Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы.",
       "finding_ids": [
-        "D-002"
+        "D-001"
       ]
     },
     {
       "action": "Код ответа 409 возвращается, но не описан. Добавьте описание кода 409: при каком условии он возвращается и пример тела ответа; или уберите упоминание.",
       "finding_ids": [
-        "D-003"
+        "D-002"
       ]
     },
     {
       "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «within 3 seconds для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
       "finding_ids": [
-        "D-004"
+        "D-003"
       ]
     },
     {
       "action": "Код ответа 202 возвращается, но не описан. Добавьте описание кода 202: при каком условии он возвращается и пример тела ответа; или уберите упоминание.",
       "finding_ids": [
-        "D-006"
+        "D-005"
       ]
     },
     {
       "action": "Размытая формулировка: «accordingly». Замените «accordingly» проверяемым условием: опишите, что именно должно быть сделано: конкретное действие, его результат и как это проверить.",
       "finding_ids": [
-        "D-007"
+        "D-006"
       ]
     },
     {
       "action": "Раздел «3.5. Callback to the core banking system» не заполнен: вместо содержания заглушка. Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.",
       "finding_ids": [
-        "D-008"
+        "D-007"
       ]
     }
   ],
@@ -3635,96 +3687,6 @@
   "tests": [
     {
       "tid": "Т-01",
-      "title": "REQ-014: Example: curl -X POST \"$BASE/v1/onboarding/ /documents?iin=000000000000\" \\ -H \"Authorization…",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-014"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-014: «Example: curl -X POST \"$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=00000…».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-02"
-      ],
-      "finding_ids": [
-        "D-002"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-02",
-      "title": "REQ-021: If a document of the same docType and side has already been uploaded in the session, the server…",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-021"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-021: «If a document of the same docType and side has already been uploaded in the session, the server…».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-03"
-      ],
-      "finding_ids": [
-        "D-003"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-03",
-      "title": "REQ-022: The upload endpoint responds within 3 seconds",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-022"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-022: «The upload endpoint responds within 3 seconds.».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-04"
-      ],
-      "finding_ids": [
-        "D-004"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-04",
-      "title": "REQ-027: Submits all uploaded documents for verification",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-027"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-027: «Submits all uploaded documents for verification. The session must contain an ID card (both sides)…».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-05"
-      ],
-      "finding_ids": [
-        "D-006"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-05",
-      "title": "REQ-028: The verification provider is called asynchronously",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-028"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-028: «The verification provider is called asynchronously. When it responds, the status changes to…».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-06"
-      ],
-      "finding_ids": [
-        "D-007"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-06",
       "title": "REQ-040: Upload a 2 MB JPEG ID_CARD FRONT",
       "kind": "positive",
       "req_ids": [
@@ -3735,10 +3697,12 @@
       "then": "201, status RECEIVED",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-07",
+      "tid": "Т-02",
       "title": "REQ-041: Upload a GIF file",
       "kind": "positive",
       "req_ids": [
@@ -3749,10 +3713,12 @@
       "then": "415",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-08",
+      "tid": "Т-03",
       "title": "REQ-042: Repeat POST with the same Idempotency-Key within 24 hours",
       "kind": "positive",
       "req_ids": [
@@ -3763,10 +3729,12 @@
       "then": "Original response, no new document",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-09",
+      "tid": "Т-04",
       "title": "REQ-043: Delete a document",
       "kind": "positive",
       "req_ids": [
@@ -3777,10 +3745,12 @@
       "then": "400",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-10",
+      "tid": "Т-05",
       "title": "REQ-044: Upload a 4th selfie",
       "kind": "positive",
       "req_ids": [
@@ -3791,10 +3761,441 @@
       "then": "423 Locked for 24 hours",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     }
   ],
   "verdict_after_answers": "",
   "verdict_after_answers_text": "",
-  "audit": []
+  "audit": [
+    {
+      "type": "test_unverifiable",
+      "items": [
+        {
+          "req_ids": [
+            "REQ-014"
+          ],
+          "what": "REQ-014: Example: curl -X POST \"$BASE/v1/onboarding/ /documents?iin=000000000000\" \\ -H \"Authorization…",
+          "blocked_by": [
+            "В-02"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-001"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-021"
+          ],
+          "what": "REQ-021: If a document of the same docType and side has already been uploaded in the session, the server…",
+          "blocked_by": [
+            "В-03"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-002"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-022"
+          ],
+          "what": "REQ-022: The upload endpoint responds within 3 seconds",
+          "blocked_by": [
+            "В-06"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-003"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-027"
+          ],
+          "what": "REQ-027: Submits all uploaded documents for verification",
+          "blocked_by": [
+            "В-04"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-005"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-028"
+          ],
+          "what": "REQ-028: The verification provider is called asynchronously",
+          "blocked_by": [
+            "В-07"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-006"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        }
+      ]
+    }
+  ],
+  "checklist": [],
+  "gap_map": [
+    {
+      "id": "ST1",
+      "group": "Состояния",
+      "title": "Состояния переключателей и статусов",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "ST2",
+      "group": "Состояния",
+      "title": "Смена состояния посреди периода",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "ST3",
+      "group": "Состояния",
+      "title": "Начальное состояние",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP1",
+      "group": "Отказы и альтернативные пути",
+      "title": "Ошибки на шагах основного сценария",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP2",
+      "group": "Отказы и альтернативные пути",
+      "title": "Ветки ошибок на схемах",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP3",
+      "group": "Отказы и альтернативные пути",
+      "title": "Недоступность соседних систем",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP4",
+      "group": "Отказы и альтернативные пути",
+      "title": "Сообщения клиенту",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL1",
+      "group": "Значения, деньги и время",
+      "title": "Числовые параметры: единицы и границы",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL2",
+      "group": "Значения, деньги и время",
+      "title": "Валюта и округление",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL3",
+      "group": "Значения, деньги и время",
+      "title": "Время и периоды",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL4",
+      "group": "Значения, деньги и время",
+      "title": "Полнота перечней",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL5",
+      "group": "Значения, деньги и время",
+      "title": "Изменения задним числом",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL6",
+      "group": "Значения, деньги и время",
+      "title": "Несколько однотипных объектов",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL7",
+      "group": "Значения, деньги и время",
+      "title": "Шаг и точность чисел",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL8",
+      "group": "Значения, деньги и время",
+      "title": "Значение по умолчанию",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF1",
+      "group": "Интерфейсы между системами",
+      "title": "Надёжность интерфейса",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF2",
+      "group": "Интерфейсы между системами",
+      "title": "Ошибки интерфейса",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF3",
+      "group": "Интерфейсы между системами",
+      "title": "Права доступа в интерфейсе",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF4",
+      "group": "Интерфейсы между системами",
+      "title": "Интеграции",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "DT1",
+      "group": "Данные и экран",
+      "title": "Модель данных",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "UI1",
+      "group": "Данные и экран",
+      "title": "Экран",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN1",
+      "group": "Согласованность документа",
+      "title": "Название задачи",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN2",
+      "group": "Согласованность документа",
+      "title": "Перечни систем и участников",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN3",
+      "group": "Согласованность документа",
+      "title": "Термины",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN4",
+      "group": "Согласованность документа",
+      "title": "Цель и требования",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN5",
+      "group": "Согласованность документа",
+      "title": "Экран, функции и интерфейс",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR1",
+      "group": "Адресуемость и проверяемость",
+      "title": "Номера требований",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR2",
+      "group": "Адресуемость и проверяемость",
+      "title": "Критерии приёмки",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR3",
+      "group": "Адресуемость и проверяемость",
+      "title": "Проверяемость через действие системы",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR4",
+      "group": "Адресуемость и проверяемость",
+      "title": "Нефункциональные требования",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD1",
+      "group": "Данные клиентов и карт",
+      "title": "Персональные данные",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD2",
+      "group": "Данные клиентов и карт",
+      "title": "Где хранятся и кому передаются данные",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD3",
+      "group": "Данные клиентов и карт",
+      "title": "Данные карт",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD4",
+      "group": "Данные клиентов и карт",
+      "title": "Что видно посторонним",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD5",
+      "group": "Данные клиентов и карт",
+      "title": "Журнал аудита и откат",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    }
+  ]
 }

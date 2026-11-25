@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
+<meta name="color-scheme" content="light dark">
+<title>Ревизор ТЗ — Бэклог: приём оплаты по QR для малого бизнеса («Касса QR»)</title>
+<style>
+:root{--bg:#f6f7f9;--paper:#fff;--ink:#1f2933;--muted:#5f6b7a;--line:#d9dee5;--zebra:#f4f6f9;--link:#0b5cad;
+--accent:#0f6b4f;--accent-soft:#e8f3ee;--code:#eef1f5;--crit:#b42318;--crit-bg:#fdecea;--maj:#9a5b00;--maj-bg:#fff2d6;
+--min:#146c3a;--min-bg:#e3f5ea;--shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#10151b;--paper:#171d25;--ink:#e6eaef;--muted:#9aa6b4;--line:#2d3744;
+--zebra:#1b222b;--link:#7db4ff;--accent:#5fd0a2;--accent-soft:#16302a;--code:#222b36;--crit:#ff8a80;--crit-bg:#3b1d1b;
+--maj:#ffc266;--maj-bg:#3a2d12;--min:#7ee2a6;--min-bg:#16301f;--shadow:none}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.65 -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.doc{max-width:920px;margin:0 auto;padding:28px 20px 56px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:30px 34px 38px;box-shadow:var(--shadow)}
+h1,h2,h3,h4,h5,h6{line-height:1.3;margin:1.7em 0 .55em;font-weight:650;color:var(--ink)}
+h1{font-size:1.75rem;margin-top:0;letter-spacing:-.01em}
+h2{font-size:1.38rem;padding-bottom:.3em;border-bottom:2px solid var(--line);margin-top:2.2em}
+h3{font-size:1.12rem}h4{font-size:1rem}h5,h6{font-size:.95rem;color:var(--muted)}
+h2,h3,h4,[id]{scroll-margin-top:64px}
+p{margin:.65em 0}
+a{color:var(--link);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--link) 35%,transparent)}
+a:hover{border-bottom-color:var(--link)}
+a[id]:empty{border:0}
+code{font:.88em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--code);padding:.1em .38em;border-radius:4px;overflow-wrap:break-word}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow:auto;line-height:1.45}
+pre code{background:none;padding:0}
+hr{border:0;border-top:1px solid var(--line);margin:1.8em 0}
+ul,ol{margin:.5em 0;padding-left:1.45em}
+li{margin:.22em 0}li>ul,li>ol{margin:.2em 0}
+blockquote{margin:.9em 0;padding:.5em 1em;border-left:4px solid var(--line);background:var(--zebra);color:var(--ink);border-radius:0 8px 8px 0}
+blockquote p{margin:.35em 0}
+blockquote.verdict{border:1px solid var(--accent);border-left:6px solid var(--accent);background:var(--accent-soft);
+padding:1em 1.3em;margin:1.1em 0 1.4em;font-size:1.04rem;border-radius:10px}
+blockquote.verdict-blocked{border-color:var(--crit);background:var(--crit-bg)}
+blockquote.verdict-conditional{border-color:var(--maj);background:var(--maj-bg)}
+.tablewrap{overflow-x:auto;margin:1em 0;border:1px solid var(--line);border-radius:8px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.9rem;line-height:1.45}
+th,td{border:1px solid var(--line);padding:6px 10px;vertical-align:top;text-align:left;overflow-wrap:break-word}
+.tablewrap th:first-child,.tablewrap td:first-child{border-left:0}.tablewrap th:last-child,.tablewrap td:last-child{border-right:0}
+thead th{background:var(--zebra);font-weight:650;border-top:0}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:var(--zebra)}
+.a-right{text-align:right;font-variant-numeric:tabular-nums}.a-center{text-align:center}
+.sev{display:inline-block;font:700 .72em/1.5 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.03em;padding:0 .55em;border-radius:99px;
+vertical-align:.08em;border:1px solid transparent;white-space:nowrap}
+.sev-critical{color:var(--crit);background:var(--crit-bg);border-color:color-mix(in srgb,var(--crit) 35%,transparent)}
+.sev-major{color:var(--maj);background:var(--maj-bg);border-color:color-mix(in srgb,var(--maj) 40%,transparent)}
+.sev-minor{color:var(--min);background:var(--min-bg);border-color:color-mix(in srgb,var(--min) 35%,transparent)}
+.card{margin:1.1em 0;padding:.7em 1.1em .8em;border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;background:var(--paper)}
+.card>p:first-of-type,.card>strong:first-child{margin-top:.2em}
+.card-critical{border-left-color:var(--crit)}.card-major{border-left-color:var(--maj)}.card-minor{border-left-color:var(--min)}
+details{margin:.8em 0;padding:.4em .9em;border:1px solid var(--line);border-radius:8px}
+details>summary{cursor:pointer;font-weight:600}
+nav.toc{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+nav.toc>details{max-width:920px;margin:0 auto;border:0;border-radius:0;padding:0 20px;position:relative}
+nav.toc summary{padding:10px 0;color:var(--muted);font-size:.92rem;list-style:none}
+nav.toc summary::-webkit-details-marker{display:none}
+nav.toc summary::before{content:"\2630";margin-right:.6em;color:var(--accent)}
+nav.toc ol{position:absolute;left:20px;right:20px;top:100%;margin:0;padding:10px 14px 12px 36px;list-style:decimal;
+background:var(--paper);border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;box-shadow:var(--shadow);
+max-height:70vh;overflow:auto;font-size:.93rem}
+nav.toc li{margin:.18em 0}
+footer{max-width:920px;margin:18px auto 0;padding:0 20px;color:var(--muted);font-size:.82rem;text-align:center}
+@media (max-width:640px){body{font-size:15px}.doc{padding:14px 10px 40px}.sheet{padding:18px 14px 26px;border-radius:8px}
+h1{font-size:1.4rem}h2{font-size:1.2rem}nav.toc>details{padding:0 10px}nav.toc ol{left:10px;right:10px}}
+@page{size:A4;margin:14mm}
+@media print{
+html,body{background:#fff!important;color:#000!important;font-size:10.5pt;line-height:1.5}
+.doc{max-width:none;padding:0}.sheet{border:0;box-shadow:none;padding:0;border-radius:0;background:#fff}
+nav.toc,footer{display:none!important}
+a{color:#000;border:0;text-decoration:none}
+a[href^="http"]::after,a[href^="mailto"]::after{content:" (" attr(href) ")";font-size:.85em;word-break:break-all}
+.tablewrap{overflow:visible;border:0}
+table{font-size:8.6pt}thead{display:table-header-group}
+tr,.card,blockquote,pre,.sev{break-inside:avoid;page-break-inside:avoid}
+tbody tr:nth-child(even),thead th,blockquote,code,pre,.card,details{background:none!important}
+blockquote,blockquote.verdict{border:1px solid #888;border-left:4px solid #444;border-radius:0}
+.card{border:1px solid #bbb;border-left:4px solid #666;border-radius:0}
+.sev{border-color:currentColor;background:none!important}
+.sev-critical{color:#a00}.sev-major{color:#8a5200}.sev-minor{color:#0a5a2e}
+h1,h2,h3,h4{break-after:avoid;page-break-after:avoid}
+h2{border-bottom:1px solid #888;margin-top:1.6em}
+[id]{scroll-margin-top:0}
+}
+</style>
+</head>
+<body>
+<nav class="toc" aria-label="Содержание"><details><summary>Содержание</summary><ol>
+<li><a href="#s1">1. Паспорт прогона</a></li>
+<li><a href="#s2">2. Как агент нарезал требования</a></li>
+<li><a href="#s3">3. Проверка каждого требования</a></li>
+<li><a href="#s4">4. Проверка всего набора требований</a></li>
+<li><a href="#s5">5. Сводка</a></li>
+<li><a href="#s6">6. Итог</a></li>
+<li><a href="#s7">7. Уточняющие вопросы к автору ТЗ</a></li>
+<li><a href="#s8">8. Черновики приёмочных тестов</a></li>
+<li><a href="#app">Приложение. Как получен отчёт</a></li>
+</ol></details></nav>
+<main class="doc"><article class="sheet">
+<h1>Отчёт о статической проверке требований</h1>
+<p><strong>Документ:</strong> <code>qr_merchant_stories.md</code> · проверен 26.11.2026 02:20 (UTC+05:00) · без модели — только автоматические правила</p>
+<blockquote class="verdict verdict-conditional">
+<p><strong>Итог:</strong> ⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (итог предварительный)<br>
+Замечаний 3: блокеров 0 · существенных 3 · мелких 0 · вопросов автору 3 · требований 56<br>
+Индекс готовности документа: <strong>99 из 100</strong> — готов, предварительно. Вердикт определяют блокеры, а не индекс.<br>
+⚠️ Без модели смысл не проверялся: противоречия и пропущенные сценарии не искались.</p>
+</blockquote>
+<p><strong>Блокеров нет.</strong> Существенных замечаний: 3 — <a href="#d-001">D-001</a>, <a href="#d-002">D-002</a>, <a href="#d-003">D-003</a>.</p>
+<p><strong>Сначала спросить автора:</strong></p>
+<ol>
+<li><a href="#v-01">В-01</a> Что конкретно означает «мгновенно» в этом требовании?</li>
+<li><a href="#v-02">В-02</a> Для какой доли случаев и при какой нагрузке должен выполняться срок «в…</li>
+<li><a href="#v-03">В-03</a> Что конкретно означает «удобный» в этом требовании?</li>
+</ol>
+<p><strong>Что исправить в первую очередь:</strong></p>
+<ol>
+<li>Размытая формулировка: «мгновенно». Замените «мгновенно» проверяемым условием… (<a href="#d-001">D-001</a>)</li>
+<li>Ограничение по времени без условий измерения. Допишите условия измерения: «в… (<a href="#d-002">D-002</a>)</li>
+<li>Размытые формулировки: «удобный», «понятный», «удобно». Замените «удобный»… (<a href="#d-003">D-003</a>)</li>
+</ol>
+<p>Прогон: 0,1 с · $0, модель не вызывалась.</p>
+<p><strong>Разделы:</strong> <a href="#s1">1. Паспорт прогона</a> · <a href="#s2">2. Как агент нарезал требования</a> · <a href="#s3">3. Проверка каждого требования</a> · <a href="#s4">4. Проверка всего набора требований</a> · <a href="#s5">5. Сводка</a> · <a href="#s6">6. Итог</a> · <a href="#s7">7. Уточняющие вопросы к автору ТЗ</a> · <a href="#s8">8. Черновики приёмочных тестов</a> · <a href="#app">Приложение. Как получен отчёт</a></p>
+<h2 id="s1">1. Паспорт прогона</h2>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Поле</th><th class="a-left">Значение</th></tr></thead><tbody>
+<tr><td class="a-left">Документ</td><td class="a-left"><code>qr_merchant_stories.md</code> · Markdown · 8,6 КБ · 114 строк · 744 слова · SHA-256 <code>7abd9447446b</code> · «Бэклог: приём оплаты по QR для малого бизнеса («Касса QR»)»</td></tr>
+<tr><td class="a-left">Дата и время прогона</td><td class="a-left">26.11.2026 02:20 (UTC+05:00)</td></tr>
+<tr><td class="a-left">Модель</td><td class="a-left">без модели</td></tr>
+<tr><td class="a-left">Версия агента</td><td class="a-left">v1.0.0 (тег <code>v1.1.1</code>) · коммит <code>0d071fd</code> + незакоммиченные правки · набор правил 1.1</td></tr>
+<tr><td class="a-left">Режим</td><td class="a-left">без модели: только автоматические правила</td></tr>
+<tr><td class="a-left">Время анализа</td><td class="a-left">0,1 с</td></tr>
+<tr><td class="a-left">Стоимость прогона</td><td class="a-left">$0 (модель не вызывалась)</td></tr>
+<tr><td class="a-left">Проверка цитат</td><td class="a-left">подтверждено 9, отброшено 0</td></tr>
+<tr><td class="a-left">Перепроверка</td><td class="a-left">не выполнялась (без модели)</td></tr>
+<tr><td class="a-left">Защита данных</td><td class="a-left">значений, похожих на номера карт, ИИН/БИН, адреса почты или телефоны, не найдено</td></tr>
+</tbody></table></div>
+<h2 id="s2">2. Как агент нарезал требования</h2>
+<p>Требования выделены эвристикой (без модели); номера REQ-… присвоены программой по порядку документа. Найдено 56 требований. Формулировка — точная цитата; длинная обрезана, только если полный текст есть в карточке раздела 3. Ясность каждого требования — в матрице раздела 3.</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">ID (в документе)</th><th class="a-left">Тип</th><th class="a-left">Формулировка (цитата)</th><th class="a-left">Где</th></tr></thead><tbody>
+<tr><td class="a-left"><a href="#req-001">REQ-001</a></td><td class="a-left">прочее</td><td class="a-left">Продавец — ИП или ТОО, подключившее «Кассу QR»; владелец учётной записи в приложении.</td><td class="a-left">строка 10</td></tr>
+<tr><td class="a-left"><a href="#req-002">REQ-002</a></td><td class="a-left">прочее</td><td class="a-left">Кассир — сотрудник продавца с ограниченными правами в приложении.</td><td class="a-left">строка 11</td></tr>
+<tr><td class="a-left"><a href="#req-003">REQ-003</a></td><td class="a-left">прочее</td><td class="a-left">Динамический QR — QR-код на одну покупку с зашитой суммой, действует ограниченное время.</td><td class="a-left">строка 12</td></tr>
+<tr><td class="a-left"><a href="#req-004">REQ-004</a></td><td class="a-left">прочее</td><td class="a-left">Статический QR — наклейка на кассе без суммы; покупатель вводит сумму сам.</td><td class="a-left">строка 13</td></tr>
+<tr><td class="a-left"><a href="#req-005">REQ-005</a></td><td class="a-left">прочее</td><td class="a-left">Комиссия — плата банка за принятую оплату: 0,95% от суммы, удерживается при зачислении; покупатель комиссию не платит.</td><td class="a-left">строка 14</td></tr>
+<tr><td class="a-left"><a href="#req-006">REQ-006</a></td><td class="a-left">ограничение</td><td class="a-left">Сумма одной оплаты по любому QR — от 100 до 999 999 ₸.</td><td class="a-left">строка 18</td></tr>
+<tr><td class="a-left"><a href="#req-007">REQ-007</a></td><td class="a-left">ограничение</td><td class="a-left">Все суммы — в тенге, целым числом.</td><td class="a-left">строка 19</td></tr>
+<tr><td class="a-left"><a href="#req-008">REQ-008</a> QR-1</td><td class="a-left">прочее</td><td class="a-left">Как кассир, я хочу сформировать QR-код на сумму покупки, чтобы покупатель оплатил её из своего банковского приложения без ввода суммы.</td><td class="a-left">строка 24</td></tr>
+<tr><td class="a-left"><a href="#req-009">REQ-009</a> QR-1</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 26</td></tr>
+<tr><td class="a-left"><a href="#req-010">REQ-010</a> QR-1</td><td class="a-left">прочее</td><td class="a-left">Дано: кассир вошёл в приложение, введена сумма 4 500 ₸. Когда кассир нажимает «Выставить», Тогда на экране показываются QR-код и сумма 4 500 ₸.</td><td class="a-left">строка 27</td></tr>
+<tr><td class="a-left"><a href="#req-011">REQ-011</a> QR-1</td><td class="a-left">прочее</td><td class="a-left">Сумма — целое число тенге от 100 до 1 000 000 ₸ включительно.</td><td class="a-left">строка 28</td></tr>
+<tr><td class="a-left"><a href="#req-012">REQ-012</a> QR-1</td><td class="a-left">прочее</td><td class="a-left">QR-код действует 5 минут с момента формирования; по истечении на экране показывается «Срок оплаты истёк» и кнопка «Создать заново».</td><td class="a-left">строка 29</td></tr>
+<tr><td class="a-left"><a href="#req-013">REQ-013</a> QR-2</td><td class="a-left">прочее</td><td class="a-left">Как продавец, я хочу распечатать постоянный QR-код, чтобы принимать оплату, даже когда кассир занят.</td><td class="a-left">строка 32</td></tr>
+<tr><td class="a-left"><a href="#req-014">REQ-014</a> QR-2</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 34</td></tr>
+<tr><td class="a-left"><a href="#req-015">REQ-015</a> QR-2</td><td class="a-left">прочее</td><td class="a-left">Наклейка печатается из раздела «Мои QR» в PDF размером не менее 5 на 5.</td><td class="a-left">строка 35</td></tr>
+<tr><td class="a-left"><a href="#req-016">REQ-016</a> QR-2</td><td class="a-left">прочее</td><td class="a-left">Покупатель после сканирования видит название магазина и вводит сумму сам.</td><td class="a-left">строка 36</td></tr>
+<tr><td class="a-left"><a href="#req-017">REQ-017</a> QR-3</td><td class="a-left">интерфейс (API)</td><td class="a-left">Как кассир, я хочу видеть, что покупатель оплатил, чтобы отдать товар без сомнений.</td><td class="a-left">строка 39</td></tr>
+<tr><td class="a-left"><a href="#req-018">REQ-018</a> QR-3</td><td class="a-left">интерфейс (API)</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 41</td></tr>
+<tr><td class="a-left"><a href="#req-019">REQ-019</a> QR-3</td><td class="a-left">интерфейс (API)</td><td class="a-left">Статус оплаты обновляется на экране кассира мгновенно.</td><td class="a-left">строка 42</td></tr>
+<tr><td class="a-left"><a href="#req-020">REQ-020</a> QR-3</td><td class="a-left">интерфейс (API)</td><td class="a-left">Дано: QR на 4 500 ₸ выставлен. Когда покупатель оплатил, Тогда на экране кассира статус «Оплачено», сумма и время оплаты.</td><td class="a-left">строка 43</td></tr>
+<tr><td class="a-left"><a href="#req-021">REQ-021</a> QR-3</td><td class="a-left">интерфейс (API)</td><td class="a-left">Если оплата не поступила в течение 10 минут, счёт отменяется автоматически.</td><td class="a-left">строка 44</td></tr>
+<tr><td class="a-left"><a href="#req-022">REQ-022</a> QR-4</td><td class="a-left">прочее</td><td class="a-left">Как кассир, я хочу отменить выставленный счёт до оплаты, чтобы исправить ошибку в сумме.</td><td class="a-left">строка 47</td></tr>
+<tr><td class="a-left"><a href="#req-023">REQ-023</a> QR-4</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 49</td></tr>
+<tr><td class="a-left"><a href="#req-024">REQ-024</a> QR-4</td><td class="a-left">прочее</td><td class="a-left">Дано: счёт в статусе «Ожидает оплаты». Когда кассир нажимает «Отменить», Тогда счёт переходит в статус «Отменён», а оплата по этому QR отклоняется банком покупателя с сообщением «Счёт отменён».</td><td class="a-left">строка 50</td></tr>
+<tr><td class="a-left"><a href="#req-025">REQ-025</a> QR-4</td><td class="a-left">прочее</td><td class="a-left">Отменённый счёт нельзя вернуть в статус «Ожидает оплаты».</td><td class="a-left">строка 51</td></tr>
+<tr><td class="a-left"><a href="#req-026">REQ-026</a> QR-5</td><td class="a-left">прочее</td><td class="a-left">Как продавец, я хочу получать деньги на свой счёт, чтобы пользоваться выручкой.</td><td class="a-left">строка 56</td></tr>
+<tr><td class="a-left"><a href="#req-027">REQ-027</a> QR-5</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 58</td></tr>
+<tr><td class="a-left"><a href="#req-028">REQ-028</a> QR-5</td><td class="a-left">прочее</td><td class="a-left">Зачисление на текущий счёт продавца — в день оплаты, за вычетом комиссии.</td><td class="a-left">строка 59</td></tr>
+<tr><td class="a-left"><a href="#req-029">REQ-029</a> QR-5</td><td class="a-left">прочее</td><td class="a-left">Пример: оплата 10 000 ₸ → продавцу зачисляется 9 900 ₸.</td><td class="a-left">строка 60</td></tr>
+<tr><td class="a-left"><a href="#req-030">REQ-030</a> QR-6</td><td class="a-left">прочее</td><td class="a-left">Как кассир, я хочу оформить возврат по оплате, чтобы покупатель получил деньги за возвращённый товар.</td><td class="a-left">строка 63</td></tr>
+<tr><td class="a-left"><a href="#req-031">REQ-031</a> QR-6</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 65</td></tr>
+<tr><td class="a-left"><a href="#req-032">REQ-032</a> QR-6</td><td class="a-left">прочее</td><td class="a-left">Возврат оформляется из карточки оплаты в течение 30 дней с даты оплаты.</td><td class="a-left">строка 66</td></tr>
+<tr><td class="a-left"><a href="#req-033">REQ-033</a> QR-6</td><td class="a-left">прочее</td><td class="a-left">Допускается частичный возврат; сумма одного возврата не превышает сумму исходной оплаты.</td><td class="a-left">строка 67</td></tr>
+<tr><td class="a-left"><a href="#req-034">REQ-034</a> QR-6</td><td class="a-left">прочее</td><td class="a-left">Деньги возвращаются на счёт, с которого покупатель платил.</td><td class="a-left">строка 68</td></tr>
+<tr><td class="a-left"><a href="#req-035">REQ-035</a> QR-7</td><td class="a-left">прочее</td><td class="a-left">Как продавец, я хочу ограничить права кассира, чтобы он не мог распоряжаться деньгами магазина.</td><td class="a-left">строка 71</td></tr>
+<tr><td class="a-left"><a href="#req-036">REQ-036</a> QR-7</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 73</td></tr>
+<tr><td class="a-left"><a href="#req-037">REQ-037</a> QR-7</td><td class="a-left">прочее</td><td class="a-left">Кассир не может оформлять возвраты и не видит выручку за прошлые дни.</td><td class="a-left">строка 74</td></tr>
+<tr><td class="a-left"><a href="#req-038">REQ-038</a> QR-7</td><td class="a-left">прочее</td><td class="a-left">Вход кассира — по PIN-коду из 4 цифр; после 5 неверных попыток подряд вход блокируется на 15 минут.</td><td class="a-left">строка 75</td></tr>
+<tr><td class="a-left"><a href="#req-039">REQ-039</a> QR-7</td><td class="a-left">прочее</td><td class="a-left">Оператор может выставлять и отменять счета только в своей смене.</td><td class="a-left">строка 76</td></tr>
+<tr><td class="a-left"><a href="#req-040">REQ-040</a> QR-8</td><td class="a-left">прочее</td><td class="a-left">Как продавец, я хочу видеть историю платежей, выгружать её в Excel, настраивать push-уведомления и добавлять новых кассиров, чтобы вести учёт.</td><td class="a-left">строка 79</td></tr>
+<tr><td class="a-left"><a href="#req-041">REQ-041</a> QR-8</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 81</td></tr>
+<tr><td class="a-left"><a href="#req-042">REQ-042</a> QR-8</td><td class="a-left">прочее</td><td class="a-left">История показывает дату, время, сумму, комиссию и статус каждой оплаты.</td><td class="a-left">строка 82</td></tr>
+<tr><td class="a-left"><a href="#req-043">REQ-043</a> QR-8</td><td class="a-left">прочее</td><td class="a-left">Отчёт автоматически отправляется на e-mail бухгалтера каждый понедельник.</td><td class="a-left">строка 83</td></tr>
+<tr><td class="a-left"><a href="#req-044">REQ-044</a> QR-9</td><td class="a-left">прочее</td><td class="a-left">Средства по оплатам QR зачисляются на счёт продавца на следующий рабочий день после оплаты единой суммой за день.</td><td class="a-left">строка 86</td></tr>
+<tr><td class="a-left"><a href="#req-045">REQ-045</a> QR-10</td><td class="a-left">прочее</td><td class="a-left">Как покупатель, я хочу получить чек по ссылке, чтобы сохранить подтверждение оплаты.</td><td class="a-left">строка 91</td></tr>
+<tr><td class="a-left"><a href="#req-046">REQ-046</a> QR-10</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 93</td></tr>
+<tr><td class="a-left"><a href="#req-047">REQ-047</a> QR-10</td><td class="a-left">прочее</td><td class="a-left">После оплаты покупателю приходит SMS со ссылкой на чек вида https://check.example.kz/r?phone=77000000000&amp;amount=4500.</td><td class="a-left">строка 94</td></tr>
+<tr><td class="a-left"><a href="#req-048">REQ-048</a> QR-10</td><td class="a-left">прочее</td><td class="a-left">Чек по ссылке открывается без входа в приложение.</td><td class="a-left">строка 95</td></tr>
+<tr><td class="a-left"><a href="#req-049">REQ-049</a> QR-10</td><td class="a-left">прочее</td><td class="a-left">Макет чека — см. макет М-12.</td><td class="a-left">строка 96</td></tr>
+<tr><td class="a-left"><a href="#req-050">REQ-050</a> QR-11</td><td class="a-left">прочее</td><td class="a-left">Как продавец, я хочу получать push о каждой оплате, чтобы видеть продажи без открытия приложения.</td><td class="a-left">строка 99</td></tr>
+<tr><td class="a-left"><a href="#req-051">REQ-051</a> QR-11</td><td class="a-left">прочее</td><td class="a-left">Критерии приёмки:</td><td class="a-left">строка 101</td></tr>
+<tr><td class="a-left"><a href="#req-052">REQ-052</a> QR-11</td><td class="a-left">прочее</td><td class="a-left">Push содержит сумму и время оплаты и не содержит данных покупателя.</td><td class="a-left">строка 102</td></tr>
+<tr><td class="a-left"><a href="#req-053">REQ-053</a> QR-11</td><td class="a-left">прочее</td><td class="a-left">Push не отправляется, если продавец отключил уведомления в настройках.</td><td class="a-left">строка 103</td></tr>
+<tr><td class="a-left"><a href="#req-054">REQ-054</a> QR-12</td><td class="a-left">прочее</td><td class="a-left">Необходимо реализовать передачу данных о каждой оплате в ОФД через REST-интеграцию с очередью сообщений.</td><td class="a-left">строка 106</td></tr>
+<tr><td class="a-left"><a href="#req-055">REQ-055</a> QR-13</td><td class="a-left">прочее</td><td class="a-left">Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно.</td><td class="a-left">строка 109</td></tr>
+<tr><td class="a-left"><a href="#req-056">REQ-056</a></td><td class="a-left">прочее</td><td class="a-left">Описание будет добавлено позже.</td><td class="a-left">строка 113</td></tr>
+</tbody></table></div>
+<p><strong>Не считал требованиями: 21 блок.</strong></p>
+<ul>
+<li>заголовок: заголовок раздела · строки 1, 8, 16, 21, 23, 31, 38, 46, 53, 55, 62, 70, 78, 85, 88 и ещё 5</li>
+<li>сведения о документе: сведения о документе (версия, дата, статус) · строка 3 — «Продукт: мобильное приложение «Береке Бизнес» (условное название)…»</li>
+</ul>
+<h2 id="s3">3. Проверка каждого требования</h2>
+<p>Без модели каждое требование проверено только автоматическими правилами (размытые слова, заглушки, сроки без условий, незакрытые перечни, несколько требований в одном пункте и др.); смысловые критерии не проверялись (❔).<br>
+Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4. Карточки ниже — только у требований, к которым есть замечания.</p>
+<a id="s3-matrix"></a><p><strong>Матрица «требование × критерий»</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-center">Полнота</th><th class="a-center">Однозн.</th><th class="a-center">Непротив.</th><th class="a-center">Провер.</th><th class="a-center">Реализ.</th><th class="a-center">Необх.</th><th class="a-center">Атом.</th><th class="a-right">Ясность</th></tr></thead><tbody>
+<tr><td class="a-left"><a href="#req-019">REQ-019</a> QR-3</td><td class="a-center">❔</td><td class="a-center"><a href="#d-001">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+<tr><td class="a-left"><a href="#req-021">REQ-021</a> QR-3</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-002">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+<tr><td class="a-left"><a href="#req-055">REQ-055</a> QR-13</td><td class="a-center">❔</td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+</tbody></table></div>
+<p>Не проверены ни по одному критерию (во всех клетках было бы ❔): 53 требования — <a href="#req-001">REQ-001</a>, <a href="#req-002">REQ-002</a>, <a href="#req-003">REQ-003</a>, <a href="#req-004">REQ-004</a>, <a href="#req-005">REQ-005</a>, <a href="#req-006">REQ-006</a>, <a href="#req-007">REQ-007</a>, <a href="#req-008">REQ-008</a>, <a href="#req-009">REQ-009</a>, <a href="#req-010">REQ-010</a>, <a href="#req-011">REQ-011</a>, <a href="#req-012">REQ-012</a>, <a href="#req-013">REQ-013</a>, <a href="#req-014">REQ-014</a>, <a href="#req-015">REQ-015</a>, <a href="#req-016">REQ-016</a>, <a href="#req-017">REQ-017</a>, <a href="#req-018">REQ-018</a>, <a href="#req-020">REQ-020</a>, <a href="#req-022">REQ-022</a>, <a href="#req-023">REQ-023</a>, <a href="#req-024">REQ-024</a>, <a href="#req-025">REQ-025</a>, <a href="#req-026">REQ-026</a>, <a href="#req-027">REQ-027</a>, <a href="#req-028">REQ-028</a>, <a href="#req-029">REQ-029</a>, <a href="#req-030">REQ-030</a>, <a href="#req-031">REQ-031</a>, <a href="#req-032">REQ-032</a>, <a href="#req-033">REQ-033</a>, <a href="#req-034">REQ-034</a>, <a href="#req-035">REQ-035</a>, <a href="#req-036">REQ-036</a>, <a href="#req-037">REQ-037</a>, <a href="#req-038">REQ-038</a>, <a href="#req-039">REQ-039</a>, <a href="#req-040">REQ-040</a>, <a href="#req-041">REQ-041</a>, <a href="#req-042">REQ-042</a>, <a href="#req-043">REQ-043</a>, <a href="#req-044">REQ-044</a>, <a href="#req-045">REQ-045</a>, <a href="#req-046">REQ-046</a>, <a href="#req-047">REQ-047</a>, <a href="#req-048">REQ-048</a>, <a href="#req-049">REQ-049</a>, <a href="#req-050">REQ-050</a>, <a href="#req-051">REQ-051</a>, <a href="#req-052">REQ-052</a>, <a href="#req-053">REQ-053</a>, <a href="#req-054">REQ-054</a>, <a href="#req-056">REQ-056</a>.</p>
+<p>Пустых клеток (не проверено): 389.</p>
+<h3 id="req-019">REQ-019 · QR-3 · QR-3. Статус оплаты у кассира · строка 42</h3>
+<blockquote>
+<p>Статус оплаты обновляется на экране кассира мгновенно.</p>
+</blockquote>
+<p>Ясность 7,5 — есть замечания · ⚠️ Однозн. <a href="#d-001">D-001</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="d-001"></a>
+<p><strong>D-001 · 🟡 <span class="sev sev-major">MAJOR</span> · Однозначность.</strong> Размытая формулировка: «мгновенно»</p>
+<p>Слово «мгновенно» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.</p>
+<ul>
+<li>Цитата: строка 42 (цитата выше)</li>
+<li>Как исправить: Замените «мгновенно» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.</li>
+<li>Вопрос автору <a href="#v-01">В-01</a>; источник: правило <code>vague-word</code></li>
+</ul>
+</div>
+<h3 id="req-021">REQ-021 · QR-3 · QR-3. Статус оплаты у кассира · строка 44</h3>
+<blockquote>
+<p>Если оплата не поступила в течение 10 минут, счёт отменяется автоматически.</p>
+</blockquote>
+<p>Ясность 7,5 — есть замечания · ⚠️ Провер. <a href="#d-002">D-002</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="d-002"></a>
+<p><strong>D-002 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
+<p>Задан срок «в течение 10 минут», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.</p>
+<ul>
+<li>Цитата: строка 44 (цитата выше)</li>
+<li>Как исправить: Допишите условия измерения: «в течение 10 минут для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан.</li>
+<li>Вопрос автору <a href="#v-02">В-02</a>; источник: правило <code>time-without-conditions</code></li>
+</ul>
+</div>
+<h3 id="req-055">REQ-055 · QR-13 · QR-13. Удобство · строка 109</h3>
+<blockquote>
+<p>Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно.</p>
+</blockquote>
+<p>Ясность 7,5 — есть замечания · ⚠️ Однозн. <a href="#d-003">D-003</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="d-003"></a>
+<p><strong>D-003 · 🟡 <span class="sev sev-major">MAJOR</span> · Однозначность.</strong> Размытые формулировки: «удобный», «понятный», «удобно»</p>
+<p>Слово «удобный» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. Здесь же: «понятный», «удобно». Как в <a href="#d-001">D-001</a>.</p>
+<ul>
+<li>Цитата: строка 109 (цитата выше)</li>
+<li>Как исправить: Замените «удобный» проверяемым условием: задайте проверяемый критерий: число шагов до цели, время выполнения задачи пользователем или ссылку на утверждённый макет.</li>
+<li>Вопрос автору <a href="#v-03">В-03</a>; источник: правило <code>vague-word</code></li>
+</ul>
+</div>
+<a id="s3-clean"></a><p><strong>Требования без замечаний (53)</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-left">Где</th><th class="a-left">Начало текста (полностью — в <a href="#s2">разделе 2</a>)</th></tr></thead><tbody>
+<tr><td class="a-left"><a id="req-001"></a>REQ-001</td><td class="a-left">строка 10</td><td class="a-left">Продавец — ИП или ТОО, подключившее…</td></tr>
+<tr><td class="a-left"><a id="req-002"></a>REQ-002</td><td class="a-left">строка 11</td><td class="a-left">Кассир — сотрудник продавца с…</td></tr>
+<tr><td class="a-left"><a id="req-003"></a>REQ-003</td><td class="a-left">строка 12</td><td class="a-left">Динамический QR — QR-код на одну…</td></tr>
+<tr><td class="a-left"><a id="req-004"></a>REQ-004</td><td class="a-left">строка 13</td><td class="a-left">Статический QR — наклейка на кассе без…</td></tr>
+<tr><td class="a-left"><a id="req-005"></a>REQ-005</td><td class="a-left">строка 14</td><td class="a-left">Комиссия — плата банка за принятую…</td></tr>
+<tr><td class="a-left"><a id="req-006"></a>REQ-006</td><td class="a-left">строка 18</td><td class="a-left">Сумма одной оплаты по любому QR — от…</td></tr>
+<tr><td class="a-left"><a id="req-007"></a>REQ-007</td><td class="a-left">строка 19</td><td class="a-left">Все суммы — в тенге, целым числом.</td></tr>
+<tr><td class="a-left"><a id="req-008"></a>REQ-008 QR-1</td><td class="a-left">строка 24</td><td class="a-left">Как кассир, я хочу сформировать QR-код…</td></tr>
+<tr><td class="a-left"><a id="req-009"></a>REQ-009 QR-1</td><td class="a-left">строка 26</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-010"></a>REQ-010 QR-1</td><td class="a-left">строка 27</td><td class="a-left">Дано: кассир вошёл в приложение…</td></tr>
+<tr><td class="a-left"><a id="req-011"></a>REQ-011 QR-1</td><td class="a-left">строка 28</td><td class="a-left">Сумма — целое число тенге от 100 до 1…</td></tr>
+<tr><td class="a-left"><a id="req-012"></a>REQ-012 QR-1</td><td class="a-left">строка 29</td><td class="a-left">QR-код действует 5 минут с момента…</td></tr>
+<tr><td class="a-left"><a id="req-013"></a>REQ-013 QR-2</td><td class="a-left">строка 32</td><td class="a-left">Как продавец, я хочу распечатать…</td></tr>
+<tr><td class="a-left"><a id="req-014"></a>REQ-014 QR-2</td><td class="a-left">строка 34</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-015"></a>REQ-015 QR-2</td><td class="a-left">строка 35</td><td class="a-left">Наклейка печатается из раздела «Мои…</td></tr>
+<tr><td class="a-left"><a id="req-016"></a>REQ-016 QR-2</td><td class="a-left">строка 36</td><td class="a-left">Покупатель после сканирования видит…</td></tr>
+<tr><td class="a-left"><a id="req-017"></a>REQ-017 QR-3</td><td class="a-left">строка 39</td><td class="a-left">Как кассир, я хочу видеть, что…</td></tr>
+<tr><td class="a-left"><a id="req-018"></a>REQ-018 QR-3</td><td class="a-left">строка 41</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-020"></a>REQ-020 QR-3</td><td class="a-left">строка 43</td><td class="a-left">Дано: QR на 4 500 ₸ выставлен. Когда…</td></tr>
+<tr><td class="a-left"><a id="req-022"></a>REQ-022 QR-4</td><td class="a-left">строка 47</td><td class="a-left">Как кассир, я хочу отменить…</td></tr>
+<tr><td class="a-left"><a id="req-023"></a>REQ-023 QR-4</td><td class="a-left">строка 49</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-024"></a>REQ-024 QR-4</td><td class="a-left">строка 50</td><td class="a-left">Дано: счёт в статусе «Ожидает оплаты»…</td></tr>
+<tr><td class="a-left"><a id="req-025"></a>REQ-025 QR-4</td><td class="a-left">строка 51</td><td class="a-left">Отменённый счёт нельзя вернуть в…</td></tr>
+<tr><td class="a-left"><a id="req-026"></a>REQ-026 QR-5</td><td class="a-left">строка 56</td><td class="a-left">Как продавец, я хочу получать деньги…</td></tr>
+<tr><td class="a-left"><a id="req-027"></a>REQ-027 QR-5</td><td class="a-left">строка 58</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-028"></a>REQ-028 QR-5</td><td class="a-left">строка 59</td><td class="a-left">Зачисление на текущий счёт продавца…</td></tr>
+<tr><td class="a-left"><a id="req-029"></a>REQ-029 QR-5</td><td class="a-left">строка 60</td><td class="a-left">Пример: оплата 10 000 ₸ → продавцу…</td></tr>
+<tr><td class="a-left"><a id="req-030"></a>REQ-030 QR-6</td><td class="a-left">строка 63</td><td class="a-left">Как кассир, я хочу оформить возврат по…</td></tr>
+<tr><td class="a-left"><a id="req-031"></a>REQ-031 QR-6</td><td class="a-left">строка 65</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-032"></a>REQ-032 QR-6</td><td class="a-left">строка 66</td><td class="a-left">Возврат оформляется из карточки оплаты…</td></tr>
+<tr><td class="a-left"><a id="req-033"></a>REQ-033 QR-6</td><td class="a-left">строка 67</td><td class="a-left">Допускается частичный возврат; сумма…</td></tr>
+<tr><td class="a-left"><a id="req-034"></a>REQ-034 QR-6</td><td class="a-left">строка 68</td><td class="a-left">Деньги возвращаются на счёт, с…</td></tr>
+<tr><td class="a-left"><a id="req-035"></a>REQ-035 QR-7</td><td class="a-left">строка 71</td><td class="a-left">Как продавец, я хочу ограничить права…</td></tr>
+<tr><td class="a-left"><a id="req-036"></a>REQ-036 QR-7</td><td class="a-left">строка 73</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-037"></a>REQ-037 QR-7</td><td class="a-left">строка 74</td><td class="a-left">Кассир не может оформлять возвраты и…</td></tr>
+<tr><td class="a-left"><a id="req-038"></a>REQ-038 QR-7</td><td class="a-left">строка 75</td><td class="a-left">Вход кассира — по PIN-коду из 4 цифр…</td></tr>
+<tr><td class="a-left"><a id="req-039"></a>REQ-039 QR-7</td><td class="a-left">строка 76</td><td class="a-left">Оператор может выставлять и отменять…</td></tr>
+<tr><td class="a-left"><a id="req-040"></a>REQ-040 QR-8</td><td class="a-left">строка 79</td><td class="a-left">Как продавец, я хочу видеть историю…</td></tr>
+<tr><td class="a-left"><a id="req-041"></a>REQ-041 QR-8</td><td class="a-left">строка 81</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-042"></a>REQ-042 QR-8</td><td class="a-left">строка 82</td><td class="a-left">История показывает дату, время, сумму…</td></tr>
+<tr><td class="a-left"><a id="req-043"></a>REQ-043 QR-8</td><td class="a-left">строка 83</td><td class="a-left">Отчёт автоматически отправляется на…</td></tr>
+<tr><td class="a-left"><a id="req-044"></a>REQ-044 QR-9</td><td class="a-left">строка 86</td><td class="a-left">Средства по оплатам QR зачисляются на…</td></tr>
+<tr><td class="a-left"><a id="req-045"></a>REQ-045 QR-10</td><td class="a-left">строка 91</td><td class="a-left">Как покупатель, я хочу получить чек по…</td></tr>
+<tr><td class="a-left"><a id="req-046"></a>REQ-046 QR-10</td><td class="a-left">строка 93</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-047"></a>REQ-047 QR-10</td><td class="a-left">строка 94</td><td class="a-left">После оплаты покупателю приходит SMS…</td></tr>
+<tr><td class="a-left"><a id="req-048"></a>REQ-048 QR-10</td><td class="a-left">строка 95</td><td class="a-left">Чек по ссылке открывается без входа в…</td></tr>
+<tr><td class="a-left"><a id="req-049"></a>REQ-049 QR-10</td><td class="a-left">строка 96</td><td class="a-left">Макет чека — см. макет М-12.</td></tr>
+<tr><td class="a-left"><a id="req-050"></a>REQ-050 QR-11</td><td class="a-left">строка 99</td><td class="a-left">Как продавец, я хочу получать push о…</td></tr>
+<tr><td class="a-left"><a id="req-051"></a>REQ-051 QR-11</td><td class="a-left">строка 101</td><td class="a-left">Критерии приёмки:</td></tr>
+<tr><td class="a-left"><a id="req-052"></a>REQ-052 QR-11</td><td class="a-left">строка 102</td><td class="a-left">Push содержит сумму и время оплаты и…</td></tr>
+<tr><td class="a-left"><a id="req-053"></a>REQ-053 QR-11</td><td class="a-left">строка 103</td><td class="a-left">Push не отправляется, если продавец…</td></tr>
+<tr><td class="a-left"><a id="req-054"></a>REQ-054 QR-12</td><td class="a-left">строка 106</td><td class="a-left">Необходимо реализовать передачу данных…</td></tr>
+<tr><td class="a-left"><a id="req-056"></a>REQ-056</td><td class="a-left">строка 113</td><td class="a-left">Описание будет добавлено позже.</td></tr>
+</tbody></table></div>
+<h2 id="s4">4. Проверка всего набора требований</h2>
+<p>Здесь замечания к документу в целом: противоречия между разделами, пропуски, стандарты, термины, нумерация. Без модели — только то, что находят автоматические правила.</p>
+<h3>4.1 Полнота набора</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<h3>4.2 Взаимная непротиворечивость</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<h3>4.3 Реализуемость, стандарты и безопасность</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<h3>4.4 Понятность и термины</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<h3>4.5 Прослеживаемость</h3>
+<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<p>Покрытие требований критериями приёмки строит модель; без неё оно не оценивалось.</p>
+<h3 id="s4-gaps">Карта полноты: контрольные вопросы к документу</h3>
+<p>Агент обязан ответить на каждый из 35 вопросов — так ни один типовой пробел не пропускается молча. Карта сама не меняет индексы и итог: на них влияют только связанные замечания.</p>
+<p>Итого: описано 0 · пробелов 0 · не относится 3 · не оценено 32.</p>
+<p>Без модели на остальные 32 вопросов никто не отвечал; их список — в JSON-версии отчёта (поле <code>gap_map</code>).</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Вопрос</th><th class="a-left">Ответ</th><th class="a-left">На чём основан ответ</th></tr></thead><tbody>
+<tr><td class="a-left">IF1. Надёжность интерфейса</td><td class="a-left">— не относится</td><td class="a-left">в документе нет описания программного интерфейса</td></tr>
+<tr><td class="a-left">IF2. Ошибки интерфейса</td><td class="a-left">— не относится</td><td class="a-left">в документе нет описания программного интерфейса</td></tr>
+<tr><td class="a-left">IF3. Права доступа в интерфейсе</td><td class="a-left">— не относится</td><td class="a-left">в документе нет описания программного интерфейса</td></tr>
+</tbody></table></div>
+<h3 id="s4-obs">Наблюдения (проверьте сами, на итог не влияют)</h3>
+<p>Эти признаки находятся словарными правилами низкой точности: часто это нормальная формулировка. Они не входят в число дефектов, индексы и вердикт.</p>
+<ul>
+<li><a id="n-01"></a><strong>Н-01</strong> · строка 19 · <a href="#req-007">REQ-007</a> · Обобщение «Все» без границ: «Все суммы — в тенге, целым числом»</li>
+<li><a id="n-02"></a><strong>Н-02</strong> · строка 67 · <a href="#req-033">REQ-033</a> · Неясно, обязательно ли требование («Допускается»): «Допускается частичный возврат; сумма одного возврата не превышает сумму исходной оплаты»</li>
+<li><a id="n-03"></a><strong>Н-03</strong> · строка 74 · <a href="#req-037">REQ-037</a> · Неясно, обязательно ли требование («может»): «Кассир не может оформлять возвраты и не видит выручку за прошлые дни»</li>
+<li><a id="n-04"></a><strong>Н-04</strong> · строка 74 · <a href="#req-037">REQ-037</a> · Требование сформулировано через отрицание («не может»): «Кассир не может оформлять возвраты и не видит выручку за прошлые дни»</li>
+<li><a id="n-05"></a><strong>Н-05</strong> · строка 76 · <a href="#req-039">REQ-039</a> · Неясно, обязательно ли требование («может»): «Оператор может выставлять и отменять счета только в своей смене»</li>
+<li><a id="n-06"></a><strong>Н-06</strong> · строка 83 · <a href="#req-043">REQ-043</a> · Обобщение «каждый» без границ: «Отчёт автоматически отправляется на e-mail бухгалтера каждый понедельник»</li>
+</ul>
+<h2 id="s5">5. Сводка</h2>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Показатель</th><th class="a-right">Значение</th></tr></thead><tbody>
+<tr><td class="a-left">Требований всего</td><td class="a-right">56</td></tr>
+<tr><td class="a-left">— без замечаний</td><td class="a-right">53</td></tr>
+<tr><td class="a-left">— с замечаниями</td><td class="a-right">3</td></tr>
+<tr><td class="a-left">Замечаний всего</td><td class="a-right">3</td></tr>
+<tr><td class="a-left">— 🔴 <span class="sev sev-critical">CRITICAL</span> (блокеры)</td><td class="a-right">0</td></tr>
+<tr><td class="a-left">— 🟡 <span class="sev sev-major">MAJOR</span> (существенные)</td><td class="a-right">3</td></tr>
+<tr><td class="a-left">— 🟢 <span class="sev sev-minor">MINOR</span> (мелкие)</td><td class="a-right">0</td></tr>
+<tr><td class="a-left">Наблюдений (на итог не влияют)</td><td class="a-right">6</td></tr>
+<tr><td class="a-left">Вопросов автору</td><td class="a-right">3</td></tr>
+<tr><td class="a-left">Контрольных вопросов к документу</td><td class="a-right">35, из них пробелов 0</td></tr>
+<tr><td class="a-left">Тестов можно написать уже сейчас</td><td class="a-right">5</td></tr>
+<tr><td class="a-left">Тестов нельзя написать без ответа автора</td><td class="a-right">0</td></tr>
+</tbody></table></div>
+<p><strong>Замечания по критериям качества</strong></p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Критерий</th><th class="a-right">Замечаний</th><th class="a-left">Основание</th></tr></thead><tbody>
+<tr><td class="a-left">Однозначность</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2</td></tr>
+<tr><td class="a-left">Проверяемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6</td></tr>
+</tbody></table></div>
+<p><strong>Индекс готовности документа</strong></p>
+<p><strong>99 из 100 — готов</strong> (предварительно: применены только правила). Шкала: 85 и выше — готов, 60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов.</p>
+<p>Как посчитан: 10 × 9,87 (средняя ясность 56 треб.) − 0 (штраф за замечания к набору: 8×0 + 3×0 + 1×0 = 0) = 99. Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
+<p>Требования по ясности: ясное — 53 · есть замечания — 3 · нужна доработка — 0 · в таком виде использовать нельзя — 0.</p>
+<p>Плотность: 0,05 дефекта на одно требование · 4,0 на 1000 слов документа. Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.</p>
+<p><strong>Критичные дефекты:</strong> нет.</p>
+<p><strong>Время и стоимость:</strong> 0,1 с, $0 (модель не вызывалась).</p>
+<h2 id="s6">6. Итог</h2>
+<p><strong>⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (модель не использовалась: проверены только автоматические правила, итог предварительный)</strong></p>
+<p>Блокеров нет, но есть 3 существенных замечания: без ответов автора разработчик и тестировщик могут понять эти места по-разному. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.</p>
+<p><strong>Что исправить в первую очередь</strong></p>
+<ol>
+<li>Размытая формулировка: «мгновенно». (<a href="#d-001">D-001</a>)</li>
+<li>Ограничение по времени без условий измерения. (<a href="#d-002">D-002</a>)</li>
+<li>Размытые формулировки: «удобный», «понятный», «удобно». (<a href="#d-003">D-003</a>)</li>
+</ol>
+<p><strong>Что в документе уже хорошо</strong></p>
+<p>Без модели сильные стороны документа не оцениваются.</p>
+<h2 id="s7">7. Уточняющие вопросы к автору ТЗ</h2>
+<p>3 вопроса составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
+<h3>Важные (3)</h3>
+<div class="card"><a id="v-01"></a>
+<p><strong>В-01.</strong> Что конкретно означает «мгновенно» в этом требовании? (кому: аналитик — автор документа; к <a href="#d-001">D-001</a>)</p>
+</div>
+<div class="card"><a id="v-02"></a>
+<p><strong>В-02.</strong> Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение 10 минут»? (кому: владелец продукта (бизнес); к <a href="#d-002">D-002</a>)</p>
+</div>
+<div class="card"><a id="v-03"></a>
+<p><strong>В-03.</strong> Что конкретно означает «удобный» в этом требовании? (кому: аналитик — автор документа; к <a href="#d-003">D-003</a>)</p>
+</div>
+<h2 id="s8">8. Черновики приёмочных тестов</h2>
+<p>Можно написать уже сейчас: 5 · Нельзя написать без ответа автора: 0. Полные тексты (Дано / Когда / Тогда) — в файле <code>*.tests.md</code> рядом с отчётом.</p>
+<ul>
+<li>Готовы: <a id="t-01"></a>Т-01 (<a href="#req-006">REQ-006</a>), <a id="t-02"></a>Т-02 (<a href="#req-011">REQ-011</a>), <a id="t-03"></a>Т-03 (<a href="#req-011">REQ-011</a>), <a id="t-04"></a>Т-04 (<a href="#req-015">REQ-015</a>), <a id="t-05"></a>Т-05 (<a href="#req-015">REQ-015</a>).</li>
+</ul>
+<h2 id="app">Приложение. Как получен отчёт</h2>
+<p><strong>Метод.</strong></p>
+<ol>
+<li>Документ читается и делится на блоки (абзацы, пункты, строки таблиц); номера строк берутся из исходного текста. Значения, похожие на номера карт и ИИН, маскируются до любой обработки.</li>
+<li>Блоки делятся на требования и служебные части эвристикой; номера REQ-… присваивает программа.</li>
+<li>Автоматические правила (набор 1.1: 27 основных и 8 слабых «наблюдений») ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, схемы без веток ошибок, подсадной текст для ИИ.</li>
+<li>Модель не использовалась: проверки по смыслу (противоречия, пропущенные сценарии, пограничные случаи) не выполнялись.</li>
+<li>Каждую цитату программа ищет в тексте документа; замечание без найденной цитаты выбрасывается, в отчёт попадает исходный текст, а не пересказ. Номера, индексы, вердикт и отметки в матрице считает программа; перед записью отчёта она проверяет, что его части не противоречат друг другу.</li>
+</ol>
+<p><strong>Честно о границах.</strong> Это первый проход, который экономит время проверяющего; решение остаётся за человеком. Опубликованные замеры ИИ-проверки требований показывают, что лучшие модели находят примерно половину настоящих проблем и ошибочно помечают около одного требования из десяти. Поэтому цитаты сверяет программа, а полнота агента измеряется на контрольных документах, которых он раньше не видел. В этом прогоне модель не работала, поэтому найдено заведомо меньше.</p>
+<p><strong>Ограничения этого прогона</strong></p>
+<ul>
+<li>Модель не использовалась: найдено только то, что выявляют правила по формальным признакам.</li>
+<li>Рисунки и схемы-картинки не проверяются: учитывается только текст.</li>
+<li>Агент не знает внутренних стандартов банка и не видит связанных документов, если их не передали через --context.</li>
+</ul>
+<p><strong>Подробности прогона</strong> — в файле <code>*.diagnostic.md</code> рядом с отчётом: расход по этапам, отклонённые перепроверкой (0), объединённые повторы (0), выброшенные без подтверждённой цитаты (0). Журнал решений — в JSON-версии (поле <code>audit</code>, только хэши текстов): 0 обращений к модели, 0 решений программы.</p>
+</article></main>
+<footer>Отчёт сформирован программой «Ревизор ТЗ». Решение остаётся за человеком.</footer>
+</body>
+</html>
