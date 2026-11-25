@@ -15,7 +15,7 @@ from tests.dialog_helpers import Base
 class StageUsageTests(Base):
     def test_passport_table_and_json(self):
         res, _ = self.run_fake(tp.make_script(), path=self.doc())
-        md = report_md.render(res)
+        md = report_md.render_run_details(res)  # the stage table lives in the diagnostic side file
         self.assertIn("**Расход по этапам**", md)
         self.assertIn("рассуждения модели — они оплачиваются как выход", md)
         self.assertRegex(md, r"\| нарезка \| 1 \| [\d\s]+ \| [\d\s]+ \|")

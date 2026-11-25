@@ -162,18 +162,20 @@ class DraftTitles(unittest.TestCase):
         self.assertNotIn("условий измерения", ds[0].title)
         self.assertTrue(ds[0].title.startswith("Ф-7: Сервис передаёт push"))
 
-    def test_boundary_without_result_links_a_question_and_says_so(self):
-        req = R("REQ-001", "Клиент задаёт порог от 1 000 до 1 000 000 включительно.", "Ф-1")
+    def test_boundary_without_result_goes_to_the_list_of_unverifiable(self):
+        req = R("REQ-001", "Клиент задаёт порог от 1 000 до 1 000 000.", "Ф-1")  # inclusiveness not stated
         q = Question(qid="В-03", text="Что при значении вне диапазона?", why="", addressee="analyst",
                      req_ids=["REQ-001"])
-        drafts = testgen.finalize(testgen.boundary_drafts([req]), [req], [], [q])
-        out = [d for d in drafts if not d.then][0]
-        self.assertEqual(out.blocked_by, ["В-03"])
+        audit = []
+        drafts = testgen.finalize(testgen.boundary_drafts([req]), [req], [], [q], audit)
+        self.assertTrue(all(d.then for d in drafts))
+        items = audit[0]["items"]
+        self.assertEqual(items[0]["blocked_by"], ["В-03"])
         from revizor.model import Result, RunInfo
-        res = Result(run=RunInfo(doc_name="d.md"), requirements=[req], tests=drafts, questions=[q])
-        self.assertIn("ожидаемый результат в документе не описан — нужен ответ автора", sidefiles.tests_md(res))
-        self.assertIn("ожидаемый результат в документе не описан — нужен ответ автора", report_md.render(res)
-                      if hasattr(report_md, "render") else "ожидаемый результат в документе не описан — нужен ответ автора")
+        res = Result(run=RunInfo(doc_name="d.md"), requirements=[req], tests=drafts, questions=[q], audit=audit)
+        text = sidefiles.tests_md(res)
+        self.assertIn("Что нельзя проверить, пока нет ответа", text)
+        self.assertIn("ответ: В-03", text)
 
 
 if __name__ == "__main__":

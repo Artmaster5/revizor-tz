@@ -237,7 +237,7 @@ class RunAll(unittest.TestCase):
         self.assertIn("Запланированные команды", buf.getvalue())
         md = run_all.RESULTS_MD.read_text(encoding="utf-8")
         self.assertIn("## Провайдер `offline`, модель `stub-model`", md)
-        self.assertIn("Слепые вместе (4)", md)
+        self.assertIn("Настроечные вместе (4)", md)
         self.assertIn("Честные оговорки", md)
         self.assertTrue((run_all.RESULTS_DIR / "requirements.offline.score.json").exists())
 

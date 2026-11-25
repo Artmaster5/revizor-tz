@@ -4,7 +4,8 @@ from __future__ import annotations
 import csv
 import io
 
-from . import answers as ans_mod
+from . import answers as ans_mod, rewrite_gate
+from .report_md import impact_text
 from .model import ADDRESSEE_RU, GAP_RU, TEST_KIND_RU, Question, Result
 from .textfmt import blockquote, lines_text, plain_quote, md, md_cell, quote_location, shorten
 
@@ -46,6 +47,9 @@ def questions_md(result: Result, *, input_path: str, output_path: str, questions
             out.append(f"Тип пробела: {GAP_RU.get(q.gap, q.gap)}.")
         if q.why:
             out.append(f"Почему важно: {md(q.why)}")
+        line = impact_text(q, result)
+        if line:
+            out.append(md(line) + ".")
         if q.quote is not None:
             out += ["", f"Место в документе ({quote_location(q.quote)}):", "", blockquote(shorten(plain_quote(q.quote.text), 500))]
         if q.options:
@@ -66,16 +70,22 @@ def _closing(result: Result) -> tuple[dict[str, list[str]], list[dict]]:
 
 
 def fixed_md(result: Result) -> str | None:
-    """Proposed rewrites («было → стало») from the reviewers and from the author's answers; None when empty."""
+    """Proposed rewrites («было → стало») that passed the gate of ``rewrite_gate``, the author's answers, and the
+    rewrites that did not pass (the requirement keeps its text, the row says what must change). None when empty."""
     closes, _fixed = _closing(result)
-    rows = [f for f in result.findings if f.status == "open" and not f.advisory and f.fixed_wording]
+    rows, withheld = rewrite_gate.plan(result)
+    seen = {fid for w in withheld for fid in w.fids}
+    withheld += [w for w in rewrite_gate.recorded(result) if not set(w.fids) & seen]
     chosen = [f for f in result.findings if f.status == "open" and f.closed_by_answer and not f.fixed_wording]
     waiting = [f for f in result.findings if f.status == "open" and not f.advisory and not f.fixed_wording
-               and not f.closed_by_answer and f.question_id and f.scope == "requirement"]
-    if not rows and not chosen:
+               and not f.closed_by_answer and f.question_id and f.scope == "requirement"
+               and f.fid not in {fid for w in withheld for fid in w.fids}]
+    if not rows and not chosen and not withheld:
         return None
     qa = {q.qid: q for q in result.questions}
     req_quote = {r.rid: r.quote for r in result.requirements}
+    n_withheld = sum(len(w.fids) for w in withheld)
+    by_fid = {f.fid: f for f in result.findings}
 
     def basis(f) -> str:
         qids = closes.get(f.fid, [])
@@ -83,13 +93,27 @@ def fixed_md(result: Result) -> str | None:
 
     out = [f"# Предлагаемые формулировки для «{md(result.run.doc_name)}»", "",
            "Черновики исправленных требований: написанные проверяющим без решения автора и учитывающие ответы автора. "
-           "Перед внесением в документ их должен прочитать автор: модель могла ошибиться.", ""]
+           "Перед внесением в документ их должен прочитать автор: модель могла ошибиться.", "",
+           f"Проверка смысла: предложено формулировок {len(rows) + n_withheld}, напечатано {len(rows)}, "
+           f"не напечатано {n_withheld}. Формулировка печатается, только если она описывает то же требование, не теряет "
+           "числа, коды и идентификаторы исходного текста, не сокращает его правила и не вносит значений, которых нет "
+           "в документе и в ответах автора. У остальных в таблице ниже остаётся исходный текст и сказано, что менять.", ""]
     if rows:
         out += ["| Требование | Было | Стало | Основание |", "| :--- | :--- | :--- | :--- |"]
-        for f in rows:
-            rid = f.req_ids[0] if f.req_ids else ""
-            before = plain_quote(req_quote.get(rid) or (f.quotes[0].text if f.quotes else ""))
-            out.append(f"| {rid or '—'} | {md_cell(before, 400)} | {md_cell(f.fixed_wording, 600)} | {basis(f)} |")
+        for r in rows:
+            note = "; сведены из нескольких замечаний" if r.composed else ""
+            why = "; ".join(basis(by_fid[i]) if i in by_fid else f"замечание {i}" for i in r.fids)
+            out.append(f"| {r.rid or '—'} | {md_cell(plain_quote(r.before), 400)} | {md_cell(r.after, 600)} | "
+                       f"{why}{note} |")
+    if withheld:
+        out += ["", "**Формулировка не предложена: требование остаётся как есть, нужно изменить следующее**", "",
+                "| Требование | Остаётся | Что нужно изменить | Вопрос | Почему не предложена формулировка |",
+                "| :--- | :--- | :--- | :--- | :--- |"]
+        for w in withheld:
+            need = "; ".join(md_cell(x, 300) for x in w.needs if x) + (" " + " ".join(w.gaps) if w.gaps else "")
+            ques = "; ".join(f"{q}: {md_cell(qa[q].text, 160)}" if q in qa else q for q in w.qids) or "—"
+            out.append(f"| {w.rid or '—'} | {md_cell(plain_quote(w.before), 300)} | {need or '—'} | {ques} | "
+                       f"{md_cell('; '.join(w.reasons), 400)} ({', '.join(w.fids)}) |")
     if chosen:
         out += ["", "**Что внести в документ по ответам автора** (формулировку выбранного варианта автор вписывает сам):", "",
                 "| Требование | Было | Что внести | Основание |", "| :--- | :--- | :--- | :--- |"]
@@ -105,18 +129,35 @@ def fixed_md(result: Result) -> str | None:
     return "\n".join(out) + "\n"
 
 
+def _unverifiable(result: Result) -> list[dict]:
+    items: list[dict] = []
+    for a in result.audit:
+        if a.get("type") == "test_unverifiable":
+            items += [x for x in a.get("items") or [] if isinstance(x, dict)]
+    return items
+
+
 def tests_md(result: Result) -> str | None:
-    """Acceptance-test drafts with Дано / Когда / Тогда; None when there are none."""
-    if not result.tests:
+    """Acceptance-test drafts with Дано / Когда / Тогда and the list of what cannot be checked yet; None when both are empty."""
+    unver = _unverifiable(result)
+    if not result.tests and not unver:
         return None
     qa = {q.qid: q for q in result.questions}
     fa = {f.fid: f for f in result.findings}
     ready = sum(1 for t in result.tests if t.then and not t.blocked_by)
+    waiting: dict[str, int] = {}
+    for t in result.tests:
+        if not (t.then and not t.blocked_by):
+            for qid in t.blocked_by or ["без вопроса"]:
+                waiting[qid] = waiting.get(qid, 0) + 1
+    n_wait = len(result.tests) - ready
     out = [f"# Черновики приёмочных тестов для «{md(result.run.doc_name)}»", "",
-           "Ожидаемый результат взят только из документа. Если документ его не описывает, в тесте так и написано: "
-           "придумывать поведение за автора агент не вправе. Это черновики для тестировщика, не готовые тест-кейсы.", "",
-           f"Можно написать уже сейчас: {ready} · Нельзя написать без ответа автора или описания результата: "
-           f"{len(result.tests) - ready}", ""]
+           "Ожидаемый результат взят только из документа. Черновик печатается, только если в нём есть конкретное "
+           "действие и конкретный ожидаемый результат; придумывать поведение за автора агент не вправе. Это черновики "
+           "для тестировщика, не готовые тест-кейсы.", "",
+           f"Готовы к прогону: {ready}. Ждут ответа автора: {n_wait}"
+           + (" (" + ", ".join(f"{k} — {v}" for k, v in sorted(waiting.items())) + ")" if waiting else "")
+           + f". Нельзя проверить, пока нет ответа: {len(unver)} (список в конце файла).", ""]
     for t in result.tests:
         if t.then and not t.blocked_by:
             status = "готов"
@@ -136,6 +177,22 @@ def tests_md(result: Result) -> str | None:
         if t.finding_ids:
             out.append("- Нельзя дописать, пока не снято замечание: " + "; ".join(
                 f"{i} — {md(fa[i].title)}" if i in fa else i for i in t.finding_ids))
+        out.append("")
+    if unver:
+        out += ["## Что нельзя проверить, пока нет ответа", "",
+                "Для этих требований в документе нет конкретного действия или ожидаемого результата, поэтому черновик "
+                "теста не составлен.", ""]
+        for x in unver:
+            qids = ", ".join(x.get("blocked_by") or [])
+            done = ", ".join(x.get("answered") or [])
+            fids = x.get("finding_ids") or []
+            what = md(x.get("what") or "")
+            rids = ", ".join(x.get("req_ids") or [])
+            head = what if all(r in what for r in (x.get("req_ids") or [])) else f"{rids} · {what}"
+            tail = (f"ответ: {qids}" if qids else
+                    f"ответ {done} получен: впишите его в документ, тогда тест можно составить" if done
+                    else "вопроса к автору пока нет")
+            out.append(f"- {head} — {tail}" + (f"; замечание {', '.join(fids)}" if fids else ""))
         out.append("")
     return "\n".join(out)
 

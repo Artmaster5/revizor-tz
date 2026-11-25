@@ -331,9 +331,8 @@ class ClarityScale(unittest.TestCase):
         with _TmpDoc() as d:
             res = pipeline.run(d.path, backend=None)
         text = report_md.render(res)
-        self.assertIn("такую оценку получает только требование, у которого есть блокер", text)
-        self.assertIn("10 − 6,5 за каждый блокер", text)
-        self.assertIn("если блокера у требования нет — не ниже 4", text)
+        self.assertIn("Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5", text)
+        self.assertIn("не ниже 1, а без блокера не ниже 4", text)
 
 
 # --- task 4: version label -----------------------------------------------------------------------------------------
@@ -425,8 +424,8 @@ class DocTitle(unittest.TestCase):
         self.assertEqual(res.run.doc_title, "Уведомление о порогах")
         text = report_md.render(res)
         self.assertIn("| Документ | ", text)
-        after = text.split("| Документ | ", 1)[1].split("\n", 2)
-        self.assertTrue(after[1].startswith("| Название документа | Уведомление о порогах |"))
+        row = text.split("| Документ | ", 1)[1].split("\n", 1)[0]
+        self.assertTrue(row.endswith("· «Уведомление о порогах» |"), row)
         import json
         self.assertEqual(json.loads(report_json.render(res))["run"]["doc_title"], "Уведомление о порогах")
 
@@ -442,7 +441,8 @@ class DocTitle(unittest.TestCase):
         self.assertEqual(RunInfo().doc_title, "")
         res = self.title_of(test_pipeline.DOC)
         res.run.doc_title = ""
-        self.assertIn("| Название документа | не найдено |", report_md.render(res))
+        row = report_md.render(res).split("| Документ | ", 1)[1].split("\n", 1)[0]
+        self.assertNotIn("«", row)
 
 
 # --- task 6: masked values keep their asterisks -------------------------------------------------------------------

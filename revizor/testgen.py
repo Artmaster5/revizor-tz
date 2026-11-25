@@ -37,6 +37,12 @@ _OVER = re.compile(rf"(?<![\w.,])(?<!не\s)(более|свыше|больше)
 _UNDER = re.compile(rf"(?<![\w.,])(?<!не\s)(менее|меньше)\s+({_NUM})({_UNIT})", re.I)
 _REJECT = re.compile(r"отклон\w*|ошибк\w*|недопустим\w*|не\s+принима\w*|отказ\w*|запрещ\w*|не\s+допуска\w*|не\s+может\s+быть", re.I)
 _SENT_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")
+_INCL_WORDS = re.compile(r"включительно|включая\s+границ|(?:обе\s+)?границы\s+включен", re.I)
+_EXCL_WORDS = re.compile(r"не\s+включая|исключая|не\s+включительно|(?:обе\s+)?границы\s+не\s+включен|строго\s+(?:больше|меньше|между)", re.I)
+_STEP_KNOWN = re.compile(r"цел(?:ое|ых|ым|ого|ые)\b|целочисл|\bцелы\w+", re.I)
+_STEP_QUESTION = re.compile(r"\bшаг|дробн|копе[ей]|тиын|округл|целое|целых|точност|десятичн", re.I)
+_TEMPLATE_WHEN = re.compile(r"^\W*(?:выполнить|совершить|провести|осуществить)\s+(?:любое\s+|то\s+)?(?:действие|сценарий|шаг|операцию|проверку)\b", re.I)
+_TEMPLATE_THEN = re.compile(r"^\W*(?:результат|поведение|ответ|система\s+работает)\s+(?:должн\w+\s+)?соответств\w+\s+(?:требовани|документ|описани|ожидани)", re.I)
 
 _COND_START = re.compile(r"^(?:Если|Когда|При|После|Пока)\s+", re.I)
 _HTTP_ROW = re.compile(r"^(?P<code>[1-5]\d\d)[.:]?\s+(?:Ответ\s+)?(?:в\s+случае|когда|если)[,\s]+(?:если\s+|когда\s+)?(?P<cond>.{6,200}?)[.]?$", re.I)
@@ -83,6 +89,11 @@ def _sentence(text: str, pos: int) -> str:
     return text[start:end + 1].strip()
 
 
+def _word_states(word: str) -> bool:
+    """«не более», «не менее», «максимум», «≤» say that the number itself is allowed; a bare «до» or «от» does not."""
+    return word.strip().lower() not in ("до", "от")
+
+
 def limits(text: str) -> list[dict[str, Any]]:
     """Numeric limits in a requirement: [{kind, low, high, unit, tok, span, sentence, inclusive}]."""
     t = clean(text)
@@ -92,29 +103,37 @@ def limits(text: str) -> list[dict[str, Any]]:
     def free(a: int, b: int) -> bool:
         return all(b <= x or a >= y for x, y in taken)
 
-    def add(kind, m, low=None, high=None, unit="", tok="", inclusive=True):
+    def add(kind, m, low=None, high=None, unit="", tok="", inclusive=True, stated=False):
         if not free(m.start(), m.end()):
             return
         taken.append((m.start(), m.end()))
+        sent = _sentence(t, m.start())
+        if kind == "range":  # the text may say outright whether the borders belong to the range
+            if _EXCL_WORDS.search(sent):
+                inclusive, stated = False, True
+            elif stated or _INCL_WORDS.search(sent):
+                inclusive, stated = True, True
         found.append({"kind": kind, "low": low, "high": high, "unit": _unit(unit), "tok": tok,
-                      "sentence": _sentence(t, m.start()), "inclusive": inclusive, "pos": m.start()})
+                      "sentence": sent, "inclusive": inclusive, "stated": stated, "pos": m.start(),
+                      "phrase": m.group(0).strip(),
+                      "step_known": bool(re.search(r"[.,]\d", tok or "") or _STEP_KNOWN.search(sent))})
 
     for m in _RANGE.finditer(t):
         lo, hi = to_number(m.group(1)), to_number(m.group(2))
         if lo < hi:
-            add("range", m, lo, hi, m.group(3), m.group(1), True)
+            add("range", m, lo, hi, m.group(3), m.group(1), True, bool(m.group(4)))
     for m in _RANGE_DASH.finditer(t):
         lo, hi = to_number(m.group(1)), to_number(m.group(2))
         if lo < hi:
             add("range", m, lo, hi, m.group(3), m.group(1), True)
     for m in _MAX.finditer(t):
-        add("max", m, None, to_number(m.group(2)), m.group(3), m.group(2), True)
+        add("max", m, None, to_number(m.group(2)), m.group(3), m.group(2), True, _word_states(m.group(1)))
     for m in _MIN.finditer(t):
-        add("min", m, to_number(m.group(2)), None, m.group(3), m.group(2), True)
+        add("min", m, to_number(m.group(2)), None, m.group(3), m.group(2), True, _word_states(m.group(1)))
     for m in _OVER.finditer(t):
-        add("over", m, to_number(m.group(2)), None, m.group(3), m.group(2), False)
+        add("over", m, to_number(m.group(2)), None, m.group(3), m.group(2), False, True)
     for m in _UNDER.finditer(t):
-        add("under", m, None, to_number(m.group(2)), m.group(3), m.group(2), False)
+        add("under", m, None, to_number(m.group(2)), m.group(3), m.group(2), False, True)
     found.sort(key=lambda d: d["pos"])
     return found
 
@@ -134,6 +153,8 @@ def _vals(lim: dict[str, Any]) -> tuple[list[float], list[float], list[str]]:
     st = _step(lim["tok"]) if lim["tok"] else 1.0
     lo, hi = lim["low"], lim["high"]
     if k == "range":
+        if not lim.get("inclusive", True):
+            return [lo + st, hi - st], [lo, hi], []
         return [lo, hi], [lo - st, hi + st], []
     if k == "max":
         return [hi], [hi + st], []
@@ -146,6 +167,9 @@ def _vals(lim: dict[str, Any]) -> tuple[list[float], list[float], list[str]]:
 
 def _fmt_list(vals: list[float], unit: str, ref: str) -> str:
     return ", ".join(fmt(v, ref) for v in vals) + (f" {unit}" if unit else "")
+
+
+STEP_NOTE = "шаг значения не задан: взяты соседние целые"
 
 
 def boundary_drafts(reqs: list[Requirement]) -> list[TestDraft]:
@@ -161,21 +185,32 @@ def boundary_drafts(reqs: list[Requirement]) -> list[TestDraft]:
             ref = lim["tok"]
             unit = lim["unit"]
             lab = _label(req)
+            stated = bool(lim.get("stated"))
+            note = "" if lim.get("step_known", True) else f" ({STEP_NOTE}.)"
+            own = [fmt(v, ref) for v in (lim["low"], lim["high"]) if v is not None]
+            phrase = lim.get("phrase", "")
             if inside:
+                then = (f"Значения принимаются без ошибки: по требованию {lab} допустимо «{phrase}»." if stated
+                        else f"Значения принимаются без ошибки (требование {lab} допускает их).")
                 out.append(TestDraft(
-                    tid="", kind="boundary", req_ids=[req.rid], origin="rule",
+                    tid="", kind="boundary", req_ids=[req.rid], origin="rule", explicit_limit=stated, values=own,
                     title=f"{lab}: граничные допустимые значения {_fmt_list(inside, unit, ref)}",
                     given=f"Система работает в обычном режиме; проверяется требование {lab}: «{subj}».",
-                    when=f"Ввести или передать значения на границе допустимого: {_fmt_list(inside, unit, ref)}.",
-                    then=f"Значения принимаются без ошибки (требование {lab} допускает их)."))
+                    when=f"Ввести или передать значения на границе допустимого: {_fmt_list(inside, unit, ref)}.{note}",
+                    then=then))
             if outside:
                 reject = next((x for x in _SENT_SPLIT.split(text) if re.search(r"отклон|ошибк|не\s+принима|недопустим|не\s+допуска", x, re.I)), "")
-                then = (f"Значения отклоняются так, как описано в требовании: «{shorten(reject, 160)}»." if reject else "")
+                if reject:
+                    then = f"Значения отклоняются так, как описано в требовании: «{shorten(reject, 160)}»."
+                elif stated:
+                    then = f"Значения не принимаются как допустимые: по требованию {lab} допустимо только «{phrase}»."
+                else:
+                    then = ""
                 out.append(TestDraft(
-                    tid="", kind="boundary", req_ids=[req.rid], origin="rule",
+                    tid="", kind="boundary", req_ids=[req.rid], origin="rule", explicit_limit=stated, values=own,
                     title=f"{lab}: значения сразу за границей {_fmt_list(outside, unit, ref)}",
                     given=f"Система работает в обычном режиме; проверяется требование {lab}: «{subj}».",
-                    when=f"Ввести или передать значения сразу за границей: {_fmt_list(outside, unit, ref)}.",
+                    when=f"Ввести или передать значения сразу за границей: {_fmt_list(outside, unit, ref)}.{note}",
                     then=then))
     return out
 
@@ -324,30 +359,116 @@ def merge(det: list[TestDraft], extra: list[TestDraft]) -> list[TestDraft]:
     return out
 
 
-def finalize(drafts: list[TestDraft], reqs: list[Requirement], findings: list[Finding], questions: list[Question]) -> list[TestDraft]:
-    """Deterministic order and ids; blocked_by from open CRITICAL/MAJOR findings whose question is still unanswered."""
+def is_template(t: TestDraft) -> bool:
+    """A draft without a concrete action or a concrete expected result: the step is a stock phrase, or empty."""
+    when, then = (t.when or "").strip(), (t.then or "").strip()
+    if len(when.split()) < 3 or _TEMPLATE_WHEN.match(when):
+        return True
+    return not then or bool(_TEMPLATE_THEN.match(then))
+
+
+def _words(s: str) -> set[str]:
+    return set(_flat(s).split())
+
+
+def _jaccard(a: str, b: str) -> float:
+    x, y = _words(a), _words(b)
+    return len(x & y) / len(x | y) if x | y else 1.0
+
+
+def same_check(a: TestDraft, b: TestDraft) -> bool:
+    """Same requirement, same input values, same expected result — one draft is enough."""
+    return (set(a.req_ids) == set(b.req_ids) and a.kind == b.kind and _nums(a.when) == _nums(b.when)
+            and _jaccard(a.then, b.then) >= 0.8 and _jaccard(a.when, b.when) >= 0.5)
+
+
+def dedupe(drafts: list[TestDraft]) -> list[TestDraft]:
+    out: list[TestDraft] = []
+    for t in drafts:
+        twin = next((o for o in out if same_check(o, t)), None)
+        if twin is None:
+            out.append(t)
+            continue
+        for q in t.blocked_by:
+            if q not in twin.blocked_by:
+                twin.blocked_by.append(q)
+        for f in t.finding_ids:
+            if f not in twin.finding_ids:
+                twin.finding_ids.append(f)
+        if not twin.then and t.then:  # keep the concrete one
+            twin.then, twin.when, twin.given = t.then, t.when, t.given
+    return out
+
+
+def _disputes(f: Finding, t: TestDraft, req_text: str) -> bool:
+    """The finding names one of the limit's own numbers in its text or in a quote narrower than the requirement."""
+    from .rewrite_gate import NARROW_QUOTE, _norm_num, specials
+    parts = [f.title or "", f.problem or "", f.recommendation or ""]
+    parts += [q.text for q in f.quotes if len(q.text) < NARROW_QUOTE * max(len(req_text), 1)]
+    seen = specials("\n".join(parts), label=True).numbers
+    return any(_norm_num(v) in seen for v in t.values)
+
+
+def finalize(drafts: list[TestDraft], reqs: list[Requirement], findings: list[Finding], questions: list[Question],
+             audit: list[dict] | None = None) -> list[TestDraft]:
+    """Deterministic order and ids; blocked_by from open CRITICAL/MAJOR findings whose question is still unanswered.
+
+    A boundary draft that code built from a limit with stated inclusiveness is ready whatever other questions the
+    requirement has; only an open finding that names the limit's own numbers blocks it, and only through its question.
+    A draft without a concrete action or expected result is not a draft: it goes to the list «что нельзя проверить»
+    (``audit`` entry ``test_unverifiable``)."""
     order = {r.rid: k for k, r in enumerate(reqs)}
+    req_text = {r.rid: r.quote or r.summary for r in reqs}
     kind_rank = {"boundary": 0, "positive": 1, "negative": 2}
     origin_rank = {"rule": 0, "model": 1}
     ranked = sorted(enumerate(drafts), key=lambda p: (order.get(p[1].req_ids[0], 10**6) if p[1].req_ids else 10**6,
                                                        origin_rank.get(p[1].origin, 2), kind_rank.get(p[1].kind, 3), p[0]))
     q_answered = {q.qid: bool(q.answer) and "обращённый к проверяющему" not in q.answer_effect for q in questions}
     q_known = set(q_answered)
-    out: list[TestDraft] = []
-    for n, (_i, t) in enumerate(ranked, 1):
-        t.tid = f"Т-{n:02d}"
+    live = [f for f in findings if f.status == "open" and not f.advisory and not f.closed_by_answer]
+    kept: list[TestDraft] = []
+    unverifiable: list[dict] = []
+    for _i, t in ranked:
         blocked = [q for q in t.blocked_by if q in q_known and not q_answered.get(q)]
-        for f in findings:
-            if (f.status == "open" and not f.advisory and not f.closed_by_answer and f.severity in ("CRITICAL", "MAJOR")
-                    and f.question_id and set(f.req_ids) & set(t.req_ids)
-                    and not q_answered.get(f.question_id) and f.question_id not in blocked):
-                blocked.append(f.question_id)
-        if not t.then and not blocked:  # no expected result in the document: ask the author, if a question exists
-            qn = next((q.qid for q in questions if not q_answered.get(q.qid) and set(q.req_ids) & set(t.req_ids)), "")
-            if qn:
-                blocked.append(qn)
+        if t.explicit_limit and t.then:
+            blocked = []
+            for f in live:
+                if set(f.req_ids) & set(t.req_ids) and _disputes(f, t, req_text.get(t.req_ids[0], "")):
+                    if f.fid not in t.finding_ids:
+                        t.finding_ids.append(f.fid)
+                    if f.question_id and not q_answered.get(f.question_id) and f.question_id not in blocked:
+                        blocked.append(f.question_id)
+            if t.finding_ids and not blocked:  # disputed, but the finding has no question: nothing to wait for
+                unverifiable.append({"req_ids": t.req_ids, "what": t.title, "blocked_by": [], "finding_ids": t.finding_ids,
+                                     "why": "граница оспорена замечанием, вопроса к нему нет"})
+                continue
+            step_q = next((q.qid for q in questions if not q_answered.get(q.qid) and set(q.req_ids) & set(t.req_ids)
+                           and _STEP_QUESTION.search(q.text)), "")
+            if STEP_NOTE in t.when and step_q:
+                t.when += f" Шаг значения уточняет вопрос {step_q}."
+        else:
+            for f in live:
+                if (f.severity in ("CRITICAL", "MAJOR") and f.question_id and set(f.req_ids) & set(t.req_ids)
+                        and not q_answered.get(f.question_id) and f.question_id not in blocked):
+                    blocked.append(f.question_id)
+            if not t.then and not blocked:  # no expected result in the document: ask the author, if a question exists
+                qn = next((q.qid for q in questions if not q_answered.get(q.qid) and set(q.req_ids) & set(t.req_ids)), "")
+                if qn:
+                    blocked.append(qn)
         t.blocked_by = blocked
-        out.append(t)
+        if is_template(t):
+            done = [f.question_id for f in live if f.question_id and q_answered.get(f.question_id)
+                    and set(f.req_ids) & set(t.req_ids)]
+            unverifiable.append({"req_ids": t.req_ids, "what": t.title, "blocked_by": blocked, "answered": done,
+                                 "finding_ids": t.finding_ids,
+                                 "why": "в документе нет конкретного действия или ожидаемого результата"})
+            continue
+        kept.append(t)
+    out = dedupe(kept)
+    for n, t in enumerate(out, 1):
+        t.tid = f"Т-{n:02d}"
+    if audit is not None and unverifiable:
+        audit.append({"type": "test_unverifiable", "items": unverifiable})
     return out
 
 

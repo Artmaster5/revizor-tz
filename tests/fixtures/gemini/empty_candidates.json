@@ -1,0 +1,10 @@
+{
+ "status": 200,
+ "body": {
+  "candidates": [],
+  "usageMetadata": {
+   "promptTokenCount": 900
+  },
+  "modelVersion": "gemini-3.8-flash"
+ }
+}

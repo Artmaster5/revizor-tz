@@ -50,6 +50,7 @@ _KEY_PATTERNS = [
     re.compile(r"\bsk-ant-[A-Za-z0-9_\-]{6,}"),
     re.compile(r"\bsk-[A-Za-z0-9_\-]{16,}"),
     re.compile(r"\bAIza[0-9A-Za-z_\-]{20,}"),
+    re.compile(r"\bAQ\.[0-9A-Za-z_\-.]{20,}"),  # newer Google AI Studio keys
     re.compile(r"(?i)(bearer\s+)[A-Za-z0-9._\-]{12,}"),
     re.compile(r"(?i)((?:api[_-]?key|x-goog-api-key|x-api-key|access[_-]?token|token|key)[\"']?\s*[=:]\s*[\"']?)[A-Za-z0-9._\-]{16,}"),
 ]
@@ -91,6 +92,7 @@ class LLMError(Exception):
         self.kind = kind  # "network" | "timeout" | "rate" | "server" | ""
         self.usage: Usage | None = None  # tokens spent by the failed call, if known
         self.limit: int | None = None  # token limit that was hit (kind == "truncated")
+        self.final = False  # True: the backend already retried this itself, the base loop must not repeat it
 
     def __str__(self) -> str:
         return self.user_message
@@ -174,6 +176,7 @@ STAGE_EFFORT: dict[str, str] = {
     "review": "low", "review_clarity": "low", "review_completeness": "low",
     "review_correctness": "low",
     "set_consistency": "high", "set_completeness": "medium", "set_standards": "medium",
+    "set_gaps": "medium",
     "skeptic": "medium", "questions": "low", "answers": "medium", "tests": "low",
     "checklist": "low",
 }
@@ -215,6 +218,9 @@ def _stage_lookup(table: dict[str, str], stage: str) -> str:
 
 class Backend:
     provider: str = "base"
+    # Requirements per review request (one request per batch and lens). None = prompts.BATCH_SIZE (12).
+    # A provider with a large context sets more (fewer requests); LLM_BATCH_SIZE overrides it for every provider.
+    review_batch_size: int | None = None
 
     def __init__(self, *, model: str = "", effort: str = "", concurrency: int = 1, cache: Any = None,
                  use_cache: bool = True, max_attempts: int = 4,
@@ -307,6 +313,8 @@ class Backend:
                     text, usage = self._raw(system, user, max_tokens)
             except LLMTransient as e:
                 self._account(e.usage)
+                if e.final:
+                    raise
                 last = e
                 if attempt >= self.max_attempts:
                     break
@@ -344,6 +352,12 @@ class Backend:
             return data, ["$: ожидался объект JSON {…}, получено %s" % type(data).__name__]
         return data, []
 
+    @property
+    def cache_model(self) -> str:
+        """Model name in the answer-cache key. A backend that may change models during a run returns the
+        CONFIGURED name here, so a second launch of the same command finds every stored answer."""
+        return self.model
+
     def take_dropped(self) -> list[dict[str, str]]:
         """Items dropped from the last answer of THIS thread ({"path", "reason"}); reading clears them."""
         got = list(getattr(self._tls, "dropped", []))
@@ -359,7 +373,7 @@ class Backend:
         effort = self.effort_for(stage)
         cache = self.cache
         if cache is not None and self.use_cache:
-            key = cache.key(self.provider, self.model, effort, system, user)
+            key = cache.key(self.provider, self.cache_model, effort, system, user)
             hit = cache.get(key)
             if hit is not None:
                 data, errors = (validate(hit, schema) if schema else (hit, []))
@@ -417,7 +431,7 @@ class Backend:
         if cache is not None:
             # Key recomputed: the model may have been substituted during the call. The key uses the REQUESTED
             # effort even after a lower-effort retry, so the next identical run finds this answer and pays nothing.
-            key = cache.key(self.provider, self.model, effort, system, user)
+            key = cache.key(self.provider, self.cache_model, effort, system, user)
             if not cache.put(key, data, {"provider": self.provider, "model": self.model,
                                          "effort": effort, "effort_sent": sent_effort, "stage": stage,
                                          "usage": total.to_dict()}):

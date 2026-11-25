@@ -114,3 +114,70 @@ class Assemble(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AbsenceStatements(unittest.TestCase):
+    TEXT = """# Метод выдачи книг
+
+## Требования
+
+Ф-1. Библиотека выдаёт книгу читателю на 14 дней при предъявлении билета.
+
+## Параметры запроса
+
+### Path-параметры
+
+Не используются.
+
+### Заголовки
+
+Нет
+
+### Query-параметры
+
+| Параметр | Обязательность | Описание |
+| :--- | :--- | :--- |
+| limit | Нет | Максимум записей в ответе |
+| Path-параметры | Не используются | |
+
+### Тело
+
+Тело запроса: Отсутствует.
+
+Комментарий: N/A
+
+Библиотека не используется для хранения журналов доступа читателей, только для выдачи книг.
+"""
+
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.TemporaryDirectory()
+        p = Path(self.tmp.name) / "d.md"
+        p.write_text(self.TEXT, encoding="utf-8")
+        self.doc = load(p)
+        self.reqs, self.skipped = heuristic_slice(self.doc)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_statements_of_absence_are_skipped_with_a_reason(self):
+        texts = [r.quote for r in self.reqs]
+        self.assertFalse(any(t.strip() in ("Не используются.", "Нет") for t in texts))
+        self.assertFalse(any("Отсутствует" in t for t in texts))
+        why = [s for s in self.skipped if "отсутствии" in s.reason]
+        self.assertTrue({"Не используются.", "Нет"} <= {s.text for s in why})
+        self.assertTrue(any("Path-параметры" in s.text for s in why))
+
+    def test_parameter_rows_and_real_sentences_stay_requirements(self):
+        texts = " ".join(r.quote for r in self.reqs)
+        self.assertIn("limit", texts)  # «Нет» in the «Обязательность» column does not make the row an absence
+        self.assertIn("14 дней", texts)
+        self.assertIn("не используется для хранения журналов", texts)
+
+    def test_model_answer_with_an_absence_statement_is_filtered(self):
+        blk = next(b for b in self.doc.blocks if b.text.strip() == "Не используются.")
+        ok = next(b for b in self.doc.blocks if "14 дней" in b.text)
+        reqs, skipped, _ = assemble(self.doc, [{"block_ids": [blk.bid], "kind": "api"}, {"block_ids": [ok.bid]}], [])
+        self.assertEqual(len(reqs), 1)
+        self.assertEqual(skipped[0].block_ids, [blk.bid])
+        self.assertIn("отсутствии", skipped[0].reason)

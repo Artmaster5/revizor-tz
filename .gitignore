@@ -5,7 +5,9 @@ __pycache__/
 *.pyc
 .DS_Store
 
-# старые пробные прогоны (до калибровки), в репозиторий не идут
-reports/live/
-reports/live2/
+# рабочие прогоны настройки; в репозиторий идут только итоговые замеры из eval/results/
+reports/live*/
 reports/live_haiku*
+reports/gemini*/
+reports/blind*/
+reports/demo*

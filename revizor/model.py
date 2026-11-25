@@ -283,6 +283,12 @@ class Finding(_Dictable):
     blocker_reason: str = ""  # CRITICAL only: one of BLOCKER_REASONS; "" for MAJOR and MINOR
     # places of merged-away findings that lie elsewhere: shown as «см. также», never a basis for a requirement's mark
     see_also: list[Quote] = field(default_factory=list)
+    gap_ids: list[str] = field(default_factory=list)  # ids of completeness-map items (gapcheck) this finding answers
+    # titles of the findings merged into this one (re-check, duplicates by code): printed as «Сюда же: …»
+    also: list[str] = field(default_factory=list)
+    # how the level came to be, oldest first: {"by": "model"|"rule"|"skeptic"|"merge", "level": "MAJOR",
+    # "with": "D-012" (merge), "why": "…"}; the last entry's level always equals ``severity`` (consistency.py)
+    level_trail: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -314,6 +320,9 @@ class Question(_Dictable):
     answer: str = ""  # the author's answer (dialog mode)
     answer_effect: str = ""  # what the agent did with the answer
     gap: str = ""  # one of GAP_TYPES or ""
+    # what answering changes, computed by code: {"closes": [fids], "blockers_closed": k, "verdict_after": code,
+    # "index_after": n, "index_delta": d}; empty when not computed
+    impact: dict[str, Any] = field(default_factory=dict)
 
 
 TEST_KINDS = ("positive", "negative", "boundary")
@@ -334,6 +343,8 @@ class TestDraft(_Dictable):
     blocked_by: list[str] = field(default_factory=list)  # question ids the expected result depends on
     finding_ids: list[str] = field(default_factory=list)
     origin: str = "model"  # "model" | "rule"
+    explicit_limit: bool = False  # boundary draft built by code from a limit whose inclusiveness the text states
+    values: list[str] = field(default_factory=list)  # that limit's own numbers (as written), to tell who disputes it
 
 
 @dataclass
@@ -373,6 +384,7 @@ class RunInfo(_Dictable):
     mode: str = "offline"  # "full" | "fast" | "offline"
     provider: str = "offline"
     model: str = ""
+    model_version: str = ""  # the exact version the provider reports for ``model`` (an alias), "" when unknown
     effort: str = ""
     # document
     doc_name: str = ""
@@ -398,7 +410,7 @@ class RunInfo(_Dictable):
     skeptic_kept: int = 0
     skeptic_rejected: int = 0
     skeptic_merged: int = 0
-    manual_minutes_estimate: int = 0
+    manual_minutes_estimate: int | None = None  # kept for JSON compatibility; never filled (no sourced figure)
     warnings: list[str] = field(default_factory=list)
     injection_suspected: bool = False  # the document contains text addressed to the reviewing AI
     masked_values: int = 0  # sensitive values masked before the text went anywhere
@@ -435,6 +447,25 @@ class ChecklistItem(_Dictable):
     by_model: bool = False
 
 
+GAP_STATUSES = ("covered", "gap", "na", "unchecked", "unverified", "rejected")
+
+
+@dataclass
+class GapCell(_Dictable):
+    """One question of the completeness map (gapcheck.ITEMS) and the answer to it.
+
+    The map never changes indices or the verdict: only the linked findings do, through the ordinary path."""
+
+    id: str  # item id from gapcheck.ITEMS ("ST1")
+    group: str  # Russian group name
+    title: str  # short Russian title
+    status: str = "unchecked"  # one of GAP_STATUSES
+    line: int = 0  # covered: line of the confirmed quote
+    finding_ids: list[str] = field(default_factory=list)  # gap: open findings that state the gap
+    checked: list[str] = field(default_factory=list)  # what the model went through (short names)
+    note: str = ""  # one Russian sentence: what the answer rests on
+
+
 @dataclass
 class Result(_Dictable):
     run: RunInfo
@@ -457,3 +488,4 @@ class Result(_Dictable):
     verdict_after_answers_text: str = ""
     audit: list[dict[str, Any]] = field(default_factory=list)  # one entry per model call and per code decision
     checklist: list[ChecklistItem] = field(default_factory=list)  # unfilled review checklist of the document, answered
+    gap_map: list[GapCell] = field(default_factory=list)  # completeness map; empty when the stage did not run at all

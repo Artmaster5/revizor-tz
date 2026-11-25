@@ -152,13 +152,13 @@ class OfflineReportTests(unittest.TestCase):
     def test_counts_agree_header_summary_json(self):
         counted = [f for f in self.result.findings if not f.advisory]
         n = len(counted)
-        self.assertIn(f"Дефектов: {n} ", self.md)
-        self.assertIn(f"| Дефектов всего | {n} |", self.md)
+        self.assertIn(f"Замечаний {n}: ", self.md)
+        self.assertIn(f"| Замечаний всего | {n} |", self.md)
         js = self.data["summary"]
         self.assertIn(n, js.values())
         sev = {s: sum(1 for f in counted if f.severity == s) for s in ("CRITICAL", "MAJOR", "MINOR")}
         self.assertEqual(js["by_severity"], sev)
-        self.assertIn(f"Требований: {len(self.result.requirements)} ", self.md)
+        self.assertIn(f"требований {len(self.result.requirements)}", self.md)
 
     def test_every_link_has_target(self):
         targets = set(re.findall(r'<a id="([^"]+)"></a>', self.md))
@@ -172,7 +172,13 @@ class OfflineReportTests(unittest.TestCase):
             card = self.md.split(f'<a id="{textfmt.anchor(f.fid)}"></a>', 1)[1][:4000]
             if not f.advisory:
                 self.assertIn("Как исправить", card.split("<a id=")[0], f.fid)
-                self.assertIn("Основание:", card.split("<a id=")[0], f.fid)
+        # the standard behind each criterion is named once, in the criteria table of section 5
+        s5 = self.md.split("**Замечания по критериям качества**", 1)[1].split("\n\n", 2)[1]
+        from revizor.report_md import CRITERION_RU, STANDARDS
+        for f in self.result.findings:
+            if not f.advisory and f.criterion in STANDARDS:
+                self.assertIn(f"| {CRITERION_RU[f.criterion]} | ", s5, f.fid)
+                self.assertIn(STANDARDS[f.criterion], s5, f.fid)
 
     def test_quotes_are_from_the_document(self):
         doc = normalize("\n".join(self.lines))

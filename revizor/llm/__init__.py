@@ -20,6 +20,7 @@ from .pricing import stage_usage_rows
 __all__ = [
     "Backend", "Usage", "LLMError", "LLMUnavailable", "LLMTransient", "LLMBadOutput", "LLMRefused",
     "FakeBackend", "STAGE_EFFORT", "stage_usage_rows", "choose_provider", "make_backend", "is_placeholder", "PROVIDERS", "DEFAULT_CACHE_DIR",
+    "review_batch_size_for", "BATCH_SIZE_RANGE",
 ]
 
 PROVIDERS = ("anthropic", "gemini", "openai", "ollama", "offline")
@@ -59,6 +60,42 @@ def _int(env: Mapping[str, str], name: str, default: int | None, lo: int, hi: in
         return max(lo, min(hi, int(float(v))))
     except ValueError:
         return default
+
+
+BATCH_SIZE_RANGE = (1, 200)
+
+
+def _batch_size(env: Mapping[str, str]) -> int | None:
+    """``LLM_BATCH_SIZE`` (1–200, clamped) or None when not set / not a number."""
+    lo, hi = BATCH_SIZE_RANGE
+    return _int(env, "LLM_BATCH_SIZE", None, lo, hi)
+
+
+def review_batch_size_for(provider: str, env: Mapping[str, str]) -> int | None:
+    """Requirements per review request for ``provider`` without building a backend (for the estimate).
+    None means the agent default (prompts.BATCH_SIZE)."""
+    bs = _batch_size(env)
+    if bs:
+        return bs
+    p = normalize_provider(provider)
+    if p in ("", "auto"):
+        p = choose_provider(env)
+    if p == "gemini":
+        from .gemini_backend import REVIEW_BATCH_SIZE
+
+        return REVIEW_BATCH_SIZE
+    return None
+
+
+def _fallback_model(env: Mapping[str, str], default: str) -> str:
+    """``GEMINI_FALLBACK_MODEL``: absent → default; set but empty (or none/off) → feature off."""
+    raw = env.get("GEMINI_FALLBACK_MODEL")
+    if raw is None:
+        return default
+    v = str(raw).strip().strip("'\"").strip()
+    if not v or v.lower() in ("off", "no", "0", "false") or is_placeholder(v):
+        return ""
+    return v
 
 
 def _float(env: Mapping[str, str], name: str, default: float) -> float:
@@ -111,8 +148,18 @@ def make_backend(provider: str, env: Mapping[str, str], *, model: str | None = N
     timeout_default = 900.0 if p == "ollama" else (600.0 if p == "anthropic" else 300.0)
     timeout = _float(env, "LLM_TIMEOUT", timeout_default)
     max_tokens_override = _int(env, "LLM_MAX_TOKENS", None, 256, 200000)
-    common = dict(cache=cache, use_cache=use_cache)
 
+    backend = _make(p, provider, env, model=model, cache=cache, use_cache=use_cache, timeout=timeout,
+                    max_tokens_override=max_tokens_override)
+    bs = _batch_size(env)
+    if bs:
+        backend.review_batch_size = bs
+    return backend
+
+
+def _make(p: str, provider: str, env: Mapping[str, str], *, model: str | None, cache: DiskCache, use_cache: bool,
+          timeout: float, max_tokens_override: int | None) -> Backend:
+    common = dict(cache=cache, use_cache=use_cache)
     if p == "anthropic":
         from .anthropic_backend import DEFAULT_MODEL, AnthropicBackend
 
@@ -129,7 +176,8 @@ def make_backend(provider: str, env: Mapping[str, str], *, model: str | None = N
             max_tokens_override=max_tokens_override, **common)
 
     if p == "gemini":
-        from .gemini_backend import DEFAULT_BASE_URL, DEFAULT_MODEL as GM, KEY_HELP, GeminiBackend
+        from .gemini_backend import (DEFAULT_BASE_URL, DEFAULT_MODEL as GM, FALLBACK_MODEL, KEY_HELP, OVERLOAD_WAIT_S,
+                                     GeminiBackend)
 
         key = _get(env, "GEMINI_API_KEY", "GOOGLE_API_KEY")
         if not key:
@@ -138,7 +186,8 @@ def make_backend(provider: str, env: Mapping[str, str], *, model: str | None = N
             key, model=model or _get(env, "GEMINI_MODEL") or GM,
             base_url=_get(env, "GEMINI_BASE_URL") or DEFAULT_BASE_URL, timeout=timeout,
             concurrency=_int(env, "LLM_CONCURRENCY", 1, 1, 32) or 1,
-            max_tokens_override=max_tokens_override, **common)
+            max_tokens_override=max_tokens_override, fallback_model=_fallback_model(env, FALLBACK_MODEL),
+            overload_wait_s=_int(env, "GEMINI_OVERLOAD_WAIT_S", int(OVERLOAD_WAIT_S), 0, 3600), **common)
 
     from .openai_compat_backend import DEFAULT_MODEL as OM, OLLAMA_BASE_URL, OPENAI_BASE_URL, OpenAICompatBackend
 

@@ -102,12 +102,12 @@ class OfflineApplyTests(Base):
 
     def test_option_on_blockers_changes_verdict_after_answers_only(self):
         blockers = [x.qid for x in self.base.questions if x.priority == "blocker"]
-        self.assertEqual(len(blockers), 2)
+        self.assertEqual(len(blockers), 3)
         res = self.run_offline(answers=provider_from_text(fill(self.text_q, {b: "а" for b in blockers})))
         self.assertEqual(res.verdict, "BLOCKED")                    # the document as it is
         self.assertEqual(res.verdict_after_answers, "CONDITIONAL")  # once the answers are written into it
         closed = [f for f in res.findings if f.closed_by_answer]
-        self.assertEqual(len(closed), 2)
+        self.assertEqual(len(closed), 3)
         self.assertTrue(all(f.severity == "CRITICAL" for f in closed))
         for qid in blockers:
             qq = next(x for x in res.questions if x.qid == qid)
@@ -126,7 +126,7 @@ class OfflineApplyTests(Base):
     def test_report_json_fixed_and_questionnaire(self):
         res = self.run_offline(answers=provider_from_text(fill(self.text_q, {"В-01": "б", "В-02": "а", "В-03": "а", "В-04": "не знаю"})))
         md = report_md.render(res)
-        self.assertIn("Ответы автора учтены: 3 из 19", md)
+        self.assertIn("Ответы автора учтены: 3 из 21", md)
         self.assertIn("По документу как он есть:", md)
         self.assertIn("После внесения ответов автора в документ:", md)
         self.assertIn("### Диалог с автором", md)
@@ -135,7 +135,8 @@ class OfflineApplyTests(Base):
         self.assertEqual(data["summary"]["verdict_after_answers"], "CONDITIONAL")
         fixed = sidefiles.fixed_md(res)
         self.assertIn("ответ В-01", fixed)
-        self.assertIn("замечание D-008", fixed)
+        q3 = next(x for x in res.questions if x.qid == "В-03")
+        self.assertIn(f"замечание {q3.finding_ids[0]}", fixed)
         again = sidefiles.questions_md(res, input_path="i", output_path="o", questions_path="q")
         self.assertRegex(again, r"Ответ: б\n")           # the answer is kept as a letter
         self.assertIsNone(sidefiles.fixed_md(self.base))
@@ -162,7 +163,7 @@ class ModelApplyTests(Base):
         def answers(user):
             return {"answers": [
                 {"qid": first.qid, "understood": "Автор выбрал PATCH.", "closes": [fid, "D-777"],
-                 "fixed": [{"rid": rid, "wording": "Сервис сохраняет порог методом PATCH."},
+                 "fixed": [{"rid": rid, "wording": "Поле REST type, значение PATCH: сервис сохраняет порог методом PATCH."},
                            {"rid": "REQ-999", "wording": "чужое"}],
                  "follow_up": {"text": "Нужна ли идемпотентность?", "options": ["да", "нет"], "addressee": "architect"}},
                 {"qid": "В-88", "understood": "x", "closes": [fid]}]}
@@ -170,7 +171,7 @@ class ModelApplyTests(Base):
         self.assertIn("answers", [s for s, _, _ in b.log])
         f = next(x for x in res.findings if x.fid == fid)
         self.assertTrue(f.closed_by_answer)
-        self.assertEqual(f.fixed_wording, "Сервис сохраняет порог методом PATCH.")
+        self.assertEqual(f.fixed_wording, "Поле REST type, значение PATCH: сервис сохраняет порог методом PATCH.")
         self.assertFalse(any(x.closed_by_answer for x in res.findings if x.fid != fid))
         self.assertEqual(res.questions[-1].text, "Нужна ли идемпотентность?")
         self.assertEqual(res.questions[-1].qid, f"В-{len(res.questions):02d}")
@@ -236,7 +237,7 @@ class CliAnswersTests(Base):
         self.lines.clear()
         self.assertEqual(self.cli("--provider", "offline", "-i", REQ_DOC, "-o", str(out), "--answers", str(qfile)), 0)
         md = out.read_text(encoding="utf-8")
-        self.assertIn("Ответы автора учтены: 2 из 19", md)
+        self.assertIn("Ответы автора учтены: 2 из 21", md)
         self.assertTrue((self.dir / "r.fixed.md").exists())
         self.assertRegex(qfile.read_text(encoding="utf-8"), r"Ответ: б\n")
         self.assertIn("r.fixed.md", self.text)
@@ -277,7 +278,7 @@ class InteractiveTests(Base):
         self.assertEqual(self.cli("--provider", "offline", "-i", REQ_DOC, "-o", str(out), "--interactive", input_fn=inp), 0)
         self.assertEqual(len(inp.asked), 4)   # two answers, one skipped, then the input ended
         md = out.read_text(encoding="utf-8")
-        self.assertIn("Ответы автора учтены: 2 из 19", md)
+        self.assertIn("Ответы автора учтены: 2 из 21", md)
         q = (self.dir / "r.questions.md").read_text(encoding="utf-8")
         self.assertRegex(q, r"(?s)### В-01.*?Ответ: б\n")
         self.assertIn("Какой HTTP-метод", self.text)          # the question was shown
@@ -286,13 +287,13 @@ class InteractiveTests(Base):
         out = self.dir / "r.md"
         inp = self.feed(["б", EOFError()])
         self.assertEqual(self.cli("--provider", "offline", "-i", REQ_DOC, "-o", str(out), "--interactive", input_fn=inp), 0)
-        self.assertIn("Ответы автора учтены: 1 из 19", out.read_text(encoding="utf-8"))
+        self.assertIn("Ответы автора учтены: 1 из 21", out.read_text(encoding="utf-8"))
 
     def test_interactive_ctrl_c_keeps_answers(self):
         out = self.dir / "r.md"
         inp = self.feed(["а", KeyboardInterrupt()])
         self.assertEqual(self.cli("--provider", "offline", "-i", REQ_DOC, "-o", str(out), "--interactive", input_fn=inp), 0)
-        self.assertIn("Ответы автора учтены: 1 из 19", out.read_text(encoding="utf-8"))
+        self.assertIn("Ответы автора учтены: 1 из 21", out.read_text(encoding="utf-8"))
 
     def test_interactive_asks_at_most_seven_blockers_first_and_q_stops(self):
         res = self.run_offline()

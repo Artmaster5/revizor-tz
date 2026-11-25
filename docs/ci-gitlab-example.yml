@@ -1,0 +1,62 @@
+# ПРИМЕР. Этот файл не используется в репозитории. Чтобы включить проверку,
+# перенесите задание в .gitlab-ci.yml репозитория, где лежат требования, и поправьте пути.
+#
+# Что делает (та же логика, что в docs/ci-example.yml для GitHub Actions):
+# при merge request, который меняет документы в папке requirements/, запускает
+# Ревизор ТЗ без модели (только правила: бесплатно, без ключей, текст никуда
+# не уходит), сохраняет отчёты как артефакт и роняет проверку, если найден
+# хотя бы один блокер (CRITICAL) или документ не удалось прочитать.
+#
+# Предположение: код Ревизора лежит в папке tools/revizor вашего репозитория
+# (или подключён иначе); поправьте REVIZOR_DIR под своё расположение.
+
+check-requirements:
+  image: python:3.12          # полный образ: в нём есть git (в -slim его нет)
+  variables:
+    REVIZOR_DIR: tools/revizor
+    REVIZOR_NO_DOTENV: "1"    # не читать .env; ключи берутся только из переменных CI
+    GIT_DEPTH: "0"            # нужна история, чтобы сравнить с целевой веткой
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - requirements/**/*
+  script:
+    - pip install -r "$REVIZOR_DIR/requirements.txt"
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    # Изменённые и добавленные документы в этом merge request
+    - git diff --name-only --diff-filter=AM "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...HEAD" -- 'requirements/*.md' 'requirements/*.docx' 'requirements/*.pdf' > changed.txt
+    - cat changed.txt
+    - mkdir -p review-reports
+    - |
+      status=0
+      while IFS= read -r doc; do
+        [ -n "$doc" ] || continue
+        name="$(basename "$doc")"
+        # код 3 от Ревизора означает «найден блокер»
+        python "$REVIZOR_DIR/main.py" \
+          --input "$doc" \
+          --output "review-reports/${name}.report.md" \
+          --provider offline \
+          --fail-on critical || status=$?
+        # Нечитаемый документ (скан, битый файл) Ревизор описывает в отчёте и
+        # возвращает 0. Для ворот это тоже «не готов», поэтому проверяем поле
+        # diagnostic в JSON-отчёте и возвращаем 4.
+        python -c "import json,sys; sys.exit(4 if json.load(open(sys.argv[1], encoding='utf-8')).get('diagnostic') else 0)" \
+          "review-reports/${name}.report.json" || status=4
+      done < changed.txt
+      exit $status
+  artifacts:
+    when: always              # отчёты нужны и тогда, когда проверка упала
+    name: requirements-review
+    paths:
+      - review-reports/
+    expire_in: 30 days
+
+# Вариант с моделью. Ключ храните в защищённой и скрытой переменной CI/CD
+# (Settings -> CI/CD -> Variables), в файлы его не записывайте. Для модели внутри
+# контура банка вместо ключа задайте OLLAMA_BASE_URL и OLLAMA_MODEL и --provider ollama.
+# Задайте потолок цены, чтобы прогон не вышел за бюджет. В строке запуска выше замените
+#   --provider offline
+# на
+#   --provider anthropic --max-cost 1.00
+# и добавьте в variables задания ANTHROPIC_MODEL (ANTHROPIC_API_KEY придёт из переменной CI/CD).

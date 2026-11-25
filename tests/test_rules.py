@@ -163,6 +163,18 @@ class SetRules(Case):
         self.fires("missing-ids", body, filler="")
         self.silent("missing-ids", "- ТР-1. Клиент платит по QR.\n- ТР-2. Клиент видит чек.\n- ТР-3. Клиент отменяет платёж.\n")
 
+    def test_missing_ids_counts_statements_not_table_rows(self):
+        # three numbered rules and a parameter table of eight rows: the rows need no numbers of their own
+        rows = "\n".join(f"| param{k} | string | Да | Поле {k} |" for k in range(8))
+        body = ("- ТР-1. Клиент платит по QR.\n- ТР-2. Клиент видит чек.\n- ТР-3. Клиент отменяет платёж.\n\n"
+                "## Параметры запроса\n\n| Параметр | Тип | Обязательный | Описание |\n| --- | --- | --- | --- |\n" + rows + "\n")
+        found, _ = run(body)
+        hits = [f for f in found if f.rule_ids[0] == "missing-ids"]
+        self.assertFalse(hits, [f.problem for f in hits])
+        body = "\n".join(f"Клиент выполняет действие номер {k} в разделе платежей приложения.\n" for k in range(5))
+        f = self.fires("missing-ids", body, filler="")[0]
+        self.assertIn("есть только у 0 из 5 требований", f.problem)
+
     def test_unit_mix(self):
         self.fires("unit-mix", "- ТР-1. Сумма хранится в тиынах.\n- ТР-2. Порог задаётся в тенге, от 1 000 до 50 000.\n")
         self.fires("unit-mix", "- ТР-1. Таймаут — 500 мс.\n- ТР-2. Таймаут повторного запроса — 2 с.\n")
@@ -378,7 +390,10 @@ class Documents(unittest.TestCase):
         self.assertIn(("empty-table", 87), got)                         # empty approvers table
         self.assertIn(("no-version", 68), got)                          # version / date missing
         crit = [f for f in found if f.severity == "CRITICAL"]
-        self.assertEqual({f.rule_ids[0] for f in crit}, {"get-mutation", "error-in-success"})
+        # the placeholder testing section is a blocker on the organisers' own scale (their sample report lists it)
+        self.assertEqual({f.rule_ids[0] for f in crit}, {"get-mutation", "error-in-success", "empty-section"})
+        self.assertIn("title-mismatch", rules)                          # two names of one task
+        self.assertIn("api-reliability", rules)                         # no 429, time-outs, concurrency…
 
     def test_clean_spec(self):
         doc = load(FIX / "clean_spec.md")

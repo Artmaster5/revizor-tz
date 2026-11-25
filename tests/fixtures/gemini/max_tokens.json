@@ -1,0 +1,26 @@
+{
+ "status": 200,
+ "body": {
+  "candidates": [
+   {
+    "content": {
+     "role": "model",
+     "parts": [
+      {
+       "text": "{\"ok\": tr"
+      }
+     ]
+    },
+    "finishReason": "MAX_TOKENS"
+   }
+  ],
+  "usageMetadata": {
+   "promptTokenCount": 1200,
+   "cachedContentTokenCount": 200,
+   "candidatesTokenCount": 60,
+   "thoughtsTokenCount": 40,
+   "totalTokenCount": 1300
+  },
+  "modelVersion": "gemini-3.8-flash"
+ }
+}

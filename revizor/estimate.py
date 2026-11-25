@@ -4,14 +4,14 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Mapping
 
-from . import checklist as checklist_mod, loader, rules, slicer
+from . import checklist as checklist_mod, gapcheck, loader, rules, slicer
 from .llm import Usage
 from .llm.base import STAGE_EFFORT, parse_stage_overrides
 from .llm.pricing import cost_note, cost_usd
 from .model import Diagnostic
 from .pipeline import (batch_payload, batches, injection_lines, load_contexts, req_list_payload, review_hints,
                        review_stages, set_hints, _question_lines, _skeptic_line)
-from .prompts import (COMBINED_STAGE, SET_STAGES, SKEPTIC_CHUNK, approx_tokens, build_system, checklist_user,
+from .prompts import (COMBINED_STAGE, GAPS_STAGE, SET_STAGES, gaps_user, SKEPTIC_CHUNK, approx_tokens, build_system, checklist_user,
                       injection_note, questions_user, review_user, set_user, skeptic_user, slice_user)
 from .textfmt import dec, num, usd
 
@@ -26,12 +26,14 @@ from .textfmt import dec, num, usd
 #   call) · set_completeness 25 215 / 2 900 = 8,7 (medium) · set_standards 23 095 / 2 600 = 8,9 (medium) ·
 #   skeptic 22 747 / 4 410 = 5,2 (medium) · questions 7 400 / 4 500 = 1,6 (low) · tests 10 521 / 1 800 = 5,8 (low).
 # The combined pass of --depth fast («review», low) was not measured: it takes the mean of the three lenses.
+# «set_gaps» (the critic pass, medium) was not measured: its factor 5,0 is a guess below set_completeness, because its
+# JSON is larger (one entry per checklist item) and the thinking per JSON token should be lower.
 # «answers» and «checklist» (the document's own unfilled review checklist, low) were not measured either. Each factor is valid for the stage's DEFAULT effort (STAGE_EFFORT); for another
 # effort it is scaled by the ratio of THINKING_MULT (the ratios are provisional: only the default efforts were measured).
 STAGE_MULT = {"slice": 1.3, "slice_rest": 1.3, "review_clarity": 2.8, "review_completeness": 3.2,
               "review_correctness": 2.5, "review": 2.8, "set_consistency": 20.4, "set_completeness": 8.7,
               "set_standards": 8.9, "skeptic": 5.2, "questions": 1.6, "answers": 3.0, "tests": 5.8,
-              "checklist": 1.6}
+              "checklist": 1.6, "set_gaps": 5.0}
 THINKING_MULT = {"low": 1.5, "medium": 3.0, "high": 6.0, "xhigh": 8.0, "max": 10.0}
 THINKING_SPREAD = (0.7, 1.4)  # low / high edge of the range around the expected value
 # Time. Seconds per output token of ONE request stream: the measured run spent 1 493 s in calls for 351 568 tokens.
@@ -55,6 +57,8 @@ FINDINGS_PER_SET_STAGE = 6
 OUT_SKEPTIC_DECISION = 45
 OUT_QUESTION = 190
 OUT_CHECKLIST_ITEM = 70
+OUT_GAP_ITEM = 75  # id, status, up to 8 short names in «checked», a note, a quote for «covered»
+GAP_FINDINGS = 8  # typical gap findings of the critic pass (each ≈ OUT_FINDING)
 LINE_CHARS_MODEL_FINDING = 650
 LOW_OUT_FACTOR = 0.8
 HIGH_OUT_DEFAULT = 1.5  # providers without effort levels: some reasoning on top of the JSON
@@ -102,7 +106,7 @@ class Estimate:
     error: str = ""
 
 
-def build(input_path: str, *, depth: str, contexts: list[str] | None = None) -> Estimate:
+def build(input_path: str, *, depth: str, contexts: list[str] | None = None, batch_size: int | None = None) -> Estimate:
     doc = loader.load(input_path)
     if isinstance(doc, Diagnostic):
         return Estimate(error=doc.title)
@@ -115,7 +119,7 @@ def build(input_path: str, *, depth: str, contexts: list[str] | None = None) -> 
                    system_tokens=approx_tokens(system))
     calls = est.calls
     calls.append(Call("slice", approx_tokens(slice_user(doc, inj)), OUT_SLICE_REQ * len(reqs) + OUT_SLICE_SKIP * len(skipped)))
-    bs = batches(reqs)
+    bs = batches(reqs, batch_size)
     lenses = review_stages(depth)
     est.batches, est.lenses = len(bs), len(lenses)
     model_findings = 0.0
@@ -131,6 +135,14 @@ def build(input_path: str, *, depth: str, contexts: list[str] | None = None) -> 
         user = set_user(st, req_list_payload(reqs), set_hints(rf, st), inj)
         calls.append(Call(st, approx_tokens(user), OUT_SET + (300 if st == "set_completeness" else 0)))
         model_findings += FINDINGS_PER_SET_STAGE
+    try:
+        _cells, send = gapcheck.initial_cells(doc)
+    except Exception:
+        send = []
+    if send:
+        user = gaps_user(gapcheck.item_lines(send), req_list_payload(reqs), inj)
+        calls.append(Call(GAPS_STAGE, approx_tokens(user), OUT_GAP_ITEM * len(send) + GAP_FINDINGS * OUT_FINDING))
+        model_findings += GAP_FINDINGS / 2  # about half of them merge with findings of the other set checks
     counted_rules = [f for f in rf if not f.advisory]
     for k, f in enumerate(counted_rules, 1):
         f.fid = f"D-{k:03d}"
@@ -239,7 +251,7 @@ def report(est: Estimate, *, provider: str, model: str, depth: str, provider_not
     n_review = sum(len(v) for k, v in by_stage.items() if k.startswith("review"))
     parts = [f"нарезка {len(by_stage.get('slice', []))}",
              f"требования {n_review} ({est.batches} пак. × {est.lenses} {'линзы' if est.lenses > 1 else 'проход'})",
-             f"набор {sum(len(by_stage.get(s, [])) for s in SET_STAGES)}"]
+             f"набор {sum(len(by_stage.get(s, [])) for s in SET_STAGES + (GAPS_STAGE,))}"]
     if "skeptic" in by_stage:
         parts.append(f"перепроверка {len(by_stage['skeptic'])}")
     if "questions" in by_stage:

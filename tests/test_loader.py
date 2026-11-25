@@ -172,3 +172,25 @@ class GoodFiles(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ShortDocuments(unittest.TestCase):
+    FIXTURES = Path(__file__).resolve().parent / "fixtures"
+
+    def test_five_short_real_requirements_are_reviewed_with_a_warning(self):
+        d = load(self.FIXTURES / "short_valid.md")
+        self.assertNotIsInstance(d, Diagnostic)
+        self.assertTrue(any("очень короткий" in w for w in d.warnings))
+        from revizor.slicer import heuristic_slice
+        self.assertGreaterEqual(len(heuristic_slice(d)[0]), 4)
+
+    def test_nothing_to_review_is_still_rejected(self):
+        d = load(BROKEN / "tiny.md")
+        self.assertEqual(d.code, "TOO_SHORT")
+
+    def test_words_without_a_sentence_are_rejected(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as t:
+            p = Path(t) / "a.txt"
+            p.write_text("\n".join(["один два"] * 8), encoding="utf-8")
+            self.assertEqual(load(p).code, "TOO_SHORT")

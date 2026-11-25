@@ -13,7 +13,7 @@ from .safety_rules import SAFETY_RULES
 from .set_rules import SET_RULES
 from .text_rules import TEXT_RULES
 
-RULESET_VERSION = "1.0"
+RULESET_VERSION = "1.1"
 
 
 @dataclass
@@ -45,6 +45,8 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("no-version", "traceability", "MINOR", "set", "Нет версии и даты документа"),
     _R("dangling-reference", "set_consistency", "MINOR", "set", "Ссылки на несуществующие разделы, таблицы, требования"),
     _R("duplicate", "set_consistency", "MINOR", "set", "Повторяющиеся требования"),
+    _R("flow-happy-path", "set_completeness", "MAJOR", "set", "Схема процесса только с успешным путём"),
+    _R("title-mismatch", "comprehensibility", "MINOR", "set", "Название в заголовке и в сведениях о документе расходятся"),
     # HTTP API
     _R("get-mutation", "set_feasibility", "CRITICAL", "set", "GET для изменяющего запроса (RFC 9110 §9.2.1)"),
     _R("error-in-success", "set_consistency", "CRITICAL", "set", "Ответ с ошибкой под успешным кодом 2xx"),
@@ -52,6 +54,7 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("param-type-mismatch", "set_consistency", "MAJOR", "set", "Один параметр с разными типами в разных таблицах"),
     _R("content-type-without-body", "set_consistency", "MINOR", "set", "Content-Type у запроса без тела"),
     _R("sensitive-in-query", "set_feasibility", "MAJOR", "set", "Чувствительные данные в строке запроса"),
+    _R("api-reliability", "set_completeness", "MINOR", "set", "Интерфейс без лимитов, тайм-аутов, идемпотентности или версии"),
     # manipulation and data protection
     _R("prompt-injection", "set_feasibility", "MAJOR", "set", "Текст, обращённый к проверяющему или ИИ"),
     _R("hidden-text", "set_feasibility", "MINOR", "set", "Скрытый текст: HTML-комментарии и невидимые символы"),
@@ -71,6 +74,12 @@ _IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **SAFETY_RULES, **ADVISORY_RULE
 assert set(_IMPL) == set(RULES), set(_IMPL) ^ set(RULES)
 
 last_errors: list[str] = []
+
+
+def rule_counts() -> tuple[int, int]:
+    """(main rules, advisory observations), counted from the registry."""
+    adv = sum(1 for r in RULES.values() if r.advisory)
+    return len(RULES) - adv, adv
 
 
 def run_rules(doc: SourceDoc, requirements: list[Requirement], skipped: list[Skipped]) -> list[Finding]:
@@ -118,4 +127,4 @@ def _drop_echoes(found: list[Finding]) -> list[Finding]:
     return out
 
 
-__all__ = ["RULES", "RULESET_VERSION", "RuleInfo", "run_rules", "last_errors"]
+__all__ = ["RULES", "RULESET_VERSION", "RuleInfo", "run_rules", "last_errors", "rule_counts"]

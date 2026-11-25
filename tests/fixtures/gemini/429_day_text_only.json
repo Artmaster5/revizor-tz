@@ -1,0 +1,11 @@
+{
+ "status": 429,
+ "body": {
+  "error": {
+   "code": 429,
+   "message": "Resource has been exhausted: requests per day limit reached for this model on the free tier.",
+   "status": "RESOURCE_EXHAUSTED",
+   "details": []
+  }
+ }
+}

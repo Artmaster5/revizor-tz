@@ -18,8 +18,11 @@ from .structure import INVISIBLE_CHARS, parse_blocks
 
 MAX_CHARS = 400_000
 MAX_BYTES = 60 * 1024 * 1024
-MIN_CHARS = 200
-MIN_LINES = 3
+# A document is rejected only when it cannot hold a requirement: fewer than MIN_WORDS words, or no line of at least
+# three words. A short but real list of requirements is reviewed, with a warning (SHORT_CHARS / SHORT_LINES).
+MIN_WORDS = 12
+SHORT_CHARS = 200
+SHORT_LINES = 3
 
 # --- diagnostics ----------------------------------------------------------------
 
@@ -739,9 +742,14 @@ def _load(spath: str) -> SourceDoc | Diagnostic:
             return _diag("TOO_SHORT", spath, size=size, chars=0, lines=0, details="в HTML нет видимого текста")
         return _diag("ONLY_WHITESPACE", spath, size=size)
     nonblank_lines = sum(1 for ln in text.split("\n") if ln.strip())
-    if len(visible) < MIN_CHARS or nonblank_lines < MIN_LINES:
+    words = len(re.findall(r"[^\W_]+", text))
+    has_sentence = any(len(re.findall(r"[^\W_]+", ln)) >= 3 for ln in text.split("\n"))
+    if words < MIN_WORDS or not has_sentence:
         return _diag("TOO_SHORT", spath, size=size, chars=len(visible), lines=nonblank_lines,
-                     details=f"видимых знаков: {len(visible)}, непустых строк: {nonblank_lines}")
+                     details=f"слов: {words}, видимых знаков: {len(visible)}, непустых строк: {nonblank_lines}")
+    if len(visible) < SHORT_CHARS or nonblank_lines < SHORT_LINES:
+        warnings.append(f"Документ очень короткий ({words} слов, {nonblank_lines} непустых строк): проверено всё, что в нём есть, "
+                        "но выводы о полноте набора требований ненадёжны.")
     if len(text) > MAX_CHARS:
         return _diag("TOO_LARGE", spath, size=size, chars=f"{len(text):,}".replace(",", " "), limit=f"{MAX_CHARS:,}".replace(",", " "))
 
@@ -752,7 +760,7 @@ def _load(spath: str) -> SourceDoc | Diagnostic:
     text, masked = mask_sensitive(text)
     if masked:
         warnings.append(
-            f"Замаскировано {len(masked)} значений, похожих на номера карт или ИИН: в модель и в отчёт они не попадают."
+            f"Замаскировано {len(masked)} значений, похожих на номера карт, ИИН/БИН, адреса почты или телефоны: в модель и в отчёт они не попадают."
         )
 
     lines = text.split("\n")

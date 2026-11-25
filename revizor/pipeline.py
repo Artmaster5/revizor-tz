@@ -15,25 +15,23 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Any, Callable
 
-from . import answers as ans_mod, baseline as baseline_mod, checklist as checklist_mod, loader, rules, score, slicer, testgen, verdict
+from . import answers as ans_mod, baseline as baseline_mod, consistency, checklist as checklist_mod, gapcheck, impact, loader, rules, score, slicer, testgen, verdict
 from .config import agent_commit, agent_dirty, agent_tag, agent_version
 from .llm import Backend, LLMError, LLMUnavailable
 from .llm.pricing import cost_note, cost_usd
-from .merge import (QuoteStats, SEV_RANK, apply_skeptic, dedupe_model, fold_rules, merge_duplicates, model_finding,
+from .merge import (QuoteStats, SEV_RANK, apply_skeptic, dedupe_model, fold_formal, fold_rules, merge_duplicates, model_finding,
                     number, sort_key)
 from .model import (GAP_TYPES, REQ_CRITERIA, CoverageRow, CriterionVerdict, Diagnostic, DroppedQuote, Finding,
                     FixAction, Question, QuestionDraft, Requirement, RequirementReview, Result, RunInfo, Skipped,
                     SourceDoc, Strength)
-from .prompts import (BATCH_SIZE, COMBINED_NAME, COMBINED_STAGE, LENS_BY_STAGE, MAX_TOKENS, REVIEW_LENSES, SCHEMAS,
+from .prompts import (BATCH_SIZE, COMBINED_NAME, COMBINED_STAGE, GAPS_STAGE, LENS_BY_STAGE, MAX_TOKENS, REVIEW_LENSES, SCHEMAS,
                       SET_FIRST_ATTEMPT_TOKENS, SET_NAME, SET_STAGES, SKEPTIC_CHUNK, ContextDoc, Lens, build_system, injection_note,
-                      answers_tag, answers_user, checklist_user, questions_user, review_user, set_user, skeptic_user, slice_rest_user,
+                      answers_tag, answers_user, checklist_user, gaps_user, questions_user, review_user, set_user, skeptic_user, slice_rest_user,
                       slice_user, tests_user)
 from .quotes import QuoteIndex
 from .textfmt import count, lines_text, shorten, W_BLOCK, W_DEFECT, W_FINDING, W_LINE, W_REQ
 
 STEPS = 9
-MANUAL_MIN_PER_REQ = 4
-MANUAL_MIN_REPORT = 45
 
 # Default gap type of a rule question, by criterion (rules do not name it themselves).
 GAP_BY_CRITERION = {
@@ -61,7 +59,7 @@ def _sha(s: str) -> str:
 STAGE_GROUP = {"slice": "нарезка", "slice_rest": "нарезка", "review": "проверка требований",
                "review_clarity": "проверка требований", "review_completeness": "проверка требований",
                "review_correctness": "проверка требований", "set_consistency": "проверка набора",
-               "set_completeness": "проверка набора", "set_standards": "проверка набора",
+               "set_completeness": "проверка набора", "set_standards": "проверка набора", "set_gaps": "проверка набора",
                "skeptic": "перепроверка", "questions": "вопросы", "answers": "ответы автора", "tests": "тесты",
                "checklist": "чек-лист документа"}
 HEARTBEAT_S = 15.0  # a «still waiting» line after this many silent seconds
@@ -143,7 +141,7 @@ class Gate:
         """Thinking is billed inside max_tokens: the set-level stages ask for SET_FIRST_ATTEMPT_TOKENS at once
         (Claude and Gemini accept it; other servers have lower caps and keep MAX_TOKENS)."""
         n = MAX_TOKENS.get(stage, 16000)
-        if stage in SET_STAGES and self.backend.provider in ("anthropic", "gemini"):
+        if (stage in SET_STAGES or stage == GAPS_STAGE) and self.backend.provider in ("anthropic", "gemini"):
             n = max(n, SET_FIRST_ATTEMPT_TOKENS)
         return n
 
@@ -171,12 +169,14 @@ class Gate:
         except LLMUnavailable as e:
             with self.lock:
                 self.dead = e.user_message
-            entry.update(ok=False, error=e.user_message[:300], seconds=round(time.monotonic() - t0, 2))
+            entry.update(ok=False, error=e.user_message[:300], detail=str(getattr(e, "detail", "") or "")[:300],
+                         seconds=round(time.monotonic() - t0, 2))
             self._log(entry)
             self._done_call(tid, stage, t0, False, "модель недоступна")
             raise
         except LLMError as e:
-            entry.update(ok=False, error=e.user_message[:300], seconds=round(time.monotonic() - t0, 2))
+            entry.update(ok=False, error=e.user_message[:300], detail=str(getattr(e, "detail", "") or "")[:300],
+                         seconds=round(time.monotonic() - t0, 2))
             self._log(entry)
             self._done_call(tid, stage, t0, False, "ответ не получен")
             raise
@@ -210,10 +210,10 @@ class Gate:
 # --- prompt inputs shared with the estimate -------------------------------------------------
 
 
-def batches(requirements: list[Requirement]) -> list[list[Requirement]]:
+def batches(requirements: list[Requirement], size: int | None = None) -> list[list[Requirement]]:
     if not requirements:
         return []
-    n = math.ceil(len(requirements) / BATCH_SIZE)
+    n = math.ceil(len(requirements) / (size or BATCH_SIZE))
     size = math.ceil(len(requirements) / n)
     return [requirements[i:i + size] for i in range(0, len(requirements), size)]
 
@@ -383,15 +383,23 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
 
     # 4–5. review and set checks ---------------------------------------------------------------
     model_findings: list[Finding] = []
+    try:
+        gap_cells, gap_send = gapcheck.initial_cells(doc)
+    except Exception as e:  # the completeness map is optional: never breaks the run
+        gap_cells, gap_send = [], []
+        warnings.append(f"Карта полноты не составлена: внутренняя ошибка ({type(e).__name__}).")
+    gap_found = 0
     if model_on:
         jobs = []
-        for b in batches(requirements):
+        for b in batches(requirements, getattr(backend, "review_batch_size", None)):
             for lens in review_stages(depth):
                 jobs.append(("review", b, lens))
         for st in SET_STAGES:
             jobs.append(("set", None, st))
+        if gap_send:
+            jobs.append(("gaps", None, gap_send))
         for kind, _b, what in jobs:
-            gate.plan("review" if kind == "review" else what, 1)
+            gate.plan("review" if kind == "review" else GAPS_STAGE if kind == "gaps" else what, 1)
         say(f"      Отправляю модели {len(jobs)} запросов (одновременно до {gate.backend.concurrency})…")
         results = _run_jobs(gate, jobs, rule_findings, requirements, inj)
         rev_found = set_found = 0
@@ -419,6 +427,22 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
                 model_raw += n_raw
                 rev_found += len(found)
                 model_findings += found
+            elif kind == "gaps":
+                if err:
+                    set_failed += 1
+                    unchecked.append(f"Проход-критик «чего не хватает» не выполнен: {err}; контрольные вопросы не оценены.")
+                    audit.append({"type": "decision", "what": "set_stage_unchecked", "stage": GAPS_STAGE, "reason": err[:300]})
+                    continue
+                try:
+                    found = gapcheck.apply_model(ans, gap_cells, what, qi=qi, stats=stats, known=known, audit=audit,
+                                                 dropped=dropped)
+                    model_raw += sum(len(x.get("findings") or []) for x in ans.get("items") or [] if isinstance(x, dict))
+                    model_findings += found
+                    gap_found = len(found)
+                    set_found += len(found)
+                except Exception as e:  # a bug in parsing must not kill the run
+                    unchecked.append(f"Ответ прохода-критика не разобран: внутренняя ошибка ({type(e).__name__}).")
+                    gap_cells, _send = gapcheck.initial_cells(doc)
             else:
                 stage = what
                 if err:
@@ -438,11 +462,13 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
                         audit.append({"type": "decision", "what": "quote_dropped", "stage": stage, "title": dq.title})
                 if stage == "set_completeness":
                     coverage = _coverage(ans.get("coverage"), known)
-        lens_txt = f"{len(batches(requirements))} пакетов × {len(review_stages(depth))} линзы" if depth == "full" \
-            else f"{len(batches(requirements))} пакетов"
+        lens_txt = f"{len(batches(requirements, getattr(backend, 'review_batch_size', None)))} пакетов × {len(review_stages(depth))} линзы" if depth == "full" \
+            else f"{len(batches(requirements, getattr(backend, 'review_batch_size', None)))} пакетов"
         say(f"[4/{STEPS}] Проверяю каждое требование моделью ({lens_txt})… подтверждено {rev_found}"
             + (f", не выполнено запросов: {rev_failed}" if rev_failed else ""))
-        say(f"[5/{STEPS}] Проверяю набор требований (3 шага)… подтверждено {set_found}"
+        n_steps = len(SET_STAGES) + (1 if gap_send else 0)
+        say(f"[5/{STEPS}] Проверяю набор требований ({n_steps} шага)… подтверждено {set_found}"
+            + (f" (из них пробелов по контрольным вопросам: {gap_found})" if gap_send else "")
             + (f", не выполнено шагов: {set_failed}" if set_failed else ""))
     else:
         say(f"[4/{STEPS}] Проверка каждого требования моделью… пропущено: модель не используется")
@@ -495,10 +521,22 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
     # 8a. near-duplicates by code: needs the question ids, so it runs after the questions and before everything that
     # reads the findings (answers, tests, indices, verdict). The skeptic has already looked at both twins.
     info.dup_merged = merge_duplicates(counted_open, questions, fix_first, audit)
-    if info.dup_merged:
+    folded = fold_formal(counted_open, questions, fix_first, audit)
+    if info.dup_merged or folded is not None:
         open_f = [f for f in findings if f.status == "open"]
         rejected = [f for f in findings if f.status in ("rejected", "merged")]
         counted_open = [f for f in counted_open if f.status == "open"]
+    # 8a'. the completeness map follows every gap to the finding that survived; what each answer changes
+    try:
+        gapcheck.resolve(gap_cells, findings)
+    except Exception as e:
+        warnings.append(f"Карта полноты не связана с замечаниями: внутренняя ошибка ({type(e).__name__}).")
+    # a question is «блокирующий» exactly while it is linked to an open CRITICAL (after the re-check and the merges)
+    consistency.settle_questions(questions, counted_open)
+    try:
+        impact.apply(questions, counted_open, requirements, offline=not model_on, reorder=True, findings=findings)
+    except Exception as e:
+        warnings.append(f"Влияние ответов на итог не посчитано: внутренняя ошибка ({type(e).__name__}).")
     say(f"[8/{STEPS}] Составляю вопросы автору ({'модель' if q_by_model else 'шаблоны правил'})… "
         f"{len(questions)}")
 
@@ -553,7 +591,10 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
     after_code = after_text = ""
     if applied is not None and applied.answered:
         after_code, after_text = verdict.decide([f for f in open_f if not f.closed_by_answer], offline=not model_on)
-    info.manual_minutes_estimate = MANUAL_MIN_PER_REQ * len(requirements) + MANUAL_MIN_REPORT
+    try:  # questions added from the author's answers get their impact too
+        impact.apply(questions, counted_open, requirements, offline=not model_on, reorder=False)
+    except Exception as e:
+        warnings.append(f"Влияние ответов на итог не посчитано: внутренняя ошибка ({type(e).__name__}).")
     say(f"[9/{STEPS}] Считаю индексы и вердикт… {verdict.short_text(code)}")
 
     if gate is not None:
@@ -577,12 +618,31 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
         except Exception as e:
             warnings.append(f"Сравнение с прошлой проверкой не выполнено: внутренняя ошибка ({type(e).__name__}).")
 
-    return Result(run=info, requirements=requirements, skipped=skipped,
-                  reviews=[reviews[r.rid] for r in requirements], findings=sorted(open_f, key=sort_key),
-                  rejected=rejected, dropped=dropped, questions=questions, fix_first=fix_first, strengths=strengths,
-                  coverage=coverage, verdict=code, verdict_text=vtext, verdict_reason=reason, tests=tests,
-                  verdict_after_answers=after_code, verdict_after_answers_text=after_text, audit=audit,
-                  checklist=checklist_items)
+    result = Result(run=info, requirements=requirements, skipped=skipped,
+                    reviews=[reviews[r.rid] for r in requirements], findings=sorted(open_f, key=sort_key),
+                    rejected=rejected, dropped=dropped, questions=questions, fix_first=fix_first, strengths=strengths,
+                    coverage=coverage, verdict=code, verdict_text=vtext, verdict_reason=reason, tests=tests,
+                    verdict_after_answers=after_code, verdict_after_answers_text=after_text, audit=audit,
+                    checklist=checklist_items, gap_map=gap_cells)
+    # the report never contradicts itself: marks, clarity, question priorities and strengths follow the findings;
+    # anything the checker still finds goes into the warnings instead of a silently self-contradicting report
+    try:  # corrected wordings that lose meaning are withheld on every path that renders cards
+        from . import rewrite_gate
+        rewrite_gate.apply(result)
+    except Exception as e:  # stage boundary: the report is still written, but no rewrite may pass unchecked
+        for f in result.findings:
+            f.fixed_wording = ""
+        warnings.append(f"Проверка предложенных формулировок не выполнена ({type(e).__name__}): они не показаны.")
+    consistency.settle(result)
+    try:
+        problems = consistency.check_consistency(result)
+    except Exception as e:  # stage boundary: a bug in the checker must not cost the report
+        problems = [f"проверка согласованности не выполнена ({type(e).__name__})"]
+    for p in problems:
+        warnings.append("Отчёт может противоречить себе: " + p)
+    if problems:
+        audit.append({"type": "decision", "what": "consistency_violations", "count": len(problems)})
+    return result
 
 
 # --- optional stages: author's answers and test drafts ---------------------------------------------------------
@@ -673,7 +733,7 @@ def _tests_stage(requirements, counted_open, questions, coverage, gate, depth, i
         except Exception as e:
             unchecked.append(f"Черновики тестов: часть, которую составляет модель, не выполнена ({_err(e)}); "
                              "показаны только черновики по правилам.")
-    drafts = testgen.finalize(testgen.merge(det, extra), requirements, counted_open, questions)
+    drafts = testgen.finalize(testgen.merge(det, extra), requirements, counted_open, questions, audit)
     ready = sum(1 for t in drafts if t.then and not t.blocked_by)
     say(f"      Черновики тестов: {len(drafts)} (готовы {ready}, ждут ответа автора или описания результата {len(drafts) - ready})")
     return drafts
@@ -776,6 +836,8 @@ def _run_jobs(gate: Gate, jobs, rule_findings, requirements, inj):
     def one(job):
         kind, b, what = job
         try:
+            if kind == "gaps":
+                return _gaps_call(gate, what, requirements, inj), ""
             if kind == "review":
                 user = review_user(batch_payload(b), review_hints(rule_findings, b, what), what, inj)
                 return gate.call(what.stage if what else COMBINED_STAGE, user), ""
@@ -792,13 +854,31 @@ def _run_jobs(gate: Gate, jobs, rule_findings, requirements, inj):
     # One pool for review lenses and set checks (the set prompts take only the requirement list and rule hints, not
     # review results). Submission order: the long set checks first, so that they do not start in the last wave;
     # results come back in the ORIGINAL job order, so ids, report and JSON do not depend on completion order.
-    submit = sorted(range(len(jobs)), key=lambda i: (jobs[i][0] != "set", i))
+    submit = sorted(range(len(jobs)), key=lambda i: (jobs[i][0] not in ("set", "gaps"), i))
     results: list = [None] * len(jobs)
     with ThreadPoolExecutor(max_workers=workers) as ex:
         futs = {i: ex.submit(one, jobs[i]) for i in submit}
         for i, fu in futs.items():
             results[i] = fu.result()
     return results
+
+
+def _gaps_call(gate: Gate, items: list, requirements: list[Requirement], inj: str) -> dict:
+    """The critic pass: one call with every item; for the ids that did not come back, ONE follow-up call with only
+    those items (like ``slice_rest``). What is still missing stays «unchecked» (gapcheck.apply_model)."""
+    reqs = req_list_payload(requirements)
+    ans = gate.call(GAPS_STAGE, gaps_user(gapcheck.item_lines(items), reqs, inj))
+    got = [x for x in (ans.get("items") or []) if isinstance(x, dict)]
+    missing = [it for it in items if it.id not in gapcheck.answered_ids({"items": got})]
+    if missing:
+        gate.plan(GAPS_STAGE, 1)
+        try:
+            ans2 = gate.call(GAPS_STAGE, gaps_user(gapcheck.item_lines(missing), reqs, inj))
+            got += [x for x in (ans2.get("items") or []) if isinstance(x, dict)]
+            gate._log({"type": "decision", "what": "gaps_follow_up", "ids": [it.id for it in missing]})
+        except (LLMError, StageSkipped) as e:
+            gate._log({"type": "decision", "what": "gaps_follow_up_failed", "reason": _err(e)[:300]})
+    return {"items": got}
 
 
 def _empty_reviews(requirements: list[Requirement], model_on: bool) -> dict[str, RequirementReview]:
@@ -960,7 +1040,16 @@ def _template_fix_first(findings: list[Finding]) -> list[FixAction]:
     top = [f for f in ranked if f.severity in ("CRITICAL", "MAJOR")][:7]
     if len(top) < 3:
         top = ranked[:3]
-    return [FixAction(action=f"{f.title}. {shorten(f.recommendation, 260)}", finding_ids=[f.fid]) for f in top]
+    out: list[FixAction] = []
+    by_text: dict[str, FixAction] = {}
+    for f in top:  # the same fix for several places is one action with all of them
+        text = f"{f.title}. {shorten(f.recommendation, 260)}"
+        if text in by_text:
+            by_text[text].finding_ids.append(f.fid)
+            continue
+        by_text[text] = FixAction(action=text, finding_ids=[f.fid])
+        out.append(by_text[text])
+    return out
 
 
 def _template_reason(findings: list[Finding], model_on: bool) -> str:
@@ -1015,8 +1104,8 @@ def _finish_reviews(reviews: dict[str, RequirementReview], requirements, finding
             if hits:
                 note = cur.note if cur.status == "issue" and cur.note else hits[0].title
                 rv.criteria[c] = CriterionVerdict("issue", note)
-            elif cur.status == "issue":
-                rv.criteria[c] = CriterionVerdict("ok", "замечание модели не подтвердилось (цитата или перепроверка)")
+            elif cur.status == "issue":  # not confirmed by the quote check or the re-check (counted in the passport)
+                rv.criteria[c] = CriterionVerdict("ok", "")
 
 
 def _usage(info: RunInfo, backend: Backend | None, warnings: list[str], audit: list[dict] | None = None) -> None:
@@ -1029,6 +1118,7 @@ def _usage(info: RunInfo, backend: Backend | None, warnings: list[str], audit: l
     t = backend.totals
     info.provider = backend.provider
     info.model = backend.model
+    info.model_version = str(getattr(backend, "model_version", "") or "")
     info.effort = getattr(backend, "effort_label", None) or backend.effort
     info.llm_calls = backend.calls
     info.llm_cache_hits = backend.cache_hits

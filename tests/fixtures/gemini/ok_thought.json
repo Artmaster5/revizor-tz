@@ -1,0 +1,32 @@
+{
+ "status": 200,
+ "body": {
+  "candidates": [
+   {
+    "content": {
+     "role": "model",
+     "parts": [
+      {
+       "text": "Сначала разберу требования {не json",
+       "thought": true
+      },
+      {
+       "text": "{\"ok\": true}"
+      }
+     ]
+    },
+    "finishReason": "STOP",
+    "index": 0
+   }
+  ],
+  "usageMetadata": {
+   "promptTokenCount": 1200,
+   "cachedContentTokenCount": 200,
+   "candidatesTokenCount": 60,
+   "thoughtsTokenCount": 40,
+   "totalTokenCount": 1300
+  },
+  "modelVersion": "gemini-3.5-flash-lite",
+  "responseId": "test-response-id-1"
+ }
+}

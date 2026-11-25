@@ -23,7 +23,26 @@ PLACEHOLDER_ONLY = re.compile(
     r"<[^<>]{1,40}>|\[[^\[\]]{1,40}\]|lorem ipsum.*|xxx+)\s*[.!]?\s*$",
     re.I,
 )
+_ABSENT_PHRASE = (r"не\s+(?:используется|используются|применяется|применяются|требуется|требуются|предусмотрен[оаы]?|"
+                  r"предполагается|предполагаются|задан[оаы]?|нужн[оаы]?)|отсутству\w+|нет\s+данных|без\s+параметров|"
+                  r"not\s+(?:used|applicable|required|provided)|none|n/?a|—|–|-")
+_ABSENT_WORD = r"нет|no"  # a bare yes/no word: a statement of absence in a paragraph, but a flag value in a table cell
+_ABSENT_PARA = re.compile(rf"^\W*(?:[^:|\n]{{1,60}}:\s*)?(?:{_ABSENT_PHRASE}|{_ABSENT_WORD})\W*$", re.I)
+# in a table cell a dash or «N/A» is an unfilled value (a defect the rules report), not a statement of absence
+_ABSENT_CELL = re.compile(rf"^\W*(?:{_ABSENT_PHRASE.rsplit('|none', 1)[0]})\W*$", re.I)
+ABSENCE_REASON = "утверждение об отсутствии («не используются», «нет», «—»): это сведение, а не требование"
 _GLUE = re.compile(r"^(?:или|либо|или же|и|or|and|пример|например|example|e\.g\.)\s*:?$", re.I)
+
+
+def is_absence_statement(b: Block) -> bool:
+    """«Не используются.», «Нет», «Отсутствуют», «N/A», «Path-параметры: не используются» as the whole content of a
+    block or of every value cell of a table row. A flag «Нет» in a column of a parameter table stays a requirement."""
+    if b.kind == "table_row":
+        values = [c.strip() for c in b.cells[1:]] if len(b.cells) > 1 else []
+        return bool(values) and all(_ABSENT_CELL.match(c) for c in values if c) and any(values)
+    if b.kind in ("paragraph", "list_item"):
+        return bool(_ABSENT_PARA.match(b.text.strip())) and "\n" not in b.text.strip()
+    return False
 
 
 def is_placeholder_text(text: str) -> bool:
@@ -119,6 +138,8 @@ def _skip_reason(b: Block, first_heading: Block | None, single_title: bool,
             return "template", "строка шаблона: значения не заполнены или оставлены варианты выбора"
     if b.kind != "code" and is_placeholder_text(b.text):
         return "placeholder", "заглушка вместо содержания"
+    if is_absence_statement(b):
+        return "other", ABSENCE_REASON
     if b.raw.lstrip().startswith("<!--"):
         return "other", "скрытый комментарий (не виден читателю документа)"
     if first_heading is not None and single_title and b.section == first_heading.section and b.line_start > first_heading.line_start:
@@ -277,6 +298,14 @@ def assemble(doc: SourceDoc, req_items: list[dict], skipped_items: list[dict], *
             skipped.append(_skipped(blocks, str(item.get("category") or "other"),
                                     str(item.get("reason") or "").strip(), origin))
     missing = [b.bid for b in doc.blocks if b.bid not in used]
+    kept: list[Requirement] = []
+    for r in reqs:  # the model may also take «Не используются.» for a requirement
+        blocks = [by_id[b] for b in r.block_ids if by_id[b].kind != "heading"]
+        if blocks and all(is_absence_statement(b) for b in blocks):
+            skipped.append(_skipped(blocks, "other", ABSENCE_REASON, origin))
+        else:
+            kept.append(r)
+    reqs = kept
     reqs, skipped = _number(doc, reqs, skipped)
     return reqs, skipped, missing
 

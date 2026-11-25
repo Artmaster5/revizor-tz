@@ -20,7 +20,7 @@ def quiet_script(**over):
     """A model that finds nothing by itself: the findings come from the rules, the rest is overridable."""
     base = {"review": {"reviews": []}, "review_clarity": {"reviews": []}, "review_completeness": {"reviews": []},
             "review_correctness": {"reviews": []}, "set_consistency": {"findings": []},
-            "set_completeness": {"findings": []}, "set_standards": {"findings": []},
+            "set_completeness": {"findings": []}, "set_standards": {"findings": []}, "set_gaps": {"items": []},
             "skeptic": lambda user: tp.skeptic_answer(user, reject_titles=(), reject_all=False),
             "questions": LLMBadOutput("нет сценария questions"), "tests": LLMBadOutput("нет сценария tests"),
             "answers": LLMBadOutput("нет сценария answers")}

@@ -40,7 +40,7 @@ class Mask(unittest.TestCase):
         self.assertEqual(mask_sensitive(text), (text, []))
 
     def test_money_and_plain_numbers_untouched(self):
-        for text in ["Порог от 1 000 до 1 000 000 ₸ включительно.", "Сумма 1000000 тиын.", "Телефон +7 701 123 45 67",
+        for text in ["Порог от 1 000 до 1 000 000 ₸ включительно.", "Сумма 1000000 тиын.", "Телефон 701 123 45 67",
                      "Дата 2026-11-12, код 0000000000000000", "Идентификатор 123456789012"]:
             with self.subTest(text=text):
                 self.assertEqual(mask_sensitive(text), (text, []))
@@ -81,3 +81,60 @@ class LoaderMasks(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WellKnownTestCards(unittest.TestCase):
+    def test_visa_and_mastercard_test_numbers_are_masked_in_every_notation(self):
+        for card in ("4111 1111 1111 1111", "4111-1111-1111-1111", "4111111111111111",
+                     "5555 5555 5555 4444", "5555-5555-5555-4444", "5555555555554444"):
+            with self.subTest(card=card):
+                out, notes = mask_sensitive(f"Тестовая карта {card}, срок 12/30.")
+                self.assertEqual(len(out), len(f"Тестовая карта {card}, срок 12/30."))
+                self.assertEqual(len(notes), 1)
+                self.assertNotIn(card, out)
+                self.assertEqual(out.count("*"), 6)
+                self.assertTrue(out.startswith("Тестовая карта ") and out.endswith(", срок 12/30."))
+
+    def test_same_length_mask_keeps_head_and_tail(self):
+        out, _ = mask_sensitive("4111111111111111")
+        self.assertEqual(out, "411111******1111")
+
+    def test_non_luhn_number_stays(self):
+        for t in ("4111 1111 1111 1112", "5555555555554443", "Сумма 1234567890123456 ₸"):
+            with self.subTest(t=t):
+                self.assertEqual(mask_sensitive(t), (t, []))
+
+    def test_all_equal_digits_stay(self):
+        self.assertEqual(mask_sensitive("0000000000000000")[1], [])
+
+
+class EmailAndPhones(unittest.TestCase):
+    def test_email_local_part_is_masked_same_length(self):
+        t = "Писать на ivan.petrov@bank.kz или support+tz@mail.example.com."
+        out, notes = mask_sensitive(t)
+        self.assertEqual(len(out), len(t))
+        self.assertEqual(out, "Писать на i**********@bank.kz или s*********@mail.example.com.")
+        self.assertEqual(len(notes), 2)
+
+    def test_phones_in_unmistakable_formats(self):
+        for ph in ("+7 701 123 45 67", "+7(701)123-45-67", "+77011234567", "8 (701) 123-45-67", "8 701 123 45 67",
+                   "+44 20 7946 0958", "+380501234567"):
+            with self.subTest(ph=ph):
+                t = f"Тел. {ph}, доб. 5."
+                out, notes = mask_sensitive(t)
+                self.assertEqual(len(out), len(t))
+                self.assertEqual(len(notes), 1)
+                self.assertIn("номер телефона", notes[0])
+                self.assertNotIn(ph, out)
+
+    def test_amounts_ids_dates_and_codes_stay(self):
+        for t in ("Сумма 8 000 000 000 ₸ и +1 000 000 000 ₸.", "Идентификатор операции 87011234567 в журнале.",
+                  "Дата 2026-11-25, версия 1.2.3, код ERR_70112345.", "Лимит 100 000 тенге, ставка 12,5 %.",
+                  "Заявка 8701123 от 25.11.2026.", "Порог 5 000 000 и 1 000 000", "Пишите на @username или a@b"):
+            with self.subTest(t=t):
+                self.assertEqual(mask_sensitive(t), (t, []))
+
+    def test_card_is_not_taken_for_a_phone(self):
+        out, notes = mask_sensitive("Карта 4111 1111 1111 1111.")
+        self.assertEqual(len(notes), 1)
+        self.assertIn("номер карты", notes[0])

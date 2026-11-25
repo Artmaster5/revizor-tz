@@ -2,19 +2,19 @@
   "format": "revizor-report/1",
   "summary": {
     "tests": {
-      "ready": 10,
-      "blocked": 11
+      "ready": 12,
+      "blocked": 0
     },
     "answers": null,
     "verdict_after_answers": "",
     "baseline": null,
-    "requirements": 61,
+    "requirements": 60,
     "requirements_with_findings": 21,
-    "findings": 19,
+    "findings": 23,
     "by_severity": {
-      "CRITICAL": 2,
-      "MAJOR": 9,
-      "MINOR": 8
+      "CRITICAL": 3,
+      "MAJOR": 10,
+      "MINOR": 10
     },
     "by_criterion": {
       "completeness": 3,
@@ -24,24 +24,24 @@
       "feasibility": 0,
       "necessity": 0,
       "singularity": 0,
-      "set_completeness": 3,
+      "set_completeness": 6,
       "set_consistency": 8,
       "set_feasibility": 2,
-      "comprehensibility": 0,
+      "comprehensibility": 1,
       "traceability": 2
     },
     "observations": 2,
-    "questions": 19,
+    "questions": 22,
     "questions_by_priority": {
-      "blocker": 2,
+      "blocker": 3,
       "important": 9,
-      "nice": 8
+      "nice": 10
     },
     "readiness": 54,
     "readiness_band": "нужна существенная доработка",
     "clarity_bands": {
-      "ясное": 46,
-      "есть замечания": 10,
+      "ясное": 43,
+      "есть замечания": 12,
       "нужна доработка": 5,
       "в таком виде использовать нельзя": 0
     },
@@ -52,11 +52,12 @@
   "run": {
     "agent_name": "Ревизор ТЗ",
     "agent_version": "1.0.0 (v1.0.0-dirty)",
-    "started_at": "2026-11-25T20:16:23+05:00",
+    "started_at": "2026-11-25T22:48:18+05:00",
     "duration_s": 0.14,
     "mode": "offline",
     "provider": "offline",
     "model": "",
+    "model_version": "",
     "effort": "",
     "doc_name": "requirements.pdf",
     "doc_format": "pdf",
@@ -73,26 +74,26 @@
     "cache_write_tokens": 0,
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "quotes_confirmed": 35,
+    "quotes_confirmed": 46,
     "quotes_restored": 0,
     "quotes_dropped": 0,
     "skeptic_kept": 0,
     "skeptic_rejected": 0,
     "skeptic_merged": 0,
-    "manual_minutes_estimate": 289,
+    "manual_minutes_estimate": null,
     "warnings": [
       "Документ прочитан из PDF: таблицы и списки могли потерять разметку, номера строк считаются по извлечённому тексту."
     ],
     "injection_suspected": false,
     "masked_values": 0,
     "score": 54,
-    "score_formula": "10 × 9,45 (средняя ясность 61 треб.) − 40 (штраф за замечания к набору: 8×2 + 3×8 + 1×5 = 45, но не больше 40) = 54",
-    "rules_version": "1.0",
+    "score_formula": "10 × 9,39 (средняя ясность 60 треб.) − 40 (штраф за замечания к набору: 8×3 + 3×9 + 1×7 = 58, но не больше 40) = 54",
+    "rules_version": "1.1",
     "doc_words": 994,
     "context_files": [],
     "dup_merged": 0,
     "critical_demoted": 0,
-    "agent_commit": "6aec2d6",
+    "agent_commit": "a6714b9",
     "agent_tag": "v1.0.0",
     "agent_dirty": true,
     "doc_title": "Уведомление о расходах по карте"
@@ -687,21 +688,6 @@
     {
       "rid": "REQ-040",
       "doc_id": "",
-      "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Path-параметры",
-      "kind": "api",
-      "quote": "Не используются.",
-      "summary": "",
-      "block_ids": [
-        "B091"
-      ],
-      "line_start": 168,
-      "line_end": 168,
-      "page": 3,
-      "origin": "heuristic"
-    },
-    {
-      "rid": "REQ-041",
-      "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
       "kind": "api",
       "quote": "Parameter: cardId | Format: string | Size: 1–64 | Mandatory: Да | Logic: Карта клиента | Description: Идентификатор карты | DB field: card_id",
@@ -715,7 +701,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-042",
+      "rid": "REQ-041",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
       "kind": "api",
@@ -730,7 +716,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-043",
+      "rid": "REQ-042",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
       "kind": "api",
@@ -745,7 +731,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-044",
+      "rid": "REQ-043",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Request body",
       "kind": "api",
@@ -760,7 +746,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-045",
+      "rid": "REQ-044",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Request body",
       "kind": "api",
@@ -775,7 +761,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-046",
+      "rid": "REQ-045",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
       "kind": "api",
@@ -790,7 +776,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-047",
+      "rid": "REQ-046",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
       "kind": "api",
@@ -805,7 +791,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-048",
+      "rid": "REQ-047",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
       "kind": "api",
@@ -820,7 +806,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-049",
+      "rid": "REQ-048",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
       "kind": "api",
@@ -835,7 +821,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-050",
+      "rid": "REQ-049",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
       "kind": "api",
@@ -850,7 +836,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-051",
+      "rid": "REQ-050",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы",
       "kind": "api",
@@ -865,7 +851,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-052",
+      "rid": "REQ-051",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы",
       "kind": "api",
@@ -880,7 +866,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-053",
+      "rid": "REQ-052",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 200. Successful — Created",
       "kind": "api",
@@ -897,7 +883,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-054",
+      "rid": "REQ-053",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 200. Successful — Created",
       "kind": "api",
@@ -912,7 +898,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-055",
+      "rid": "REQ-054",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 200. Successful — Created",
       "kind": "api",
@@ -927,7 +913,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-056",
+      "rid": "REQ-055",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 200. Successful — Created",
       "kind": "api",
@@ -942,7 +928,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-057",
+      "rid": "REQ-056",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 400. Unsuccessful — Bad request",
       "kind": "api",
@@ -957,7 +943,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-058",
+      "rid": "REQ-057",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 401. Unsuccessful — Unauthorized",
       "kind": "api",
@@ -972,7 +958,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-059",
+      "rid": "REQ-058",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 403. Unsuccessful — Forbidden",
       "kind": "api",
@@ -987,7 +973,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-060",
+      "rid": "REQ-059",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 403. Unsuccessful — Forbidden",
       "kind": "api",
@@ -1003,7 +989,7 @@
       "origin": "heuristic"
     },
     {
-      "rid": "REQ-061",
+      "rid": "REQ-060",
       "doc_id": "",
       "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 500. Unsuccessful — Internal server error",
       "kind": "api",
@@ -1633,6 +1619,18 @@
     },
     {
       "block_ids": [
+        "B091"
+      ],
+      "category": "other",
+      "reason": "утверждение об отсутствии («не используются», «нет», «—»): это сведение, а не требование",
+      "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Path-параметры",
+      "line_start": 168,
+      "line_end": 168,
+      "text": "Не используются.",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
         "B092"
       ],
       "category": "heading",
@@ -1774,7 +1772,7 @@
         }
       },
       "by_model": false,
-      "clarity": 9.6
+      "clarity": 10.0
     },
     {
       "rid": "REQ-002",
@@ -1844,7 +1842,7 @@
         }
       },
       "by_model": false,
-      "clarity": 9.6
+      "clarity": 10.0
     },
     {
       "rid": "REQ-004",
@@ -1885,8 +1883,8 @@
       "rid": "REQ-005",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Схема процесса показывает только успешный путь"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -1914,7 +1912,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 8.8
     },
     {
       "rid": "REQ-006",
@@ -1928,8 +1926,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Денежные суммы в разных единицах: тиын и тенге"
         },
         "verifiability": {
           "status": "unchecked",
@@ -2060,8 +2058,8 @@
       "rid": "REQ-010",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Схема процесса показывает только успешный путь"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2089,7 +2087,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 8.8
     },
     {
       "rid": "REQ-011",
@@ -2124,7 +2122,7 @@
         }
       },
       "by_model": false,
-      "clarity": 7.5
+      "clarity": 7.1
     },
     {
       "rid": "REQ-012",
@@ -2138,8 +2136,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Денежные суммы в разных единицах: тиын и тенге"
         },
         "verifiability": {
           "status": "unchecked",
@@ -2159,7 +2157,7 @@
         }
       },
       "by_model": false,
-      "clarity": 8.8
+      "clarity": 8.4
     },
     {
       "rid": "REQ-013",
@@ -2391,8 +2389,8 @@
           "note": "не проверялось без модели"
         },
         "feasibility": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Метод GET используется для изменения данных"
         },
         "necessity": {
           "status": "unchecked",
@@ -2410,8 +2408,8 @@
       "rid": "REQ-020",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "В описании интерфейса не хватает правил надёжности"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2426,8 +2424,8 @@
           "note": "не проверялось без модели"
         },
         "feasibility": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Метод GET используется для изменения данных"
         },
         "necessity": {
           "status": "unchecked",
@@ -2439,7 +2437,7 @@
         }
       },
       "by_model": false,
-      "clarity": 6.8
+      "clarity": 6.4
     },
     {
       "rid": "REQ-021",
@@ -2566,8 +2564,8 @@
           "note": "не проверялось без модели"
         },
         "feasibility": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Метод GET используется для изменения данных"
         },
         "necessity": {
           "status": "unchecked",
@@ -2601,8 +2599,8 @@
           "note": "не проверялось без модели"
         },
         "feasibility": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Метод GET используется для изменения данных"
         },
         "necessity": {
           "status": "unchecked",
@@ -3126,8 +3124,8 @@
           "note": "не проверялось без модели"
         },
         "feasibility": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Чувствительные данные передаются в адресной строке запроса"
         },
         "necessity": {
           "status": "unchecked",
@@ -3139,7 +3137,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 8.8
     },
     {
       "rid": "REQ-041",
@@ -3153,8 +3151,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Параметр «amount» описан с разными типами: integer и string"
         },
         "verifiability": {
           "status": "unchecked",
@@ -3188,8 +3186,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Параметр «enabled» описан с разными типами: integer и string"
         },
         "verifiability": {
           "status": "unchecked",
@@ -3223,8 +3221,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Указан Content-Type, хотя тела запроса нет"
         },
         "verifiability": {
           "status": "unchecked",
@@ -3244,7 +3242,7 @@
         }
       },
       "by_model": false,
-      "clarity": 8.8
+      "clarity": 9.6
     },
     {
       "rid": "REQ-044",
@@ -3258,8 +3256,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Указан Content-Type, хотя тела запроса нет"
         },
         "verifiability": {
           "status": "unchecked",
@@ -3285,41 +3283,6 @@
       "rid": "REQ-045",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "unambiguity": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "verifiability": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "feasibility": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "necessity": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "singularity": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        }
-      },
-      "by_model": false,
-      "clarity": 9.6
-    },
-    {
-      "rid": "REQ-046",
-      "criteria": {
-        "completeness": {
           "status": "issue",
           "note": "Незакрытый перечень: «и далее»"
         },
@@ -3328,8 +3291,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Код ответа 201 назван успешным, но не описан"
         },
         "verifiability": {
           "status": "unchecked",
@@ -3352,7 +3315,7 @@
       "clarity": 8.0
     },
     {
-      "rid": "REQ-047",
+      "rid": "REQ-046",
       "criteria": {
         "completeness": {
           "status": "unchecked",
@@ -3387,6 +3350,41 @@
       "clarity": 10.0
     },
     {
+      "rid": "REQ-047",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "issue",
+          "note": "Параметр «amount» описан с разными типами: integer и string"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 8.8
+    },
+    {
       "rid": "REQ-048",
       "criteria": {
         "completeness": {
@@ -3398,8 +3396,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Параметр «enabled» описан с разными типами: integer и string"
         },
         "verifiability": {
           "status": "unchecked",
@@ -3454,7 +3452,7 @@
         }
       },
       "by_model": false,
-      "clarity": 8.8
+      "clarity": 10.0
     },
     {
       "rid": "REQ-050",
@@ -3538,8 +3536,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Ошибка возвращается с успешным кодом 200"
         },
         "verifiability": {
           "status": "unchecked",
@@ -3559,7 +3557,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 6.8
     },
     {
       "rid": "REQ-053",
@@ -3594,7 +3592,7 @@
         }
       },
       "by_model": false,
-      "clarity": 6.8
+      "clarity": 10.0
     },
     {
       "rid": "REQ-054",
@@ -3748,8 +3746,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "В описании кода 403 сказано, что возвращается 404"
         },
         "verifiability": {
           "status": "unchecked",
@@ -3769,7 +3767,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 8.8
     },
     {
       "rid": "REQ-059",
@@ -3804,45 +3802,10 @@
         }
       },
       "by_model": false,
-      "clarity": 8.8
-    },
-    {
-      "rid": "REQ-060",
-      "criteria": {
-        "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "unambiguity": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "verifiability": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "feasibility": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "necessity": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        },
-        "singularity": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
-        }
-      },
-      "by_model": false,
       "clarity": 10.0
     },
     {
-      "rid": "REQ-061",
+      "rid": "REQ-060",
       "criteria": {
         "completeness": {
           "status": "unchecked",
@@ -3880,21 +3843,69 @@
   "findings": [
     {
       "scope": "set",
+      "criterion": "comprehensibility",
+      "severity": "MINOR",
+      "title": "Название в заголовке и в сведениях о документе расходятся",
+      "problem": "Заголовок документа — «Уведомление о расходах по карте», а в сведениях о документе указано «Месячный порог расходов по карте». Общих слов в названиях меньше половины: непонятно, о какой задаче документ, и при поиске по названию в системе задач или в реестре документов его можно не найти или перепутать с другим.",
+      "recommendation": "Приведите название к одному виду во всех местах: в заголовке, в служебных полях и в ссылках.",
+      "quotes": [
+        {
+          "text": "Уведомление о расходах по карте",
+          "line_start": 1,
+          "line_end": 1,
+          "page": 1,
+          "section": "Уведомление о расходах по карте",
+          "rid": "",
+          "exact": true
+        },
+        {
+          "text": "Наименование задачи                                                    Месячный порог расходов по карте",
+          "line_start": 12,
+          "line_end": 12,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Общие сведения",
+          "rid": "",
+          "exact": true
+        }
+      ],
+      "req_ids": [],
+      "question": {
+        "text": "Какое название задачи правильное?",
+        "options": [
+          "Как в заголовке: «Уведомление о расходах по карте»",
+          "Как в сведениях: «Месячный порог расходов по карте»"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:title-mismatch",
+      "rule_ids": [
+        "title-mismatch"
+      ],
+      "stage": "rules",
+      "fid": "D-001",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-13",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Comprehensible)"
+    },
+    {
+      "scope": "set",
       "criterion": "traceability",
       "severity": "MINOR",
       "title": "У большинства требований нет номеров",
-      "problem": "Номер из документа есть только у 4 из 61 требований. Без номера на требование нельзя сослаться в задаче, тест-кейсе или замечании, и трудно проверить, что каждое требование покрыто тестом. Разделы без номеров: «Цели», «Архитектура решения», «Дизайн процесса UI», «BPMN схема процесса», «Sequence Diagram», «Нефункциональные требования», «Требования к данным», «Требования к интеграции» и ещё 16.",
+      "problem": "Номер из документа есть только у 4 из 9 требований, которые описывают поведение системы, данные, интерфейс или ограничения. Всего агент выделил 60 пунктов; строки таблиц параметров, ответы, шаги схем, цели и примеры приёмки здесь не считаются: им отдельный номер не обязателен. Без номера на требование нельзя сослаться в задаче, тест-кейсе или замечании, и трудно проверить, что каждое требование покрыто тестом. Разделы без номеров: «Архитектура решения», «Нефункциональные требования», «Требования к данным», «Требования к интеграции».",
       "recommendation": "Присвойте каждому требованию уникальный номер (например, Ф-5, НФТ-1, ДАН-1, API-3) и ссылайтесь на эти номера в критериях приёмки.",
       "quotes": [
-        {
-          "text": "Дать клиенту возможность узнать о достижении личного бюджета в момент покупки.",
-          "line_start": 23,
-          "line_end": 23,
-          "page": 1,
-          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Цели",
-          "rid": "REQ-001",
-          "exact": true
-        },
         {
           "text": "Мобильное приложение → сервис настроек. Карточный процессинг → учёт расходов → сервис push.",
           "line_start": 26,
@@ -3905,19 +3916,64 @@
           "exact": true
         },
         {
-          "text": "Карты → Расходы → Уведомления. На экране видны переключатель, поле «Порог, ₸», сумма за месяц и кнопка «Сохранить».",
-          "line_start": 29,
-          "line_end": 29,
+          "text": "Сервис передаёт push на отправку в течение минуты после получения события.",
+          "line_start": 52,
+          "line_end": 52,
           "page": 1,
-          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Дизайн процесса UI",
-          "rid": "REQ-003",
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Нефункциональные требования",
+          "rid": "REQ-011",
+          "exact": true
+        },
+        {
+          "text": "Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.",
+          "line_start": 55,
+          "line_end": 55,
+          "page": 2,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к данным",
+          "rid": "REQ-012",
+          "exact": true
+        },
+        {
+          "text": "Архитектура решения",
+          "line_start": 25,
+          "line_end": 25,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Архитектура решения",
+          "rid": "",
+          "exact": true
+        },
+        {
+          "text": "Нефункциональные требования",
+          "line_start": 51,
+          "line_end": 51,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Нефункциональные требования",
+          "rid": "",
+          "exact": true
+        },
+        {
+          "text": "Требования к данным",
+          "line_start": 54,
+          "line_end": 54,
+          "page": 2,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к данным",
+          "rid": "",
+          "exact": true
+        },
+        {
+          "text": "Требования к интеграции",
+          "line_start": 57,
+          "line_end": 57,
+          "page": 2,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к интеграции",
+          "rid": "",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-001",
         "REQ-002",
-        "REQ-003"
+        "REQ-011",
+        "REQ-012"
       ],
       "question": {
         "text": "Какую схему номеров использовать для требований без номера?",
@@ -3933,17 +3989,80 @@
         "missing-ids"
       ],
       "stage": "rules",
-      "fid": "D-001",
+      "fid": "D-002",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-12",
+      "question_id": "В-14",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "IEEE 830-1998 п. 4.3.8 (Traceable)"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MAJOR",
+      "title": "Схема процесса показывает только успешный путь",
+      "problem": "Схема описывает только последовательность успешных шагов: на ней нет ни одной ветки ошибки, отказа или альтернативного пути. Разработчик не узнает из схемы, куда идёт процесс при сбое шага, а тестировщик — какие ветки проверять; каждый достроит их по-своему.",
+      "recommendation": "Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь.",
+      "quotes": [
+        {
+          "text": "Проведение покупки → пересчёт расходов → проверка порога → при достижении отправка push → завершение.",
+          "line_start": 35,
+          "line_end": 35,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › BPMN схема процесса",
+          "rid": "REQ-005",
+          "exact": true
+        },
+        {
+          "text": "BPMN схема процесса",
+          "line_start": 34,
+          "line_end": 34,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › BPMN схема процесса",
+          "rid": "",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-005"
+      ],
+      "question": {
+        "text": "Какие ветки, кроме успешной, должны быть на схеме?",
+        "options": [
+          "Ошибка и отказ на каждом шаге",
+          "Тайм-аут и недоступность соседней системы",
+          "Отмена пользователем и повтор"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:flow-happy-path",
+      "rule_ids": [
+        "flow-happy-path"
+      ],
+      "stage": "rules",
+      "fid": "D-003",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-04",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
       "scope": "requirement",
@@ -3990,7 +4109,70 @@
       "advisory": true,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MAJOR",
+      "title": "Схема процесса показывает только успешный путь",
+      "problem": "Схема описывает только последовательность успешных шагов: на ней нет ни одной ветки ошибки, отказа или альтернативного пути. Разработчик не узнает из схемы, куда идёт процесс при сбое шага, а тестировщик — какие ветки проверять; каждый достроит их по-своему.",
+      "recommendation": "Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь.",
+      "quotes": [
+        {
+          "text": "Процессинг → сервис расходов: проведена покупка. Сервис расходов → настройки: получить порог карты. Сервис расходов →\npush: передать последние четыре цифры карты и сумму при достижении порога.",
+          "line_start": 48,
+          "line_end": 49,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Sequence Diagram",
+          "rid": "REQ-010",
+          "exact": true
+        },
+        {
+          "text": "Sequence Diagram",
+          "line_start": 47,
+          "line_end": 47,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Sequence Diagram",
+          "rid": "",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-010"
+      ],
+      "question": {
+        "text": "Какие ветки, кроме успешной, должны быть на схеме?",
+        "options": [
+          "Ошибка и отказ на каждом шаге",
+          "Тайм-аут и недоступность соседней системы",
+          "Отмена пользователем и повтор"
+        ],
+        "addressee": "analyst",
+        "gap": ""
+      },
+      "source": "rule:flow-happy-path",
+      "rule_ids": [
+        "flow-happy-path"
+      ],
+      "stage": "rules",
+      "fid": "D-004",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-04",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
       "scope": "requirement",
@@ -4028,16 +4210,19 @@
         "time-without-conditions"
       ],
       "stage": "rules",
-      "fid": "D-002",
+      "fid": "D-005",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-03",
+      "question_id": "В-05",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
     },
     {
@@ -4086,24 +4271,27 @@
         "unit-mix"
       ],
       "stage": "rules",
-      "fid": "D-003",
+      "fid": "D-006",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-04",
+      "question_id": "В-06",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
       "scope": "set",
       "criterion": "set_completeness",
-      "severity": "MAJOR",
+      "severity": "CRITICAL",
       "title": "Раздел «Тестирование требований» не заполнен: вместо содержания заглушка",
-      "problem": "Вместо содержания раздела стоит заглушка «заполняются тестировщиками». Значит, эта часть требований не готова: по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел формально есть.",
+      "problem": "Вместо содержания раздела стоит заглушка «заполняются тестировщиками». Значит, эта часть требований не готова: по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел формально есть. Это раздел о проверке результата: пока он не заполнен, нет согласованного способа принять работу, поэтому передавать документ в разработку и тестирование нельзя.",
       "recommendation": "Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.",
       "quotes": [
         {
@@ -4141,16 +4329,19 @@
         "empty-section"
       ],
       "stage": "rules",
-      "fid": "D-004",
+      "fid": "D-007",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-05",
+      "question_id": "В-02",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
-      "blocker_reason": "",
+      "blocker_reason": "missing_part",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
@@ -4195,16 +4386,19 @@
         "unfilled-checklist"
       ],
       "stage": "rules",
-      "fid": "D-005",
+      "fid": "D-008",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-13",
+      "question_id": "В-15",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
@@ -4240,16 +4434,19 @@
         "no-version"
       ],
       "stage": "rules",
-      "fid": "D-006",
+      "fid": "D-009",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-14",
+      "question_id": "В-16",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "IEEE 830-1998 п. 4.3.8 (Traceable)"
     },
     {
@@ -4294,16 +4491,19 @@
         "empty-table"
       ],
       "stage": "rules",
-      "fid": "D-007",
+      "fid": "D-010",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-15",
+      "question_id": "В-17",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
@@ -4372,7 +4572,7 @@
         "get-mutation"
       ],
       "stage": "rules",
-      "fid": "D-008",
+      "fid": "D-011",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4382,7 +4582,61 @@
       "advisory": false,
       "blocker_reason": "protocol",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "В описании интерфейса не хватает правил надёжности",
+      "problem": "Интерфейс меняет данные, но в документе не описано: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса. Без этих правил разработчики клиента и сервера по-разному поведут себя при перегрузке, медленном ответе, повторной отправке и одновременной правке одного объекта, а тестировщик не знает, какое поведение ожидать.",
+      "recommendation": "Добавьте в описание интерфейса: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса — с конкретными значениями (лимит запросов и код ответа при превышении, тайм-аут и число повторов, способ защиты от одновременной правки, ключ идемпотентности, номер версии в пути или заголовке).",
+      "quotes": [
+        {
+          "text": "REST type                                                                  GET",
+          "line_start": 136,
+          "line_end": 136,
+          "page": 3,
+          "section": "Уведомление о расходах по карте › Часть B. REST API › Общие параметры",
+          "rid": "REQ-020",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-020"
+      ],
+      "question": {
+        "text": "Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях?",
+        "options": [
+          "Задать лимит с кодом 429, тайм-аут и повторы, ключ идемпотентности и версию в пути",
+          "Описать только то, что нужно этой задаче, остальное — по общему стандарту команды",
+          "Принять риск и не описывать"
+        ],
+        "addressee": "architect",
+        "gap": ""
+      },
+      "source": "rule:api-reliability",
+      "rule_ids": [
+        "api-reliability"
+      ],
+      "stage": "rules",
+      "fid": "D-012",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-18",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
       "scope": "requirement",
@@ -4420,16 +4674,19 @@
         "placeholder"
       ],
       "stage": "rules",
-      "fid": "D-009",
+      "fid": "D-013",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-16",
+      "question_id": "В-19",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
@@ -4468,16 +4725,19 @@
         "placeholder"
       ],
       "stage": "rules",
-      "fid": "D-010",
+      "fid": "D-014",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-17",
+      "question_id": "В-20",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
@@ -4494,12 +4754,12 @@
           "line_end": 174,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
-          "rid": "REQ-041",
+          "rid": "REQ-040",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-041"
+        "REQ-040"
       ],
       "question": {
         "text": "Как передавать идентификатор карты и другие чувствительные значения?",
@@ -4516,16 +4776,19 @@
         "sensitive-in-query"
       ],
       "stage": "rules",
-      "fid": "D-011",
+      "fid": "D-015",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-06",
+      "question_id": "В-07",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
     },
     {
@@ -4542,7 +4805,7 @@
           "line_end": 175,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
-          "rid": "REQ-042",
+          "rid": "REQ-041",
           "exact": true
         },
         {
@@ -4551,13 +4814,13 @@
           "line_end": 189,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
-          "rid": "REQ-048",
+          "rid": "REQ-047",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-042",
-        "REQ-048"
+        "REQ-041",
+        "REQ-047"
       ],
       "question": {
         "text": "Какой тип у параметра «amount»?",
@@ -4573,16 +4836,19 @@
         "param-type-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-012",
+      "fid": "D-016",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-07",
+      "question_id": "В-08",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
@@ -4599,7 +4865,7 @@
           "line_end": 177,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
-          "rid": "REQ-043",
+          "rid": "REQ-042",
           "exact": true
         },
         {
@@ -4608,13 +4874,13 @@
           "line_end": 190,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
-          "rid": "REQ-049",
+          "rid": "REQ-048",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-043",
-        "REQ-049"
+        "REQ-042",
+        "REQ-048"
       ],
       "question": {
         "text": "Какой тип у параметра «enabled»?",
@@ -4630,16 +4896,19 @@
         "param-type-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-013",
+      "fid": "D-017",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-08",
+      "question_id": "В-09",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
@@ -4656,7 +4925,7 @@
           "line_end": 181,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Request body",
-          "rid": "REQ-044",
+          "rid": "REQ-043",
           "exact": true
         },
         {
@@ -4665,13 +4934,13 @@
           "line_end": 182,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Request body",
-          "rid": "REQ-045",
+          "rid": "REQ-044",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-044",
-        "REQ-045"
+        "REQ-043",
+        "REQ-044"
       ],
       "question": {
         "text": "Передаются ли параметры в теле запроса?",
@@ -4687,16 +4956,19 @@
         "content-type-without-body"
       ],
       "stage": "rules",
-      "fid": "D-014",
+      "fid": "D-018",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-18",
+      "question_id": "В-21",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
@@ -4713,12 +4985,12 @@
           "line_end": 185,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
-          "rid": "REQ-046",
+          "rid": "REQ-045",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-046"
+        "REQ-045"
       ],
       "question": {
         "text": "Какие именно значения входят в перечень?",
@@ -4735,16 +5007,19 @@
         "open-list"
       ],
       "stage": "rules",
-      "fid": "D-015",
+      "fid": "D-019",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-19",
+      "question_id": "В-22",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3"
     },
     {
@@ -4761,12 +5036,12 @@
           "line_end": 185,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
-          "rid": "REQ-046",
+          "rid": "REQ-045",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-046"
+        "REQ-045"
       ],
       "question": {
         "text": "Возвращает ли сервис код 201?",
@@ -4782,16 +5057,19 @@
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-016",
+      "fid": "D-020",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-09",
+      "question_id": "В-10",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
@@ -4817,12 +5095,12 @@
           "line_end": 202,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 200. Successful — Created",
-          "rid": "REQ-053",
+          "rid": "REQ-052",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-053"
+        "REQ-052"
       ],
       "question": {
         "text": "Какой код возвращать, когда операция отклонена?",
@@ -4839,16 +5117,19 @@
         "error-in-success"
       ],
       "stage": "rules",
-      "fid": "D-017",
+      "fid": "D-021",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-02",
+      "question_id": "В-03",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "protocol",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
@@ -4884,16 +5165,19 @@
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-018",
+      "fid": "D-022",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-10",
+      "question_id": "В-11",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     },
     {
@@ -4910,12 +5194,12 @@
           "line_end": 205,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 200. Successful — Created",
-          "rid": "REQ-055",
+          "rid": "REQ-054",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-055"
+        "REQ-054"
       ],
       "question": {
         "text": "Что система должна сделать вместо запрещённого действия?",
@@ -4941,6 +5225,9 @@
       "advisory": true,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
     },
     {
@@ -4966,12 +5253,12 @@
           "line_end": 215,
           "page": 4,
           "section": "Уведомление о расходах по карте › Часть B. REST API › Статусы › 403. Unsuccessful — Forbidden",
-          "rid": "REQ-059",
+          "rid": "REQ-058",
           "exact": true
         }
       ],
       "req_ids": [
-        "REQ-059"
+        "REQ-058"
       ],
       "question": {
         "text": "Какой код возвращается в этом случае?",
@@ -4988,16 +5275,19 @@
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-019",
+      "fid": "D-023",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-11",
+      "question_id": "В-12",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
       "blocker_reason": "",
       "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "level_trail": [],
       "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
     }
   ],
@@ -5016,7 +5306,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-008"
+        "D-011"
       ],
       "req_ids": [
         "REQ-020",
@@ -5036,10 +5326,57 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "scenario"
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-011"
+        ],
+        "blockers_closed": 1,
+        "verdict_after": "BLOCKED",
+        "index_after": 56,
+        "index_delta": 2
+      }
     },
     {
       "qid": "В-02",
+      "text": "Кто и когда заполнит раздел «Тестирование требований»?",
+      "why": "Вместо содержания раздела стоит заглушка «заполняются тестировщиками».",
+      "addressee": "analyst",
+      "options": [
+        "Автор документа — до начала разработки",
+        "Другая команда — указать ответственного и срок",
+        "Раздел не нужен — удалить"
+      ],
+      "priority": "blocker",
+      "finding_ids": [
+        "D-007"
+      ],
+      "req_ids": [],
+      "quote": {
+        "text": "Тестирование требований",
+        "line_start": 63,
+        "line_end": 63,
+        "page": 2,
+        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к тестированию › Тестирование требований",
+        "rid": "",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-007"
+        ],
+        "blockers_closed": 1,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-03",
       "text": "Какой код возвращать, когда операция отклонена?",
       "why": "В описании ответа 200 приведён пример с признаком ошибки (\"result\":\"ERROR\").",
       "addressee": "architect",
@@ -5050,10 +5387,10 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-017"
+        "D-021"
       ],
       "req_ids": [
-        "REQ-053"
+        "REQ-052"
       ],
       "quote": {
         "text": "Successful — Created",
@@ -5067,10 +5404,62 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-021"
+        ],
+        "blockers_closed": 1,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-03",
+      "qid": "В-04",
+      "text": "Какие ветки, кроме успешной, должны быть на схеме?",
+      "why": "Схема описывает только последовательность успешных шагов: на ней нет ни одной ветки ошибки, отказа или альтернативного пути.",
+      "addressee": "analyst",
+      "options": [
+        "Ошибка и отказ на каждом шаге",
+        "Тайм-аут и недоступность соседней системы",
+        "Отмена пользователем и повтор"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-003",
+        "D-004"
+      ],
+      "req_ids": [
+        "REQ-005",
+        "REQ-010"
+      ],
+      "quote": {
+        "text": "Проведение покупки → пересчёт расходов → проверка порога → при достижении отправка push → завершение.",
+        "line_start": 35,
+        "line_end": 35,
+        "page": 1,
+        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › BPMN схема процесса",
+        "rid": "REQ-005",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-003",
+          "D-004"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-05",
       "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»?",
       "why": "Задан срок «в течение минуты», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать.",
       "addressee": "business",
@@ -5081,7 +5470,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-002"
+        "D-005"
       ],
       "req_ids": [
         "REQ-011"
@@ -5098,10 +5487,19 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "value"
+      "gap": "value",
+      "impact": {
+        "closes": [
+          "D-005"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-04",
+      "qid": "В-06",
       "text": "В каких единицах хранить, передавать и сравнивать суммы?",
       "why": "Одни суммы заданы в единицах «тиын», другие — в «тенге», а правило пересчёта нигде не записано.",
       "addressee": "architect",
@@ -5112,7 +5510,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-003"
+        "D-006"
       ],
       "req_ids": [
         "REQ-012",
@@ -5130,39 +5528,19 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-006"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-05",
-      "text": "Кто и когда заполнит раздел «Тестирование требований»?",
-      "why": "Вместо содержания раздела стоит заглушка «заполняются тестировщиками».",
-      "addressee": "analyst",
-      "options": [
-        "Автор документа — до начала разработки",
-        "Другая команда — указать ответственного и срок",
-        "Раздел не нужен — удалить"
-      ],
-      "priority": "important",
-      "finding_ids": [
-        "D-004"
-      ],
-      "req_ids": [],
-      "quote": {
-        "text": "Тестирование требований",
-        "line_start": 63,
-        "line_end": 63,
-        "page": 2,
-        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к тестированию › Тестирование требований",
-        "rid": "",
-        "exact": true
-      },
-      "option_effects": [],
-      "answer": "",
-      "answer_effect": "",
-      "gap": "scenario"
-    },
-    {
-      "qid": "В-06",
+      "qid": "В-07",
       "text": "Как передавать идентификатор карты и другие чувствительные значения?",
       "why": "Параметры «cardId» передаются в строке запроса (query).",
       "addressee": "security",
@@ -5173,10 +5551,10 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-011"
+        "D-015"
       ],
       "req_ids": [
-        "REQ-041"
+        "REQ-040"
       ],
       "quote": {
         "text": "cardId               string                1–64                  Да                    Карта клиента         Идентификатор         card_id\n                                                                                                             карты",
@@ -5184,16 +5562,25 @@
         "line_end": 174,
         "page": 4,
         "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
-        "rid": "REQ-041",
+        "rid": "REQ-040",
         "exact": true
       },
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "scenario"
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-015"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-07",
+      "qid": "В-08",
       "text": "Какой тип у параметра «amount»?",
       "why": "В одной таблице параметр «amount» имеет тип integer, в другой — string.",
       "addressee": "architect",
@@ -5203,11 +5590,11 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-012"
+        "D-016"
       ],
       "req_ids": [
-        "REQ-042",
-        "REQ-048"
+        "REQ-041",
+        "REQ-047"
       ],
       "quote": {
         "text": "amount               integer               32 bit                Да                    1 000–1 000 000       Порог в тенге         limit_kzt",
@@ -5215,16 +5602,25 @@
         "line_end": 175,
         "page": 4,
         "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
-        "rid": "REQ-042",
+        "rid": "REQ-041",
         "exact": true
       },
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-016"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-08",
+      "qid": "В-09",
       "text": "Какой тип у параметра «enabled»?",
       "why": "В одной таблице параметр «enabled» имеет тип integer, в другой — string.",
       "addressee": "architect",
@@ -5234,11 +5630,11 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-013"
+        "D-017"
       ],
       "req_ids": [
-        "REQ-043",
-        "REQ-049"
+        "REQ-042",
+        "REQ-048"
       ],
       "quote": {
         "text": "enabled              integer               1 знак                Да                    0 или 1               Признак               enabled\n                                                                                                             включения",
@@ -5246,16 +5642,25 @@
         "line_end": 177,
         "page": 4,
         "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Query-параметры",
-        "rid": "REQ-043",
+        "rid": "REQ-042",
         "exact": true
       },
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-017"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-09",
+      "qid": "В-10",
       "text": "Возвращает ли сервис код 201?",
       "why": "В тексте код 201 назван успешным, но в описании ответов для него нет ни условия, ни примера тела ответа.",
       "addressee": "architect",
@@ -5265,10 +5670,10 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-016"
+        "D-020"
       ],
       "req_ids": [
-        "REQ-046"
+        "REQ-045"
       ],
       "quote": {
         "text": "Если результат 200 или 201 — успешный",
@@ -5276,16 +5681,25 @@
         "line_end": 185,
         "page": 4,
         "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
-        "rid": "REQ-046",
+        "rid": "REQ-045",
         "exact": true
       },
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-020"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-10",
+      "qid": "В-11",
       "text": "Какой код должен возвращаться в этом случае?",
       "why": "В описании ответа 200 стоит название «Created», которое по стандарту HTTP относится к коду 201.",
       "addressee": "architect",
@@ -5295,7 +5709,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-018"
+        "D-022"
       ],
       "req_ids": [],
       "quote": {
@@ -5310,10 +5724,19 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-022"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-11",
+      "qid": "В-12",
       "text": "Какой код возвращается в этом случае?",
       "why": "Раздел описывает ответ 403, но в нём же сказано, что в этом случае возвращается 404.",
       "addressee": "architect",
@@ -5324,10 +5747,10 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-019"
+        "D-023"
       ],
       "req_ids": [
-        "REQ-059"
+        "REQ-058"
       ],
       "quote": {
         "text": "Unsuccessful — Forbidden",
@@ -5341,12 +5764,58 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-023"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-12",
+      "qid": "В-13",
+      "text": "Какое название задачи правильное?",
+      "why": "Заголовок документа — «Уведомление о расходах по карте», а в сведениях о документе указано «Месячный порог расходов по карте».",
+      "addressee": "analyst",
+      "options": [
+        "Как в заголовке: «Уведомление о расходах по карте»",
+        "Как в сведениях: «Месячный порог расходов по карте»"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-001"
+      ],
+      "req_ids": [],
+      "quote": {
+        "text": "Уведомление о расходах по карте",
+        "line_start": 1,
+        "line_end": 1,
+        "page": 1,
+        "section": "Уведомление о расходах по карте",
+        "rid": "",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "term",
+      "impact": {
+        "closes": [
+          "D-001"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-14",
       "text": "Какую схему номеров использовать для требований без номера?",
-      "why": "Номер из документа есть только у 4 из 61 требований.",
+      "why": "Номер из документа есть только у 4 из 9 требований, которые описывают поведение системы, данные, интерфейс или ограничения.",
       "addressee": "analyst",
       "options": [
         "Продолжить существующую нумерацию на все разделы",
@@ -5354,29 +5823,38 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-001"
+        "D-002"
       ],
       "req_ids": [
-        "REQ-001",
         "REQ-002",
-        "REQ-003"
+        "REQ-011",
+        "REQ-012"
       ],
       "quote": {
-        "text": "Дать клиенту возможность узнать о достижении личного бюджета в момент покупки.",
-        "line_start": 23,
-        "line_end": 23,
+        "text": "Мобильное приложение → сервис настроек. Карточный процессинг → учёт расходов → сервис push.",
+        "line_start": 26,
+        "line_end": 26,
         "page": 1,
-        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Цели",
-        "rid": "REQ-001",
+        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Архитектура решения",
+        "rid": "REQ-002",
         "exact": true
       },
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "owner"
+      "gap": "owner",
+      "impact": {
+        "closes": [
+          "D-002"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-13",
+      "qid": "В-15",
       "text": "Кто проводит ревью по чек-листу и когда?",
       "why": "В 28 ячейках таблицы (14 строк) оставлены все варианты ответа, например «Да / Нет».",
       "addressee": "qa",
@@ -5386,7 +5864,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-005"
+        "D-008"
       ],
       "req_ids": [],
       "quote": {
@@ -5401,10 +5879,19 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "scenario"
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-008"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-14",
+      "qid": "В-16",
       "text": "Какую версию и дату присвоить документу?",
       "why": "В документе версия или дата оставлены незаполненными.",
       "addressee": "analyst",
@@ -5414,7 +5901,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-006"
+        "D-009"
       ],
       "req_ids": [],
       "quote": {
@@ -5429,10 +5916,19 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "owner"
+      "gap": "owner",
+      "impact": {
+        "closes": [
+          "D-009"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-15",
+      "qid": "В-17",
       "text": "Кто должен быть в этой таблице?",
       "why": "Таблица есть, но ни одна её строка не заполнена.",
       "addressee": "business",
@@ -5442,7 +5938,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-007"
+        "D-010"
       ],
       "req_ids": [],
       "quote": {
@@ -5457,10 +5953,59 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "scenario"
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-010"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-16",
+      "qid": "В-18",
+      "text": "Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях?",
+      "why": "Интерфейс меняет данные, но в документе не описано: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса.",
+      "addressee": "architect",
+      "options": [
+        "Задать лимит с кодом 429, тайм-аут и повторы, ключ идемпотентности и версию в пути",
+        "Описать только то, что нужно этой задаче, остальное — по общему стандарту команды",
+        "Принять риск и не описывать"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-012"
+      ],
+      "req_ids": [
+        "REQ-020"
+      ],
+      "quote": {
+        "text": "REST type                                                                  GET",
+        "line_start": 136,
+        "line_end": 136,
+        "page": 3,
+        "section": "Уведомление о расходах по карте › Часть B. REST API › Общие параметры",
+        "rid": "REQ-020",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "impact": {
+        "closes": [
+          "D-012"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-19",
       "text": "Чем заменить заглушку «Prod: —»?",
       "why": "Вместо содержания стоит заглушка «Prod: —».",
       "addressee": "business",
@@ -5471,7 +6016,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-009"
+        "D-013"
       ],
       "req_ids": [
         "REQ-024"
@@ -5488,10 +6033,19 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "value"
+      "gap": "value",
+      "impact": {
+        "closes": [
+          "D-013"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-17",
+      "qid": "В-20",
       "text": "Чем заменить заглушку «—»?",
       "why": "Вместо содержания стоит заглушка «—».",
       "addressee": "business",
@@ -5502,7 +6056,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-010"
+        "D-014"
       ],
       "req_ids": [
         "REQ-026"
@@ -5519,10 +6073,19 @@
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "value"
+      "gap": "value",
+      "impact": {
+        "closes": [
+          "D-014"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-18",
+      "qid": "В-21",
       "text": "Передаются ли параметры в теле запроса?",
       "why": "Для запроса задан заголовок Content-Type, но сказано, что тело запроса не используется.",
       "addressee": "architect",
@@ -5532,11 +6095,11 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-014"
+        "D-018"
       ],
       "req_ids": [
-        "REQ-044",
-        "REQ-045"
+        "REQ-043",
+        "REQ-044"
       ],
       "quote": {
         "text": "Content-Type: application/json .",
@@ -5544,16 +6107,25 @@
         "line_end": 181,
         "page": 4,
         "section": "Уведомление о расходах по карте › Часть B. REST API › Параметры запроса › Request body",
-        "rid": "REQ-044",
+        "rid": "REQ-043",
         "exact": true
       },
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "conflict"
+      "gap": "conflict",
+      "impact": {
+        "closes": [
+          "D-018"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     },
     {
-      "qid": "В-19",
+      "qid": "В-22",
       "text": "Какие именно значения входят в перечень?",
       "why": "Перечень заканчивается словами «и далее», поэтому непонятно, что ещё в него входит.",
       "addressee": "analyst",
@@ -5564,10 +6136,10 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-015"
+        "D-019"
       ],
       "req_ids": [
-        "REQ-046"
+        "REQ-045"
       ],
       "quote": {
         "text": "Если результат 400, 401 и далее — неуспешный",
@@ -5575,56 +6147,60 @@
         "line_end": 185,
         "page": 4,
         "section": "Уведомление о расходах по карте › Часть B. REST API › Ответ",
-        "rid": "REQ-046",
+        "rid": "REQ-045",
         "exact": true
       },
       "option_effects": [],
       "answer": "",
       "answer_effect": "",
-      "gap": "value"
+      "gap": "value",
+      "impact": {
+        "closes": [
+          "D-019"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
     }
   ],
   "fix_first": [
     {
-      "action": "Метод GET используется для изменения данных. Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.",
-      "finding_ids": [
-        "D-008"
-      ]
-    },
-    {
-      "action": "Ошибка возвращается с успешным кодом 200. Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом значении) с телом ошибки, а в ответ 2xx включайте только успешный результат.",
-      "finding_ids": [
-        "D-017"
-      ]
-    },
-    {
-      "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «в течение минуты для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
-      "finding_ids": [
-        "D-002"
-      ]
-    },
-    {
-      "action": "Денежные суммы в разных единицах: тиын и тенге. Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.",
-      "finding_ids": [
-        "D-003"
-      ]
-    },
-    {
       "action": "Раздел «Тестирование требований» не заполнен: вместо содержания заглушка. Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.",
       "finding_ids": [
-        "D-004"
+        "D-007"
       ]
     },
     {
-      "action": "Чувствительные данные передаются в адресной строке запроса. Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы.",
+      "action": "Метод GET используется для изменения данных. Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.",
       "finding_ids": [
         "D-011"
       ]
     },
     {
-      "action": "Параметр «amount» описан с разными типами: integer и string. Выберите для «amount» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места.",
+      "action": "Ошибка возвращается с успешным кодом 200. Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом значении) с телом ошибки, а в ответ 2xx включайте только успешный результат.",
       "finding_ids": [
-        "D-012"
+        "D-021"
+      ]
+    },
+    {
+      "action": "Схема процесса показывает только успешный путь. Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь.",
+      "finding_ids": [
+        "D-003",
+        "D-004"
+      ]
+    },
+    {
+      "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «в течение минуты для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
+      "finding_ids": [
+        "D-005"
+      ]
+    },
+    {
+      "action": "Денежные суммы в разных единицах: тиын и тенге. Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.",
+      "finding_ids": [
+        "D-006"
       ]
     }
   ],
@@ -5632,7 +6208,7 @@
   "coverage": [],
   "verdict": "BLOCKED",
   "verdict_text": "⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (модель не использовалась: проверены только автоматические правила, итог предварительный)",
-  "verdict_reason": "Найдено блокеров: 2 (Метод GET используется для изменения данных; Ошибка возвращается с успешным кодом 200). Пока они не устранены, разработчик и тестировщик будут работать по описанию, которое противоречит себе или общепринятым стандартам, и часть работы придётся переделывать. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.",
+  "verdict_reason": "Найдено блокеров: 3 (Раздел «Тестирование требований» не заполнен: вместо содержания заглушка; Метод GET используется для изменения данных; Ошибка возвращается с успешным кодом 200). Пока они не устранены, разработчик и тестировщик будут работать по описанию, которое противоречит себе или общепринятым стандартам, и часть работы придётся переделывать. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.",
   "tests": [
     {
       "tid": "Т-01",
@@ -5643,12 +6219,15 @@
       ],
       "given": "Система работает в обычном режиме; проверяется требование Ф-1: «Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно».",
       "when": "Ввести или передать значения на границе допустимого: 1 000, 1 000 000 ₸.",
-      "then": "Значения принимаются без ошибки (требование Ф-1 допускает их).",
-      "blocked_by": [
-        "В-04"
-      ],
+      "then": "Значения принимаются без ошибки: по требованию Ф-1 допустимо «от 1 000 до 1 000 000 ₸ включительно».",
+      "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": true,
+      "values": [
+        "1 000",
+        "1 000 000"
+      ]
     },
     {
       "tid": "Т-02",
@@ -5659,12 +6238,15 @@
       ],
       "given": "Система работает в обычном режиме; проверяется требование Ф-1: «Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно».",
       "when": "Ввести или передать значения сразу за границей: 999, 1 000 001 ₸.",
-      "then": "",
-      "blocked_by": [
-        "В-04"
-      ],
+      "then": "Значения не принимаются как допустимые: по требованию Ф-1 допустимо только «от 1 000 до 1 000 000 ₸ включительно».",
+      "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": true,
+      "values": [
+        "1 000",
+        "1 000 000"
+      ]
     },
     {
       "tid": "Т-03",
@@ -5678,7 +6260,9 @@
       "then": "Клиент получает push (требование Ф-3).",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
       "tid": "Т-04",
@@ -5692,46 +6276,12 @@
       "then": "Следующее достижение вызывает push независимо от истории предыдущей настройки (требование Ф-4).",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
       "tid": "Т-05",
-      "title": "REQ-011: Сервис передаёт push на отправку в течение минуты после получения события",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-011"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-011: «Сервис передаёт push на отправку в течение минуты после получения события.».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-03"
-      ],
-      "finding_ids": [
-        "D-002"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-06",
-      "title": "REQ-012: Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак…",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-012"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-012: «Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак…».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-04"
-      ],
-      "finding_ids": [
-        "D-003"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-07",
       "title": "REQ-015: Провести покупку на 1 500 ₸",
       "kind": "positive",
       "req_ids": [
@@ -5742,10 +6292,12 @@
       "then": "Итог 50 000 ₸ и один push",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-08",
+      "tid": "Т-06",
       "title": "REQ-016: Провести 1 февраля в 00:03 по Алматы",
       "kind": "positive",
       "req_ids": [
@@ -5756,10 +6308,12 @@
       "then": "Февральский счётчик вырос на 4 000 ₸",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-09",
+      "tid": "Т-07",
       "title": "REQ-017: Перевести 500 ₸",
       "kind": "positive",
       "req_ids": [
@@ -5770,208 +6324,253 @@
       "then": "Счётчик показывает 19 900 ₸",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-10",
-      "title": "REQ-020: Поле: REST type | Значение: GET",
+      "tid": "Т-08",
+      "title": "REQ-050: ответ 200 — успешного выполнения метода",
       "kind": "positive",
       "req_ids": [
-        "REQ-020"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-020: «Поле: REST type | Значение: GET».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-01"
-      ],
-      "finding_ids": [
-        "D-008"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-11",
-      "title": "REQ-041: Parameter: cardId | Format: string | Size: | Mandatory: Да | Logic: Карта клиента | Description…",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-041"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-041: «Parameter: cardId | Format: string | Size: 1–64 | Mandatory: Да | Logic: Карта клиента |…».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-06"
-      ],
-      "finding_ids": [
-        "D-011"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-12",
-      "title": "REQ-042: Parameter: amount | Format: integer | Size: 32 bit | Mandatory: Да | Logic: 1 000 000 |…",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-042"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-042: «Parameter: amount | Format: integer | Size: 32 bit | Mandatory: Да | Logic: 1 000–1 000 000 |…».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-07"
-      ],
-      "finding_ids": [
-        "D-012"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-13",
-      "title": "REQ-043: Parameter: enabled | Format: integer | Size: 1 знак | Mandatory: Да | Logic: 0 или 1 |…",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-043"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-043: «Parameter: enabled | Format: integer | Size: 1 знак | Mandatory: Да | Logic: 0 или 1 |…».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-08"
-      ],
-      "finding_ids": [
-        "D-013"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-14",
-      "title": "REQ-046: Если результат 200 или 201 — успешный",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-046"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-046: «Если результат 200 или 201 — успешный. Если результат 400, 401 и далее — неуспешный.».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-09"
-      ],
-      "finding_ids": [
-        "D-016"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-15",
-      "title": "REQ-051: ответ 200 — успешного выполнения метода",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-051"
+        "REQ-050"
       ],
       "given": "Метод интерфейса доступен, тестовые данные подготовлены.",
       "when": "Отправить запрос так, чтобы выполнилось условие: успешного выполнения метода.",
       "then": "Возвращается ответ с кодом 200 (так описано в документе).",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-16",
-      "title": "REQ-052: ответ 400 — параметры запроса заполнены неверно",
+      "tid": "Т-09",
+      "title": "REQ-051: ответ 400 — параметры запроса заполнены неверно",
       "kind": "negative",
       "req_ids": [
-        "REQ-052"
+        "REQ-051"
       ],
       "given": "Метод интерфейса доступен, тестовые данные подготовлены.",
       "when": "Отправить запрос так, чтобы выполнилось условие: параметры запроса заполнены неверно.",
       "then": "Возвращается ответ с кодом 400 (так описано в документе).",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-17",
-      "title": "REQ-053: {\"result\":\"OK\",\"amount\":\"50000\",\"enabled\":\"1\"} или {\"result\":\"ERROR\",\"message\":\"Проверьте сумму\"}",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-053"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-053: «{\"result\":\"OK\",\"amount\":\"50000\",\"enabled\":\"1\"} или {\"result\":\"ERROR\",\"message\":\"Проверьте сумму\"}».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-02"
-      ],
-      "finding_ids": [
-        "D-017"
-      ],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-18",
-      "title": "REQ-054: ответ 401 — запрос выполнен без необходимой авторизации",
+      "tid": "Т-10",
+      "title": "REQ-053: ответ 401 — запрос выполнен без необходимой авторизации",
       "kind": "negative",
       "req_ids": [
-        "REQ-054"
+        "REQ-053"
       ],
       "given": "Метод интерфейса доступен, тестовые данные подготовлены.",
       "when": "Отправить запрос так, чтобы выполнилось условие: запрос выполнен без необходимой авторизации.",
       "then": "Возвращается ответ с кодом 401 (так описано в документе).",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-19",
-      "title": "REQ-055: ответ 403 — на указанный ресурс доступ запрещен",
+      "tid": "Т-11",
+      "title": "REQ-054: ответ 403 — на указанный ресурс доступ запрещен",
       "kind": "negative",
       "req_ids": [
-        "REQ-055"
+        "REQ-054"
       ],
       "given": "Метод интерфейса доступен, тестовые данные подготовлены.",
       "when": "Отправить запрос так, чтобы выполнилось условие: на указанный ресурс доступ запрещен.",
       "then": "Возвращается ответ с кодом 403 (так описано в документе).",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     },
     {
-      "tid": "Т-20",
-      "title": "REQ-056: ответ 500 — произошла внутренняя ошибка сервера",
+      "tid": "Т-12",
+      "title": "REQ-055: ответ 500 — произошла внутренняя ошибка сервера",
       "kind": "negative",
       "req_ids": [
-        "REQ-056"
+        "REQ-055"
       ],
       "given": "Метод интерфейса доступен, тестовые данные подготовлены.",
       "when": "Отправить запрос так, чтобы выполнилось условие: произошла внутренняя ошибка сервера.",
       "then": "Возвращается ответ с кодом 500 (так описано в документе).",
       "blocked_by": [],
       "finding_ids": [],
-      "origin": "rule"
-    },
-    {
-      "tid": "Т-21",
-      "title": "REQ-059: Для чужой карты возвращается 404, как и для отсутствующей карты",
-      "kind": "positive",
-      "req_ids": [
-        "REQ-059"
-      ],
-      "given": "Система работает в обычном режиме; проверяется требование REQ-059: «Для чужой карты возвращается 404, как и для отсутствующей карты.».",
-      "when": "Выполнить действие, описанное в требовании, в том месте, где найдено замечание.",
-      "then": "",
-      "blocked_by": [
-        "В-11"
-      ],
-      "finding_ids": [
-        "D-019"
-      ],
-      "origin": "rule"
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
     }
   ],
   "verdict_after_answers": "",
   "verdict_after_answers_text": "",
   "audit": [
+    {
+      "type": "test_unverifiable",
+      "items": [
+        {
+          "req_ids": [
+            "REQ-005"
+          ],
+          "what": "REQ-005: Проведение покупки → пересчёт расходов → проверка порога → при достижении отправка push → завершение",
+          "blocked_by": [
+            "В-04"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-003"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-010"
+          ],
+          "what": "REQ-010: Процессинг → сервис расходов: проведена покупка",
+          "blocked_by": [
+            "В-04"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-004"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-011"
+          ],
+          "what": "REQ-011: Сервис передаёт push на отправку в течение минуты после получения события",
+          "blocked_by": [
+            "В-05"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-005"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-012"
+          ],
+          "what": "REQ-012: Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак…",
+          "blocked_by": [
+            "В-06"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-006"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-020"
+          ],
+          "what": "REQ-020: Поле: REST type | Значение: GET",
+          "blocked_by": [
+            "В-01"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-011"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-040"
+          ],
+          "what": "REQ-040: Parameter: cardId | Format: string | Size: | Mandatory: Да | Logic: Карта клиента | Description…",
+          "blocked_by": [
+            "В-07"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-015"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-041"
+          ],
+          "what": "REQ-041: Parameter: amount | Format: integer | Size: 32 bit | Mandatory: Да | Logic: 1 000 000 |…",
+          "blocked_by": [
+            "В-08"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-016"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-042"
+          ],
+          "what": "REQ-042: Parameter: enabled | Format: integer | Size: 1 знак | Mandatory: Да | Logic: 0 или 1 |…",
+          "blocked_by": [
+            "В-09"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-017"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-045"
+          ],
+          "what": "REQ-045: Если результат 200 или 201 — успешный",
+          "blocked_by": [
+            "В-10"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-020"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-052"
+          ],
+          "what": "REQ-052: {\"result\":\"OK\",\"amount\":\"50000\",\"enabled\":\"1\"} или {\"result\":\"ERROR\",\"message\":\"Проверьте сумму\"}",
+          "blocked_by": [
+            "В-03"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-021"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-058"
+          ],
+          "what": "REQ-058: Для чужой карты возвращается 404, как и для отсутствующей карты",
+          "blocked_by": [
+            "В-12"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-023"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        }
+      ]
+    },
     {
       "type": "decision",
       "what": "checklist_answered",
@@ -6121,6 +6720,347 @@
       "basis": "без модели не оценивается",
       "findings": [],
       "by_model": false
+    }
+  ],
+  "gap_map": [
+    {
+      "id": "ST1",
+      "group": "Состояния",
+      "title": "Состояния переключателей и статусов",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "ST2",
+      "group": "Состояния",
+      "title": "Смена состояния посреди периода",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "ST3",
+      "group": "Состояния",
+      "title": "Начальное состояние",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP1",
+      "group": "Отказы и альтернативные пути",
+      "title": "Ошибки на шагах основного сценария",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP2",
+      "group": "Отказы и альтернативные пути",
+      "title": "Ветки ошибок на схемах",
+      "status": "gap",
+      "line": 0,
+      "finding_ids": [
+        "D-003",
+        "D-004"
+      ],
+      "checked": [],
+      "note": "ответ дало автоматическое правило"
+    },
+    {
+      "id": "NP3",
+      "group": "Отказы и альтернативные пути",
+      "title": "Недоступность соседних систем",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP4",
+      "group": "Отказы и альтернативные пути",
+      "title": "Сообщения клиенту",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL1",
+      "group": "Значения, деньги и время",
+      "title": "Числовые параметры",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL2",
+      "group": "Значения, деньги и время",
+      "title": "Валюта и округление",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL3",
+      "group": "Значения, деньги и время",
+      "title": "Время и периоды",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL4",
+      "group": "Значения, деньги и время",
+      "title": "Полнота перечней",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL5",
+      "group": "Значения, деньги и время",
+      "title": "Изменения задним числом",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL6",
+      "group": "Значения, деньги и время",
+      "title": "Несколько однотипных объектов",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF1",
+      "group": "Интерфейсы между системами",
+      "title": "Надёжность интерфейса",
+      "status": "gap",
+      "line": 0,
+      "finding_ids": [
+        "D-012"
+      ],
+      "checked": [],
+      "note": "ответ дало автоматическое правило"
+    },
+    {
+      "id": "IF2",
+      "group": "Интерфейсы между системами",
+      "title": "Ошибки интерфейса",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF3",
+      "group": "Интерфейсы между системами",
+      "title": "Права доступа в интерфейсе",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF4",
+      "group": "Интерфейсы между системами",
+      "title": "Интеграции",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "DT1",
+      "group": "Данные и экран",
+      "title": "Модель данных",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "UI1",
+      "group": "Данные и экран",
+      "title": "Экран",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN1",
+      "group": "Согласованность документа",
+      "title": "Название задачи",
+      "status": "gap",
+      "line": 0,
+      "finding_ids": [
+        "D-001"
+      ],
+      "checked": [],
+      "note": "ответ дало автоматическое правило"
+    },
+    {
+      "id": "CN2",
+      "group": "Согласованность документа",
+      "title": "Перечни систем и участников",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN3",
+      "group": "Согласованность документа",
+      "title": "Термины",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN4",
+      "group": "Согласованность документа",
+      "title": "Цель и требования",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN5",
+      "group": "Согласованность документа",
+      "title": "Экран, функции и интерфейс",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR1",
+      "group": "Адресуемость и проверяемость",
+      "title": "Номера требований",
+      "status": "gap",
+      "line": 0,
+      "finding_ids": [
+        "D-002"
+      ],
+      "checked": [],
+      "note": "ответ дало автоматическое правило"
+    },
+    {
+      "id": "TR2",
+      "group": "Адресуемость и проверяемость",
+      "title": "Критерии приёмки",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR3",
+      "group": "Адресуемость и проверяемость",
+      "title": "Проверяемость через действие системы",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR4",
+      "group": "Адресуемость и проверяемость",
+      "title": "Нефункциональные требования",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD1",
+      "group": "Данные клиентов и карт",
+      "title": "Персональные данные",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD2",
+      "group": "Данные клиентов и карт",
+      "title": "Где хранятся и кому передаются данные",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD3",
+      "group": "Данные клиентов и карт",
+      "title": "Данные карт",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD4",
+      "group": "Данные клиентов и карт",
+      "title": "Что видно посторонним",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD5",
+      "group": "Данные клиентов и карт",
+      "title": "Журнал аудита и откат",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
     }
   ]
 }

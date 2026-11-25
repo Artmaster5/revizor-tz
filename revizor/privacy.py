@@ -1,4 +1,4 @@
-"""Masking of sensitive values (payment card numbers, Kazakhstan IIN/BIN).
+"""Masking of sensitive values (payment card numbers, Kazakhstan IIN/BIN, e-mail addresses, phone numbers).
 
 The mask keeps the text length unchanged, so line numbers and character positions
 stay valid for every later stage (quotes, line references, the report).
@@ -17,6 +17,18 @@ _CARD_RE = re.compile(
     r")(?![\w*])(?![ \-]\d)"
 )
 _IIN_RE = re.compile(r"(?<![\w*])(?<!\d[ \-])\d{12}(?![\w*])(?![ \-]\d)")
+
+
+# E-mail: the local part is masked (first character kept), the domain stays.
+_EMAIL_RE = re.compile(r"(?<![\w.%+\-@])([A-Za-z0-9][A-Za-z0-9._%+\-]*)@([A-Za-z0-9\-]+(?:\.[A-Za-z0-9\-]+)*\.[A-Za-z]{2,})(?![\w@])")
+# Phones, only in an unmistakable form: «+7» and ten digits, «8» with the 3-3-2-2 grouping, or «+» and 10–14 digits.
+_SEP = r"[ \-\u00a0]?"
+_PHONE_RES = [
+    re.compile(rf"(?<![\w+])\+7{_SEP}\(?\d{{3}}\)?{_SEP}\d{{3}}{_SEP}\d{{2}}{_SEP}\d{{2}}(?!\d)"),
+    re.compile(r"(?<![\w+])8(?:[ \-\u00a0]?\(\d{3}\)[ \-\u00a0]?|[ \-\u00a0]\d{3}[ \-\u00a0])\d{3}[ \-\u00a0]?\d{2}[ \-\u00a0]?\d{2}(?!\d)"),
+    re.compile(r"(?<![\w+])\+\d(?:[ \-\u00a0().]?\d){9,13}(?!\d)"),
+]
+_THOUSANDS = re.compile(r"^\+?\d{1,3}(?:[ \u00a0]\d{3})+$")  # «+1 000 000 000» is an amount, not a phone
 
 
 def luhn_ok(digits: str) -> bool:
@@ -73,7 +85,8 @@ def _mask_digits(fragment: str, keep_head: int, keep_tail: int) -> str:
 
 
 def mask_sensitive(text: str) -> tuple[str, list[str]]:
-    """Mask card numbers (Luhn) and IIN/BIN (check digit). Same length in, same length out."""
+    """Mask card numbers (Luhn), IIN/BIN (check digit), e-mail addresses and phone numbers in an unmistakable format.
+    Same length in, same length out. Amounts, ids, dates and codes are never touched."""
     if not text:
         return text, []
     chars = list(text)
@@ -82,7 +95,7 @@ def mask_sensitive(text: str) -> tuple[str, list[str]]:
     for m in _CARD_RE.finditer(text):
         frag = m.group(0)
         digits = re.sub(r"\D", "", frag)
-        if not 13 <= len(digits) <= 19 or not luhn_ok(digits) or len(set(digits)) < 3:
+        if not 13 <= len(digits) <= 19 or not luhn_ok(digits) or len(set(digits)) < 2:
             continue
         masked = _mask_digits(frag, 6, 4)
         chars[m.start():m.end()] = list(masked)
@@ -96,5 +109,22 @@ def mask_sensitive(text: str) -> tuple[str, list[str]]:
             continue
         chars[m.start():m.end()] = list(_mask_digits(digits, 2, 2))
         notes.append((m.start(), f"строка {_line_of(text, m.start())}: ИИН/БИН (12 цифр)"))
+    for rx in _PHONE_RES:
+        for m in rx.finditer(text):
+            frag = m.group(0)
+            digits = re.sub(r"\D", "", frag)
+            if (any(a < m.end() and m.start() < b for a, b in taken) or not 10 <= len(digits) <= 14
+                    or _THOUSANDS.match(frag) or len(set(digits)) < 2):
+                continue
+            chars[m.start():m.end()] = list(_mask_digits(frag, 2 if frag.startswith("+7") else 1, 2))
+            taken.append((m.start(), m.end()))
+            notes.append((m.start(), f"строка {_line_of(text, m.start())}: номер телефона ({len(digits)} цифр)"))
+    for m in _EMAIL_RE.finditer(text):
+        if any(a < m.end() and m.start() < b for a, b in taken):
+            continue
+        local = m.group(1)
+        chars[m.start() + 1:m.start() + len(local)] = ["*"] * (len(local) - 1)
+        taken.append((m.start(), m.end()))
+        notes.append((m.start(), f"строка {_line_of(text, m.start())}: адрес электронной почты"))
     notes.sort()
     return "".join(chars), [n for _, n in notes]

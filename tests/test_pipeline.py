@@ -82,6 +82,8 @@ def review_answer(stage: str, user: str) -> dict:
 
 
 def set_answer(stage: str) -> dict:
+    if stage == "set_gaps":
+        return {"items": []}
     if stage == "set_consistency":
         return {"findings": [{"criterion": "set_consistency", "severity": "MINOR", "title": "Слабое замечание к набору",
                               "problem": "Проверяющий ошибся.", "quotes": ["Клиент может выключить уведомления"],
@@ -185,7 +187,12 @@ class FullRunTests(_Base):
         fast = [f for f in res.findings if "быстро" in " ".join(q.text for q in f.quotes)]
         self.assertEqual(len(fast), 1)
         self.assertEqual(fast[0].source, "both")
-        self.assertTrue(fast[0].fixed_wording.startswith("Сервис отправляет push"))
+        # The model's rewrite adds «60 секунд», which the document does not have: the gate (run inside the
+        # pipeline since wave 5) withholds it and records the original text in the audit.
+        held = [a for a in res.audit if a.get("what") == "rewrite_withheld" and a.get("fid") == fast[0].fid]
+        self.assertEqual(len(held), 1)
+        self.assertTrue(held[0]["rewrite"].startswith("Сервис отправляет push"))
+        self.assertEqual(fast[0].fixed_wording, "")
         self.assertEqual(fast[0].severity, "MAJOR")
 
     def test_system_text_is_identical_for_every_stage(self):
@@ -271,7 +278,8 @@ class DegradationTests(_Base):
         res, b = self.run_fake(make_script(review_clarity=clarity))
         self.assertEqual(state["n"], 2)
         self.assertFalse(any("не проверены моделью" in w for w in res.run.warnings))
-        self.assertTrue(any(f.fixed_wording for f in res.findings))
+        self.assertTrue(any(f.fixed_wording for f in res.findings)
+                        or any(a.get("what") == "rewrite_withheld" for a in res.audit))
         self.assertGreater(b.calls, len([a for a in res.audit if a.get("type") == "model_call"]))
 
     def test_invalid_twice_marks_batch_unchecked(self):
@@ -389,8 +397,8 @@ class ReportTests(_Base):
         counted = [f for f in res.findings if not f.advisory]
         self.assertEqual(data["summary"]["defects"] if "defects" in data["summary"] else data["summary"]["findings"],
                          len(counted))
-        self.assertIn(f"Дефектов: {len(counted)} ", md)
-        self.assertIn(f"| Дефектов всего | {len(counted)} |", md)
+        self.assertIn(f"Замечаний {len(counted)}: ", md)
+        self.assertIn(f"| Замечаний всего | {len(counted)} |", md)
 
     def test_every_link_has_a_target(self):
         res, _ = self.run_fake()
@@ -402,10 +410,15 @@ class ReportTests(_Base):
     def test_fixed_wording_in_card_and_side_file(self):
         from revizor import sidefiles
         res, _ = self.run_fake()
-        self.assertIn("Исправленная формулировка", report_md.render(res))
+        md = report_md.render(res)
+        # withheld rewrite: the card points to the side file instead of printing an unchecked wording
+        self.assertNotIn("Сервис отправляет push", md)
         fixed = sidefiles.fixed_md(res)
         self.assertIsNotNone(fixed)
-        self.assertIn("60 секунд", fixed)
+        # the model's «60 секунд» replaces «быстро»: a number that the document does not have is not printed as a fix
+        self.assertNotIn("| 60 секунд", fixed)
+        self.assertIn("не напечатано 1", fixed)
+        self.assertIn("⟦уточнить: значение «60»", fixed)
 
     def test_option_effects_in_questionnaire(self):
         from revizor import sidefiles

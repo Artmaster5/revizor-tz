@@ -1,21 +1,35 @@
-"""Markdown report (GitHub-flavoured). Everything from the document or the model is escaped."""
+"""Markdown report (GitHub-flavoured). Everything from the document or the model is escaped.
+
+Layout rules (brief 5A): the first screen tells what to do; every count, mark and blocker list comes from
+``consistency`` so the head, the body and the JSON agree; a document line is printed once per card; full requirement
+cards only where there is something to say; run details live in the diagnostic side file (``render_run_details``)."""
 from __future__ import annotations
 
+import contextvars
+import re
 from collections import OrderedDict
 from datetime import datetime
 
-from . import answers as ans_mod, baseline as baseline_mod, score, verdict
+from . import answers as ans_mod, baseline as baseline_mod, consistency, gapcheck, impact as impact_mod, rules as rules_mod, score, verdict
 from .config import version_label
-from .merge import FAMILY, STANDARDS
+from .consistency import BLOCKER_SHORT, blockers as _blocker_list, fix_links, marks_of, tally, trail_line
+from .merge import FAMILY, FOLD_STAGE, STANDARDS
 from .model import (ADDRESSEE_RU, BLOCKER_RU, CHECKLIST_VERDICT_RU, CRITERION_RU, GAP_RU, KIND_RU, PRIORITY_RU, REQ_CRITERIA, SET_CRITERIA,
-                    SEVERITY_ICON, SKIP_CATEGORY_RU, TEST_KIND_RU, Finding, Question, Requirement, Result)
-from .prompts import FORMAT_RU, LENS_BY_STAGE, SET_NAME
-from .textfmt import (plain_quote, W_BLOCK, W_CALL, W_DEFECT, W_OBSERVATION, W_QUESTION, W_REQ, anchor, blockquote, count, dec,
-                      duration_text, last_section, lines_text, location, md, md_cell, minutes_text, num, plural,
+                    SEVERITY_ICON, SKIP_CATEGORY_RU, TEST_KIND_RU, Finding, Question, Quote, Requirement, Result)
+from .prompts import FORMAT_RU, GAPS_NAME, GAPS_STAGE, LENS_BY_STAGE, SET_NAME
+from .quotes import normalize
+from .textfmt import (plain_quote, W_BLOCK, W_CALL, W_OBSERVATION, W_QUESTION, W_REQ, anchor, blockquote, count, dec,
+                      duration_text, last_section, lines_text, location, md, md_cell, num, plural,
                       quote_location, shorten, size_text, usd)
 
-TABLE_QUOTE = 160
+TABLE_QUOTE = 220   # section 2: the requirement's exact text up to this many characters, cut at a word boundary
 CARD_QUOTE = 500
+QUOTES_SHOWN = 4    # quotes printed per finding; the rest are counted
+ALSO_SHOWN = 3      # titles of merged findings printed per card
+SEE_ALSO_SHOWN = 3  # places of a merged repeat printed per card
+BROAD_SET = 5       # a set finding naming more requirements than this does not by itself earn a requirement card
+FIRST_Q = 5         # questions on the first screen
+FIRST_FIX = 5       # fix-first lines on the first screen
 
 SECTIONS = OrderedDict([
     ("s1", "1. Паспорт прогона"),
@@ -40,13 +54,15 @@ MODE_RU = {"full": "полный: нарезка и три линзы прове
            "fast": "быстрый: один проход модели по требованиям, проверка набора, без перепроверки",
            "offline": "без модели: только автоматические правила"}
 LETTERS = "абвг"
+CLARITY_LEGEND = ("Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, "
+                  "мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.")
 
 
 # --- small helpers ------------------------------------------------------------------------------
 
 
 def counted(result: Result) -> list[Finding]:
-    return [f for f in result.findings if f.status == "open" and not f.advisory]
+    return consistency.counted(result.findings)
 
 
 def advisory(result: Result) -> list[Finding]:
@@ -54,7 +70,8 @@ def advisory(result: Result) -> list[Finding]:
 
 
 def sev_counts(findings: list[Finding]) -> dict[str, int]:
-    return {s: sum(1 for f in findings if f.severity == s) for s in ("CRITICAL", "MAJOR", "MINOR")}
+    t = tally(findings)
+    return {s: t[s] for s in ("CRITICAL", "MAJOR", "MINOR")}
 
 
 def link(item_id: str) -> str:
@@ -69,20 +86,23 @@ def is_offline(result: Result) -> bool:
     return result.run.mode == "offline"
 
 
+def _cap(s: str) -> str:
+    return s[:1].upper() + s[1:]
+
+
 def _sev(f: Finding) -> str:
     return f"{SEVERITY_ICON.get(f.severity, '')} {f.severity}"
 
 
 def _source(f: Finding) -> str:
+    """Who found it, in two or three words; which pass of the model did is in the diagnostic file."""
+    rules = ", ".join(f"`{r}`" for r in f.rule_ids)
     if f.source == "both":
-        return "модель и автоматическое правило " + ", ".join(f"`{r}`" for r in f.rule_ids)
+        return "модель и правило " + rules
     if f.source.startswith("rule:"):
-        return "автоматическое правило " + ", ".join(f"`{r}`" for r in f.rule_ids)
-    lens = LENS_BY_STAGE.get(f.stage)
-    if lens:
-        return f"модель (линза «{lens.name}»)"
-    if f.stage in SET_NAME:
-        return f"модель (проверка набора: {SET_NAME[f.stage]})"
+        return "правило " + rules
+    if f.stage == GAPS_STAGE and f.gap_ids:
+        return "модель, контрольный вопрос " + ", ".join(f.gap_ids)
     return "модель"
 
 
@@ -104,7 +124,7 @@ def _quote_line(q, *, with_rid: bool = True, paren: bool = False) -> str:
 
 
 def _blockers(result: Result) -> list[Finding]:
-    return [f for f in counted(result) if f.severity == "CRITICAL"]
+    return _blocker_list(result.findings)
 
 
 def _where(f: Finding) -> str:
@@ -112,7 +132,7 @@ def _where(f: Finding) -> str:
         return ""
     if f.quotes[0].page:
         pages = sorted({q.page for q in f.quotes if q.page})
-        return ("стр. " if len(pages) == 1 else "стр. ") + ", ".join(str(p) for p in pages)
+        return "стр. " + ", ".join(str(p) for p in pages)
     ls = sorted({q.line_start for q in f.quotes})
     if len(ls) == 1:
         return lines_text(f.quotes[0].line_start, f.quotes[0].line_end)
@@ -124,15 +144,75 @@ def verdict_after_blockers(result: Result) -> tuple[str, str] | None:
     if not blocker_q:
         return None
     rest = [f for f in counted(result) if f.question_id not in blocker_q]
-    return verdict.decide(rest, offline=is_offline(result))
+    code, _text = verdict.decide(rest, offline=is_offline(result))
+    return code, verdict.TEXT.get(code, _text) + (" (предварительно)" if is_offline(result) else "")
+
+
+def failed_steps_line(result: Result) -> str:
+    """«Модель не ответила на N шагов из M…» from the audit's model calls; "" when every step was answered."""
+    calls = [a for a in result.audit if a.get("type") == "model_call"]
+    failed = sum(1 for a in calls if a.get("ok") is False)
+    if not failed:
+        return ""
+    return (f"Модель не ответила на {failed} {plural(failed, ('шаг', 'шага', 'шагов'))} из {len(calls)}. Запустите ту же "
+            "команду ещё раз: готовые ответы возьмутся из кэша, повторятся только неудавшиеся шаги.")
+
+
+def model_label(r) -> str:
+    """The model's name, and the exact version in brackets when the provider reports a different one."""
+    v = getattr(r, "model_version", "") or ""
+    return md(r.model) + (f" ({md(v)})" if v and v != r.model else "")
+
+
+def counts_line(result: Result) -> str:
+    """«блокеров N · существенных N · мелких N» — the same numbers everywhere (``consistency.tally``)."""
+    t = tally(result.findings)
+    return f"блокеров {t['CRITICAL']} · существенных {t['MAJOR']} · мелких {t['MINOR']}"
 
 
 # --- render ------------------------------------------------------------------------------------
 
 
+_SAID: contextvars.ContextVar[dict[str, str] | None] = contextvars.ContextVar("said", default=None)
+_SENT_SPLIT = re.compile(r"(?<=[.!?…])\s+(?=[«\"(A-ZА-ЯЁ0-9])")
+SAID_MIN_WORDS = 6  # a shorter sentence is not worth a reference
+
+
+def _once(text: str, fid: str) -> tuple[str, list[str]]:
+    """``text`` without the sentences an earlier card of this report already printed word for word, and the ids of
+    those cards. Outside ``render`` (no report-wide memory) the text is returned unchanged."""
+    said = _SAID.get()
+    if said is None or not text:
+        return text, []
+    keep: list[str] = []
+    refs: list[str] = []
+    for sent in _SENT_SPLIT.split(text.strip()):
+        key = " ".join(normalize(sent).split())
+        if len(sent.split()) >= SAID_MIN_WORDS and said.get(key, fid) != fid:
+            if said[key] not in refs:
+                refs.append(said[key])
+            continue
+        if len(sent.split()) >= SAID_MIN_WORDS:
+            said.setdefault(key, fid)
+        keep.append(sent)
+    return " ".join(keep), refs
+
+
+def _said_ref(refs: list[str]) -> str:
+    return "как в " + links(refs[:3])
+
+
 def render(result: Result) -> str:
     if result.diagnostic is not None:
         return render_diagnostic(result)
+    token = _SAID.set({})
+    try:
+        return _render(result)
+    finally:
+        _SAID.reset(token)
+
+
+def _render(result: Result) -> str:
     parts = [
         _head(result),
         _passport(result),
@@ -146,7 +226,7 @@ def render(result: Result) -> str:
     if result.tests:
         parts.append(_tests(result))
     parts.append(_appendix(result))
-    return "\n\n".join(p.strip("\n") for p in parts if p) + "\n"
+    return fix_links("\n\n".join(p.strip("\n") for p in parts if p) + "\n")
 
 
 def _h2(key: str) -> str:
@@ -155,44 +235,68 @@ def _h2(key: str) -> str:
 
 def _head(result: Result) -> str:
     r = result.run
-    c = counted(result)
-    sc = sev_counts(c)
-    adv = advisory(result)
     lines = ["# Отчёт о статической проверке требований", ""]
     when = _when(r.started_at)
-    model = "без модели — только автоматические правила" if is_offline(result) else f"модель {md(r.model)}"
+    model = "без модели — только автоматические правила" if is_offline(result) else f"модель {model_label(r)}"
     lines.append(f"**Документ:** `{md_code(r.doc_name)}` · проверен {when} · {model}")
     lines.append("")
-    lines.append(f"> **Итог:** {md_plain(result.verdict_text)}")
-    lines.append(f"> Требований: {num(len(result.requirements))} · Дефектов: {num(len(c))} "
-                 f"(🔴 CRITICAL {sc['CRITICAL']} · 🟡 MAJOR {sc['MAJOR']} · 🟢 MINOR {sc['MINOR']}) · "
-                 f"Вопросов автору: {num(len(result.questions))}")
+    lines += first_screen(result)
+    lines.append("")
+    lines.append("**Разделы:** " + " · ".join(
+        f"[{t}](#{k})" for k, t in SECTIONS.items() if k != "s8" or result.tests))
+    return "\n".join(lines)
+
+
+def first_screen(result: Result) -> list[str]:
+    """What a reader who stops after one screen needs: the verdict, the counts, the blockers with their reasons, the
+    questions whose answers change the most, what to fix first, time and cost. Also written to ``*.summary.md``."""
+    r = result.run
+    c = counted(result)
+    t = tally(result.findings)
+    head = result.verdict_text
+    if is_offline(result) and result.verdict in verdict.TEXT and head.endswith(verdict.OFFLINE_TAIL):
+        head = verdict.TEXT[result.verdict] + " (итог предварительный)"  # the ⚠️ line below says why
+    lines = [f"> **Итог:** {md_plain(head)}",
+             f"> Замечаний {num(t['total'])}: {counts_line(result)} · вопросов автору {num(len(result.questions))} · "
+             f"требований {num(len(result.requirements))}"]
     if r.score is not None:
         prelim = ", предварительно" if is_offline(result) else ""
-        lines.append(f"> Индекс готовности документа: **{r.score} из 100** — {score.readiness_band(r.score)}{prelim}. "
-                     "Вердикт определяют блокеры, а не индекс.")
+        clash = (result.verdict == "BLOCKED" and r.score >= 60) or (result.verdict == "CONDITIONAL" and r.score >= 85)
+        lines.append(f"> Индекс готовности документа: **{r.score} из 100** — {score.readiness_band(r.score)}{prelim}."
+                     + (" Вердикт определяют блокеры, а не индекс." if clash else ""))
     sm = ans_mod.summary(result.audit)
     if sm and sm.get("total"):
         line = (f"> 💬 Ответы автора учтены: {sm.get('answered', 0)} из {sm['total']}. "
                 f"Закрыто замечаний: {len(sm.get('closed') or [])}.")
         if result.verdict_after_answers_text:
-            line += f" После внесения ответов в документ итог: {md_plain(result.verdict_after_answers_text)}."
+            left = [f.fid for f in counted(result) if f.severity == "CRITICAL" and not f.closed_by_answer]
+            if result.verdict_after_answers == result.verdict and left:
+                line += (" Итог после внесения ответов не меняется: ответы не закрывают "
+                         + ("блокер " if len(left) == 1 else "блокеры ") + links(left) + ".")
+            else:
+                after = result.verdict_after_answers_text
+                if is_offline(result) and result.verdict_after_answers in verdict.TEXT:
+                    after = verdict.TEXT[result.verdict_after_answers] + " (итог предварительный)"
+                line += f" После внесения ответов в документ итог: {md_plain(after)}."
         lines.append(line)
+    failed = failed_steps_line(result)
+    if failed:
+        lines.append("> ⚠️ " + md(failed))
     if is_offline(result):
-        lines.append("> ⚠️ Смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не искались: "
-                     "чистый результат здесь не означает, что документ готов.")
+        lines.append("> ⚠️ Без модели смысл не проверялся: противоречия и пропущенные сценарии не искались.")
     if r.injection_suspected:
         inj = [f for f in c if "prompt-injection" in f.rule_ids or ("hidden-text" in f.rule_ids and f.severity == "CRITICAL")]
         lines.append("> 🛡️ В документе есть текст, обращённый к проверяющему ИИ"
                      + (f" ({links([f.fid for f in inj])})" if inj else "") + ". Агент его не выполнял.")
     lines.append("")
     lines += _baseline_block(result)
-    blockers = _blockers(result)
-    if blockers:
-        lines.append(f"**Блокеры — исправить до начала работы ({len(blockers)}):**")
+    bl = _blockers(result)
+    if bl:
+        lines.append(f"**Блокеры — исправить до начала работы ({len(bl)}):**")
         lines.append("")
-        for k, f in enumerate(blockers, 1):
-            lines.append(f"{k}. {link(f.fid)} {md(f.title)} — {_where(f)}")
+        for k, f in enumerate(bl, 1):
+            lines.append(f"{k}. {link(f.fid)} {md(shorten(f.title, 90))} — {BLOCKER_SHORT.get(f.blocker_reason, 'основание не указано')}, "
+                         f"{_where(f)}")
     else:
         majors = [f for f in c if f.severity == "MAJOR"]
         if majors:
@@ -200,15 +304,75 @@ def _head(result: Result) -> str:
                          + links([f.fid for f in majors[:8]]) + ("…" if len(majors) > 8 else "") + ".")
         else:
             lines.append("**Блокеров и существенных замечаний нет.**")
-    if adv:
-        lines.append("")
-        verb = plural(len(adv), ("вынесено отдельно и на итог не влияет", "вынесены отдельно и на итог не влияют",
-                                 "вынесено отдельно и на итог не влияет"))
-        lines.append(f"Ещё {count(len(adv), W_OBSERVATION)} низкой точности {verb} ([раздел 4](#s4-obs)).")
-    lines.append("")
-    lines.append("**Разделы:** " + " · ".join(
-        f"[{t}](#{k})" for k, t in SECTIONS.items() if k != "s8" or result.tests))
-    return "\n".join(lines)
+    qs = first_questions(result)
+    if qs:
+        lines += ["", "**Сначала спросить автора:**", ""]
+        for k, q in enumerate(qs, 1):
+            lines.append(f"{k}. {link(q.qid)} {md(shorten(q.text, 75))}{_q_gain(q, result)}")
+    fix = _merged_actions(result.fix_first)[:FIRST_FIX]
+    if fix:
+        lines += ["", "**Что исправить в первую очередь:**", ""]
+        listed = {f.fid: f for f in bl}
+        for k, (text, ids) in enumerate(fix, 1):
+            if ids and all(i in listed for i in ids):  # its title is already on the blocker line above
+                title = listed[ids[0]].title.strip().rstrip(".")
+                if text.startswith(title):
+                    text = _cap(text[len(title):].lstrip(". "))
+            refs = f" ({links(ids[:3])}{' и ещё ' + str(len(ids) - 3) if len(ids) > 3 else ''})" if ids else ""
+            lines.append(f"{k}. {md(shorten(text, 80))}{refs}")
+    cost = usd(r.cost_usd) if not is_offline(result) else "$0, модель не вызывалась"
+    lines += ["", f"Прогон: {duration_text(r.duration_s)} · {cost}."]
+    return lines
+
+
+def _merged_actions(actions) -> list[tuple[str, list[str]]]:
+    """Fix actions with the same text become one line that links every finding they fix."""
+    out: dict[str, list[str]] = OrderedDict()
+    for a in actions:
+        ids = out.setdefault(" ".join(a.action.split()), [])
+        ids += [i for i in a.finding_ids if i not in ids]
+    return list(out.items())
+
+
+def first_questions(result: Result) -> list[Question]:
+    """Up to FIRST_Q questions without an answer, ordered by what the answer changes (blockers closed, then the gain
+    of the readiness index), then by their number."""
+    pos = {q.qid: k for k, q in enumerate(result.questions)}
+    open_q = [q for q in result.questions if not q.answer]
+    open_q.sort(key=lambda q: (-int((q.impact or {}).get("blockers_closed") or 0),
+                               -int((q.impact or {}).get("index_delta") or 0), pos[q.qid]))
+    return open_q[:FIRST_Q]
+
+
+def _q_gain(q: Question, result: Result) -> str:
+    im = q.impact or {}
+    k = int(im.get("blockers_closed") or 0)
+    if k:
+        crit = [fid for fid in im.get("closes") or q.finding_ids
+                if any(f.fid == fid and f.severity == "CRITICAL" for f in counted(result))]
+        if k == 1 and crit:
+            return f" — снимет блокер {link(crit[0])}"
+        return f" — снимет {k} {plural(k, ('блокер', 'блокера', 'блокеров'))}"
+    d = int(im.get("index_delta") or 0)
+    return f" — индекс +{d}" if d > 0 else ""
+
+
+def summary_md(result: Result, report_name: str = "") -> str:
+    """The first screen as a page of its own (``*.summary.md``) for a wiki or a task tracker. Links lead into the
+    full report when its file name is given, otherwise they become plain identifiers."""
+    r = result.run
+    title = f"# Ревизор ТЗ: «{md(r.doc_title or r.doc_name)}»"
+    lines = [title, "", f"Документ `{md_code(r.doc_name)}` · проверен {_when(r.started_at)}", ""]
+    if result.diagnostic is not None:
+        lines.append(f"> **Итог:** ❔ Документ не проверен: {md(result.diagnostic.title)}")
+        return "\n".join(lines) + "\n"
+    lines += first_screen(result)
+    text = "\n".join(lines) + "\n"
+    if report_name:
+        return text.replace("](#", f"]({report_name}#")
+    import re
+
+    return re.sub(r"\[([^\]\n]+)\]\(#[^)\s]+\)", r"\1", text)
 
 
 def _baseline_block(result: Result) -> list[str]:
@@ -250,6 +414,7 @@ STAGE_RU = {"slice": "нарезка", "slice_rest": "нарезка (остат
             "review_clarity": "линза «ясность»", "review_completeness": "линза «полнота и проверяемость»",
             "review_correctness": "линза «корректность»", "set_consistency": "набор: непротиворечивость",
             "set_completeness": "набор: полнота", "set_standards": "набор: стандарты и безопасность",
+            "set_gaps": "набор: проход-критик «чего не хватает»",
             "skeptic": "перепроверка", "questions": "вопросы автору", "answers": "ответы автора",
             "tests": "черновики тестов", "checklist": "чек-лист из документа"}
 
@@ -286,6 +451,29 @@ def _when(iso: str) -> str:
 
 # --- section 1 ------------------------------------------------------------------------------
 
+DETAIL_WARNINGS = ("Усилие модели",)  # run details for the diagnostic file, not for the passport
+
+
+def _audit_count(result: Result, what: str) -> int:
+    return sum(1 for a in result.audit if a.get("what") == what)
+
+
+def recheck_line(result: Result) -> str:
+    r = result.run
+    if r.mode != "full":
+        return "не выполнялась (" + ("быстрый режим" if r.mode == "fast" else "без модели") + ")"
+    line = f"оставлено {r.skeptic_kept}, отклонено {r.skeptic_rejected}, объединено {r.skeptic_merged}"
+    refused_m = _audit_count(result, "skeptic_merge_refused")
+    refused_r = _audit_count(result, "skeptic_raise_refused")
+    if refused_m:
+        line += (f"; не дано объединить разные дефекты в разных местах: {refused_m} "
+                 "(оба замечания остались)")
+    if refused_r:
+        line += f"; не дано поднять уровень по доводу о другом дефекте: {refused_r}"
+    if r.critical_demoted:
+        line += f"; понижено блокеров без основания: {r.critical_demoted}"
+    return line
+
 
 def _passport(result: Result) -> str:
     r = result.run
@@ -295,8 +483,9 @@ def _passport(result: Result) -> str:
     if r.doc_pages:
         doc += f" · {r.doc_pages} {plural(r.doc_pages, ('страница', 'страницы', 'страниц'))}"
     doc += f" · {num(r.doc_words)} {plural(r.doc_words, ('слово', 'слова', 'слов'))} · SHA-256 `{r.doc_sha256[:12]}`"
+    if r.doc_title:
+        doc += f" · «{md(r.doc_title)}»"
     rows.append(("Документ", doc))
-    rows.append(("Название документа", md(r.doc_title) if r.doc_title else "не найдено"))
     if r.context_files:
         rows.append(("Контекст (--context)", ", ".join(f"`{md_code(n)}`" for n in r.context_files)
                      + " — только для понимания терминов; замечания и цитаты — по основному документу"))
@@ -306,52 +495,34 @@ def _passport(result: Result) -> str:
         if r.provider not in ("offline", "", "fake") and r.model:
             model += f" (провайдер {md(r.provider)} / {md(r.model)} недоступен — см. предупреждения)"
     else:
-        model = f"{md(r.provider)} / {md(r.model)}" + (f", effort {md(r.effort)}" if r.effort else "")
+        model = f"{md(r.provider)} / {model_label(r)}" + (f", effort {md(r.effort)}" if r.effort else "")
     rows.append(("Модель", model))
     rows.append(("Версия агента", version_label(md(r.agent_version), md_code(r.agent_commit), md(r.rules_version),
                                                 tag=md_code(r.agent_tag), dirty=r.agent_dirty)))
-    rows.append(("Воспроизводимость", "правила, номера, проверка цитат, индексы и вердикт детерминированы; "
-                 "замечания модели могут отличаться от прогона к прогону"))
     rows.append(("Режим", MODE_RU.get(r.mode, r.mode)))
     rows.append(("Время анализа", duration_text(r.duration_s)))
-    if r.llm_calls or not is_offline(result):
-        rows.append(("Обращения к модели",
-                     f"{num(r.llm_calls)} (из кэша ещё {num(r.llm_cache_hits)}); токены: вход {num(r.input_tokens)}, "
-                     f"выход {num(r.output_tokens)}, чтение кэша {num(r.cache_read_tokens)}, "
-                     f"запись кэша {num(r.cache_write_tokens)}"))
-    else:
-        rows.append(("Обращения к модели", "0"))
-    rows.append(("Стоимость прогона", f"{usd(r.cost_usd)} ({md(r.cost_note)})" if r.cost_note else usd(r.cost_usd)))
-    qline = f"подтверждено {num(r.quotes_confirmed)}"
+    rows.append(("Стоимость прогона", (f"{usd(r.cost_usd)} ({md(r.cost_note)})" if r.cost_note else usd(r.cost_usd))
+                 + (f"; обращений к модели {num(r.llm_calls)}" if r.llm_calls else "")))
+    qline = f"подтверждено {num(r.quotes_confirmed)}, отброшено {num(r.quotes_dropped)}"
     if r.quotes_restored:
-        qline += f" (из них восстановлено по сходству {num(r.quotes_restored)})"
-    qline += f", отброшено {num(r.quotes_dropped)}"
-    if result.dropped:
-        qline += f"; выброшено замечаний модели без подтверждённой цитаты: {len(result.dropped)}"
+        qline += f" (восстановлено по сходству {num(r.quotes_restored)})"
     rows.append(("Проверка цитат", qline))
-    if r.mode == "full":
-        rows.append(("Перепроверка", f"оставлено {r.skeptic_kept}, отклонено {r.skeptic_rejected}, "
-                                     f"объединено {r.skeptic_merged}"))
-    else:
-        rows.append(("Перепроверка", "не выполнялась (" + ("быстрый режим" if r.mode == "fast" else "без модели") + ")"))
-    if r.critical_demoted:
-        rows.append(("Уровни критичности", f"понижено блокеров без основания: {r.critical_demoted} "
-                                           "(CRITICAL → MAJOR: не названо ни одно из пяти оснований блокера)"))
-    if r.dup_merged:
-        rows.append(("Повторы замечаний", f"объединено кодом {r.dup_merged} (то же место, тот же дефект, один вопрос); "
-                                          "список — в конце отчёта среди объединённых"))
+    rows.append(("Перепроверка", recheck_line(result)))
     rows.append(("Защита данных", f"замаскировано {num(r.masked_values)} "
-                 f"{plural(r.masked_values, ('значение', 'значения', 'значений'))}, похожих на номера карт или ИИН"
-                 if r.masked_values else "значений, похожих на номера карт или ИИН, не найдено"))
+                 f"{plural(r.masked_values, ('значение', 'значения', 'значений'))}, похожих на номера карт, ИИН/БИН, "
+                 "адреса почты или телефоны" if r.masked_values else
+                 "значений, похожих на номера карт, ИИН/БИН, адреса почты или телефоны, не найдено"))
+    if failed_steps_line(result):
+        rows.append(("Неудавшиеся шаги", md(failed_steps_line(result))))
     if r.injection_suspected:
         rows.append(("Подсадной текст", "найден текст, обращённый к проверяющему ИИ; агент его не выполнял, "
                                         "замечания правил защищены от отклонения моделью"))
     out = [_h2("s1"), "", "| Поле | Значение |", "| :--- | :--- |"]
     out += [f"| {k} | {v} |" for k, v in rows]
-    out += _stage_table(stage_rows(result))
-    if r.warnings:
+    warn = [w for w in r.warnings if not w.startswith(DETAIL_WARNINGS)]
+    if warn:
         out += ["", "**Предупреждения:**", ""]
-        out += [f"- {md(w)}" for w in r.warnings]
+        out += [f"- {md(w)}" for w in warn]
     return "\n".join(out)
 
 
@@ -363,22 +534,20 @@ def _clarity_by_rid(result: Result) -> dict[str, float | None]:
 
 
 def _slicing(result: Result) -> str:
-    clar = _clarity_by_rid(result)
     out = [_h2("s2"), ""]
     how = "моделью" if any(r.origin == "model" for r in result.requirements) else "эвристикой (без модели)"
     out.append(f"Требования выделены {how}; номера REQ-… присвоены программой по порядку документа. "
-               f"Найдено {count(len(result.requirements), W_REQ)}. Столбец «Ясность» — индекс от 1 до 10: "
-               "10 — замечаний нет, ниже 4 — в таком виде использовать нельзя (такую оценку получает только "
-               "требование, у которого есть блокер).")
+               f"Найдено {count(len(result.requirements), W_REQ)}. Формулировка — точная цитата; длинная обрезана, "
+               "только если полный текст есть в карточке раздела 3. Ясность каждого требования — в матрице раздела 3.")
     out.append("")
     if result.requirements:
-        out.append("| ID в отчёте | ID в документе | Раздел | Тип | Формулировка (цитата) | Где | Ясность |")
-        out.append("| :--- | :--- | :--- | :--- | :--- | :--- | ---: |")
+        placed, _with, _without = card_plan(result)
+        out.append("| ID (в документе) | Тип | Формулировка (цитата) | Где |")
+        out.append("| :--- | :--- | :--- | :--- |")
         for r in result.requirements:
-            c = clar.get(r.rid)
-            out.append(f"| {link(r.rid)} | {md_cell(r.doc_id)} | {md_cell(last_section(r.section), 60)} | "
-                       f"{KIND_RU.get(r.kind, r.kind)} | {md_cell(plain_quote(r.quote), TABLE_QUOTE)} | "
-                       f"{location(r.line_start, r.line_end, r.page)} | {dec(c) if c is not None else '—'} |")
+            limit = TABLE_QUOTE if placed.get(r.rid) else 100_000
+            out.append(f"| {link(r.rid)}{' ' + md(r.doc_id) if r.doc_id else ''} | {KIND_RU.get(r.kind, r.kind)} | "
+                       f"{md_cell(plain_quote(r.quote), limit)} | {location(r.line_start, r.line_end, r.page)} |")
     else:
         out.append("Требований в документе не найдено.")
     if result.skipped:
@@ -397,46 +566,150 @@ def _slicing(result: Result) -> str:
 # --- cards ------------------------------------------------------------------------------------------
 
 
-def card(f: Finding, *, show_req_links: bool) -> str:
+class Shown:
+    """Document lines already printed in this card: a line is printed once per card and once per finding at most."""
+
+    def __init__(self) -> None:
+        self.items: list[tuple[int, int, str]] = []
+
+    def add(self, line_start: int, line_end: int, text: str) -> None:
+        self.items.append((line_start, line_end, normalize(text)))
+
+    def has(self, q: Quote) -> bool:
+        nq = normalize(q.text)
+        return any(a <= q.line_start and q.line_end <= b and nq and nq in t for a, b, t in self.items)
+
+
+def _quote_items(f: Finding, shown: Shown | None, with_rid: bool, cap: int | None = QUOTES_SHOWN) -> list[str]:
+    """Each distinct quote once; a quote the card has already printed is named by its line only."""
+    shown = shown if shown is not None else Shown()
+    seen: set[tuple[int, int, str]] = set()
+    items: list[str] = []
+    rest: list[Quote] = []
+    for q in f.quotes:
+        key = (q.line_start, q.line_end, normalize(q.text))
+        if key in seen:
+            continue
+        seen.add(key)
+        if cap is not None and len(items) >= cap:
+            rest.append(q)
+            continue
+        if shown.has(q):
+            where = quote_location(q) + (f", {link(q.rid)}" if with_rid and q.rid else "")
+            if f"{where} (цитата выше)" not in items:
+                items.append(f"{where} (цитата выше)")
+        else:
+            items.append(_quote_line(q, with_rid=with_rid))
+            shown.add(q.line_start, q.line_end, q.text)
+    if rest:
+        ls = ", ".join(str(q.line_start) for q in rest[:12]) + ("…" if len(rest) > 12 else "")
+        items.append(f"и ещё {len(rest)} {plural(len(rest), ('место', 'места', 'мест'))}: строки {ls}")
+    return items
+
+
+def _place_list(f: Finding) -> list[str]:
+    """A folded formal remark: every place as «строка — начало пункта», all of them."""
+    out = []
+    for q in f.quotes:
+        rid = f" ({link(q.rid)})" if q.rid else ""
+        out.append(f"{quote_location(q)}{rid} — «{md(shorten(plain_quote(q.text), 70))}»")
+    return out
+
+
+def _also_line(f: Finding) -> str:
+    if not f.also:
+        return ""
+    shown = "; ".join(f"«{md(shorten(t, 90))}»" for t in f.also[:ALSO_SHOWN])
+    more = f" и ещё {len(f.also) - ALSO_SHOWN}" if len(f.also) > ALSO_SHOWN else ""
+    return "Сюда же: " + shown + more
+
+
+def _see_also_line(f: Finding, with_rid: bool) -> str:
+    if not f.see_also:
+        return ""
+    parts = [_quote_line(q, with_rid=with_rid) for q in f.see_also[:SEE_ALSO_SHOWN]]
+    more = f"; и ещё {len(f.see_also) - SEE_ALSO_SHOWN}" if len(f.see_also) > SEE_ALSO_SHOWN else ""
+    return "См. также (место из объединённого повтора, на отметки не влияет): " + "; ".join(parts) + more
+
+
+def card(f: Finding, *, show_req_links: bool, shown: Shown | None = None) -> str:
+    """A finding. CRITICAL and MAJOR get a full card; MINOR costs two or three lines."""
     crit = CRITERION_RU.get(f.criterion, f.criterion)
-    lines = [f'<a id="{anchor(f.fid)}"></a>', f"**{f.fid} · {_sev(f)} · {crit}.** {md(f.title)}", ""]
-    if f.problem:
-        lines += [md(f.problem), ""]
-    items = []
-    if len(f.quotes) == 1:
-        items.append("Цитата " + _quote_line(f.quotes[0], with_rid=show_req_links, paren=True))
-    else:
-        items.append("Цитаты:")
-        for q in f.quotes:
-            items.append("  - " + _quote_line(q, with_rid=show_req_links))
-    if f.see_also:
-        items.append("См. также (это место пришло из объединённого повтора; на отметки требований оно не влияет):")
-        for q in f.see_also[:5]:
-            items.append("  - " + _quote_line(q, with_rid=show_req_links))
-        if len(f.see_also) > 5:
-            items.append(f"  - и ещё {len(f.see_also) - 5}")
-    if f.recommendation:
-        items.append("Как исправить: " + md(f.recommendation))
-    if f.fixed_wording:
-        items.append("Исправленная формулировка: «" + md(f.fixed_wording) + "»")
+    head = f"**{f.fid} · {_sev(f)} · {crit}.** {md(f.title)}"
+    folded = f.stage == FOLD_STAGE
+    quotes = _place_list(f) if folded else _quote_items(f, shown, show_req_links)
+    tail: list[str] = []
     if f.question_id:
-        items.append("Вопрос автору: " + link(f.question_id))
+        tail.append("вопрос автору " + link(f.question_id))
     if show_req_links:
         extra = [r for r in f.req_ids if not any(q.rid == r for q in f.quotes)]
         if extra:
-            items.append("Затронутые требования: " + links(extra))
+            tail.append("затронуты " + links(extra[:8]) + (f" и ещё {len(extra) - 8}" if len(extra) > 8 else ""))
+    tail.append("источник: " + _source(f))
+    extra_lines = [x for x in (_see_also_line(f, show_req_links), _also_line(f),
+                               ("Уровень: " + md(trail_line(f))) if trail_line(f) else "") if x]
+    problem, p_refs = _once(f.problem, f.fid)
+    problem = md(problem) + ((" " if problem else "") + _cap(_said_ref(p_refs)) + "." if p_refs else "")
+    rec, r_refs = _once(f.recommendation, f.fid)
+    rec = md(rec) + ((" " if rec else "") + ("Дальше — " if rec else "") + _said_ref(r_refs) + "." if r_refs else "")
+    rec = _cap(rec)
+    if f.severity == "MINOR" and not folded:
+        sep = "" if f.title.rstrip()[-1:] in ".?!" else "."
+        body = [head + sep + (" " + problem if problem else "")]
+        where = "; ".join(quotes)
+        line = (f"Где: {where}." if where else "")
+        if rec:
+            line += (" " if line else "") + "Как исправить: " + rec
+        if f.fixed_wording:
+            line += " Готовая формулировка — в `*.fixed.md`."
+        items = [line] + extra_lines + [_cap("; ".join(tail))]
+        return "\n".join([f'<a id="{anchor(f.fid)}"></a>'] + body + [""] + [f"- {x}" for x in items if x])
+    lines = [f'<a id="{anchor(f.fid)}"></a>', head, ""]
+    if problem:
+        lines += [problem, ""]
+    items = []
+    if len(quotes) == 1:
+        items.append("Цитата: " + quotes[0])
+    elif quotes:
+        items.append("Места:" if folded else "Цитаты:")
+        items += ["  - " + x for x in quotes]
+    if rec:
+        items.append("Как исправить: " + rec)
+    if f.fixed_wording:
+        items.append("Готовая формулировка — в файле `*.fixed.md` рядом с отчётом.")
     if f.severity == "CRITICAL" and f.status == "open" and not f.advisory:
         items.append("Почему блокер: " + BLOCKER_RU.get(f.blocker_reason, "основание не указано"))
-    if f.status_reason:
-        items.append("Перепроверка: " + md(f.status_reason))
-    items.append("Источник: " + _source(f))
-    items.append("Основание: " + STANDARDS.get(f.criterion, "—"))
+    items += extra_lines
+    items.append(_cap("; ".join(tail)))
     for it in items:
         lines.append(it if it.startswith("  - ") else "- " + it)
     return "\n".join(lines)
 
 
+
+
 # --- section 3 --------------------------------------------------------------------------------------
+
+
+CRITERION_SHORT = {"completeness": "Полнота", "unambiguity": "Однозн.", "consistency": "Непротив.",
+                   "verifiability": "Провер.", "feasibility": "Реализ.", "necessity": "Необх.", "singularity": "Атом."}
+
+
+def card_plan(result: Result) -> tuple[dict[str, list[Finding]], list[Requirement], list[Requirement]]:
+    """(requirement-level findings printed in each requirement's card, requirements with a card, requirements
+    listed in the short table without a card). A requirement gets a card when a finding of its own names it or a
+    set finding about a few places (at most BROAD_SET requirements) does; a set finding about the whole document
+    does not by itself make a card."""
+    c = counted(result)
+    placed: dict[str, list[Finding]] = {}
+    for f in c:
+        if f.scope == "requirement" and f.req_ids:
+            placed.setdefault(f.req_ids[0], []).append(f)
+    with_card, without = [], []
+    for r in result.requirements:
+        named = [f for f in c if r.rid in f.req_ids and (f.scope == "requirement" or len(f.req_ids) <= BROAD_SET)]
+        (with_card if named else without).append(r)
+    return placed, with_card, without
 
 
 def _per_requirement(result: Result) -> str:
@@ -444,23 +717,97 @@ def _per_requirement(result: Result) -> str:
     offline = is_offline(result)
     if offline:
         out.append("Без модели каждое требование проверено только автоматическими правилами (размытые слова, "
-                   "заглушки, сроки без условий, незакрытые перечни, несколько требований в одном пункте и др.). "
-                   "Смысловые критерии без модели не проверялись.")
+                   "заглушки, сроки без условий, незакрытые перечни, несколько требований в одном пункте и др.); "
+                   "смысловые критерии не проверялись (❔).")
     else:
-        out.append("Обозначения: ✅ нарушений нет · ⚠️ есть замечание · — критерий неприменим · ❔ не проверялось.")
-    c = counted(result)
-    placed: dict[str, list[Finding]] = {}
-    for f in c:
-        if f.scope == "requirement" and f.req_ids:
-            placed.setdefault(f.req_ids[0], []).append(f)
+        out.append("Обозначения: ✅ нарушений нет · ⚠️ есть замечание (ссылка ведёт к нему) · — неприменим · "
+                   "❔ не проверялось.")
+    out.append(CLARITY_LEGEND + " Карточки ниже — только у требований, к которым есть замечания.")
     reviews = {rv.rid: rv for rv in result.reviews}
-    for r in result.requirements:
+    placed, with_card, without = card_plan(result)
+    if result.requirements:
+        out += ["", _matrix(result, reviews)]
+    for r in with_card:
         out.append("")
-        out.append(_req_block(r, placed.get(r.rid, []), c, reviews.get(r.rid), offline))
+        out.append(_req_block(r, placed.get(r.rid, []), result, reviews.get(r.rid), offline))
+    if without:
+        out += ["", _no_findings_table(result, without)]
     return "\n".join(out)
 
 
-def _req_block(r: Requirement, own: list[Finding], all_counted: list[Finding], rv, offline: bool) -> str:
+def _matrix(result: Result, reviews: dict) -> str:
+    """One row per requirement, one column per criterion of a single requirement; ⚠️ links to the first finding.
+    The marks are the ones ``consistency.apply_marks`` stored, so the matrix, the cards and the JSON agree."""
+    out = ['<a id="s3-matrix"></a>', "**Матрица «требование × критерий»**", "",
+           "| Требование | " + " | ".join(CRITERION_SHORT[x] for x in REQ_CRITERIA) + " | Ясность |",
+           "| :--- | " + " | ".join(":---:" for _ in REQ_CRITERIA) + " | ---: |"]
+    empty = 0
+    blank: list[Requirement] = []
+    for r in result.requirements:
+        rv = reviews.get(r.rid)
+        crit = rv.criteria if rv is not None else {}
+        by_crit, _t = marks_of(r.rid, result.findings)
+        if not by_crit and all((crit[x].status if x in crit else "unchecked") == "unchecked" for x in REQ_CRITERIA):
+            blank.append(r)  # a row of seven ❔ says nothing: such rows are named in one line under the table
+            empty += len(REQ_CRITERIA)
+            continue
+        cells = []
+        for x in REQ_CRITERIA:
+            st = crit[x].status if x in crit else "unchecked"
+            hit = by_crit.get(x)
+            if hit:
+                cells.append(f"[⚠️](#{anchor(hit[0].fid)})")
+            else:
+                if st == "unchecked":
+                    empty += 1
+                cells.append(STATUS_ICON.get("ok" if st == "issue" else st, "❔"))
+        label = link(r.rid) + (f" {md(r.doc_id)}" if r.doc_id else "")
+        cl = rv.clarity if rv is not None else None
+        out.append(f"| {label} | " + " | ".join(cells) + f" | {dec(cl) if cl is not None else '—'} |")
+    if blank:
+        out += ["", f"Не проверены ни по одному критерию (во всех клетках было бы ❔): {count(len(blank), W_REQ)} — "
+                + ", ".join(link(r.rid) for r in blank) + "."]
+    if empty:
+        out += ["", f"Пустых клеток (не проверено): {empty}."]
+    return "\n".join(out)
+
+
+def _ref(f: Finding) -> str:
+    """A finding named on a requirement card: its id and level; a remark about the whole document says so."""
+    if f.scope == "set" and len(f.req_ids) > BROAD_SET:
+        return f"{link(f.fid)} (к набору)"
+    return f"{link(f.fid)} {SEVERITY_ICON.get(f.severity, '')}".rstrip()
+
+
+def _clar(rv) -> str:
+    return "ясность " + dec(rv.clarity) if rv is not None and rv.clarity is not None else "ясность —"
+
+
+def _marks_line(r: Requirement, result: Result, rv, offline: bool) -> str:
+    by_crit, touched = marks_of(r.rid, result.findings)
+    crit = rv.criteria if rv is not None else {}
+    parts = []
+    for x in REQ_CRITERIA:
+        if by_crit.get(x):
+            parts.append(f"{CRITERION_SHORT[x]} " + ", ".join(_ref(f) for f in by_crit[x]))
+    line = ("⚠️ " + "; ".join(parts)) if parts else ""
+    rest = [x for x in REQ_CRITERIA if not by_crit.get(x)]
+    unchecked = [x for x in rest if (crit[x].status if x in crit else "unchecked") == "unchecked"]
+    if offline:
+        tail = "прочие без модели не проверялись"
+    elif unchecked and len(unchecked) == len(rest):
+        tail = "остальные не проверены"
+    elif unchecked:
+        tail = "не проверены: " + ", ".join(CRITERION_SHORT[x] for x in unchecked) + "; прочие ✅"
+    else:
+        tail = "прочие ✅" if parts else "по всем семи критериям нарушений нет"
+    line = (line + " · " + tail) if line else _cap(tail)
+    if touched:
+        line += " · затронуто: " + ", ".join(_ref(f) for f in touched)
+    return line
+
+
+def _req_block(r: Requirement, own: list[Finding], result: Result, rv, offline: bool) -> str:
     title = [r.rid]
     if r.doc_id:
         title.append(md(r.doc_id))
@@ -469,42 +816,36 @@ def _req_block(r: Requirement, own: list[Finding], all_counted: list[Finding], r
         title.append(md(shorten(sec, 70)))
     title.append(location(r.line_start, r.line_end, r.page))
     lines = [f'<a id="{anchor(r.rid)}"></a>', "### " + " · ".join(title), "", blockquote(plain_quote(r.quote)), ""]
-    meta = f"Тип: {KIND_RU.get(r.kind, r.kind)}"
+    shown = Shown()
+    shown.add(r.line_start, r.line_end, r.quote)
+    linked = consistency.linked(r.rid, result.findings)
+    meta = ""
     if rv is not None and rv.clarity is not None:
-        meta += f" · Ясность: {dec(rv.clarity)} из 10 ({score.clarity_band(rv.clarity)})"
-    if r.section and r.section != sec:
-        meta += f" · Раздел: {md(r.section)}"
-    lines += [meta, ""]
-    crit = rv.criteria if rv is not None else {}
-    see = [f for f in all_counted if r.rid in f.req_ids and f not in own]
-    shared = (" Но требование входит в замечания, охватывающие несколько мест документа, — они снижают его ясность "
-              "(см. ниже)." if see and rv is not None and rv.clarity is not None and rv.clarity < 10 else "")
-    if offline:
-        if own:
-            names = ", ".join(CRITERION_RU[x] for x in REQ_CRITERIA if any(f.criterion == x for f in own))
-            lines.append(f"Критерии с замечаниями правил: {names}. Остальные критерии без модели не проверялись.")
-        else:
-            lines.append("В самой формулировке правила нарушений не нашли. Смысловые критерии без модели не проверялись."
-                         + shared)
-    else:
-        lines.append("| " + " | ".join(CRITERION_RU[x] for x in REQ_CRITERIA) + " |")
-        lines.append("| " + " | ".join(":---:" for _ in REQ_CRITERIA) + " |")
-        lines.append("| " + " | ".join(STATUS_ICON.get(crit[x].status if x in crit else "unchecked", "❔")
-                                       for x in REQ_CRITERIA) + " |")
-        unchecked = sorted({crit[x].note for x in REQ_CRITERIA if x in crit and crit[x].status == "unchecked" and crit[x].note})
-        if unchecked:
-            lines += ["", "Не проверено: " + md("; ".join(unchecked))]
-        if not own:
-            lines += ["", "✅ В самой формулировке нарушений не найдено." + shared]
-            notes = [f"{CRITERION_RU[x]} — {crit[x].note}" for x in REQ_CRITERIA
-                     if x in crit and crit[x].status in ("ok", "na") and crit[x].note]
-            if notes:
-                lines.append("Заметки проверяющего: " + md("; ".join(notes[:3])) + ".")
+        # a verdict word only next to what lowers the score (the marks line lists every linked finding)
+        band = f" — {score.clarity_band(rv.clarity)}" if linked or rv.clarity >= 10 else ""
+        meta = f"Ясность {dec(rv.clarity)}{band} · "
+    lines += [meta + _marks_line(r, result, rv, offline), ""]
     for f in own:
-        lines += ["", card(f, show_req_links=False)]
-    if see:
-        lines += ["", "См. также: " + "; ".join(f"{link(f.fid)} · {_sev(f)} — {md(shorten(f.title, 90))}" for f in see)]
-    return "\n".join(lines)
+        lines += [card(f, show_req_links=False, shown=shown), ""]
+    return "\n".join(lines).rstrip()
+
+
+def _no_findings_table(result: Result, reqs: list[Requirement]) -> str:
+    """Requirements without a card: number, place, the start of the text (full text in section 2) and the
+    whole-document findings that name them."""
+    broad = {r.rid: consistency.linked(r.rid, result.findings) for r in reqs}
+    keys = {tuple(f.fid for f in v) for v in broad.values()}
+    common = list(next(iter(broad.values()))) if len(keys) == 1 else []
+    out = ['<a id="s3-clean"></a>', f"**Требования без замечаний ({len(reqs)})**", ""]
+    if common:
+        out += ["Их называют только замечания ко всему документу: " + ", ".join(_ref(f) for f in common) + ".", ""]
+    out += ["| Требование | Где | Начало текста (полностью — в [разделе 2](#s2)) |", "| :--- | :--- | :--- |"]
+    for r in reqs:
+        lab = f'<a id="{anchor(r.rid)}"></a>{r.rid}' + (f" {md(r.doc_id)}" if r.doc_id else "")
+        refs = "" if common or not broad[r.rid] else " · " + ", ".join(_ref(f) for f in broad[r.rid])
+        out.append(f"| {lab} | {location(r.line_start, r.line_end, r.page)} | "
+                   f"{md_cell(plain_quote(r.quote), 40)}{refs} |")
+    return "\n".join(out)
 
 
 # --- section 4 -------------------------------------------------------------------------------------------
@@ -520,6 +861,8 @@ def _set_level(result: Result) -> str:
     rid_set = {r.rid for r in result.requirements}
     for numb, title, crit, fams in SUBSECTIONS:
         items = [f for f in c if f.scope == "set" and f.criterion == crit]
+        # folded formal remarks keep their requirement criterion: they go to the subsection of its family
+        items += [f for f in c if f.scope == "set" and f.criterion not in SET_CRITERIA and FAMILY.get(f.criterion) in fams]
         items += [f for f in orphans if FAMILY.get(f.criterion) in fams]
         out += ["", f"### {numb} {title}", ""]
         if items:
@@ -529,6 +872,8 @@ def _set_level(result: Result) -> str:
                        "Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.")
         if crit == "traceability":
             out += ["", _coverage_block(result, rid_set, offline)]
+    if result.gap_map:
+        out += ["", _gap_map_block(result)]
     adv = advisory(result)
     out += ["", '<a id="s4-obs"></a>', "### Наблюдения (проверьте сами, на итог не влияют)", ""]
     if adv:
@@ -539,11 +884,65 @@ def _set_level(result: Result) -> str:
             q = f.quotes[0]
             rid = f" · {link(q.rid)}" if q.rid else ""
             out.append(f'- <a id="{anchor(f.fid)}"></a>**{f.fid}** · {quote_location(q)}{rid} · {md(f.title)}: '
-                       f"«{_quote_text(q.text, 200)}»")
+                       f"«{_quote_text(q.text, 120)}»")
     else:
         out.append("Нет.")
     if result.checklist:
         out += ["", _checklist_block(result)]
+    return "\n".join(out)
+
+
+GAP_CHECKED_MAX = 140
+
+
+def gap_answer(cell) -> str:
+    st = cell.status
+    if st == "covered":
+        return f"✅ описано — строка {cell.line}" if cell.line else "✅ описано"
+    if st == "gap":
+        return "⚠️ пробел — " + (links(cell.finding_ids) or "замечание не сохранилось")
+    if st == "na":
+        return "— не относится"
+    if st == "unverified":
+        return "? цитата не подтверждена"
+    if st == "rejected":
+        return "✅ пробел не подтвердился при перепроверке"
+    return "? не оценено"
+
+
+def _gap_map_block(result: Result) -> str:
+    cells = result.gap_map
+    t = gapcheck.totals(cells)
+    out = ['<a id="s4-gaps"></a>', "### Карта полноты: контрольные вопросы к документу", "",
+           f"Агент обязан ответить на каждый из {len(cells)} вопросов — так ни один типовой пробел не пропускается молча. "
+           "Карта сама не меняет индексы и итог: на них влияют только связанные замечания.", "",
+           f"Итого: описано {t['covered']} · пробелов {t['gap']} · не относится {t['na']} · не оценено {t['unchecked']}."]
+    rated = [c for c in cells if c.status != "unchecked"]
+    unrated = [c for c in cells if c.status == "unchecked"]
+    if unrated and len(unrated) * 2 >= len(cells):
+        if is_offline(result):  # without the model only the rules answer: naming the rest adds nothing
+            out += ["", f"Без модели на остальные {t['unchecked']} вопросов никто не отвечал; их список — в "
+                    "JSON-версии отчёта (поле `gap_map`)."]
+        else:
+            out += ["", "Не оценены: " + ", ".join(f"{c.id} {md(c.title)}" for c in unrated) + "."]
+        if rated:
+            out += ["", "| Вопрос | Ответ | На чём основан ответ |", "| :--- | :--- | :--- |"]
+            for c in rated:
+                out.append(f"| {c.id}. {md(c.title)} | {gap_answer(c)} | {md_cell(c.note or ', '.join(c.checked), GAP_CHECKED_MAX)} |")
+        return "\n".join(out)
+    for group in gapcheck.GROUPS:
+        rows = [c for c in cells if c.group == group]
+        if not rows:
+            continue
+        out += ["", f"**{md(group)}**"]
+        if group in gapcheck.GROUP_NOTE:
+            out += ["", md(gapcheck.GROUP_NOTE[group])]
+        out += ["", "| Вопрос | Ответ | Что перебрано / на чём основан ответ |", "| :--- | :--- | :--- |"]
+        for c in rows:
+            basis = ", ".join(c.checked) if c.checked else c.note
+            if c.checked and c.note and c.status in ("na", "unchecked", "unverified", "rejected"):
+                basis = c.note + "; " + basis
+            out.append(f"| {c.id}. {md(c.title)} | {gap_answer(c)} | {md_cell(basis, GAP_CHECKED_MAX) or '—'} |")
     return "\n".join(out)
 
 
@@ -553,10 +952,18 @@ def _checklist_block(result: Result) -> str:
     by_model = any(it.by_model for it in items)
     out = ['<a id="s4-checklist"></a>', "### Чек-лист ревью из документа: как на него отвечает проверка", ""]
     out.append(f"В документе найден чек-лист ревью ({count(len(items), ('пункт', 'пункта', 'пунктов'))}), отметки в "
-               "котором не проставлены. Ниже — ответы, которые предлагает проверка по тексту документа и найденным "
-               "замечаниям. Это подсказка для проверяющего, а не его подпись: решение и отметку ставит человек. "
-               "Ответы не меняют замечания, индексы и итог."
-               + ("" if by_model else " В этом прогоне модель на пункты не отвечала, поэтому они только перечислены."))
+               "котором не проставлены. "
+               + ("Ниже — ответы, которые предлагает проверка по тексту документа и найденным замечаниям. Это "
+                  "подсказка для проверяющего, а не его подпись: решение и отметку ставит человек. Ответы не меняют "
+                  "замечания, индексы и итог." if by_model else
+                  "В этом прогоне модель на пункты не отвечала: они перечислены без оценки, отметку ставит человек."))
+    if not by_model:
+        lines = [it.line for it in items if it.line]
+        where = f" ({lines_text(min(lines), max(lines))})" if lines else ""
+        out[-1] = (f"В документе найден чек-лист ревью ({count(len(items), ('пункт', 'пункта', 'пунктов'))}){where}, "
+                   "отметки в котором не проставлены. В этом прогоне модель на пункты не отвечала: отметку ставит "
+                   "человек.")
+        return "\n".join(out)
     out += ["", "| № | Пункт (цитата, строка) | Ответ агента (Да / Нет / Нельзя определить по тексту) | Основание | Замечания |",
             "| ---: | :--- | :--- | :--- | :--- |"]
     for it in items:
@@ -595,7 +1002,7 @@ def _coverage_block(result: Result, rid_set: set[str], offline: bool) -> str:
 def _summary(result: Result) -> str:
     r = result.run
     c = counted(result)
-    sc = sev_counts(c)
+    t = tally(result.findings)
     with_f = {rid for f in c for rid in f.req_ids}
     n_req = len(result.requirements)
     n_with = sum(1 for x in result.requirements if x.rid in with_f)
@@ -604,25 +1011,28 @@ def _summary(result: Result) -> str:
         ("Требований всего", num(n_req)),
         ("— без замечаний", num(n_req - n_with)),
         ("— с замечаниями", num(n_with)),
-        ("Дефектов всего", num(len(c))),
-        ("— 🔴 CRITICAL (блокеры)", num(sc["CRITICAL"])),
-        ("— 🟡 MAJOR (существенные)", num(sc["MAJOR"])),
-        ("— 🟢 MINOR (замечания)", num(sc["MINOR"])),
+        ("Замечаний всего", num(t["total"])),
+        ("— 🔴 CRITICAL (блокеры)", num(t["CRITICAL"])),
+        ("— 🟡 MAJOR (существенные)", num(t["MAJOR"])),
+        ("— 🟢 MINOR (мелкие)", num(t["MINOR"])),
         ("Наблюдений (на итог не влияют)", num(len(advisory(result)))),
         ("Вопросов автору", num(len(result.questions))),
     ]
+    if result.gap_map:
+        g = gapcheck.totals(result.gap_map)
+        rows.append(("Контрольных вопросов к документу", f"{num(len(result.gap_map))}, из них пробелов {num(g['gap'])}"))
     if result.tests:
         t_ready, t_rest = test_totals(result)
         rows += [("Тестов можно написать уже сейчас", num(t_ready)),
                  ("Тестов нельзя написать без ответа автора", num(t_rest))]
     out += [f"| {k} | {v} |" for k, v in rows]
-    out += ["", "**Дефекты по критериям качества**", "", "| Критерий | Дефектов |", "| :--- | ---: |"]
+    out += ["", "**Замечания по критериям качества**", "", "| Критерий | Замечаний | Основание |", "| :--- | ---: | :--- |"]
     for crit in REQ_CRITERIA + SET_CRITERIA:
         n = sum(1 for f in c if f.criterion == crit)
         if n:
-            out.append(f"| {CRITERION_RU[crit]} | {n} |")
+            out.append(f"| {CRITERION_RU[crit]} | {n} | {STANDARDS.get(crit, '—')} |")
     if not c:
-        out.append("| — | 0 |")
+        out.append("| — | 0 | — |")
 
     out += ["", "**Индекс готовности документа**", ""]
     if r.score is not None:
@@ -630,9 +1040,7 @@ def _summary(result: Result) -> str:
         out.append(f"**{r.score} из 100 — {score.readiness_band(r.score)}**{prelim}. Шкала: 85 и выше — готов, "
                    "60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов.")
         out.append("")
-        out.append(f"Как посчитан: {md(r.score_formula)}. Ясность требования = 10 − 6,5 за каждый блокер, − 2,5 за "
-                   "существенное, − 0,75 за мелкое замечание (замечания к набору, где требование упомянуто, — "
-                   "вдвое меньше), но не ниже 1; если блокера у требования нет — не ниже 4.")
+        out.append(f"Как посчитан: {md(r.score_formula)}. {CLARITY_LEGEND}")
         clar = {rv.rid: rv.clarity for rv in result.reviews if rv.clarity is not None}
         dist = score.band_distribution(clar)
         out.append("")
@@ -641,22 +1049,15 @@ def _summary(result: Result) -> str:
         out.append(md(r.score_formula) or "Индекс не считается.")
     dens = len(c) / n_req if n_req else 0.0
     per_k = len(c) * 1000 / r.doc_words if r.doc_words else 0.0
-    out += ["", f"Плотность: {dec(dens, 2)} дефекта на одно требование · {dec(per_k)} на 1000 слов документа."]
-    out.append("Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.")
+    out += ["", f"Плотность: {dec(dens, 2)} дефекта на одно требование · {dec(per_k)} на 1000 слов документа. "
+                "Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось."]
 
     blockers = _blockers(result)
-    out += ["", "**Критичные дефекты**", ""]
-    if blockers:
-        for f in blockers:
-            out.append(f"- {link(f.fid)} — {md(f.title)} ({_where(f)})")
-    else:
-        out.append("Нет.")
+    out += ["", "**Критичные дефекты:** " + (links([f.fid for f in blockers]) + " — с основаниями и строками "
+                                             "перечислены в начале отчёта." if blockers else "нет.")]
 
-    out += ["", "**Время и стоимость**", ""]
-    out.append(f"- Агент: {duration_text(r.duration_s)}, {usd(r.cost_usd)}"
-               + (f" ({md(r.cost_note)})" if r.cost_note else "") + ".")
-    out.append(f"- Ручное ревью (оценка, не замер): {num(n_req)} треб. × {4} мин + 45 мин на отчёт ≈ "
-               f"{minutes_text(r.manual_minutes_estimate)}.")
+    out += ["", f"**Время и стоимость:** {duration_text(r.duration_s)}, {usd(r.cost_usd)}"
+            + (f" ({md(r.cost_note)})" if r.cost_note else "") + "."]
     return "\n".join(out)
 
 
@@ -674,9 +1075,14 @@ def _final(result: Result) -> str:
     out.append("**Что исправить в первую очередь**")
     out.append("")
     if result.fix_first:
-        for k, a in enumerate(result.fix_first, 1):
-            refs = f" ({links(a.finding_ids)})" if a.finding_ids else ""
-            out.append(f"{k}. {md(a.action)}{refs}")
+        by_fid = {f.fid: f for f in result.findings}
+        for k, (text, ids) in enumerate(_merged_actions(result.fix_first), 1):
+            first = by_fid.get(ids[0]) if ids else None
+            title = first.title.strip().rstrip(".") if first is not None else ""
+            if title and text.startswith(title):  # «title. recommendation»: the recommendation is on the card
+                text = title + "."
+            refs = f" ({links(ids)})" if ids else ""
+            out.append(f"{k}. {md(text)}{refs}")
     else:
         out.append("Нечего исправлять в первую очередь.")
     out += ["", "**Что в документе уже хорошо**", ""]
@@ -687,7 +1093,8 @@ def _final(result: Result) -> str:
     elif is_offline(result):
         out.append("Без модели сильные стороны документа не оцениваются.")
     else:
-        out.append("Модель не отметила сильных сторон.")
+        out.append("Агент не нашёл мест, которые можно назвать хорошими без оговорок: к каждому замеченному месту "
+                   "есть замечание или вопрос.")
     return "\n".join(out)
 
 
@@ -703,9 +1110,22 @@ def _questions(result: Result) -> str:
     if after is not None:
         out.append(f"Если автор ответит на блокирующие вопросы и внесёт правки, вердикт станет: **{md(after[1])}**.")
         out.append("")
+    need_q, no_q = impact_mod.blocker_questions(result.questions, counted(result))
+    if need_q:
+        out += ["Чтобы снять все блокеры, нужны ответы на вопросы: " + links(need_q) + ".", ""]
+    if no_q:
+        by_fid = {f.fid: f for f in result.findings}
+        ready = [fid for fid in no_q if by_fid[fid].fixed_wording]
+        plain = [fid for fid in no_q if fid not in ready]
+        if ready:
+            out += ["Блокеры " + links(ready) + " исправляются без вопроса автору: готовая формулировка — в файле "
+                    "`*.fixed.md`.", ""]
+        if plain:
+            out += ["К блокерам " + links(plain) + " вопроса автору нет: что исправить, сказано в замечании.", ""]
     src = "по шаблонам автоматических правил" if is_offline(result) else "моделью по подтверждённым замечаниям"
     out.append(f"{count(len(result.questions), W_QUESTION).capitalize()} составлено {src}. "
-               "Ответы удобно вписать в файл-анкету рядом с отчётом (`*.questions.md`).")
+               "Ответы удобно вписать в файл-анкету рядом с отчётом (`*.questions.md`): там у каждого вопроса есть "
+               "варианты ответа.")
     by_fid = {f.fid: f for f in result.findings}
     out += _dialog(result)
     for prio in ("blocker", "important", "nice"):
@@ -714,7 +1134,7 @@ def _questions(result: Result) -> str:
             continue
         out += ["", f"### {PRIORITY_RU[prio]} ({len(qs)})"]
         for q in qs:
-            out += ["", question_block(q, by_fid)]
+            out += ["", question_block(q, by_fid, impact_text(q, result))]
     return "\n".join(out)
 
 
@@ -740,25 +1160,60 @@ def _dialog(result: Result) -> list[str]:
     return out
 
 
-def question_block(q: Question, by_fid: dict[str, Finding]) -> str:
-    lines = [f'<a id="{anchor(q.qid)}"></a>', f"**{q.qid}.** {md(q.text)}", ""]
+def impact_text(q: Question, result: Result) -> str:
+    """«Что изменит ответ в итоге: …» — computed by code (impact.py); "" when there is nothing to say."""
+    im = q.impact or {}
+    if not im:
+        return ""
+    total = sum(1 for f in counted(result) if f.severity == "CRITICAL")
+    k = int(im.get("blockers_closed") or 0)
+    after = im.get("verdict_after") or ""
+    if k:
+        head = f"закроет {k} из {total} " + plural(total, ("блокера", "блокеров", "блокеров"))
+        if after and after != result.verdict:
+            head += f", вердикт станет: «{verdict.short_text(after)}»"
+    elif after and after != result.verdict and result.verdict in verdict.TEXT:
+        head = f"вердикт станет: «{verdict.short_text(after)}»"
+    else:
+        head = "на вердикт не влияет"
+        if not int(im.get("index_delta") or 0):
+            return ""
+    idx = im.get("index_after")
+    delta = int(im.get("index_delta") or 0)
+    if idx is not None and delta:
+        head += f" · индекс готовности {idx - delta} → {idx}"
+    return "Что изменит ответ в итоге: " + head
+
+
+def _why_repeats(q: Question, by_fid: dict[str, Finding]) -> bool:
+    """The «why» of a template question is the first sentence of its finding's problem: printing it again is noise."""
+    w = normalize(q.why or "")
+    return bool(w) and any(w in normalize(by_fid[i].problem) for i in q.finding_ids if i in by_fid)
+
+
+def question_block(q: Question, by_fid: dict[str, Finding], impact_line: str = "") -> str:
+    """A question in two or three lines; the questionnaire (``*.questions.md``) has the full form."""
     who = ADDRESSEE_RU.get(q.addressee, q.addressee)
-    meta = f"- Кому: {md(who)}"
-    if q.gap:
-        meta += f" · Тип пробела: {GAP_RU.get(q.gap, q.gap)}"
-    lines.append(meta)
-    if q.why:
+    meta = [f"кому: {md(who)}"]
+    if q.finding_ids:  # the place and the kind of gap are on the finding's card and in the questionnaire
+        meta.append("к " + links(q.finding_ids))
+    elif q.quote is not None:
+        meta.append(quote_location(q.quote))
+    lines = [f'<a id="{anchor(q.qid)}"></a>', f"**{q.qid}.** {md(q.text)} ({'; '.join(meta)})"]
+    if q.why and not _why_repeats(q, by_fid):
         lines.append(f"- Почему важно: {md(q.why)}")
-    if q.quote is not None:
-        lines.append(f"- Где в документе: {_quote_line(q.quote)}")
     if q.options:
-        lines.append("- Варианты ответа:")
-        for k, o in enumerate(q.options):
-            eff = q.option_effects[k] if k < len(q.option_effects) and q.option_effects[k] else ""
-            lines.append(f"  - {LETTERS[k]}) {md(o)}" + (f" — что изменится: {md(eff)}" if eff else ""))
-    rel = [link(fid) for fid in q.finding_ids] + [link(r) for r in q.req_ids]
-    if rel:
-        lines.append("- Относится к: " + ", ".join(rel))
+        if q.priority == "blocker" and any(k < len(q.option_effects) and q.option_effects[k]
+                                           for k in range(len(q.options))):
+            lines.append("- Варианты ответа:")
+            for k, o in enumerate(q.options):
+                eff = q.option_effects[k] if k < len(q.option_effects) and q.option_effects[k] else ""
+                lines.append(f"  - {LETTERS[k]}) {md(o)}" + (f" — что изменится: {md(eff)}" if eff else ""))
+        elif q.priority == "blocker" or q.answer:
+            lines.append("- Варианты: " + "; ".join(f"{LETTERS[k]}) {md(o)}" for k, o in enumerate(q.options)))
+        # other questions: the options are in the questionnaire (``*.questions.md``), where the author answers
+    if impact_line:
+        lines.append(f"- {impact_line}")
     if q.answer:
         lines.append(f"- Ответ автора: {md(q.answer)}")
         if q.answer_effect:
@@ -775,21 +1230,24 @@ def test_totals(result: Result) -> tuple[int, int]:
 
 
 def _tests(result: Result) -> str:
+    """Counts and which answer each blocked draft waits for; the drafts themselves are in ``*.tests.md``."""
     out = [_h2("s8"), ""]
     ready, rest = test_totals(result)
     out.append(f"Можно написать уже сейчас: {ready} · Нельзя написать без ответа автора: {rest}. "
                "Полные тексты (Дано / Когда / Тогда) — в файле `*.tests.md` рядом с отчётом.")
-    out += ["", "| Тест | Тип | Требования | Что проверяем | Статус |", "| :--- | :--- | :--- | :--- | :--- |"]
+    out.append("")
+    ok = [t for t in result.tests if t.then and not t.blocked_by]
+    if ok:
+        out.append("- Готовы: " + ", ".join(f'<a id="{anchor(t.tid)}"></a>{t.tid} ({links(t.req_ids[:2])})' for t in ok) + ".")
+    waits: "OrderedDict[str, list]" = OrderedDict()
     for t in result.tests:
         if t.then and not t.blocked_by:
-            status = "готов"
-        elif not t.then:
-            status = "ожидаемый результат в документе не описан — нужен ответ автора" + (
-                " (" + links(t.blocked_by) + ")" if t.blocked_by else "")
-        else:
-            status = "заблокирован: ждёт ответа " + links(t.blocked_by)
-        out.append(f'| <a id="{anchor(t.tid)}"></a>{t.tid} | {TEST_KIND_RU.get(t.kind, md(t.kind))} | {links(t.req_ids)} | '
-                   f"{md_cell(t.title, 100)} | {status} |")
+            continue
+        key = ", ".join(t.blocked_by) if t.blocked_by else ""
+        waits.setdefault(key, []).append(t)
+    for key, ts in waits.items():
+        what = f"ждут ответа {links(key.split(', '))}" if key else "ожидаемый результат в документе не описан"
+        out.append(f"- {_cap(what)}: " + ", ".join(f'<a id="{anchor(t.tid)}"></a>{t.tid}' for t in ts) + ".")
     return "\n".join(out)
 
 
@@ -806,19 +1264,24 @@ def _appendix(result: Result) -> str:
     out.append("2. Блоки делятся на требования и служебные части " + (
         "моделью; программа проверяет, что каждый блок попал ровно в одно место, и сама присваивает номера REQ-…."
         if not is_offline(result) else "эвристикой; номера REQ-… присваивает программа."))
-    out.append(f"3. Автоматические правила (набор {md(r.rules_version)}) ищут формальные дефекты: размытые слова, "
-               "заглушки, единицы измерения, коды и методы HTTP, пустые разделы, подсадной текст для ИИ.")
+    n_main, n_adv = rules_mod.rule_counts()
+    out.append(f"3. Автоматические правила (набор {md(r.rules_version)}: {n_main} основных и {n_adv} слабых «наблюдений») "
+               "ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, "
+               "схемы без веток ошибок, подсадной текст для ИИ.")
     if not is_offline(result):
         out.append("4. Модель проверяет каждое требование по семи критериям ISO/IEC/IEEE 29148:2018 п. 5.2.5 "
                    + ("тремя отдельными проходами (ясность; полнота и проверяемость; корректность)" if r.mode == "full"
                       else "одним проходом")
                    + " и весь набор по пяти критериям п. 5.2.6"
+                   + (f", а проход-критик отвечает на каждый из {len(result.gap_map)} контрольных вопросов к документу"
+                      if result.gap_map else "")
                    + ("; затем второй, независимый проход перепроверяет каждое замечание." if r.mode == "full" else "."))
     else:
         out.append("4. Модель не использовалась: проверки по смыслу (противоречия, пропущенные сценарии, "
                    "пограничные случаи) не выполнялись.")
     out.append("5. Каждую цитату программа ищет в тексте документа; замечание без найденной цитаты выбрасывается, "
-               "в отчёт попадает исходный текст, а не пересказ. Номера, индексы и вердикт считает программа.")
+               "в отчёт попадает исходный текст, а не пересказ. Номера, индексы, вердикт и отметки в матрице считает "
+               "программа; перед записью отчёта она проверяет, что его части не противоречат друг другу.")
     out += ["", "**Честно о границах.** Это первый проход, который экономит время проверяющего; решение остаётся за "
             "человеком. Опубликованные замеры ИИ-проверки требований показывают, что лучшие модели находят примерно "
             "половину настоящих проблем и ошибочно помечают около одного требования из десяти. Поэтому цитаты "
@@ -826,20 +1289,6 @@ def _appendix(result: Result) -> str:
             + (", замечания модели перепроверяются вторым проходом" if not is_offline(result) and r.mode == "full" else "")
             + ", а полнота агента измеряется на контрольных документах, которых он раньше не видел."
             + (" В этом прогоне модель не работала, поэтому найдено заведомо меньше." if is_offline(result) else "")]
-
-    rejected = [f for f in result.rejected if f.status == "rejected"]
-    merged = [f for f in result.rejected if f.status == "merged"]
-    out += ["", "**Отклонено при перепроверке**", ""]
-    if rejected or merged:
-        for f in rejected:
-            out.append(f"- {f.fid} · {_sev(f)} · {md(f.title)} — отклонено: {md(f.status_reason)}")
-        for f in merged:
-            out.append(f"- {f.fid} · {md(f.title)} — объединено с {link(f.merged_into)}: {md(f.status_reason)}")
-    else:
-        out.append("Ничего." if r.mode == "full" else "Перепроверка не выполнялась.")
-    if result.dropped:
-        out += ["", f"**Выброшено из-за неподтверждённой цитаты: {len(result.dropped)}** — список в JSON-версии "
-                    "отчёта (поле `dropped`)."]
     out += ["", "**Ограничения этого прогона**", ""]
     lim = []
     if is_offline(result):
@@ -850,13 +1299,59 @@ def _appendix(result: Result) -> str:
     lim.append("Агент не знает внутренних стандартов банка и не видит связанных документов, если их не передали "
                "через --context.")
     out += [f"- {x}" for x in lim]
+    rejected = sum(1 for f in result.rejected if f.status == "rejected")
+    merged = sum(1 for f in result.rejected if f.status == "merged")
     calls = sum(1 for a in result.audit if a.get("type") == "model_call")
     decisions = sum(1 for a in result.audit if a.get("type") == "decision")
-    out += ["", f"**Журнал решений** (JSON-версия отчёта, поле `audit`; только хэши текстов, без содержимого "
-                f"документа): {count(calls, W_CALL)} к модели, "
-                f"{count(decisions, ('решение', 'решения', 'решений'))} программы (отброшенные цитаты, объединения, "
-                "защита замечаний правил, переходы без модели)."]
+    out += ["", f"**Подробности прогона** — в файле `*.diagnostic.md` рядом с отчётом: расход по этапам, отклонённые "
+                f"перепроверкой ({rejected}), объединённые повторы ({merged}), выброшенные без подтверждённой цитаты "
+                f"({len(result.dropped)}). Журнал решений — в JSON-версии (поле `audit`, только хэши текстов): "
+                f"{count(calls, W_CALL)} к модели, {count(decisions, ('решение', 'решения', 'решений'))} программы."]
     return "\n".join(out)
+
+
+# --- run details: the diagnostic side file ------------------------------------------------------------------
+
+
+def render_run_details(result: Result) -> str:
+    """``*.diagnostic.md``: everything about HOW the run went that a reader of the report does not need first —
+    model usage per stage, all warnings, the findings the re-check rejected or merged, the ones thrown away for an
+    unconfirmed quote, and the program's decisions by kind."""
+    r = result.run
+    out = [f"# Подробности прогона: «{md(r.doc_name)}»", "",
+           "Этот файл дополняет отчёт: здесь всё, что объясняет, как получен результат.", ""]
+    out += ["| Поле | Значение |", "| :--- | :--- |",
+            f"| Дата и время | {_when(r.started_at)} |",
+            f"| Модель | {md(r.provider)} / {md(r.model) or '—'}" + (f", effort {md(r.effort)}" if r.effort else "") + " |",
+            f"| Время | {duration_text(r.duration_s)} |",
+            f"| Стоимость | {usd(r.cost_usd)}" + (f" ({md(r.cost_note)})" if r.cost_note else "") + " |",
+            f"| Обращения к модели | {num(r.llm_calls)} (из кэша ещё {num(r.llm_cache_hits)}); вход {num(r.input_tokens)}, "
+            f"выход {num(r.output_tokens)}, чтение кэша {num(r.cache_read_tokens)}, запись кэша {num(r.cache_write_tokens)} |",
+            f"| Проверка цитат | подтверждено {num(r.quotes_confirmed)}, восстановлено по сходству {num(r.quotes_restored)}, "
+            f"отброшено {num(r.quotes_dropped)} |",
+            f"| Перепроверка | {recheck_line(result)} |",
+            f"| Повторы, объединённые программой | {num(r.dup_merged)} |",
+            f"| Блокеры без основания, пониженные до MAJOR | {num(r.critical_demoted)} |"]
+    out += _stage_table(stage_rows(result))
+    if r.warnings:
+        out += ["", "**Предупреждения прогона:**", ""] + [f"- {md(w)}" for w in r.warnings]
+    rejected = [f for f in result.rejected if f.status == "rejected"]
+    merged = [f for f in result.rejected if f.status == "merged"]
+    out += ["", "## Отклонено при перепроверке", ""]
+    out += [f"- {f.fid} · {_sev(f)} · {md(f.title)} — {md(f.status_reason)}" for f in rejected] or ["Ничего."]
+    out += ["", "## Объединено с другими замечаниями", ""]
+    out += [f"- {f.fid} · {md(f.title)} → {f.merged_into}: {md(f.status_reason)}" for f in merged] or ["Ничего."]
+    out += ["", "## Выброшено: цитата не найдена в документе", ""]
+    out += [f"- {md(d.stage)} · {md(d.title)} — {md(d.reason)}" + (f": «{md(shorten(d.quote, 160))}»" if d.quote else "")
+            for d in result.dropped] or ["Ничего."]
+    kinds: "OrderedDict[str, int]" = OrderedDict()
+    for a in result.audit:
+        if a.get("type") == "decision":
+            kinds[a.get("what", "")] = kinds.get(a.get("what", ""), 0) + 1
+    if kinds:
+        out += ["", "## Решения программы по видам", "", "| Решение | Сколько |", "| :--- | ---: |"]
+        out += [f"| `{md_code(k)}` | {v} |" for k, v in kinds.items()]
+    return "\n".join(out) + "\n"
 
 
 # --- diagnostic report ----------------------------------------------------------------------------------

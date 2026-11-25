@@ -5,7 +5,7 @@ import unittest
 
 from revizor import report_md, sidefiles, testgen
 from revizor.llm import FakeBackend
-from revizor.model import Finding, Question, Requirement
+from revizor.model import Finding, Question, Quote, Requirement
 
 from tests.dialog_helpers import Base, REQ_DOC, quiet_script
 
@@ -22,8 +22,11 @@ class LimitsTests(unittest.TestCase):
         inside, outside = ds
         self.assertIn("1 000, 1 000 000", inside.when)
         self.assertIn("999, 1 000 001", outside.when)
-        self.assertEqual(outside.then, "")            # the document is silent about what happens outside
+        self.assertIn("допустимо только", outside.then)  # inclusiveness is stated: the expected result is derivable
         self.assertTrue(inside.then)
+        self.assertTrue(inside.explicit_limit and outside.explicit_limit)
+        self.assertIn("шаг значения не задан: взяты соседние целые", inside.when)
+        self.assertEqual(inside.values, ["1 000", "1 000 000"])
         self.assertEqual(inside.kind, "boundary")
         self.assertEqual(outside.blocked_by, [])
 
@@ -62,8 +65,9 @@ class FinalizeTests(unittest.TestCase):
         self.q = Question(qid="В-01", text="?", why="", addressee="analyst")
 
     def drafts(self):
-        return [testgen.TestDraft(tid="", title="t2", kind="positive", req_ids=["REQ-002"], then="ok"),
-                testgen.TestDraft(tid="", title="t1", kind="positive", req_ids=["REQ-001"], then="ok")]
+        step = "Отправить запрос с заполненным полем и получить ответ"
+        return [testgen.TestDraft(tid="", title="t2", kind="positive", req_ids=["REQ-002"], when=step, then="ok"),
+                testgen.TestDraft(tid="", title="t1", kind="positive", req_ids=["REQ-001"], when=step + " снова", then="ok")]
 
     def test_ids_are_deterministic_and_follow_document_order(self):
         a = testgen.finalize(self.drafts(), self.reqs, [self.f], [self.q])
@@ -103,30 +107,106 @@ class FinalizeTests(unittest.TestCase):
         self.assertEqual(out[0].finding_ids, ["D-001"])
 
 
+class ReadinessTests(unittest.TestCase):
+    """Boundary drafts from an explicit range, disputes, duplicates and template steps (invented texts)."""
+
+    def setUp(self):
+        self.req = R("REQ-001", "Размер партии — целое число от 10 до 500 штук включительно.", "Ф-1")
+        self.other_q = Question(qid="В-01", text="Какой формат ошибки?", why="", addressee="analyst", req_ids=["REQ-001"])
+        self.other_f = Finding(scope="requirement", criterion="completeness", severity="MAJOR", title="Не описан формат ошибки",
+                               problem="Формат сообщения не задан", recommendation="", req_ids=["REQ-001"], fid="D-001",
+                               question_id="В-01", quotes=[Quote(text="Размер партии", line_start=1, line_end=1)])
+
+    def run_final(self, req, findings=(), questions=(), extra=()):
+        audit = []
+        out = testgen.finalize(testgen.boundary_drafts([req]) + list(extra), [req], list(findings), list(questions), audit)
+        return out, audit
+
+    def test_inclusive_range_is_ready_whatever_other_questions_exist(self):
+        out, _ = self.run_final(self.req, [self.other_f], [self.other_q])
+        self.assertEqual(len(out), 2)
+        self.assertTrue(all(t.then and not t.blocked_by for t in out))
+        self.assertIn("10, 500", out[0].when)
+        self.assertIn("9, 501", out[1].when)
+
+    def test_exclusive_range_takes_inner_and_border_values(self):
+        req = R("REQ-001", "Температура от 10 до 20 градусов не включая границы. Нужны целые значения.")
+        req.quote = "Размер от 10 до 20 штук, не включая границы; значения целые."
+        out, _ = self.run_final(req)
+        self.assertIn("11, 19", out[0].when)
+        self.assertIn("10, 20", out[1].when)
+        self.assertTrue(all(t.then and not t.blocked_by for t in out))
+
+    def test_range_disputed_by_a_finding_waits_for_that_question_only(self):
+        disputed = Finding(scope="requirement", criterion="correctness", severity="MINOR", title="Граница 500 противоречит другому разделу",
+                           problem="Верхняя граница 500 не согласована", recommendation="", req_ids=["REQ-001"], fid="D-002",
+                           question_id="В-02", quotes=[Quote(text="500 штук", line_start=1, line_end=1)])
+        q2 = Question(qid="В-02", text="Верхняя граница 500 или 400?", why="", addressee="analyst", req_ids=["REQ-001"])
+        out, _ = self.run_final(self.req, [self.other_f, disputed], [self.other_q, q2])
+        self.assertTrue(all(t.blocked_by == ["В-02"] for t in out))
+
+    def test_disputed_range_without_a_question_goes_to_the_list(self):
+        disputed = Finding(scope="requirement", criterion="correctness", severity="MINOR", title="Граница 500 спорна", problem="",
+                           recommendation="", req_ids=["REQ-001"], fid="D-002")
+        out, audit = self.run_final(self.req, [disputed])
+        self.assertEqual(out, [])
+        self.assertEqual(len(audit[0]["items"]), 2)
+
+    def test_unstated_inclusiveness_is_not_promoted(self):
+        req = R("REQ-001", "Размер партии от 10 до 500 штук.")
+        out, audit = self.run_final(req, [self.other_f], [self.other_q])
+        self.assertTrue(all(not t.explicit_limit for t in out))
+
+    def test_template_step_is_not_a_draft(self):
+        t = testgen.TestDraft(tid="", title="Ф-5: что-то", kind="positive", req_ids=["REQ-001"], origin="rule",
+                              when="Выполнить действие, описанное в требовании, в том месте, где найдено замечание.", then="")
+        out, audit = self.run_final(self.req, extra=[t])
+        self.assertFalse(any(x.title == "Ф-5: что-то" for x in out))
+        self.assertTrue(any(i["what"] == "Ф-5: что-то" for i in audit[0]["items"]))
+
+    def test_duplicates_collapse(self):
+        mk = lambda title: testgen.TestDraft(tid="", title=title, kind="negative", req_ids=["REQ-001"], origin="model",
+                                            when="Отправить партию из 0 штук", then="Сервис отклоняет партию с ошибкой")
+        out, _ = self.run_final(self.req, extra=[mk("Пустая партия"), mk("Партия без штук")])
+        self.assertEqual(sum(1 for x in out if x.kind == "negative"), 1)
+
+    def test_header_counts_ready_and_waiting(self):
+        from revizor.model import Result, RunInfo
+        out, audit = self.run_final(self.req)
+        out[0].blocked_by = ["В-07"]
+        res = Result(run=RunInfo(doc_name="d.md"), requirements=[self.req], tests=out, audit=audit)
+        text = sidefiles.tests_md(res)
+        self.assertIn("Готовы к прогону: 1. Ждут ответа автора: 1 (В-07 — 1)", text)
+
+
 class StageTests(Base):
     def test_offline_gives_useful_drafts_for_the_requirements_doc(self):
         res = self.run_offline()
         self.assertGreaterEqual(len(res.tests), 10)
         ready = [t for t in res.tests if t.then and not t.blocked_by]
-        blocked = [t for t in res.tests if t.blocked_by]
-        self.assertGreaterEqual(len(ready), 5)
-        self.assertGreaterEqual(len(blocked), 3)
+        self.assertGreaterEqual(len(ready), 10)
+        self.assertTrue(all(t.when and not testgen.is_template(t) for t in res.tests))  # no template steps are printed
+        unver = [x for a in res.audit if a.get("type") == "test_unverifiable" for x in a["items"]]
+        self.assertGreaterEqual(len(unver), 3)  # what the document cannot answer is listed, not faked
         self.assertEqual([t.tid for t in res.tests], [f"Т-{k:02d}" for k in range(1, len(res.tests) + 1)])
         qids = {q.qid for q in res.questions}
-        self.assertTrue(all(b in qids for t in blocked for b in t.blocked_by))
+        self.assertTrue(all(b in qids for x in unver for b in x["blocked_by"]))
         again = self.run_offline()
         self.assertEqual([(t.tid, t.title) for t in again.tests], [(t.tid, t.title) for t in res.tests])
 
     def test_report_section_and_side_file(self):
-        res = self.run_offline()
+        def tests_answer(user):
+            return {"tests": [{"title": "Пустой порог", "kind": "negative", "req_ids": ["REQ-005"],
+                               "given": "Карта активна", "when": "Отправить запрос сохранения с пустым порогом",
+                               "then": "Сервис возвращает ошибку проверки", "depends_on": "В-04"}]}
+        res, _ = self.run_fake(quiet_script(tests=tests_answer))
         md = report_md.render(res)
         self.assertIn("## 8. Черновики приёмочных тестов", md)
-        self.assertIn("Можно написать уже сейчас:", md)
-        self.assertIn("заблокирован: ждёт ответа", md)
-        self.assertIn("Тестов можно написать уже сейчас", md)
         tm = sidefiles.tests_md(res)
+        self.assertIn("заблокирован: ждёт ответа", tm)
         self.assertIn("**Дано:**", tm)
-        self.assertIn("**Тогда:** ожидаемый результат в документе не описан", tm)
+        self.assertIn("Готовы к прогону:", tm)
+        self.assertIn("Что нельзя проверить, пока нет ответа", tm)
         self.assertIn("Нельзя дописать, пока не получен ответ на В-", tm)
         out = self.dir / "r.md"
         self.assertEqual(self.cli("--provider", "offline", "-i", REQ_DOC, "-o", str(out)), 0)
@@ -135,7 +215,8 @@ class StageTests(Base):
     def test_model_stage_merges_and_respects_depth(self):
         def tests_answer(user):
             return {"tests": [{"title": "Пустой порог", "kind": "negative", "req_ids": ["REQ-005", "REQ-999"],
-                               "given": "g", "when": "w", "then": "", "depends_on": "В-04"}]}
+                               "given": "g", "when": "Отправить пустой порог в запросе", "then": "Сервис возвращает ошибку",
+                               "depends_on": "В-04"}]}
         res, b = self.run_fake(quiet_script(tests=tests_answer))
         self.assertIn("tests", [s for s, _, _ in b.log])
         self.assertTrue(any(t.origin == "model" and t.title == "Пустой порог" for t in res.tests))
@@ -144,19 +225,28 @@ class StageTests(Base):
         self.assertNotIn("tests", [s for s, _, _ in b2.log])
         self.assertTrue(fast.tests)           # the deterministic part is still there
 
+    def test_model_draft_without_result_goes_to_the_list(self):
+        def tests_answer(user):
+            return {"tests": [{"title": "Пустой порог", "kind": "negative", "req_ids": ["REQ-005"], "given": "g",
+                               "when": "w", "then": "", "depends_on": "В-04"}]}
+        res, _ = self.run_fake(quiet_script(tests=tests_answer))
+        self.assertFalse(any(t.title == "Пустой порог" for t in res.tests))
+
     def test_failing_model_stage_keeps_rule_drafts_and_warns(self):
         res, _ = self.run_fake(quiet_script(tests=RuntimeError("boom")))
         self.assertTrue(res.tests)
         self.assertTrue(any("Черновики тестов" in w for w in res.run.warnings))
 
     def test_answered_question_unblocks_drafts(self):
-        base = self.run_offline()
-        blocked = next(t for t in base.tests if t.blocked_by)
-        qid = blocked.blocked_by[0]
-        from revizor import answers as ans_mod
-        res = self.run_offline(answers=lambda qs: ans_mod.from_raw({qid: "а"}, qs))
-        same = next(t for t in res.tests if t.title == blocked.title)
-        self.assertNotIn(qid, same.blocked_by)
+        req = R("REQ-001", "Когда клиент вводит неверный код, сервис показывает сообщение об ошибке и просит повторить ввод.")
+        d = testgen.TestDraft(tid="", title="Неверный код", kind="negative", req_ids=["REQ-001"], origin="model",
+                              when="Ввести неверный код подтверждения", then="Показано сообщение об ошибке")
+        f = Finding(scope="requirement", criterion="completeness", severity="MAJOR", title="x", problem="", recommendation="",
+                    req_ids=["REQ-001"], fid="D-001", question_id="В-01")
+        q = Question(qid="В-01", text="?", why="", addressee="analyst", req_ids=["REQ-001"])
+        self.assertEqual(testgen.finalize([d], [req], [f], [q])[0].blocked_by, ["В-01"])
+        q.answer = "а"
+        self.assertEqual(testgen.finalize([testgen.TestDraft(**{**d.to_dict()})], [req], [f], [q])[0].blocked_by, [])
 
 
 if __name__ == "__main__":

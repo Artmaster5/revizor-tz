@@ -24,7 +24,7 @@ FAMILY = {
     "traceability": "trace",
 }
 SET_STAGE_DEFAULT = {"set_consistency": "set_consistency", "set_completeness": "set_completeness",
-                     "set_standards": "set_feasibility"}
+                     "set_standards": "set_feasibility", "set_gaps": "set_completeness"}
 
 # Clause each finding rests on (addendum A6).
 STANDARDS = {
@@ -71,8 +71,29 @@ def rule_blocker(f: Finding) -> str:
     return CRITERION_BLOCKER.get(f.criterion, "main_flow")
 
 
+def note_level(f: Finding, by: str, level: str, why: str = "", with_: str = "") -> None:
+    """Record a change of level in ``f.level_trail`` (the first entry is the level the finding was born with).
+
+    ``by``: "skeptic" (the re-check), "merge" (taken from a merged finding), "code" (a rule of the program),
+    "answer" (the author's answer). The caller sets ``f.severity`` itself; the last entry always equals it."""
+    if level == f.severity and f.level_trail:
+        return
+    if not f.level_trail:
+        origin = "rule" if f.source.startswith("rule:") else "model"
+        f.level_trail.append({"by": origin, "level": f.severity})
+    if level == f.severity:
+        return
+    entry: dict[str, Any] = {"by": by, "level": level}
+    if why:
+        entry["why"] = why[:300]
+    if with_:
+        entry["with"] = with_
+    f.level_trail.append(entry)
+
+
 def demote_critical(f: Finding, audit: list[dict] | None, stage: str) -> None:
     """CRITICAL without a valid blocker reason → MAJOR, recorded in the audit trail."""
+    note_level(f, "code", "MAJOR", "не названо ни одно из пяти оснований блокера")
     f.severity = "MAJOR"
     f.blocker_reason = ""
     if audit is not None:
@@ -207,7 +228,18 @@ def _same_place(q: Quote, own: list[Quote]) -> bool:
     return any(quotes_overlap(q, x) or (q.rid and q.rid == x.rid) for x in own)
 
 
-def absorb(target: Finding, other: Finding, *, all_places: bool = False) -> None:
+ALSO_MAX = 12  # titles kept in ``Finding.also`` (the card prints the first three)
+
+
+def _trace(target: Finding, other: Finding) -> None:
+    """The merged finding leaves a visible trace on the survivor: its title (and what had been merged into it)."""
+    for t in [other.title] + list(other.also):
+        t = (t or "").strip()
+        if t and t != target.title and t not in target.also and len(target.also) < ALSO_MAX:
+            target.also.append(t)
+
+
+def absorb(target: Finding, other: Finding, *, all_places: bool = False, trace: bool = True) -> None:
     """Fold ``other`` into ``target``: rule ids, severity, question, wording; quotes and requirement links.
 
     The decision is by topic. When both speak about one thing (``same_topic``) or ``all_places=True`` (a rule folded
@@ -247,10 +279,21 @@ def absorb(target: Finding, other: Finding, *, all_places: bool = False) -> None
     for r in other.rule_ids:
         if r not in target.rule_ids:
             target.rule_ids.append(r)
+    for g in other.gap_ids:  # the completeness map follows a gap to the finding that survives
+        if g not in target.gap_ids:
+            target.gap_ids.append(g)
     model_involved = target.source in ("model", "both") or other.source in ("model", "both")
     if target.rule_ids and model_involved:
         target.source = "both"
+    if trace:
+        _trace(target, other)
     if SEV_RANK.get(other.severity, 9) < SEV_RANK.get(target.severity, 9):
+        # the callers that merge two findings of the review put the more severe one first (``more_severe_first``),
+        # so this happens only when a rule's level is folded into a model finding on the rule's own line
+        note_level(target, "merge", other.severity,
+                   "уровень взят по старшему из объединённых" if not other.rule_ids or other.source == "both"
+                   else "уровень задан автоматическим правилом", with_=other.fid or (
+                       "правило " + ", ".join(other.rule_ids) if other.rule_ids else other.title[:80]))
         target.severity = other.severity
         target.blocker_reason = other.blocker_reason
     elif target.severity == "CRITICAL" and not target.blocker_reason:
@@ -261,17 +304,85 @@ def absorb(target: Finding, other: Finding, *, all_places: bool = False) -> None
         target.question = other.question
 
 
-TOPIC_MIN = 0.25
+TOPIC_MIN = 0.22          # titles: share of common topic words (see ``_roots``) that makes two findings one defect
+TOPIC_MIN_PROBLEM = 0.30  # problems are longer and share stock phrases, so the bar is higher
+
+# Words that open most findings («не описано…», «не задано…») and say nothing about what the finding is about.
+_BOILER = {"опис", "зада", "указ", "опре", "сказ", "прои", "пове", "дела", "буде", "быть", "есть", "треб", "доку",
+           "неяс", "след", "долж", "може", "нужн", "кото", "случ",
+           "defi", "spec", "desc", "miss", "requ", "docu", "beha", "happ", "shou", "does", "what", "when"}
+_TOPIC_STOP = {"если", "когда", "уже", "еще", "the", "and", "for", "not", "with", "are", "but"}
+
+
+def _roots(s: str) -> set[str]:
+    """Topic words of a text: lower case, ё→е, cut to four letters (a crude root that survives Russian endings);
+    stop words and stock openers dropped; numbers of three digits or more kept (response codes, limits)."""
+    out: set[str] = set()
+    for w in re.findall(r"\w+", (s or "").lower().replace("ё", "е")):
+        if w.isdigit():
+            if len(w) >= 3:
+                out.add(w)
+            continue
+        if len(w) < 3 or w in _STOP or w in _TOPIC_STOP:
+            continue
+        r = w[:4]
+        if r not in _BOILER:
+            out.add(r)
+    return out
+
+
+def _share(a: str, b: str) -> float:
+    x, y = _roots(a), _roots(b)
+    return len(x & y) / len(x | y) if x and y else 0.0
+
+
+def words_alike(a: Finding, b: Finding) -> bool:
+    """Two findings say the same thing, judged by their words alone: near-identical titles, one title's topic words
+    all inside the other's, or enough shared topic words in the titles or in the problems."""
+    if near_same_title(a.title, b.title):
+        return True
+    x, y = _roots(a.title), _roots(b.title)
+    if len(x) >= 2 and len(y) >= 2 and (x <= y or y <= x):
+        return True
+    return _share(a.title, b.title) >= TOPIC_MIN or _share(a.problem, b.problem) >= TOPIC_MIN_PROBLEM
+
+
+TITLE_STRICT = 0.5  # share of topic words in two titles that makes them one statement without other evidence
+
+
+_NAMED = re.compile(r"«([^»]{1,80})»")
+
+
+def different_names(a: str, b: str) -> bool:
+    """Both titles name something in quotes, and no name is shared: different parameters, sections or terms."""
+    na = {x.casefold() for x in _NAMED.findall(a or "")}
+    nb = {x.casefold() for x in _NAMED.findall(b or "")}
+    return bool(na and nb and not na & nb)
+
+
+def titles_alike(a: str, b: str) -> bool:
+    """The titles say the same thing: near-identical, one's topic words all inside the other's, or half shared.
+    Titles that name different things in quotes («amount» and «enabled») are about different subjects."""
+    if different_names(a, b):
+        return False
+    if near_same_title(a, b):
+        return True
+    x, y = _roots(a), _roots(b)
+    if len(x) >= 3 and len(y) >= 3 and (x <= y or y <= x):
+        return True
+    return _share(a, b) >= TITLE_STRICT
 
 
 def same_topic(a: Finding, b: Finding) -> bool:
-    """Two findings speak about one thing: their main quotes overlap, or their titles or problems share words.
+    """Two findings are about one defect, not merely about one place.
 
-    A set-level finding lists many places, so one shared table row is not enough to call it the same defect.
-    Near-identical titles (equal after normalising, or one title's words all inside the other's) always count."""
-    if a.quotes and b.quotes and quotes_overlap(a.quotes[0], b.quotes[0]):
-        return True
-    return near_same_title(a.title, b.title) or topic_score(a, b) >= TOPIC_MIN
+    A shared quote is never enough: one sentence of a specification often carries several different defects (a
+    missing step of the value, an undefined term and an undescribed refund can all quote the same rule), and merging
+    them by place silently erases all but one. Findings of the completeness checklist are compared by their checklist
+    items: the same item is the same topic, different items never are. Everything else is compared by words."""
+    if a.gap_ids and b.gap_ids:
+        return bool(set(a.gap_ids) & set(b.gap_ids))
+    return words_alike(a, b)
 
 
 def near_same_title(a: str, b: str) -> bool:
@@ -283,15 +394,13 @@ def near_same_title(a: str, b: str) -> bool:
 
 
 def topic_score(a: Finding, b: Finding) -> float:
-    """How strongly two findings share words: the better of title-to-title and problem-to-problem similarity."""
-    return max(jaccard(a.title, b.title), jaccard(a.problem, b.problem))
+    """How strongly two findings share topic words: the better of title-to-title and problem-to-problem similarity."""
+    return max(_share(a.title, b.title), _share(a.problem, b.problem))
 
 
 def model_twins(a: Finding, b: Finding) -> bool:
-    """Same criterion family and an overlapping quote; when a set-level finding is involved, also the same topic."""
-    if not (same_family(a, b) and findings_overlap(a, b)):
-        return False
-    return (a.scope == "requirement" and b.scope == "requirement") or same_topic(a, b)
+    """One defect reported twice: the same criterion family, an overlapping quote and the same topic."""
+    return same_family(a, b) and findings_overlap(a, b) and same_topic(a, b)
 
 
 def dedupe_model(findings: list[Finding], audit: list[dict]) -> list[Finding]:
@@ -321,12 +430,14 @@ def fold_rules(rule_findings: list[Finding], model_findings: list[Finding], audi
             out.append(rf)
             continue
         at_place = [m for m in model_findings if same_family(m, rf) and findings_overlap(m, rf)]
-        topical = [m for m in at_place if same_topic(m, rf)]
+        # a rule points at the exact offending line: a model finding whose main quote is that very line is about it
+        topical = [m for m in at_place if (m.quotes and rf.quotes and quotes_overlap(m.quotes[0], rf.quotes[0]))
+                   or same_topic(m, rf)]
         twin = max(topical, key=lambda m: topic_score(m, rf)) if topical else None
         if twin is None:
             out.append(rf)
             continue
-        absorb(twin, rf, all_places=True)
+        absorb(twin, rf, all_places=True, trace=False)  # the source line names the rule
         twin.source = "both"
         audit.append({"type": "decision", "what": "rule_folded", "rule": rf.rule_ids[0] if rf.rule_ids else "",
                       "into_title": twin.title})
@@ -366,9 +477,34 @@ class SkepticOutcome:
         self.critical_demoted = 0
 
 
+RAISE_FIT_MIN = 0.34
+
+
+def _reason_fits(f: Finding, reason: str) -> bool:
+    """A reason for a HIGHER level must speak about this very finding: it is not a new finding in disguise and at
+    least a third of the topic words of the finding's title appear in it."""
+    low = (reason or "").strip().lower()
+    if not low or low.startswith("новое замечание") or low.startswith("new finding"):
+        return False
+    title = _roots(f.title)
+    if not title:
+        return True
+    return len(title & _roots(reason)) / len(title) >= RAISE_FIT_MIN
+
+
+def more_severe_first(a: Finding, b: Finding) -> tuple[Finding, Finding]:
+    """(survivor, absorbed) of a merge of two findings: the more severe one survives, so that the title, the problem,
+    the level and the reason of a blocker on the card always come from one finding. A tie keeps the order given."""
+    return (b, a) if SEV_RANK.get(b.severity, 9) < SEV_RANK.get(a.severity, 9) else (a, b)
+
+
 def apply_skeptic(findings: list[Finding], decisions: list[dict], *, injection: bool,
                   audit: list[dict]) -> SkepticOutcome:
     """Apply keep / reject / merge decisions in place. Findings absent from the answer stay unchanged.
+
+    Two passes: first every reject and every change of level, then the merges, so that a merged card takes the level
+    of its members AS THEY STAND AFTER THE RE-CHECK. In a merge the more severe finding survives (the roles are swapped
+    when the re-check names the milder one as the target), see ``more_severe_first``.
 
     A rule-sourced finding is never removed (reject and, under a suspected injection, merge are ignored);
     under a suspected injection its severity cannot be lowered either.
@@ -377,6 +513,7 @@ def apply_skeptic(findings: list[Finding], decisions: list[dict], *, injection: 
     out = SkepticOutcome()
     by_id = {f.fid: f for f in findings if f.status == "open" and not f.advisory}
     reviewed: set[str] = set()
+    merges: list[tuple[Finding, dict, str]] = []
 
     def resolve(fid: str) -> Finding | None:
         seen = set()
@@ -386,49 +523,15 @@ def apply_skeptic(findings: list[Finding], decisions: list[dict], *, injection: 
             f = by_id.get(f.merged_into)
         return f if f is not None and f.status == "open" else None
 
-    for d in decisions:
-        if not isinstance(d, dict):
-            continue
-        fid = str(d.get("fid") or "").strip()
-        f = by_id.get(fid)
-        if f is None or f.status != "open" or fid in reviewed:
-            continue
-        reviewed.add(fid)
-        decision = d.get("decision") or "keep"
-        reason = _str(d.get("reason"), 400)
+    def keep(f: Finding, d: dict, reason: str) -> None:
         protected = is_rule_sourced(f)
-        if decision == "reject":
-            if protected:
-                out.protected += 1
-                audit.append({"type": "decision", "what": "rule_finding_protected", "fid": fid, "attempt": "reject",
-                              "reason": reason})
-                decision = "keep"
-            else:
-                f.status = "rejected"
-                f.status_reason = reason or "перепроверка не подтвердила дефект"
-                out.rejected += 1
-                audit.append({"type": "decision", "what": "skeptic_rejected", "fid": fid, "reason": f.status_reason})
-                continue
-        if decision == "merge":
-            target = resolve(str(d.get("merge_into") or "").strip())
-            if target is None or target is f:
-                decision = "keep"
-            elif protected and injection:
-                out.protected += 1
-                audit.append({"type": "decision", "what": "rule_finding_protected", "fid": fid, "attempt": "merge",
-                              "reason": reason})
-                decision = "keep"
-            else:
-                absorb(target, f)
-                f.status = "merged"
-                f.merged_into = target.fid
-                f.status_reason = reason or f"то же, что {target.fid}"
-                out.merged += 1
-                audit.append({"type": "decision", "what": "skeptic_merged", "fid": fid, "into": target.fid,
-                              "reason": f.status_reason})
-                continue
-        # keep, possibly with a new severity
         new_sev = d.get("severity") if d.get("severity") in SEVERITIES else f.severity
+        if SEV_RANK[new_sev] < SEV_RANK[f.severity] and not _reason_fits(f, reason):
+            # the re-check judges the findings it was given; a higher level argued with another defect («новое
+            # замечание…», a neighbouring problem at the same place) would put a blocker's label on the wrong card
+            audit.append({"type": "decision", "what": "skeptic_raise_refused", "fid": f.fid, "from": f.severity,
+                          "to": new_sev, "reason": reason})
+            new_sev = f.severity
         blocker = blocker_code(d.get("blocker"))
         no_reason = False
         if new_sev == "CRITICAL" and not blocker:
@@ -441,18 +544,18 @@ def apply_skeptic(findings: list[Finding], decisions: list[dict], *, injection: 
             lowering = SEV_RANK[new_sev] > SEV_RANK[f.severity]
             if protected and injection and lowering:
                 out.protected += 1
-                audit.append({"type": "decision", "what": "rule_finding_protected", "fid": fid,
+                audit.append({"type": "decision", "what": "rule_finding_protected", "fid": f.fid,
                               "attempt": f"severity {f.severity}→{new_sev}", "reason": reason})
-                no_reason = False
             else:
                 why = "не названо основание блокера" if no_reason else reason
                 f.status_reason = f"уровень изменён перепроверкой: {f.severity} → {new_sev}" + (f". {why}" if why else "")
-                audit.append({"type": "decision", "what": "skeptic_severity", "fid": fid, "from": f.severity,
+                audit.append({"type": "decision", "what": "skeptic_severity", "fid": f.fid, "from": f.severity,
                               "to": new_sev, "reason": reason})
                 if no_reason:
                     audit.append({"type": "decision", "what": "critical_without_reason", "stage": "skeptic",
-                                  "fid": fid, "title": f.title, "to": new_sev})
+                                  "fid": f.fid, "title": f.title, "to": new_sev})
                     out.critical_demoted += 1
+                note_level(f, "skeptic", new_sev, why)
                 f.severity = new_sev
                 out.severity_changed += 1
         if f.severity == "CRITICAL":
@@ -460,6 +563,67 @@ def apply_skeptic(findings: list[Finding], decisions: list[dict], *, injection: 
         else:
             f.blocker_reason = ""
         out.kept += 1
+
+    # pass 1: rejects and levels
+    for d in decisions:
+        if not isinstance(d, dict):
+            continue
+        fid = str(d.get("fid") or "").strip()
+        f = by_id.get(fid)
+        if f is None or f.status != "open" or fid in reviewed:
+            continue
+        reviewed.add(fid)
+        decision = d.get("decision") or "keep"
+        reason = _str(d.get("reason"), 400)
+        if decision == "reject":
+            if is_rule_sourced(f):
+                out.protected += 1
+                audit.append({"type": "decision", "what": "rule_finding_protected", "fid": fid, "attempt": "reject",
+                              "reason": reason})
+            else:
+                f.status = "rejected"
+                f.status_reason = reason or "перепроверка не подтвердила дефект"
+                out.rejected += 1
+                audit.append({"type": "decision", "what": "skeptic_rejected", "fid": fid, "reason": f.status_reason})
+                continue
+        if decision == "merge":
+            merges.append((f, d, reason))
+            continue
+        keep(f, d, reason)
+
+    # pass 2: merges, on the levels the re-check has just set
+    for f, d, reason in merges:
+        target = resolve(str(d.get("merge_into") or "").strip())
+        if f.status != "open" or target is None or target is f:
+            if f.status == "open":
+                keep(f, d, reason)
+            continue
+        if is_rule_sourced(f) and injection:
+            out.protected += 1
+            audit.append({"type": "decision", "what": "rule_finding_protected", "fid": f.fid, "attempt": "merge",
+                          "reason": reason})
+            keep(f, d, reason)
+            continue
+        if not (findings_overlap(target, f) or set(target.req_ids) & set(f.req_ids) or same_topic(target, f)):
+            # the re-check may fold together only what stands at one place or says one thing; two findings about
+            # different places in different words both stay, otherwise a real defect disappears from the report
+            audit.append({"type": "decision", "what": "skeptic_merge_refused", "fid": f.fid, "into": target.fid,
+                          "reason": reason})
+            out.kept += 1
+            continue
+        survivor, gone = more_severe_first(target, f)
+        if gone is target and injection and is_rule_sourced(target):
+            survivor, gone = target, f  # under a suspected injection a rule's finding is never the one that goes
+        if gone is target:
+            audit.append({"type": "decision", "what": "skeptic_merge_swapped", "fid": f.fid, "into": target.fid,
+                          "survivor": f.fid})
+        absorb(survivor, gone)
+        gone.status = "merged"
+        gone.merged_into = survivor.fid
+        gone.status_reason = reason or f"то же, что {survivor.fid}"
+        out.merged += 1
+        audit.append({"type": "decision", "what": "skeptic_merged", "fid": gone.fid, "into": survivor.fid,
+                      "reason": gone.status_reason})
     out.kept += sum(1 for fid, f in by_id.items() if fid not in reviewed and f.status == "open")
     return out
 
@@ -481,7 +645,46 @@ def jaccard(a: str, b: str) -> float:
     return len(x & y) / len(x | y) if x and y else 0.0
 
 
+NEAR_LINES = 3  # main quotes this close in one section: a heading and its stub line, a rule and its next line
+
+
+def _close_by(a: Finding, b: Finding) -> bool:
+    """The main quotes (the first of each) lie in the same section (or a section and its subsection) within
+    NEAR_LINES lines of each other."""
+    if not a.quotes or not b.quotes:
+        return False
+    qa, qb = a.quotes[0], b.quotes[0]
+    sa, sb = qa.section or "", qb.section or ""
+    same = sa == sb or sa.startswith(sb + " › ") or sb.startswith(sa + " › ")  # a section and its own subsection
+    return same and abs(qa.line_start - qb.line_start) <= NEAR_LINES
+
+
+def _lines(f: Finding) -> set[int]:
+    return {n for q in f.quotes for n in range(q.line_start, (q.line_end or q.line_start) + 1)}
+
+
+def _covered_by_rule(model_f: Finding, rule_f: Finding) -> bool:
+    """A model finding repeats a rule finding when every line it quotes is a line the rule finding quotes, both
+    belong to the same family of criteria and their words agree (``words_alike``)."""
+    if is_rule_sourced(model_f) or not is_rule_sourced(rule_f) or rule_f.severity == "MINOR" and \
+            SEV_RANK.get(model_f.severity, 9) < SEV_RANK["MINOR"]:
+        return False
+    lines = _lines(model_f)
+    if not lines or not lines <= _lines(rule_f):
+        return False
+    return FAMILY.get(model_f.criterion) == FAMILY.get(rule_f.criterion) and words_alike(model_f, rule_f)
+
+
 def _same_defect(a: Finding, b: Finding) -> bool:
+    # same words, two lines apart: one defect even when the quotes do not overlap and no requirement is shared
+    # (a heading of an empty section and its stub line). Neighbouring lines often carry different defects (two
+    # missing branches are two findings), so the titles must agree: strongly, or moderately within one family.
+    if _close_by(a, b) and not different_names(a.title, b.title) and (titles_alike(a.title, b.title)
+                            or FAMILY.get(a.criterion) == FAMILY.get(b.criterion)
+                            and _share(a.title, b.title) >= TOPIC_MIN):
+        return True
+    if _covered_by_rule(a, b) or _covered_by_rule(b, a):
+        return True
     if not set(a.req_ids) & set(b.req_ids):
         return False
     if not (a.criterion == b.criterion or findings_overlap(a, b)):
@@ -506,9 +709,7 @@ def merge_duplicates(findings: list[Finding], questions: list, fix_first: list, 
         if twin is None:
             kept.append(f)
             continue
-        longer = f.problem if len(f.problem) > len(twin.problem) else twin.problem
-        absorb(twin, f)
-        twin.problem = longer
+        absorb(twin, f)  # ``cand`` is sorted by severity: the survivor is the more severe, its own text stays
         if not twin.question_id:
             twin.question_id = f.question_id
         f.status = "merged"
@@ -516,6 +717,12 @@ def merge_duplicates(findings: list[Finding], questions: list, fix_first: list, 
         f.status_reason = f"повтор: то же место и тот же дефект, что {twin.fid}"
         moved[f.fid] = twin.fid
         audit.append({"type": "decision", "what": "duplicate_merged_by_code", "fid": f.fid, "into": twin.fid})
+    _remap(moved, findings, questions, fix_first)
+    return len(moved)
+
+
+def _remap(moved: dict[str, str], findings: list[Finding], questions: list, fix_first: list) -> None:
+    """Questions and fix-first actions that named an absorbed finding now name the survivor."""
     if moved:
         by_fid = {f.fid: f for f in findings}
         for q in questions:
@@ -539,4 +746,60 @@ def merge_duplicates(findings: list[Finding], questions: list, fix_first: list, 
                 if i not in ids:
                     ids.append(i)
             a.finding_ids = ids
-    return len(moved)
+
+
+FOLD_STAGE = "fold_singularity"
+FOLD_CRITERIA = ("singularity",)  # purely formal remarks: the same flaw at many places is one remark
+
+
+def fold_formal(findings: list[Finding], questions: list, fix_first: list, audit: list[dict]) -> Finding | None:
+    """Fold open MINOR findings of a purely formal criterion («several statements in one item») into one set-level
+    finding that lists every place. Only formal remarks of the same criterion, MINOR, without a blocker reason;
+    remarks about content are never folded (two missing branches are two findings). The first finding (document
+    order) survives and keeps its id and its question; the others are merged into it. Returns the survivor."""
+    group = [f for f in findings if f.status == "open" and not f.advisory and f.severity == "MINOR"
+             and f.criterion in FOLD_CRITERIA and f.scope == "requirement" and not f.blocker_reason]
+    if len(group) < 2:
+        return None
+    group.sort(key=sort_key)
+    head, rest = group[0], group[1:]
+    quotes, rids, rules = [], [], []
+    for f in group:
+        for q in f.quotes:
+            if not any(q.line_start == x.line_start and q.text == x.text for x in quotes):
+                quotes.append(q)
+        rids += [r for r in f.req_ids if r not in rids]
+        rules += [r for r in f.rule_ids if r not in rules]
+    sources = {f.source for f in group}
+    n = len(rids) or len(group)
+    head.scope = "set"
+    head.stage = FOLD_STAGE
+    head.title = f"В {n} {_plural_items(n)} записано по нескольку утверждений"
+    head.problem = ("В каждом из этих пунктов под одним номером записано несколько отдельных правил или "
+                    "результатов. На каждое нельзя сослаться отдельно, а тест на такой пункт проверяет сразу "
+                    "несколько вещей.")
+    head.recommendation = ("Разбейте каждый пункт на отдельные пронумерованные требования: одно правило или один "
+                           "проверяемый результат на номер.")
+    head.quotes, head.req_ids, head.rule_ids = quotes, rids, rules
+    head.source = "both" if len(sources) > 1 or "both" in sources else head.source
+    head.fixed_wording = ""
+    head.also = []
+    note_level(head, "code", "MINOR", f"собрано из {len(group)} однотипных формальных замечаний")
+    moved = {}
+    for f in rest:
+        f.status = "merged"
+        f.merged_into = head.fid
+        f.status_reason = f"собрано в одно замечание {head.fid}: тот же формальный недочёт в другом пункте"
+        moved[f.fid] = head.fid
+        if not head.question_id and f.question_id:
+            head.question_id = f.question_id
+    audit.append({"type": "decision", "what": "formal_folded", "into": head.fid, "fids": [f.fid for f in rest],
+                  "criterion": head.criterion})
+    _remap(moved, findings, questions, fix_first)
+    return head
+
+
+def _plural_items(n: int) -> str:
+    if n % 10 == 1 and n % 100 != 11:
+        return "пункте"
+    return "пунктах"

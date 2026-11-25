@@ -1,0 +1,52 @@
+{
+ "status": 200,
+ "body": {
+  "models": [
+   {
+    "name": "models/gemini-2.5-flash",
+    "version": "001",
+    "supportedGenerationMethods": [
+     "generateContent",
+     "countTokens"
+    ]
+   },
+   {
+    "name": "models/gemini-2.0-flash",
+    "supportedGenerationMethods": [
+     "generateContent",
+     "countTokens"
+    ]
+   },
+   {
+    "name": "models/gemini-2.5-flash-lite",
+    "supportedGenerationMethods": [
+     "generateContent"
+    ]
+   },
+   {
+    "name": "models/gemini-flash-lite-latest",
+    "supportedGenerationMethods": [
+     "generateContent"
+    ]
+   },
+   {
+    "name": "models/gemini-2.5-flash-preview-tts",
+    "supportedGenerationMethods": [
+     "generateContent"
+    ]
+   },
+   {
+    "name": "models/gemini-2.5-pro",
+    "supportedGenerationMethods": [
+     "generateContent"
+    ]
+   },
+   {
+    "name": "models/text-embedding-004",
+    "supportedGenerationMethods": [
+     "embedContent"
+    ]
+   }
+  ]
+ }
+}

@@ -11,30 +11,49 @@ from ._common import Ctx, ask, finding, fmt_list, short, strip_id, visible
 # --- missing-ids -------------------------------------------------------------------
 
 
+MISSING_IDS_HEADINGS = 6
+# Requirements that state what the system must do or keep: these need a number of their own. Rows of parameter
+# tables and response lists (``api``), steps of a diagram (``process``), goals and acceptance examples are parts of
+# a larger description and are not counted.
+NUMBERED_KINDS = ("functional", "nonfunctional", "data", "integration", "ui", "constraint", "other")
+
+
 def rule_missing_ids(ctx: Ctx, rule):
-    reqs = [r for r in ctx.requirements]
+    reqs = [r for r in ctx.requirements if r.kind in NUMBERED_KINDS]
     if len(reqs) < 3:
         return []
     with_id = [r for r in reqs if r.doc_id]
     if len(with_id) * 2 >= len(reqs):
         return []
+    total = len(ctx.requirements)
     sections: list[str] = []
     firsts = []
+    heads = []  # the heading line of every section whose requirements have no numbers (up to MISSING_IDS_HEADINGS)
+    seen_heads: set[str] = set()
     by_id = {b.bid: b for b in ctx.doc.blocks}
     for r in reqs:
         if r.doc_id:
             continue
         name = r.section.split(" › ")[-1] if r.section else "(без раздела)"
+        first = by_id.get(r.block_ids[0]) if r.block_ids else None
         if name not in sections:
             sections.append(name)
-            if len(firsts) < 3 and r.block_ids[0] in by_id:
-                firsts.append(ctx.q_block(by_id[r.block_ids[0]]))
+            if len(firsts) < 3 and first is not None:
+                firsts.append(ctx.q_block(first))
+        h = ctx.heading_for(first) if first is not None else None
+        if h is not None and h.bid not in seen_heads and len(heads) < MISSING_IDS_HEADINGS:
+            seen_heads.add(h.bid)
+            heads.append(ctx.q_block(h))
     return [finding(
-        rule, firsts,
+        rule, firsts + heads,
         title="У большинства требований нет номеров",
-        problem=(f"Номер из документа есть только у {len(with_id)} из {len(reqs)} требований. Без номера на требование нельзя "
-                 "сослаться в задаче, тест-кейсе или замечании, и трудно проверить, что каждое требование покрыто тестом. "
-                 f"Разделы без номеров: {fmt_list(['«' + s + '»' for s in sections], 8)}."),
+        problem=(f"Номер из документа есть только у {len(with_id)} из {len(reqs)} требований, которые описывают "
+                 "поведение системы, данные, интерфейс или ограничения. "
+                 + (f"Всего агент выделил {total} пунктов; строки таблиц параметров, ответы, шаги схем, цели и примеры "
+                    "приёмки здесь не считаются: им отдельный номер не обязателен. " if total > len(reqs) else "")
+                 + "Без номера на требование нельзя сослаться в задаче, тест-кейсе или замечании, и трудно проверить, "
+                 f"что каждое требование покрыто тестом. Разделы без номеров: "
+                 f"{fmt_list(['«' + s + '»' for s in sections], 8)}."),
         recommendation=("Присвойте каждому требованию уникальный номер (например, Ф-5, НФТ-1, ДАН-1, API-3) "
                         "и ссылайтесь на эти номера в критериях приёмки."),
         question=ask("Какую схему номеров использовать для требований без номера?",
@@ -139,6 +158,11 @@ def rule_unit_mix(ctx: Ctx, rule):
 # --- empty-section -----------------------------------------------------------------
 
 
+_TEST_NOTE = (" Это раздел о проверке результата: пока он не заполнен, нет согласованного способа принять работу, "
+              "поэтому передавать документ в разработку и тестирование нельзя.")
+_TEST_SECTION = re.compile(r"тестир|при[её]мк|acceptance|\btest", re.I)
+
+
 def rule_empty_section(ctx: Ctx, rule):
     out = []
     blocks = ctx.doc.blocks
@@ -151,6 +175,8 @@ def rule_empty_section(ctx: Ctx, rule):
                 break
             content.append(b)
         sev = "MINOR" if is_meta_section(h.section) else None
+        if sev is None and _TEST_SECTION.search(h.text):
+            sev = "CRITICAL"  # nothing to accept the work against: the organisers' scale calls it a blocker
         nxt = blocks[k + 1] if k + 1 < len(blocks) else None
         if not content and h.level == 6 and nxt is not None and nxt.kind == "heading":
             continue  # plain text: a guessed heading right before another one is usually a group title, nesting unknown
@@ -159,7 +185,7 @@ def rule_empty_section(ctx: Ctx, rule):
                 rule, [ctx.q_block(h)],
                 title=f"Раздел «{short(h.text, 60)}» пуст",
                 problem=("У раздела есть заголовок, но нет содержания. Читатель не знает, забыли ли его заполнить или "
-                         "требований здесь действительно нет; то, что должно было здесь быть, не будет ни реализовано, ни проверено."),
+                         "требований здесь действительно нет; то, что должно было здесь быть, не будет ни реализовано, ни проверено." + (_TEST_NOTE if sev == "CRITICAL" else "")),
                 recommendation="Заполните раздел или удалите его и коротко напишите, почему он не нужен (например, «не требуется: …»).",
                 question=ask(f"Что должно быть в разделе «{short(h.text, 50)}»?",
                              ["Заполнить до начала разработки", "Раздел не нужен — удалить и пояснить почему"]),
@@ -178,7 +204,7 @@ def rule_empty_section(ctx: Ctx, rule):
                 title=f"Раздел «{short(h.text, 60)}» не заполнен: вместо содержания заглушка",
                 problem=(f"Вместо содержания раздела стоит заглушка «{ph}». Значит, эта часть требований не готова: "
                          "по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел "
-                         "формально есть."),
+                         "формально есть." + (_TEST_NOTE if sev == "CRITICAL" else "")),
                 recommendation=("Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, "
                                 "кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — "
                                 "назовите ответственного и срок."),
@@ -527,6 +553,158 @@ def rule_number_without_unit(ctx: Ctx, rule):
     return out
 
 
+# --- flow-happy-path ---------------------------------------------------------------------------------------
+
+_DIAGRAM_HEAD = re.compile(r"bpmn|sequence|диаграмм|схем\w*\s+(?:бизнес-?\s*)?процесс|схем\w*\s+взаимодейств|\bflow\b|"
+                           r"flowchart|поток", re.I)
+_DATA_HEAD = re.compile(r"(?:схем|модел|структур|диаграмм)\w*\s+(?:данных|класс|сущност|таблиц|баз)|\bjson\b|\bxsd\b|"
+                        r"\ber[- ]?диаграмм|data\s+(?:schema|model)|swagger|openapi|\bdto\b", re.I)
+_CHAIN = re.compile(r"→|⟶|->|=>|-->>|->>")
+_DIAGRAM_CODE = re.compile(r"^\s*(?:```\s*(?:mermaid|plantuml|puml)|@startuml|sequenceDiagram|flowchart|graph\s+(?:TD|LR|TB|RL|BT))",
+                           re.I | re.M)
+_ALT_BRANCH = re.compile(r"ошибк|отказ|отклон|иначе|неуспеш|недоступ|тайм-?аут|повтор|error|fail|reject|timeout|retry|"
+                         r"\balt\b|\bopt\b|\belse\b|исключени|exception|\bнет\b\s*[\]|)]|--\s*нет|\|нет\|", re.I)
+_IMAGE = re.compile(r"!\[[^\]]*\]\([^)]*\)|<img\b|\.(?:png|jpe?g|gif|svg|bmp|webp|drawio|vsdx?|bpmn)\b", re.I)
+FLOW_MAX_LINES = 60  # a «short textual chain»; a longer body is a described process, not a one-line diagram
+
+
+def _section_body(ctx: Ctx, heading) -> list:
+    """Blocks after the heading up to the next heading of any level."""
+    out = []
+    started = False
+    for b in ctx.doc.blocks:
+        if b is heading:
+            started = True
+            continue
+        if not started:
+            continue
+        if b.kind == "heading":
+            break
+        out.append(b)
+    return out
+
+
+def rule_flow_happy_path(ctx: Ctx, rule):
+    out = []
+    for h in ctx.doc.blocks:
+        if h.kind != "heading" or not _DIAGRAM_HEAD.search(h.text) or _DATA_HEAD.search(h.text):
+            continue
+        body = _section_body(ctx, h)
+        if not body:
+            continue
+        raw = "\n".join(b.raw for b in body)
+        if _DATA_HEAD.search(raw[:200]) and not _DIAGRAM_CODE.search(raw):
+            continue
+        text = "\n".join(b.text for b in body)
+        without_images = _IMAGE.sub("", raw)
+        if _IMAGE.search(raw) and not re.sub(r"[\s\W_]+", "", without_images.replace("!", "")):
+            out.append(finding(
+                rule, [ctx.q_block(h)] + [ctx.q_block(b) for b in body[:2]],
+                title="Схема дана только картинкой: агент её не проверял",
+                problem=("В разделе со схемой процесса нет текста, только ссылка на изображение. Агент читает только текст, "
+                         "поэтому схему не проверял: показаны ли на ней ветки ошибок и альтернативные пути, неизвестно, а "
+                         "разработчику и тестировщику придётся восстанавливать шаги по картинке."),
+                recommendation=("Добавьте рядом со ссылкой текстовое описание схемы: шаги, участников и ветки ошибок "
+                                "(или текстовую схему mermaid / plantuml)."),
+                question=ask("Есть ли текстовое описание этой схемы?",
+                             ["Да, добавим текстовую схему рядом", "Нет, схема только картинкой — проверьте её вручную"]),
+                severity="MINOR",
+            ))
+            continue
+        if sum(b.line_end - b.line_start + 1 for b in body) > FLOW_MAX_LINES:
+            continue
+        numbered = [b for b in body if b.kind == "list_item" and re.match(r"^\s*\d+[.)]", b.raw)]
+        chain = [b for b in body if _CHAIN.search(b.text) or _DIAGRAM_CODE.search(b.raw) or b.kind == "code"]
+        if not chain and len(numbered) < 2:
+            continue
+        if _ALT_BRANCH.search(text) or _ALT_BRANCH.search(raw):
+            continue
+        quoted = (chain or numbered)[:3]
+        out.append(finding(
+            rule, [ctx.q_block(b) for b in quoted] + [ctx.q_block(h)],
+            title="Схема процесса показывает только успешный путь",
+            problem=("Схема описывает только последовательность успешных шагов: на ней нет ни одной ветки ошибки, "
+                     "отказа или альтернативного пути. Разработчик не узнает из схемы, куда идёт процесс при сбое шага, "
+                     "а тестировщик — какие ветки проверять; каждый достроит их по-своему."),
+            recommendation=("Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, "
+                            "тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; "
+                            "для каждой — куда идёт процесс и что видит пользователь."),
+            question=ask("Какие ветки, кроме успешной, должны быть на схеме?",
+                         ["Ошибка и отказ на каждом шаге", "Тайм-аут и недоступность соседней системы",
+                          "Отмена пользователем и повтор"]),
+        ))
+    return out
+
+
+# --- title-mismatch ----------------------------------------------------------------------------------------
+
+_NAME_LABEL = re.compile(r"^\W*(?:(?:наименование|название)\s+(?:задачи|проекта|функци\w*|документа|доработки|"
+                         r"инициативы|продукта|фичи)|title|project\s+name|feature\s+name|document\s+name|"
+                         r"имя\s+проекта)\W*$", re.I)
+_NAME_INLINE = re.compile(r"^\W*((?:наименование|название)\s+(?:задачи|проекта|функци\w*|документа|доработки|"
+                          r"инициативы|продукта|фичи)|title|project\s+name|feature\s+name|document\s+name)\W*[:：—–-]\s*(.+)$",
+                          re.I)
+_GENERIC_TITLE = {"требо", "техни", "задан", "тз", "специ", "докум", "brd", "srs", "prd", "requi", "funct", "функц",
+                  "бизне", "описа", "верси", "проек", "черно", "draft", "докуме", "оглав", "введе"}
+_GENERIC_TITLE_WORDS = {"тз", "brd", "srs", "prd", "frd", "ft", "фт"}
+TITLE_TOP_LINES = 80
+
+
+def _title_stems(s: str) -> set[str]:
+    out = set()
+    for w in re.findall(r"\w+", (s or "").lower().replace("ё", "е")):
+        if len(w) <= 2 or w.isdigit() or w in _GENERIC_TITLE_WORDS:
+            continue
+        st = w[:5]
+        if st in _GENERIC_TITLE or w[:6] in _GENERIC_TITLE:
+            continue
+        out.add(st)
+    return out
+
+
+def _name_field(ctx: Ctx):
+    """(block, value) of a name field near the top: a properties-table row or a «Label: value» line."""
+    for b in ctx.doc.blocks:
+        if b.line_start > TITLE_TOP_LINES:
+            break
+        if b.kind == "table_row":
+            cells = [c.strip() for c in b.cells]
+            if len(cells) >= 2 and _NAME_LABEL.match(cells[0]) and cells[1]:
+                return b, cells[1]
+            for k, h in enumerate(b.header):
+                if _NAME_LABEL.match(h.strip()) and k < len(cells) and cells[k]:
+                    return b, cells[k]
+        elif b.kind in ("paragraph", "list_item"):
+            m = _NAME_INLINE.match(visible(b.text).strip())
+            if m and m.group(2).strip():
+                return b, m.group(2).strip()
+    return None, ""
+
+
+def rule_title_mismatch(ctx: Ctx, rule):
+    head = next((b for b in ctx.doc.blocks if b.kind == "heading" and b.text.strip()), None)
+    if head is None:
+        return []
+    nb, name = _name_field(ctx)
+    if nb is None:
+        return []
+    a, b = _title_stems(head.text), _title_stems(name)
+    if len(a) < 2 or len(b) < 2:
+        return []
+    if len(a & b) * 2 >= len(a | b):  # at least half of all distinct words are shared → the same name
+        return []
+    return [finding(
+        rule, [ctx.q_block(head), ctx.q_block(nb)],
+        title="Название в заголовке и в сведениях о документе расходятся",
+        problem=(f"Заголовок документа — «{short(head.text, 90)}», а в сведениях о документе указано "
+                 f"«{short(name, 90)}». Общих слов в названиях меньше половины: непонятно, о какой задаче документ, и при поиске "
+                 "по названию в системе задач или в реестре документов его можно не найти или перепутать с другим."),
+        recommendation="Приведите название к одному виду во всех местах: в заголовке, в служебных полях и в ссылках.",
+        question=ask("Какое название задачи правильное?",
+                     [f"Как в заголовке: «{short(head.text, 60)}»", f"Как в сведениях: «{short(name, 60)}»"]),
+    )]
+
+
 SET_RULES = {
     "missing-ids": rule_missing_ids,
     "unit-mix": rule_unit_mix,
@@ -538,6 +716,8 @@ SET_RULES = {
     "incomplete-reference": rule_incomplete_reference,
     "duplicate": rule_duplicate,
     "number-without-unit": rule_number_without_unit,
+    "flow-happy-path": rule_flow_happy_path,
+    "title-mismatch": rule_title_mismatch,
 }
 
 _ = detect_doc_id  # re-exported helper kept for readers of this module

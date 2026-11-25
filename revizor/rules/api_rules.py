@@ -537,6 +537,60 @@ def rule_sensitive_in_query(ctx: Ctx, rule):
     )]
 
 
+# --- api-reliability ------------------------------------------------------------------------------------
+
+_CHANGING = re.compile(r"\b(POST|PUT|PATCH|DELETE)\b")
+RELIABILITY = (  # (what, pattern) — searched across the whole document
+    ("ограничение частоты запросов (код 429)",
+     re.compile(r"\b429\b|ограничени\w*\s+(?:частоты|числа|количества)\s+(?:запрос|вызов)|"
+                r"лимит\w*\s+(?:на\s+)?(?:частот|числ|количеств|запрос|вызов)\w*|rate[ -]?limit|throttl", re.I)),
+    ("тайм-ауты и повторы запросов",
+     re.compile(r"тайм-?аут|timeout|time-out|повтор\w*\s+(?:запрос|вызов|отправк|попытк)|retry|retries", re.I)),
+    ("одновременные изменения одного объекта",
+     re.compile(r"одновремен|конкурент|параллельн|\b409\b|\b412\b|etag|if-match|верси\w*\s+(?:объекта|записи)|"
+                r"optimistic|оптимистичн", re.I)),
+    ("идемпотентность изменяющих запросов", re.compile(r"идемпотент|idempot", re.I)),
+    ("версия интерфейса",
+     re.compile(r"/v\d+(?:\.\d+)?(?:/|\b)|верси\w*\s+(?:api|апи|интерфейс|протокол|метод)|api[- ]?version", re.I)),
+)
+
+
+def rule_api_reliability(ctx: Ctx, rule):
+    if not ctx.is_api:
+        return []
+    decl = None
+    for b in ctx.doc.blocks:
+        t = visible(b.text)
+        if _CHANGING.search(t) and (_PATH.search(t) or b.kind in ("table_row", "code", "heading")):
+            decl = b
+            break
+    quote = ctx.q_block(decl) if decl is not None else None
+    if quote is None:
+        # a document that changes data through GET (itself a defect) still needs the reliability rules
+        via_get = rule_get_mutation(ctx, rule)
+        quote = via_get[0].quotes[0] if via_get and via_get[0].quotes else None
+    if quote is None:
+        return []
+    text = visible(ctx.doc.text)
+    missing = [what for what, rx in RELIABILITY if not rx.search(text)]
+    if len(missing) < 2:
+        return []
+    return [finding(
+        rule, [quote],
+        title="В описании интерфейса не хватает правил надёжности",
+        problem=("Интерфейс меняет данные, но в документе не описано: " + "; ".join(missing) + ". Без этих правил "
+                 "разработчики клиента и сервера по-разному поведут себя при перегрузке, медленном ответе, повторной "
+                 "отправке и одновременной правке одного объекта, а тестировщик не знает, какое поведение ожидать."),
+        recommendation=("Добавьте в описание интерфейса: " + "; ".join(missing) + " — с конкретными значениями "
+                        "(лимит запросов и код ответа при превышении, тайм-аут и число повторов, способ защиты от "
+                        "одновременной правки, ключ идемпотентности, номер версии в пути или заголовке)."),
+        question=ask("Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях?",
+                     ["Задать лимит с кодом 429, тайм-аут и повторы, ключ идемпотентности и версию в пути",
+                      "Описать только то, что нужно этой задаче, остальное — по общему стандарту команды",
+                      "Принять риск и не описывать"], "architect"),
+    )]
+
+
 API_RULES = {
     "get-mutation": rule_get_mutation,
     "error-in-success": rule_error_in_success,
@@ -544,4 +598,5 @@ API_RULES = {
     "param-type-mismatch": rule_param_type_mismatch,
     "content-type-without-body": rule_content_type_without_body,
     "sensitive-in-query": rule_sensitive_in_query,
+    "api-reliability": rule_api_reliability,
 }

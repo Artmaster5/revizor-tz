@@ -99,8 +99,11 @@ class SkepticBlockers(unittest.TestCase):
 
     def test_raise_to_critical_needs_reason(self):
         a, b = _f("D-001", "MAJOR"), _f("D-002", "MAJOR")
-        apply_skeptic([a, b], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL", "blocker": "loss"},
-                               {"fid": "D-002", "decision": "keep", "severity": "CRITICAL", "blocker": ""}],
+        why = "Суть та же: " + a.title  # a higher level must be argued with this very finding (see test_merge_topic)
+        apply_skeptic([a, b], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL", "blocker": "loss",
+                                "reason": why},
+                               {"fid": "D-002", "decision": "keep", "severity": "CRITICAL", "blocker": "",
+                                "reason": why}],
                       injection=False, audit=[])
         self.assertEqual((a.severity, a.blocker_reason), ("CRITICAL", "loss"))
         self.assertEqual((b.severity, b.blocker_reason), ("MAJOR", ""))
@@ -192,7 +195,7 @@ class PipelineBlockers(tp._Base):
         self.assertEqual(by_title[fast.title]["blocker_reason"], "")
         self.assertEqual(data["run"]["critical_demoted"], 1)
         self.assertEqual(data["summary"]["by_severity"]["CRITICAL"], 1)
-        self.assertIn("🔴 CRITICAL 1 ", md)
+        self.assertIn("блокеров 1 · ", md)
 
     def test_fast_depth_uses_the_same_scale(self):
         res, b = self.run_fake(self.script(), depth="fast")
