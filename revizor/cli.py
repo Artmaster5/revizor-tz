@@ -38,7 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = _Parser(prog="python main.py", add_help=True,
                 description="Ревизор ТЗ — статическая проверка документа с требованиями. Пишет отчёт на русском.")
     p.add_argument("paths", nargs="*", help="вход и выход без ключей: <документ> <отчёт.md>")
-    p.add_argument("--input", "-i", help="документ с требованиями (.md, .txt, .pdf, .docx)")
+    p.add_argument("--input", "-i", help="документ с требованиями (.md, .txt, .pdf, .docx, .html)")
     p.add_argument("--output", "-o", help="куда записать отчёт (.md или .json); рядом появятся .json, файл подробностей (.details.md), анкета вопросов и другие файлы")
     p.add_argument("--provider", default="auto",
                    help="auto | anthropic | gemini | openai | ollama | offline. По умолчанию auto: берётся первый найденный ключ в "
@@ -260,14 +260,15 @@ def _write_all(result: Result, inp: str, outp: str, say) -> list[Path] | None:
             main_path = out
             if ext in (".html", ".htm"):
                 main_path = out.with_suffix(".md")
-                say(f"Отчёт в HTML пока не поддерживается — записываю Markdown: {main_path}")
+                say(f"Основной отчёт записываю в Markdown: {main_path}. HTML-страница с отчётом будет рядом: {main_path.with_suffix('.html')}.")
             md_text = report_md.render(result, main_path.name)
             files.append((main_path, md_text))
             files.append((main_path.with_suffix(".json"), report_json.render(result)))
         base = files[0][0]
         if result.questions:
             qpath = base.with_name(base.stem + ".questions.md")
-            files.append((qpath, sidefiles.questions_md(result, input_path=inp, output_path=str(base),
+            answered = base.with_name(base.stem + "_answered" + base.suffix)  # the rerun must not overwrite this report
+            files.append((qpath, sidefiles.questions_md(result, input_path=inp, output_path=str(answered),
                                                          questions_path=str(qpath))))
         fixed = sidefiles.fixed_md(result)
         if fixed:

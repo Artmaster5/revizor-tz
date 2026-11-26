@@ -591,4 +591,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input docs/requirements.md --output reports/report_answered.md --answers reports/report_answered.questions.md`
+Когда ответите, запустите: `python main.py --input docs/requirements.md --output reports/report_answered_answered.md --answers reports/report_answered.questions.md`

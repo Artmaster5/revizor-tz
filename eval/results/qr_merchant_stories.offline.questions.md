@@ -59,4 +59,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input eval/docs/qr_merchant_stories.md --output eval/results/qr_merchant_stories.offline.md --answers eval/results/qr_merchant_stories.offline.questions.md`
+Когда ответите, запустите: `python main.py --input eval/docs/qr_merchant_stories.md --output eval/results/qr_merchant_stories.offline_answered.md --answers eval/results/qr_merchant_stories.offline.questions.md`

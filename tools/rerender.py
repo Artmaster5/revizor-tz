@@ -59,7 +59,8 @@ def files_for(result: Result, out: Path, *, side_files: bool = True) -> list[tup
         return files
     if result.questions:
         qpath = out.with_name(out.stem + ".questions.md")
-        files.append((qpath, sidefiles.questions_md(result, input_path=result.run.doc_name, output_path=str(out),
+        answered = out.with_name(out.stem + "_answered" + out.suffix)  # the rerun must not overwrite this report
+        files.append((qpath, sidefiles.questions_md(result, input_path=result.run.doc_name, output_path=str(answered),
                                                     questions_path=str(qpath))))
     for suffix, build in ((".fixed.md", sidefiles.fixed_md), (".tests.md", sidefiles.tests_md),
                           (".findings.csv", sidefiles.findings_csv)):

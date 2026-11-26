@@ -393,4 +393,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input docs/requirements.md --output reports/report_haiku.md --answers reports/report_haiku.questions.md`
+Когда ответите, запустите: `python main.py --input docs/requirements.md --output reports/report_haiku_answered.md --answers reports/report_haiku.questions.md`

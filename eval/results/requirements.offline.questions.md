@@ -395,4 +395,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input docs/requirements.md --output eval/results/requirements.offline.md --answers eval/results/requirements.offline.questions.md`
+Когда ответите, запустите: `python main.py --input docs/requirements.md --output eval/results/requirements.offline_answered.md --answers eval/results/requirements.offline.questions.md`

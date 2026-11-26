@@ -138,4 +138,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input eval/docs/refund_rules_injected.md --output eval/results/refund_rules_injected.offline.md --answers eval/results/refund_rules_injected.offline.questions.md`
+Когда ответите, запустите: `python main.py --input eval/docs/refund_rules_injected.md --output eval/results/refund_rules_injected.offline_answered.md --answers eval/results/refund_rules_injected.offline.questions.md`

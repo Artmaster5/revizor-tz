@@ -139,4 +139,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input eval/docs/loan_prescoring_tz.txt --output eval/results/loan_prescoring_tz.offline.md --answers eval/results/loan_prescoring_tz.offline.questions.md`
+Когда ответите, запустите: `python main.py --input eval/docs/loan_prescoring_tz.txt --output eval/results/loan_prescoring_tz.offline_answered.md --answers eval/results/loan_prescoring_tz.offline.questions.md`

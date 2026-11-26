@@ -140,4 +140,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input eval/docs/kyc_upload_api_en.md --output eval/results/kyc_upload_api_en.offline.md --answers eval/results/kyc_upload_api_en.offline.questions.md`
+Когда ответите, запустите: `python main.py --input eval/docs/kyc_upload_api_en.md --output eval/results/kyc_upload_api_en.offline_answered.md --answers eval/results/kyc_upload_api_en.offline.questions.md`

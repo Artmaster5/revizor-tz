@@ -413,4 +413,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input examples/requirements.pdf --output reports/report_offline_pdf.md --answers reports/report_offline_pdf.questions.md`
+Когда ответите, запустите: `python main.py --input examples/requirements.pdf --output reports/report_offline_pdf_answered.md --answers reports/report_offline_pdf.questions.md`

@@ -395,4 +395,4 @@
 
 Ответ:
 
-Когда ответите, запустите: `python main.py --input docs/requirements.md --output reports/report_offline_answered.md --answers reports/report_offline_answered.questions.md`
+Когда ответите, запустите: `python main.py --input docs/requirements.md --output reports/report_offline_answered_answered.md --answers reports/report_offline_answered.questions.md`
