@@ -6,6 +6,7 @@ them by a model, and an answer that talks to the reviewer (an injection) is not 
 """
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass, field
 from typing import Any, Callable
@@ -25,6 +26,8 @@ NOT_KNOWN = ("не знаю", "пока не знаю", "незнаю", "зат�
 _HEAD = re.compile(
     r"^[\s>#*_`\-]*(?:\d+[.)]\s*)?[*_`]*\s*([ВвBb])[-–—‑]?(\d{1,3})\b(?=\s*(?:$|[·•|:.,;—–\-)\]*_`]))")
 _ANSWER_LINE = re.compile(r"^[\s>*_`#\-]*(?:ответ|answer)\s*[*_`]*\s*[:：]\s*[*_`]*(.*)$", re.I)
+_FINGERPRINT = re.compile(r"^[\s>*_`#\-]*отпечаток вопроса\s*[:：]\s*[*_`]*\s*([0-9a-f]{6,64})\b", re.I)
+_DOC_FINGERPRINT = re.compile(r"^[\s>*_`#\-]*отпечаток документа\s*[:：]\s*[*_`]*\s*([0-9a-f]{6,64})\b", re.I | re.M)
 _RERUN = re.compile(r"^\s*(?:когда ответите|повторный прогон)", re.I)
 _LETTER = re.compile(r"^\(?\s*([абвгАБВГa-dA-D])\s*(?:[).:]|$)\s*(.*)$", re.S)
 
@@ -58,6 +61,9 @@ class Parsed:
     answers: dict[str, Answer] = field(default_factory=dict)
     unknown: list[str] = field(default_factory=list)  # ids in the file that the current questionnaire does not have
     warnings: list[str] = field(default_factory=list)  # Russian, for the passport
+    sha256: str = ""  # hash of the answers file text (or of the typed answers): ``RunInfo.answers_sha256``
+    doc_fingerprint: str = ""  # «Отпечаток документа» the questionnaire was issued for, "" when the file has none
+    stale: dict[str, str] = field(default_factory=dict)  # qid → why the answer was not applied (fingerprint mismatch)
 
 
 def is_unanswered(text: str) -> bool:
@@ -94,6 +100,9 @@ def interpret(qid: str, raw: str, options: list[str]) -> Answer | None:
 def parse(text: str, questions: list[Question]) -> Parsed:
     """Questionnaire text → answers by question id. Never raises; problems go to ``warnings``."""
     out = Parsed()
+    out.sha256 = hashlib.sha256((text or "").encode("utf-8")).hexdigest()
+    m_doc = _DOC_FINGERPRINT.search(text or "")
+    out.doc_fingerprint = m_doc.group(1).lower() if m_doc else ""
     by_id = {q.qid: q for q in questions}
     lines = (text or "").replace("\r\n", "\n").replace("\r", "\n").split("\n")
     blocks: list[tuple[str, list[str]]] = []
@@ -124,6 +133,13 @@ def parse(text: str, questions: list[Question]) -> Parsed:
         a = interpret(qid, raw, q.options)
         if a is None:
             continue
+        given = next((m.group(1).lower() for m in (_FINGERPRINT.match(ln) for ln in body[1:first]) if m), "")
+        if given and q.fingerprint and given != q.fingerprint.lower():
+            out.stale[qid] = given
+            out.warnings.append(
+                f"Ответ на {qid} не применён: вопрос или документ изменились с тех пор, как выдан файл ответов "
+                "(отпечаток вопроса не совпал). Ответьте на вопрос в новой анкете.")
+            continue
         if qid in out.answers:
             out.warnings.append(f"Вопрос {qid} встречается в файле ответов несколько раз: взят последний непустой ответ.")
         out.answers[qid] = a
@@ -137,6 +153,7 @@ def parse(text: str, questions: list[Question]) -> Parsed:
 def from_raw(raw: dict[str, str], questions: list[Question]) -> Parsed:
     """Answers collected in the terminal (qid → what the author typed) through the same interpretation."""
     out = Parsed()
+    out.sha256 = hashlib.sha256("\n".join(f"{k}={v}" for k, v in sorted(raw.items())).encode("utf-8")).hexdigest()
     by_id = {q.qid: q for q in questions}
     for qid, r in raw.items():
         q = by_id.get(qid)

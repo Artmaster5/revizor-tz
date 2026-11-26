@@ -164,7 +164,8 @@ def model_finding(raw: dict, *, scope: str, stage: str, qi: QuoteIndex, stats: Q
     if not quotes:
         shown = next((b for b in bad if b), "")
         return None, DroppedQuote(stage=stage, title=title, quote=shown[:300],
-                                  reason="цитата не найдена в документе" if shown else "замечание без цитаты")
+                                  reason="цитата не найдена в документе" if shown else "замечание без цитаты",
+                                  problem=_str(raw.get("problem"), 1500))
     req_ids: list[str] = []
     if rid:
         req_ids.append(rid)
@@ -239,7 +240,29 @@ def _trace(target: Finding, other: Finding) -> None:
             target.also.append(t)
 
 
-def absorb(target: Finding, other: Finding, *, all_places: bool = False, trace: bool = True) -> None:
+ABSORBED_QUOTE_MAX = 600
+BY_VALUES = ("recheck", "dedup", "code")
+
+
+def absorbed_record(other: Finding, by: str, severity: str = "") -> dict:
+    """The full record of a finding that is merged away: what the reader needs to see it on the survivor's card.
+    ``severity`` is the level it has at this moment, i.e. before anything in the same step could lower it."""
+    return {"title": other.title, "problem": other.problem, "recommendation": other.recommendation,
+            "severity": severity or other.severity, "criterion": other.criterion,
+            "quotes": [{"line": q.line_start, "text": (q.text or "")[:ABSORBED_QUOTE_MAX]} for q in other.quotes],
+            "source": other.source, "by": by if by in BY_VALUES else "code"}
+
+
+def _record_absorbed(target: Finding, other: Finding, by: str, severity: str = "") -> None:
+    """Add ``other`` and everything already merged into it to ``target.absorbed`` (nested merges are flattened)."""
+    for rec in [absorbed_record(other, by, severity)] + [dict(x) for x in other.absorbed]:
+        if not any(x.get("title") == rec.get("title") and x.get("problem") == rec.get("problem")
+                   and x.get("by") == rec.get("by") for x in target.absorbed):
+            target.absorbed.append(rec)
+
+
+def absorb(target: Finding, other: Finding, *, all_places: bool = False, trace: bool = True,
+           by: str = "code", before: tuple[str, str] | None = None) -> None:
     """Fold ``other`` into ``target``: rule ids, severity, question, wording; quotes and requirement links.
 
     The decision is by topic. When both speak about one thing (``same_topic``) or ``all_places=True`` (a rule folded
@@ -253,8 +276,15 @@ def absorb(target: Finding, other: Finding, *, all_places: bool = False, trace: 
     quote lies in that requirement. No new link is ever made just because a quote happens to lie in a requirement.
 
     Quotes are deduplicated and kept in document order; the first one is the most telling: a quote that came from a
-    code rule (it points at the exact offending line) if there is one, otherwise the survivor's own first quote."""
+    code rule (it points at the exact offending line) if there is one, otherwise the survivor's own first quote.
+
+    ``by`` names the path of the merge for the record ``target.absorbed`` ("recheck", "dedup", "code"). A merged finding
+    is never lowered first: ``before`` = (level, blocker reason) that ``other`` had before the step lowered it; the
+    survivor takes the higher of the two levels and the trail says so."""
     topic = all_places or same_topic(target, other)
+    o_sev, o_block = (before if before else (other.severity, other.blocker_reason))
+    if o_sev == "CRITICAL" and not blocker_code(o_block):
+        o_sev, o_block = "MAJOR", ""
     own = list(target.quotes)
     lead = own[0] if own else None
     if not is_rule_sourced(target) and is_rule_sourced(other) and other.quotes:
@@ -285,19 +315,21 @@ def absorb(target: Finding, other: Finding, *, all_places: bool = False, trace: 
     model_involved = target.source in ("model", "both") or other.source in ("model", "both")
     if target.rule_ids and model_involved:
         target.source = "both"
+    _record_absorbed(target, other, by, o_sev)
     if trace:
         _trace(target, other)
-    if SEV_RANK.get(other.severity, 9) < SEV_RANK.get(target.severity, 9):
+    if SEV_RANK.get(o_sev, 9) < SEV_RANK.get(target.severity, 9):
         # the callers that merge two findings of the review put the more severe one first (``more_severe_first``),
-        # so this happens only when a rule's level is folded into a model finding on the rule's own line
-        note_level(target, "merge", other.severity,
+        # so this happens only when a rule's level is folded into a model finding on the rule's own line, or when
+        # the merged finding had been lowered earlier in the same step
+        note_level(target, "merge", o_sev,
                    "уровень взят по старшему из объединённых" if not other.rule_ids or other.source == "both"
                    else "уровень задан автоматическим правилом", with_=other.fid or (
                        "правило " + ", ".join(other.rule_ids) if other.rule_ids else other.title[:80]))
-        target.severity = other.severity
-        target.blocker_reason = other.blocker_reason
+        target.severity = o_sev
+        target.blocker_reason = o_block if o_sev == "CRITICAL" else ""
     elif target.severity == "CRITICAL" and not target.blocker_reason:
-        target.blocker_reason = other.blocker_reason if other.severity == "CRITICAL" else ""
+        target.blocker_reason = o_block if o_sev == "CRITICAL" else ""
     if not target.fixed_wording and other.fixed_wording:
         target.fixed_wording = other.fixed_wording
     if target.question is None and other.question is not None:
@@ -385,6 +417,20 @@ def same_topic(a: Finding, b: Finding) -> bool:
     return words_alike(a, b)
 
 
+CODE_GUARD = "topic"  # the guard of the merges the program makes itself (same choice as the re-check's MERGE_GUARD)
+
+
+def guard_allows(target: Finding, f: Finding, guard: str) -> bool:
+    """May ``f`` be folded into ``target``? ``guard``: "topic" (one defect by words or checklist item),
+    "place_or_topic" (an overlapping quote, a shared requirement or one topic), "none" (always).
+    One function for the re-check (``gate.merge_allowed``) and for the merges by code."""
+    if guard == "none":
+        return True
+    if guard == "place_or_topic":
+        return findings_overlap(target, f) or bool(set(target.req_ids) & set(f.req_ids)) or same_topic(target, f)
+    return same_topic(target, f)
+
+
 def near_same_title(a: str, b: str) -> bool:
     na, nb = normalize(a or "").lower(), normalize(b or "").lower()
     if na and na == nb:
@@ -420,7 +466,7 @@ def dedupe_model(findings: list[Finding], audit: list[dict]) -> list[Finding]:
         if twin is None:
             kept.append(f)
             continue
-        absorb(twin, f)
+        absorb(twin, f, by="code")
         audit.append({"type": "decision", "what": "duplicate_merged", "stage": f.stage, "title": f.title,
                       "into_title": twin.title})
     return kept
@@ -444,7 +490,7 @@ def fold_rules(rule_findings: list[Finding], model_findings: list[Finding], audi
         if twin is None:
             out.append(rf)
             continue
-        absorb(twin, rf, all_places=True, trace=False)  # the source line names the rule
+        absorb(twin, rf, all_places=True, trace=False, by="code")  # the source line names the rule
         twin.source = "both"
         audit.append({"type": "decision", "what": "rule_folded", "rule": rf.rule_ids[0] if rf.rule_ids else "",
                       "into_title": twin.title})
@@ -543,6 +589,12 @@ def _covered_by_rule(model_f: Finding, rule_f: Finding) -> bool:
 
 
 def _same_defect(a: Finding, b: Finding) -> bool:
+    """One defect, by code: the place-and-words test below AND the guard every merge obeys (one topic). Two findings
+    that share a requirement, a criterion or a question but speak about different things both stay open."""
+    return _same_defect_loose(a, b) and guard_allows(a, b, CODE_GUARD)
+
+
+def _same_defect_loose(a: Finding, b: Finding) -> bool:
     # same words, two lines apart: one defect even when the quotes do not overlap and no requirement is shared
     # (a heading of an empty section and its stub line). Neighbouring lines often carry different defects (two
     # missing branches are two findings), so the titles must agree: strongly, or moderately within one family.
@@ -577,7 +629,7 @@ def merge_duplicates(findings: list[Finding], questions: list, fix_first: list, 
         if twin is None:
             kept.append(f)
             continue
-        absorb(twin, f)  # ``cand`` is sorted by severity: the survivor is the more severe, its own text stays
+        absorb(twin, f, by="code")  # ``cand`` is sorted by severity: the survivor is the more severe, its own text stays
         if not twin.question_id:
             twin.question_id = f.question_id
         f.status = "merged"
@@ -640,6 +692,10 @@ def fold_formal(findings: list[Finding], questions: list, fix_first: list, audit
         rules += [r for r in f.rule_ids if r not in rules]
     sources = {f.source for f in group}
     n = len(rids) or len(group)
+    # the head's own wording is replaced below: it goes into the record first, then every other remark
+    _record_absorbed(head, head, "code")
+    for f in rest:
+        _record_absorbed(head, f, "code")
     head.scope = "set"
     head.stage = FOLD_STAGE
     head.title = f"В {n} {_plural_items(n)} записано по нескольку утверждений"

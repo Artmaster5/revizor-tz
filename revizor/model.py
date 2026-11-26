@@ -256,6 +256,7 @@ class QuestionDraft(_Dictable):
     options: list[str] = field(default_factory=list)
     addressee: str = "analyst"  # one of ADDRESSEES
     gap: str = ""  # one of GAP_TYPES or ""
+    assumption: str = ""  # what the team assumes if the author does not answer; "" = no safe assumption
 
 
 @dataclass
@@ -279,6 +280,8 @@ class Finding(_Dictable):
     question_id: str = ""  # "В-05" once the final questions are numbered
     closed_by_answer: bool = False  # the author's answer settles it (dialog mode); the document still has to be edited
     fixed_wording: str = ""  # corrected requirement text (from the reviewer's rewrite or from the author's answer)
+    # check of the fix by code: {"status": "resolved" | "remains" | "unchecked", "note": "<one Russian line>"}; None = absent
+    fix_check: dict[str, str] | None = None
     advisory: bool = False  # low-precision observation: shown separately, never counted in indices or the verdict
     # why the re-check (stage 7) made a finding an observation: «деталь проектирования — <reason>»; "" for rule observations
     advisory_reason: str = ""
@@ -288,9 +291,15 @@ class Finding(_Dictable):
     gap_ids: list[str] = field(default_factory=list)  # ids of completeness-map items (gapcheck) this finding answers
     # titles of the findings merged into this one (re-check, duplicates by code): printed as «Сюда же: …»
     also: list[str] = field(default_factory=list)
+    # the full record of every finding merged into this one (nested merges flattened), oldest first: {"title", "problem",
+    # "recommendation", "severity", "criterion", "quotes": [{"line": n, "text": "…"}], "source", "by"}; ``by`` is
+    # "recheck" (stage 7 gate), "dedup" (stage 7 repeat search) or "code" (merged by the program). The cards print it.
+    absorbed: list[dict[str, Any]] = field(default_factory=list)
     # how the level came to be, oldest first: {"by": "model"|"rule"|"skeptic"|"merge", "level": "MAJOR",
     # "with": "D-012" (merge), "why": "…"}; the last entry's level always equals ``severity`` (consistency.py)
     level_trail: list[dict[str, Any]] = field(default_factory=list)
+    # one Russian line: the characteristic of ISO/IEC/IEEE 29148:2018 the finding violates (standard.py); "" when unknown
+    standard: str = ""
 
 
 @dataclass
@@ -322,6 +331,12 @@ class Question(_Dictable):
     answer: str = ""  # the author's answer (dialog mode)
     answer_effect: str = ""  # what the agent did with the answer
     gap: str = ""  # one of GAP_TYPES or ""
+    # what the team assumes if the author does not answer (clarify.NO_ASSUMPTION when there is no safe assumption)
+    assumption: str = ""
+    fingerprint: str = ""  # hash of the normalised question text and the quoted place (clarify.fingerprint)
+    # who gets the question in the letter to the author: "business" | "architect" | "security" | "testing"
+    # (clarify.LETTER_GROUPS); ``addressee`` keeps the older five-value vocabulary of the questionnaire
+    letter_group: str = ""
     # what answering changes, computed by code: {"closes": [fids], "blockers_closed": k, "verdict_after": code,
     # "index_after": n, "index_delta": d}; empty when not computed
     impact: dict[str, Any] = field(default_factory=dict)
@@ -375,6 +390,7 @@ class DroppedQuote(_Dictable):
     title: str
     quote: str
     reason: str
+    problem: str = ""  # what the finding said (the reader gets it in the details file)
 
 
 @dataclass
@@ -393,6 +409,8 @@ class RunInfo(_Dictable):
     doc_format: str = ""
     doc_size_bytes: int | None = None
     doc_sha256: str = ""
+    answers_sha256: str = ""  # SHA-256 of the author's answers file when one was given
+    answers_sha256: str = ""  # sha256 of the answers file (or of the typed answers) of a repeat check; "" without answers
     doc_pages: int | None = None
     doc_lines: int = 0
     doc_chars: int = 0
@@ -429,6 +447,9 @@ class RunInfo(_Dictable):
     agent_tag: str = ""  # git tag that points exactly at the agent's commit; "" when there is none
     agent_dirty: bool = False  # tracked files of the agent had uncommitted changes at run time
     doc_title: str = ""  # first heading of the document (or its first non-empty line, up to 120 characters)
+    # Wall-clock seconds of stages 1–9 (nine numbers; empty when the run ended before the last stage). Stages 4 and 5
+    # share one pool of requests, so their spans overlap and the numbers need not add up to ``duration_s``.
+    stage_seconds: list[float] = field(default_factory=list)
 
 
 CHECKLIST_VERDICTS = ("yes", "no", "unknown")
@@ -493,3 +514,6 @@ class Result(_Dictable):
     audit: list[dict[str, Any]] = field(default_factory=list)  # one entry per model call and per code decision
     checklist: list[ChecklistItem] = field(default_factory=list)  # unfilled review checklist of the document, answered
     gap_map: list[GapCell] = field(default_factory=list)  # completeness map; empty when the stage did not run at all
+    # two kinds of readiness (readiness.py): {"dev": {"ok", "text", "blockers": [fids]},
+    # "test": {"ok", "text", "coverage_pct": int | None, "uncovered": [requirement ids]}}; {} when not computed
+    readiness: dict[str, Any] = field(default_factory=dict)

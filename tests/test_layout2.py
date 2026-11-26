@@ -100,7 +100,8 @@ class DetailsFile(_Texts):
             for phrase in ("Сюда же", "(цитата выше)", "объединение с правило"):
                 self.assertNotIn(phrase, det, (label, phrase))
         det = self.cases["model"][2]
-        self.assertIn("Объединено с похожими замечаниями: «", det)
+        # the stored report is re-rendered: its merged cards give the list with title, problem and place (wave 9)
+        self.assertRegex(det, r"Объединено с похожими замечаниями \(\d+\):\n  - \*\*")
         self.assertIn("объединено с правилом `flow-happy-path` — MAJOR (уровень задан автоматическим правилом)", det)
         for part in ("## А. Разбор по каждому требованию", "## Б. Замечания к набору требований", "## В. Карта полноты",
                      "## Г. Вопросы автору полностью"):

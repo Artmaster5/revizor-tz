@@ -168,6 +168,7 @@ padding:16px 20px;font-size:1.42rem;line-height:1.3;font-weight:680;letter-spaci
 .lvl-warn{border-color:var(--maj);background:var(--maj-bg)}
 .lvl-ok{border-color:var(--min);background:var(--min-bg)}
 .lvl-unknown{border-color:var(--unk);background:var(--unk-bg)}
+.vnote{margin:6px 2px 0}
 .nums{display:grid;grid-template-columns:1.5fr repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
 .tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
 .tile .v{font-size:1.7rem;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
@@ -205,6 +206,95 @@ padding:16px 20px;font-size:1.42rem;line-height:1.3;font-weight:680;letter-spaci
 .fail h2{font-size:1.32rem;margin:0 0 6px;color:var(--crit)}
 .fail p{margin:0;font-size:1rem;overflow-wrap:anywhere}
 
+/* questions and findings on the result screen */
+.blk{margin-top:18px;padding:16px 20px}
+.blk-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px 14px;flex-wrap:wrap;margin-bottom:6px}
+.blk-head h2{font-size:1.1rem;margin:0;font-weight:660}
+.blk-lead{margin:0 0 10px}
+.note-card{margin-top:14px;padding:12px 16px;border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-left:5px solid var(--accent);border-radius:10px;background:var(--accent-soft);font-size:.93rem}
+.note-card h2{font-size:1rem;margin:0 0 4px}
+.note-card ul{margin:4px 0 0;padding-left:1.2em}.note-card li{margin:.15em 0}
+.qlist,.flist{list-style:none;margin:0;padding:0}
+.qrow{padding:12px 0;border-top:1px solid var(--line)}
+.qrow:first-child{border-top:0}
+.qhead{display:flex;gap:10px;align-items:baseline}
+.qnum{flex:none;font:700 .78rem/1 ui-monospace,Menlo,Consolas,monospace;background:var(--code);border-radius:6px;padding:4px 7px;white-space:nowrap}
+.qtext{font-weight:600;overflow-wrap:anywhere}
+.qwhy{margin:4px 0 0 0;font-size:.85rem;color:var(--muted);overflow-wrap:anywhere}
+.qwhy .linkish{font-size:inherit}
+.qeff{margin:4px 0 0;font-size:.85rem;color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:99px;padding:3px 12px;font-size:.84rem;cursor:pointer;text-align:left;line-height:1.35}
+.chip:hover{border-color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.qrow textarea{display:block;width:100%;margin-top:8px;min-height:54px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit;resize:vertical}
+.q-foot{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.q-foot .quiet{flex:1 1 260px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.frow{border-top:1px solid var(--line)}
+.frow:first-child{border-top:0}
+.frow summary{display:flex;align-items:baseline;gap:10px;padding:8px 2px;cursor:pointer;list-style:none}
+.frow summary::-webkit-details-marker{display:none}
+.frow summary::before{content:"";flex:none;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);margin:0 4px 1px 0;transition:transform .12s}
+.frow details[open]>summary::before{transform:rotate(45deg)}
+.frow summary:hover .ftitle{text-decoration:underline}
+.lv{flex:none;font-size:.74rem;font-weight:700;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.lv-critical{background:var(--crit-bg);color:var(--crit)}.lv-major{background:var(--maj-bg);color:var(--maj)}.lv-minor{background:var(--min-bg);color:var(--min)}
+.ftitle{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:560}
+.floc{flex:none;color:var(--muted);font-size:.82rem;white-space:nowrap}
+.fclosed{flex:none;font-size:.74rem;color:var(--accent);white-space:nowrap}
+.fbody{margin:0 0 10px 19px;padding:10px 14px;border-left:3px solid var(--line);font-size:.92rem}
+.fbody h3{margin:0 0 6px;font-size:.95rem}
+.fbody p{margin:6px 0;overflow-wrap:anywhere}
+.fbody .k{font-weight:620}
+.fquote{margin:6px 0;padding:6px 12px;border-left:3px solid var(--accent);background:var(--code);border-radius:0 8px 8px 0;font:.84rem/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere;white-space:pre-wrap}
+.flinks{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;font-size:.88rem}
+.f-more{margin-top:8px}
+.frow.flash>details{animation:flash 1.6s ease-out}
+.qrow.flash{animation:flash 1.6s ease-out}
+@keyframes flash{from{background:var(--accent-soft)}to{background:transparent}}
+@media (prefers-reduced-motion:reduce){.frow.flash>details,.qrow.flash{animation:none}}
+
+.try-row{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:10px 2px 0}
+.ready-lines{margin:6px 2px 0}.ready-lines p{margin:2px 0;font-size:.95rem}
+.ready-lines .rl-k{font-weight:650}.ready-lines .rl-ok{color:var(--accent)}.ready-lines .rl-no{color:var(--crit)}
+.qaddr{flex:none;font-size:.72rem;font-weight:650;border:1px solid var(--line);border-radius:99px;padding:1px 8px;color:var(--muted);white-space:nowrap}
+.qassume{margin:4px 0 0;font-size:.86rem;color:var(--ink);overflow-wrap:anywhere}
+.qassume.blocks{color:var(--crit);font-weight:600}
+.fcheck{flex:none;font-size:.74rem;white-space:nowrap}.fcheck.c-ok{color:var(--accent)}.fcheck.c-bad{color:var(--crit)}
+.fxcheck{margin:6px 0;font-size:.9rem;font-weight:600}.fxcheck.c-ok{color:var(--accent)}.fxcheck.c-bad{color:var(--crit)}.fxcheck.c-un{color:var(--muted);font-weight:400}
+.ub{border-left:5px solid var(--crit)}
+.ub.ub-ok{border-left-color:var(--accent)}
+.ub-main{margin:2px 0 0;font-size:1.02rem;font-weight:600;overflow-wrap:anywhere}
+.ub-steps{list-style:none;margin:10px 0 0;padding:0;font-size:.92rem}
+.ub-steps li{padding:5px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.ub-steps .ub-q{font-weight:600}
+.ub-steps .ub-to{display:block;color:var(--muted)}
+.ub-more{margin:8px 0 0;padding-left:1.2em;font-size:.92rem;color:var(--muted)}.ub-more li{margin:.25em 0;overflow-wrap:anywhere}
+.ub .linkish,.note-card .linkish,.fxrow .linkish{font-size:inherit;font-weight:inherit}
+.q-prog{display:inline-flex;align-items:center;gap:10px}
+.aprog{display:inline-block;width:120px;height:8px;border-radius:99px;background:var(--code);overflow:hidden;vertical-align:middle}
+.aprog i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .2s}
+.qgroup{padding:14px 0 2px;border-top:1px solid var(--line);font-size:.8rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}
+.qgroup:first-child{border-top:0;padding-top:4px}
+.qgroup.g-blocker{color:var(--crit)}
+.qrow.qdone{opacity:.92}
+.qmark{display:inline-block;margin:6px 0 0;padding:1px 10px;border-radius:99px;font-size:.78rem;font-weight:600;background:var(--code);color:var(--muted)}
+.qmark.m-crit{background:var(--crit-bg);color:var(--crit)}
+.qmark.m-ok{background:var(--accent-soft);color:var(--accent)}
+.forecast{flex:1 1 100%;margin:0;font-size:.9rem;font-weight:600;color:var(--accent)}
+.forecast.f-none{color:var(--muted);font-weight:400}
+.fxlist{list-style:none;margin:0;padding:0}
+.fxrow{padding:12px 0;border-top:1px solid var(--line)}
+.fxrow:first-child{border-top:0}
+.fxrow h3{margin:0 0 4px;font-size:.95rem;display:flex;gap:10px;align-items:baseline}
+.fxrow p{margin:6px 0;font-size:.92rem;overflow-wrap:anywhere}
+.fxrow .k{font-weight:620}
+.fxans{padding:6px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;overflow-wrap:anywhere;white-space:pre-wrap}
+.fxnew{margin:6px 0;padding:8px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--paper);white-space:pre-wrap;overflow-wrap:anywhere}
+.fxbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.fxbar .copied{font-size:.85rem;color:var(--accent)}
+
 footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14px}
 
 @media (max-width:760px){
@@ -223,6 +313,7 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
 }
 @media (max-width:520px){.drop-chosen{flex-wrap:wrap}#doc-change{flex:1 1 100%}.est-grid{grid-template-columns:1fr;gap:4px}
 .est-tile{display:flex;align-items:baseline;gap:10px}.est-tile .v{font-size:1.05rem}}
+@media (max-width:520px){.aprog{width:80px}.blk{padding:14px}.frow summary{flex-wrap:wrap;gap:4px 8px}.ftitle{flex:1 1 100%;order:3}.fbody{margin-left:4px}.qhead{flex-direction:column;gap:4px}}
 @media (max-width:420px){.ghost .tlabel{display:none}.btn.big{width:100%}.actions .btn{flex:1 1 100%}}
 </style>
 </head>
@@ -260,6 +351,7 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
    <div class="drop-busy" id="drop-busy" hidden>Загружаю документ…</div>
   </div>
   <p id="doc-error" class="err" role="alert" hidden></p>
+  <div class="try-row" id="try-row" hidden><button type="button" class="btn" id="try-example">Попробовать на примере</button><span class="quiet" id="try-note"></span></div>
 
   <div class="answers-row">
    <span id="answers-empty"><input type="file" id="answers-input" class="vh" accept=".md,.txt"><label for="answers-input">+ Ответы автора (необязательно)</label></span>
@@ -285,17 +377,20 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
  <section id="result" aria-live="polite" aria-label="Результат проверки">
   <div id="res-done">
    <div id="verdict" class="verdict lvl-unknown"><span class="vk">Вердикт</span><span id="verdict-text"></span></div>
+   <p class="quiet vnote" id="verdict-note" hidden></p>
+   <div class="ready-lines" id="readiness" hidden><p id="ready-dev"></p><p id="ready-test"></p></div>
    <div class="nums" id="res-numbers">
-    <div class="tile"><div class="v" id="n-score">—</div><div class="k">Индекс готовности</div><div class="bar" id="score-bar"><i></i></div></div>
-    <div class="tile t-crit"><div class="v" id="n-crit">0</div><div class="k">блокеров</div></div>
-    <div class="tile t-maj"><div class="v" id="n-maj">0</div><div class="k">существенных</div></div>
-    <div class="tile t-min"><div class="v" id="n-min">0</div><div class="k">мелких</div></div>
+    <div class="tile"><div class="v" id="n-score">—</div><div class="k" id="k-score">Индекс готовности</div><div class="bar" id="score-bar"><i></i></div></div>
+    <div class="tile t-crit"><div class="v" id="n-crit">0</div><div class="k" id="k-crit">блокеров</div></div>
+    <div class="tile t-maj"><div class="v" id="n-maj">0</div><div class="k" id="k-maj">существенных</div></div>
+    <div class="tile t-min"><div class="v" id="n-min">0</div><div class="k" id="k-min">мелких</div></div>
     <div class="tile"><div class="v" id="n-q">0</div><div class="k">вопросов автору</div></div>
     <div class="tile"><div class="v" id="n-req">0</div><div class="k">требований найдено</div></div>
    </div>
    <div class="card diag" id="res-diag" hidden><h2 id="diag-title"></h2><p id="diag-what"></p><p class="k">Что сделать:</p><ol id="diag-todo"></ol></div>
    <p class="res-meta" id="res-meta"></p>
    <p class="res-cache" id="res-cache"></p>
+   <p class="quiet" id="res-stage-times" hidden></p>
    <div class="actions">
     <a id="open-report" class="btn primary" target="_blank" rel="noopener">Открыть отчёт</a>
     <a id="open-questions" class="btn">Анкета для автора</a>
@@ -303,12 +398,46 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
    </div>
    <details class="notes" id="res-notes" hidden><summary id="res-notes-title">Примечания к проверке</summary>
     <ul class="warns" id="res-warnings"></ul></details>
+   <div class="note-card" id="rerun-note" hidden></div>
+   <p class="quiet" id="details-msg" role="status" hidden><span id="details-msg-text"></span> <button type="button" class="linkish" id="details-retry">Повторить</button></p>
+   <section class="card blk ub" id="unblock" aria-labelledby="ub-title" hidden>
+    <div class="blk-head"><h2 id="ub-title">Кратчайший путь к «можно начинать»</h2><span class="quiet" id="ub-count"></span></div>
+    <p class="ub-main" id="ub-main"></p>
+    <ol class="ub-steps" id="ub-steps"></ol>
+    <ul class="ub-more" id="ub-more"></ul>
+   </section>
+   <section class="card blk" id="fixes" aria-labelledby="fx-title" hidden>
+    <div class="blk-head"><h2 id="fx-title">Что вписать в документ</h2><a id="download-fixes" class="btn" hidden>Скачать все формулировки</a></div>
+    <p class="quiet blk-lead" id="fx-lead"></p>
+    <ol class="fxlist" id="fx-list"></ol>
+   </section>
+   <section class="card blk" id="questions" aria-labelledby="q-title" hidden>
+    <div class="blk-head"><h2 id="q-title">Вопросы автору</h2><button type="button" class="btn" id="copy-letter" hidden>Скопировать письмо автору</button><span class="q-prog"><span class="quiet" id="q-counter" aria-live="polite"></span><span class="aprog" id="answers-progress" role="progressbar" aria-label="Отвечено вопросов" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"><i></i></span></span></div>
+    <p class="quiet blk-lead" id="q-lead"></p>
+    <p class="quiet" id="q-letter-msg" role="status" hidden></p>
+    <div class="filters" id="q-filters" role="group" aria-label="Показать вопросы по адресату" hidden></div>
+    <ol class="qlist" id="q-list"></ol>
+    <button type="button" class="btn f-more" id="q-more" hidden></button>
+    <div class="q-foot" id="q-foot">
+     <button type="button" class="btn primary" id="recheck-button" disabled>Перепроверить с ответами</button>
+     <span class="quiet" id="recheck-info"></span>
+     <p class="forecast" id="recheck-forecast" role="status" hidden></p>
+    </div>
+    <p class="run-msg" id="recheck-msg" role="status"></p>
+   </section>
+   <section class="card blk" id="findings" aria-labelledby="f-title" hidden>
+    <div class="blk-head"><h2 id="f-title">Замечания</h2></div>
+    <div class="filters" id="f-filters" role="group" aria-label="Показать замечания"></div>
+    <ol class="flist" id="f-list"></ol>
+    <button type="button" class="btn f-more" id="f-more" hidden></button>
+   </section>
    <div class="files" id="res-files" hidden><h3>Остальные файлы</h3><ul id="files-list"></ul><p id="files-dir"></p></div>
   </div>
   <div class="card fail" id="res-fail" hidden><h2>Проверка не завершилась</h2><p id="fail-text"></p></div>
   <div class="again">
    <button type="button" class="btn primary" id="new-check">Проверить другой документ</button>
    <button type="button" class="btn" id="retry-button" hidden>Запустить ещё раз</button>
+   <button type="button" class="btn" id="back-button" hidden>Вернуться к прошлому результату</button>
   </div>
  </section>
 
@@ -334,7 +463,7 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
 "use strict";
 var $=function(id){return document.getElementById(id);};
 var HDR={"X-Revizor-UI":"1"};
-var S={cfg:null,doc:null,answers:null,jobId:null,logNext:0,pollT:0,tick:0,elapsed:0,elapsedAt:0,starting:false,
+var S={stageSec:[],stageAt:0,example:false,qAddr:"all",letter:null,cfg:null,doc:null,answers:null,jobId:null,logNext:0,pollT:0,tick:0,elapsed:0,elapsedAt:0,starting:false,
   estSeq:0,est:null,lastStatus:null,uploading:false};
 var STAGE_WORD={pending:"ожидает",running:"идёт",done:"готово",skipped:"пропущен",stopped:"прервано"};
 var CROSS_SVG='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>';
@@ -415,9 +544,12 @@ function applyConfig(c){
   if(c.provider_note){$("notice").textContent=String(c.provider_note);show("notice",true);}
   txt("foot","Ревизор ТЗ"+(c.version?" "+c.version:"")+" · окно работает только на этом компьютере (127.0.0.1)");
   onModelChange(false);
+  S.example=!!c.example;
+  txt("try-note",c.provider==="offline"?"Откроет пример и сразу проверит его правилами, без модели: бесплатно.":"Загрузит пример и покажет оценку времени и стоимости: запускать или нет, решаете вы.");
   if(c.job&&c.job.job_id){restoreJob(c.job);return;}
   if(c.preloaded&&c.preloaded.upload_id){setDoc(c.preloaded);runEstimate(true);}
   else setState("idle");
+  refreshRun();
 }
 function loadConfig(){
   buildStages(DEFAULT_STAGES);
@@ -436,7 +568,7 @@ function setDoc(d){
   refreshRun();
 }
 function clearDoc(){
-  S.doc=null;show("drop-chosen",false);show("drop-empty",true);$("doc-drop").classList.remove("chosen");
+  S.doc=null;S.fromExample=false;show("drop-chosen",false);show("drop-empty",true);$("doc-drop").classList.remove("chosen");
   $("doc-input").value="";refreshRun();
 }
 function docError(msg){var e=$("doc-error");if(msg){e.textContent=msg;e.hidden=false;}else e.hidden=true;}
@@ -453,7 +585,7 @@ function uploadDoc(file){
       headers:{"X-Revizor-UI":"1","Content-Type":"application/octet-stream"},body:file}).then(function(r){
     S.uploading=false;show("drop-busy",false);$("doc-input").value="";
     if(!r.ok){docError(r.error);if(had){show("drop-chosen",true);}else{show("drop-empty",true);}refreshRun();return;}
-    setDoc(r);runEstimate(true);
+    S.fromExample=false;setDoc(r);runEstimate(true);
   });
 }
 $("doc-input").addEventListener("change",function(){if(this.files&&this.files[0])uploadDoc(this.files[0]);});
@@ -546,7 +678,25 @@ function renderCapHint(){
 
 /* ---------- run ---------- */
 function runMsg(t,bad){var m=$("run-msg");m.textContent=t||"";m.classList.toggle("bad",!!bad);}
+function tryExample(){
+  if(S.uploading||S.starting||getState()==="running"||S.doc)return;
+  docError(null);S.uploading=true;S.fromExample=true;
+  show("drop-empty",false);show("drop-busy",true);refreshRun();
+  postJSON("/api/example",{}).then(function(r){
+    S.uploading=false;show("drop-busy",false);
+    if(!r.ok){S.fromExample=false;show("drop-empty",true);if(r.status===409){attachLatest(r.error);}else docError(r.error);refreshRun();return;}
+    setDoc(r);
+    if(r.mode==="offline"&&r.job_id){
+      runMsg("");beginJob(String(r.job_id),{doc_name:S.doc.name,model:"offline",depth:(S.cfg&&S.cfg.default_depth)||"full",answers_name:""});
+    }else{
+      runEstimate(true);
+      runMsg("Пример загружен. Для него настроена модель, поэтому проверка будет платной: посмотрите оценку, при желании задайте потолок расходов и нажмите «Проверить».");
+    }
+  });
+}
+$("try-example").addEventListener("click",tryExample);
 function refreshRun(){
+  show("try-row",!!S.example&&!S.doc&&!S.uploading);
   var b=$("run-button");var can=!!S.doc&&!S.uploading&&!S.starting&&getState()!=="running";
   b.disabled=!can;
   if(!S.doc&&!S.uploading)runMsg("Сначала выберите документ");
@@ -580,7 +730,7 @@ function resetProgress(){
 }
 function clearLog(){txt("log-lines","");S.logNext=0;}
 function beginJob(id,info){
-  S.jobId=id;S.lastStatus=null;resetProgress();
+  S.jobId=id;S.lastStatus=null;resetProgress();resetDetails();
   progHeader(info);S.elapsed=0;S.elapsedAt=performance.now();
   renderCounters({model:0,cache:0},"$0.00",info.model);
   setState("running");startTick();schedulePoll(300);
@@ -615,17 +765,36 @@ function poll(){
   });
 }
 function startTick(){stopTick();S.tick=setInterval(function(){
-  if(getState()!=="running")return;txt("elapsed",fmtTime(S.elapsed+(performance.now()-S.elapsedAt)/1000));},250);}
+  if(getState()!=="running")return;txt("elapsed",fmtTime(S.elapsed+(performance.now()-S.elapsedAt)/1000));tickStages();},250);}
 function stopTick(){if(S.tick){clearInterval(S.tick);S.tick=0;}}
 
+function fmtSec(v){v=Math.max(0,num(v));
+  if(v<10)return v.toFixed(1).replace(".",",")+" с";
+  if(v<100)return Math.round(v)+" с";
+  return Math.floor(v/60)+" мин "+Math.round(v%60)+" с";}
+function tickStages(){
+  var d=(performance.now()-S.stageAt)/1000;
+  for(var i=0;i<9;i++){if(S.stageSec[i]==null)continue;var row=$("stage-"+(i+1));if(!row||!row.classList.contains("s-running"))continue;
+    row.querySelector(".st-word").textContent=STAGE_WORD.running+" · "+fmtSec(S.stageSec[i]+d);}
+}
+var SHORT_STAGE=["чтение","нарезка","правила","требования","наборы","цитаты","перепроверка","вопросы","индексы"];
+function renderStageTimes(secs){
+  var el=$("res-stage-times");
+  if(!secs||!secs.length){el.hidden=true;return;}
+  var parts=[];secs.forEach(function(v,i){if(v!=null&&i<SHORT_STAGE.length)parts.push(SHORT_STAGE[i]+" "+fmtSec(v));});
+  if(!parts.length){el.hidden=true;return;}
+  el.textContent="Время по этапам: "+parts.join(" · ");el.hidden=false;
+}
 function renderStages(stages,stepText,failed){
-  stages=stages||[];
+  stages=stages||[];S.stageAt=performance.now();
   for(var i=0;i<9;i++){
     var row=$("stage-"+(i+1));if(!row)continue;var s=stages[i]||{};var state=STAGE_WORD[s.state]?s.state:"pending";if(state==="stopped"||(failed&&state==="running"))state=failed?"stopped":"pending";
     row.className="stage s-"+state;
     var ico=row.querySelector(".st-ico");ico.innerHTML=state==="done"?CHECK_SVG:(state==="stopped"?CROSS_SVG:"");
     if(s.label){var nm=row.querySelector(".st-name");if(nm.lastChild&&nm.lastChild.nodeType===3)nm.lastChild.nodeValue=String(s.label);}
-    row.querySelector(".st-word").textContent=STAGE_WORD[state];
+    var secs=(state==="done"||state==="running")&&s.seconds!=null?num(s.seconds):null;
+    S.stageSec[i]=state==="running"&&secs!=null?secs:null;
+    row.querySelector(".st-word").textContent=STAGE_WORD[state]+(secs!=null?" · "+fmtSec(secs):"");
     var det=row.querySelector(".st-detail");var dt=(state==="done"||state==="skipped")&&s.detail?String(s.detail):"";det.textContent=dt;det.hidden=!dt;
     var stp=row.querySelector(".st-step");var sx=state==="running"&&stepText?String(stepText):"";stp.textContent=sx;stp.hidden=!sx;
     if(state==="running")row.setAttribute("aria-current","step");else row.removeAttribute("aria-current");
@@ -667,6 +836,378 @@ function restoreJob(job){
   if(job.state==="running"){setState("running");startTick();schedulePoll(500);}
 }
 
+
+/* ---------- questions and findings ---------- */
+var DRAFT_KEY="revizor-ui-draft-";
+var FILTERS=[["all","все"],["critical","блокеры"],["major","существенные"],["minor","мелкие"]];
+var VERDICT_WORD={stop:"начинать нельзя",warn:"можно начинать с условиями",ok:"можно начинать",unknown:"документ не проверен"};
+var FIND_LIMIT=12;
+S.details=null;S.filter="all";S.showAll=false;S.reportUrl="";S.rechecking=false;S.backJob=null;S.qRows=[];S.fRows=[];
+function resetDetails(){
+  S.details=null;S.detailsFor=null;S.qRows=[];S.fRows=[];S.filter="all";S.showAll=false;S.qShowAll=false;show("q-more",false);
+  ["rerun-note","details-msg","unblock","fixes","questions","findings"].forEach(function(id){show(id,false);});
+  clear($("q-list"));clear($("f-list"));clear($("fx-list"));txt("recheck-msg","");show("recheck-forecast",false);S.noteUl=null;
+}
+function draftGet(){try{var v=sessionStorage.getItem(DRAFT_KEY+S.jobId);var o=v?JSON.parse(v):null;return o&&typeof o==="object"?o:{};}catch(e){return {};}}
+function draftSave(){try{var o={};S.qRows.forEach(function(r){var v=r.ta.value;if(v.trim())o[r.q.id]=v;});
+  if(Object.keys(o).length)sessionStorage.setItem(DRAFT_KEY+S.jobId,JSON.stringify(o));else sessionStorage.removeItem(DRAFT_KEY+S.jobId);}catch(e){}}
+function loadDetails(jobId){
+  S.detailsFor=jobId;show("details-msg",false);
+  api("/api/details?job="+encodeURIComponent(jobId)).then(function(d){
+    if(jobId!==S.jobId||getState()!=="done")return;
+    if(!d.ok){txt("details-msg-text","Не удалось загрузить вопросы и замечания: "+d.error);show("details-msg",true);return;}
+    S.details=d;S.levelOf={};(d.findings||[]).forEach(function(f){S.levelOf[f.fid]=f.level;});
+    renderUnblock(d);renderFixes(d);renderQuestions(d);renderFindings(d);renderClosedBy(d);openFromHash();
+  });
+}
+$("details-retry").addEventListener("click",function(){if(S.jobId)loadDetails(S.jobId);});
+
+function renderRerunNote(r){
+  var box=$("rerun-note");clear(box);var a=r&&r.answers;
+  if(!a){box.hidden=true;return;}
+  box.appendChild(mk("h2",null,"Это проверка с ответами автора"));
+  var ul=mk("ul");function li(t){ul.appendChild(mk("li",null,t));}
+  li("Учтено ответов: "+num(a.taken)+" из "+num(a.total)+".");
+  var af=a.after||{},pv=a.previous,w=r.findings||{},o=af.open||w,n=num(af.closed_count);
+  if(n>0){
+    li("Ответы закрывают "+n+" "+plural(n,"замечание","замечания","замечаний")+" ("+(a.closed||[]).join(", ")+"), из них блокеров "+num(af.closed_critical)+". "
+      +"Они закрыты, когда ответ внесён в документ: до этого в отчёте они остаются.");
+    li("Открытых замечаний: в документе как он написан — "+num(w.total)+"; с учётом ответов — "+num(o.total)
+      +(pv?" (было "+num((pv.findings||{}).total)+")":"")+".");
+    if(pv)li("Блокеров: было "+num((pv.findings||{}).critical)+", стало "+num(o.critical)+".");
+  }else{
+    li("Ответы замечаний не закрывают: открытых замечаний по-прежнему "+num(w.total)+".");
+  }
+  if(af.score!=null){var same=num(af.score)===num(r.score);
+    li("Индекс готовности: в документе как он написан — "+(r.score==null?"—":r.score)+"; с учётом ответов — "+af.score
+      +(pv&&pv.score!=null?" (было "+pv.score+")":"")+(same?" — без изменений.":"."));}
+  if(af.verdict&&af.verdict_text){
+    if(af.verdict===r.verdict&&(af.left_blockers||[]).length)li("Итог не меняется: ответы не закрывают "+(af.left_blockers.length>1?"блокеры ":"блокер ")+af.left_blockers.join(", ")+".");
+    else if(af.verdict!==r.verdict)li("После внесения ответов в документ итог: "+af.verdict_text+".");
+    else li("Итог прежний: "+af.verdict_text+".");
+  }
+  li("Ответы ещё нужно внести в документ: индекс и итог в отчёте считаются по его тексту.");
+  box.appendChild(ul);box.hidden=false;S.noteUl=ul;
+}
+
+/* a text with ids («В-01», «D-006») in it: every id becomes a button that scrolls to the question or the finding */
+function rich(el,text){
+  String(text==null?"":text).split(/([ВD]-\d{2,})/).forEach(function(part,i){
+    if(!part)return;
+    if(i%2===0){el.appendChild(document.createTextNode(part));return;}
+    var b=mk("button","linkish",part);b.type="button";
+    b.addEventListener("click",function(){if(part.charAt(0)==="D")goToFinding(part);else goToQuestion(part);});
+    el.appendChild(b);});
+  return el;
+}
+function renderUnblock(d){
+  var u=d.unblock,box=$("unblock");
+  if(!u||!u.blockers||!(u.lines||[]).length){box.hidden=true;return;}
+  box.hidden=false;box.classList.toggle("ub-ok",u.state==="all_closed");
+  txt("ub-count","Блокеров: "+u.blockers+(u.closed.length?" · закрыто ответами: "+u.closed.length:""));
+  var m=$("ub-main");clear(m);rich(m,u.lines[0]);
+  var st=$("ub-steps");clear(st);
+  (u.need||[]).forEach(function(n){
+    var li=mk("li");li.appendChild(rich(mk("span","ub-q"),n.qid+" — "+n.question));
+    var sub=mk("span","ub-to");rich(sub," снимает "+(n.fids.length>1?"блокеры ":"блокер "));
+    n.fids.forEach(function(fid,k){if(k)sub.appendChild(document.createTextNode("; "));rich(sub,fid+": "+(n.titles[k]||""));});
+    li.appendChild(sub);st.appendChild(li);});
+  st.hidden=!(u.need||[]).length;
+  var ul=$("ub-more");clear(ul);
+  u.lines.slice(1).forEach(function(t){ul.appendChild(rich(mk("li"),t));});
+  ul.hidden=u.lines.length<2;
+}
+function renderClosedBy(d){
+  /* «one answer — several findings»: the repeat-check card lists what each answer closed */
+  if(!S.noteUl)return;
+  (d.questions||[]).forEach(function(q){
+    if(!(q.closed||[]).length)return;
+    var n=q.closed.length;
+    S.noteUl.appendChild(rich(mk("li"),"Ответ на "+q.id+" закрыл "+(n>1?"замечания ":"замечание ")+q.closed.join(", ")+(n>1?" — одним ответом.":".")));});
+}
+function renderFixes(d){
+  var fx=d.fixes||[],box=$("fixes"),list=$("fx-list");clear(list);
+  var r=(S.lastStatus||{}).result||{};var hasAns=!!r.answers;
+  if(!hasAns||!fx.length){box.hidden=true;return;}
+  box.hidden=false;
+  txt("fx-title","Что вписать в документ ("+fx.length+")");
+  txt("fx-lead","Ответы ещё нужно внести в сам документ: индекс и итог считаются по его тексту. Ниже — место, ответ автора и готовая формулировка, если агент её написал и она прошла проверку.");
+  var files=r.files||[],dl=null;files.forEach(function(x){if(x&&x.kind==="fixed"&&!dl)dl=x;});
+  var a=$("download-fixes");if(dl&&dl.url){a.href=String(dl.url)+(String(dl.url).indexOf("?")<0?"?":"&")+"download=1";a.setAttribute("download",String(dl.name||""));a.hidden=false;a.title=String(dl.name||"");}else{a.hidden=true;a.removeAttribute("href");}
+  fx.forEach(function(x,i){
+    var n=i+1;var li=mk("li","fxrow");li.id="fix-"+n;
+    var h=mk("h3");h.appendChild(mk("span","qnum",x.qid));h.appendChild(mk("span","qtext",x.text));li.appendChild(h);
+    var where=x.line!=null||x.location;
+    if(where){var pw=mk("p");pw.appendChild(mk("span","k","Место в документе: "));pw.appendChild(document.createTextNode(x.location||("строка "+x.line)));li.appendChild(pw);
+      if(x.quote)li.appendChild(mk("div","fquote",x.quote));}
+    var pa=mk("p");pa.appendChild(mk("span","k","Ответ автора:"));li.appendChild(pa);li.appendChild(mk("div","fxans",x.answer));
+    if(x.closed&&x.closed.length){var pc=mk("p","quiet");rich(pc,"Закрывает "+(x.closed.length>1?"замечания ":"замечание ")+x.closed.join(", ")+" — после внесения в документ.");li.appendChild(pc);}
+    (x.fix_checks||[]).forEach(function(c){var t=checkText(c);if(t){var pf=mk("p","fxcheck "+t[0]);pf.appendChild(document.createTextNode(c.fid+" — "+t[1]));li.appendChild(pf);}});
+    var w=x.wording;
+    if(w&&w.after){
+      var p1=mk("p");p1.appendChild(mk("span","k","Что вписать"+(w.rid?" в "+w.rid:"")+":"));li.appendChild(p1);
+      if(w.before){li.appendChild(mk("div","fquote","Было: "+w.before));}
+      var nw=mk("div","fxnew",w.after);nw.id="fix-text-"+n;li.appendChild(nw);
+      var bar=mk("div","fxbar");var cb=mk("button","btn","Скопировать");cb.type="button";cb.id="copy-fix-"+n;
+      var done=mk("span","copied");done.setAttribute("role","status");
+      cb.addEventListener("click",function(){copyText(w.after,function(ok){done.textContent=ok?"Скопировано":"Не удалось скопировать: выделите текст вручную";if(ok){setTimeout(function(){done.textContent="";},2500);}});});
+      bar.appendChild(cb);bar.appendChild(done);li.appendChild(bar);
+    }else if(w&&w.same_as){
+      var ps=mk("p","quiet");rich(ps,"Формулировка для этого места общая с ответом "+w.same_as+": она показана там.");li.appendChild(ps);
+    }else{
+      li.appendChild(mk("p","quiet","Готовой формулировки агент не предложил: впишите ответ в это место сами."));
+    }
+    list.appendChild(li);
+  });
+}
+$("copy-letter").addEventListener("click",function(){
+  var f=S.letter;if(!f)return;var msg=$("q-letter-msg");
+  function say(t){msg.textContent=t;msg.hidden=!t;}
+  function open(){try{window.open(String(f.url),"_blank","noopener");}catch(e){}}
+  fetch(String(f.url)).then(function(r){return r.ok?r.text():Promise.reject(new Error("http"));}).then(function(t){
+    copyText(t,function(ok){if(ok){say("Письмо автору скопировано.");setTimeout(function(){say("");},3000);}else{say("Не удалось скопировать: письмо открыто в новой вкладке.");open();}});
+  }).catch(function(){say("Не удалось получить письмо: открываю его в новой вкладке.");open();});
+});
+function copyText(t,cb){
+  function fallback(){try{var ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.top="-1000px";document.body.appendChild(ta);ta.select();var ok=document.execCommand("copy");document.body.removeChild(ta);cb(!!ok);}catch(e){cb(false);}}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){cb(true);},fallback);return;}}catch(e){}
+  fallback();
+}
+
+var ADDR_RU={business:"бизнес-заказчик",architect:"архитектор / разработка",security:"безопасность",testing:"тестирование"};
+var ADDR_KEY={business:"business",architect:"architect",security:"security",testing:"testing",qa:"testing"};
+function renderQFilters(qs){
+  var box=$("q-filters");clear(box);
+  var counts={},order=[];qs.forEach(function(q){var k=ADDR_KEY[q.addressee];if(!k)return;if(!counts[k]){counts[k]=0;order.push(k);}counts[k]++;});
+  if(order.length<2){box.hidden=true;S.qAddr="all";return;}
+  [["all","все ("+qs.length+")"]].concat(order.map(function(k){return [k,ADDR_RU[k]+" ("+counts[k]+")"];})).forEach(function(x){
+    var b=mk("button","chip",x[1]);b.type="button";b.setAttribute("data-addr",x[0]);b.setAttribute("aria-pressed",x[0]===S.qAddr?"true":"false");
+    b.addEventListener("click",function(){S.qAddr=x[0];applyQLimit();});box.appendChild(b);});
+  box.hidden=false;
+}
+var GROUPS=[["blocker","Сначала — снимают блокеры"],["important","Потом — существенные"],["nice","Остальные"]];
+function renderQuestions(d){
+  var qs=d.questions||[];var list=$("q-list");clear(list);S.qRows=[];S.qGroups=[];
+  txt("q-title","Вопросы автору ("+qs.length+")");
+  show("questions",true);
+  show("q-list",qs.length>0);show("q-foot",qs.length>0);show("recheck-msg",qs.length>0);
+  if(!qs.length){txt("q-lead","Вопросов к автору нет.");txt("q-counter","");$("answers-progress").hidden=true;return;}
+  $("answers-progress").hidden=false;
+  var anyDone=qs.some(function(q){return q.answer&&q.answer_effect;});
+  txt("q-lead",anyDone?"Ответы, которые уже учтены, внизу. Остальные вопросы — наверху: можно ответить ещё и перепроверить.":
+    "Ответьте на те вопросы, на которые знаете ответ: можно выбрать вариант или написать своими словами. Остальные оставьте пустыми. Вопросы стоят по силе влияния: сверху те, что снимают блокеры.");
+  S.qAddr="all";renderQFilters(qs);show("copy-letter",!!S.letter);
+  var draft=draftGet();
+  /* groups: the pipeline already ordered the questions by priority and effect; keep that order inside a group */
+  var byGroup={blocker:[],important:[],nice:[],done:[]};
+  qs.forEach(function(q,i){var done=!!(q.answer&&q.answer_effect);
+    var g=done?"done":(byGroup[q.priority]?q.priority:"important");byGroup[g].push({q:q,n:i+1});});
+  var plan=GROUPS.concat([["done","Уже отвечено"]]);
+  plan.forEach(function(g){
+    var items=byGroup[g[0]];if(!items.length)return;
+    var head=mk("li","qgroup g-"+g[0],g[1]+" ("+items.length+")");head.setAttribute("role","presentation");list.appendChild(head);
+    var grp={head:head,rows:[]};S.qGroups.push(grp);
+    items.forEach(function(it){var row=buildQuestion(it.q,it.n,draft,g[0]==="done");grp.rows.push(row);S.qRows.push(row);list.appendChild(row.li);});
+  });
+  S.qShowAll=false;applyQLimit();paintChips();updateAnswered();
+  var st=S.lastStatus||{};
+  var off=st.model==="offline";
+  txt("recheck-info",(off?"Модель не нужна: проверка пойдёт только правилами, бесплатно. ":
+    (st.max_cost?"Потолок расходов: $"+st.max_cost+". ":"Потолок расходов не задан. ")
+    +"Повторная проверка снова обращается к модели; если такие же ответы уже проверяли, ответы возьмутся из кэша. "));
+}
+function buildQuestion(q,n,draft,done){
+  var li=mk("li","qrow"+(done?" qdone":""));li.id="question-"+n;
+  var head=mk("div","qhead");head.appendChild(mk("span","qnum",q.id));head.appendChild(mk("span","qtext",q.text));li.appendChild(head);
+  /* what an answer does (before) or did (after a repeat check) */
+  var mark=null;
+  if(done){mark=(q.closed||[]).length?["m-ok","ответ закрыл: "+q.closed.join(", ")]:["","ответ учтён, замечания остались открытыми"];}
+  else if(q.effect&&q.effect.text){mark=[q.effect.critical>0?"m-crit":"",q.effect.text];}
+  var addr=ADDR_KEY[q.addressee]||"";
+  if(addr)head.appendChild(mk("span","qaddr",ADDR_RU[addr]));
+  if(mark)li.appendChild(mk("span","qmark "+mark[0],mark[1]));
+  if(q.assumption)li.appendChild(mk("p","qassume","Если не ответите, считаем так: "+q.assumption));
+  else if(q.priority==="blocker"&&!done)li.appendChild(mk("p","qassume blocks","Без ответа работу по этому пункту начинать нельзя"));
+  var why=mk("p","qwhy");
+  if(q.why)why.appendChild(document.createTextNode("Почему спрашиваем: "+q.why+" "));
+  if(q.line!=null||q.location){why.appendChild(document.createTextNode("Место в документе: "+(q.location||("строка "+q.line))+". "));}
+  if((q.finding_ids||[]).length){
+    why.appendChild(document.createTextNode("Относится к "+(q.finding_ids.length>1?"замечаниям ":"замечанию ")));
+    q.finding_ids.forEach(function(fid,k){if(k)why.appendChild(document.createTextNode(", "));
+      var b=mk("button","linkish",fid);b.type="button";b.addEventListener("click",function(){goToFinding(fid);});why.appendChild(b);});
+    why.appendChild(document.createTextNode("."));}
+  if(why.firstChild)li.appendChild(why);
+  var ta=mk("textarea");ta.id="answer-"+n;ta.rows=2;ta.maxLength=2000;ta.placeholder="Ваш ответ";
+  var lab=mk("label","vh","Ответ на вопрос "+q.id);lab.htmlFor=ta.id;
+  ta.value=draft[q.id]!=null?draft[q.id]:(q.answer||"");
+  var chipEls=[];
+  if((q.options||[]).length){
+    var cw=mk("div","chips");cw.setAttribute("role","group");cw.setAttribute("aria-label","Варианты ответа на "+q.id);
+    q.options.forEach(function(o){
+      var c=mk("button","chip",o);c.type="button";c.setAttribute("aria-pressed","false");
+      c.addEventListener("click",function(){ta.value=(ta.value.trim()===o)?"":o;onAnswerInput();ta.focus();});
+      cw.appendChild(c);chipEls.push([c,o]);});
+    li.appendChild(cw);}
+  li.appendChild(lab);li.appendChild(ta);
+  if(q.answer&&q.answer_effect)li.appendChild(mk("p","qeff","Что сделали с ответом: "+q.answer_effect));
+  var row={q:q,n:n,ta:ta,chips:chipEls,li:li,done:done,addr:addr};
+  ta.addEventListener("input",onAnswerInput);
+  return row;
+}
+var Q_LIMIT=6;
+function applyQLimit(){
+  var hidden=0,blockers=S.qRows.filter(function(r){return r.q.priority==="blocker"&&!r.done;}).length;
+  var lim=Math.max(Q_LIMIT,blockers),seen=0;
+  S.qRows.forEach(function(r){
+    var match=S.qAddr==="all"||r.addr===S.qAddr;
+    var open=!r.done;if(open&&match)seen++;
+    var vis=match&&(S.qShowAll||r.done||(open&&seen<=lim)||r.ta.value.trim()!=="");r.li.hidden=!vis;if(!vis&&match)hidden++;});
+  document.querySelectorAll("#q-filters button").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-addr")===S.qAddr?"true":"false");});
+  S.qGroups.forEach(function(g){g.head.hidden=!g.rows.some(function(r){return !r.li.hidden;});});
+  var m=$("q-more");if(hidden>0){m.textContent="Показать остальные вопросы ("+hidden+")";m.hidden=false;}else m.hidden=true;
+}
+$("q-more").addEventListener("click",function(){S.qShowAll=true;applyQLimit();});
+function paintChips(){S.qRows.forEach(function(r){var v=r.ta.value.trim();r.chips.forEach(function(c){c[0].setAttribute("aria-pressed",v===c[1]?"true":"false");});});}
+function answeredCount(){return S.qRows.filter(function(r){return r.ta.value.trim()!=="";}).length;}
+/*FORECAST*/
+function forecastFor(items,offline){
+  /* items: [{q:<question with closes/option_closes/options>, text:<typed answer>}]; every finding is counted once.
+     Without a model only the choice of a ready option closes a finding. */
+  var seen={},c={critical:0,major:0,minor:0};
+  items.forEach(function(it){
+    var v=String(it.text||"").trim();if(!v)return;var q=it.q;
+    var fids=offline?((q.options||[]).indexOf(v)>=0?(q.option_closes||[]):[]):(q.closes||[]);
+    fids.forEach(function(f){if(seen[f.fid])return;seen[f.fid]=1;if(c[f.level]!=null)c[f.level]++;});});
+  return c;
+}
+/*END_FORECAST*/
+function forecastText(c,offline){
+  var parts=[];
+  if(c.critical)parts.push("блокеров "+c.critical);if(c.major)parts.push("существенных "+c.major);if(c.minor)parts.push("мелких "+c.minor);
+  if(!parts.length)return offline?"Эти ответы замечания не закроют: без модели закрывает только выбор готового варианта из подсказок.":"Эти ответы замечания не закроют: они не связаны с открытыми замечаниями.";
+  return "Эти ответы должны закрыть: "+parts.join(", ")+".";
+}
+function updateForecast(){
+  var el=$("recheck-forecast"),k=answeredCount();
+  if(!k){el.hidden=true;return;}
+  var lv=S.levelOf||{},off=(S.lastStatus||{}).model==="offline";
+  var items=S.qRows.filter(function(r){return r.ta.value.trim()!=="";}).map(function(r){
+    var q=r.q;return {q:{options:q.options,
+      closes:(q.closes||[]).map(function(f){return {fid:f,level:lv[f]};}),
+      option_closes:(q.option_closes||[]).map(function(f){return {fid:f,level:lv[f]};})},text:r.ta.value};});
+  var c=forecastFor(items,off);
+  el.textContent=forecastText(c,off);el.classList.toggle("f-none",!(c.critical||c.major||c.minor));el.hidden=false;
+}
+function updateAnswered(){
+  var k=answeredCount(),N=S.qRows.length;txt("q-counter","Отвечено: "+k+" из "+N);
+  var pb=$("answers-progress");pb.setAttribute("aria-valuemax",String(N));pb.setAttribute("aria-valuenow",String(k));
+  pb.firstElementChild.style.width=(N?Math.round(100*k/N):0)+"%";
+  $("recheck-button").disabled=!(k>0)||S.rechecking||getState()!=="done";
+  updateForecast();
+}
+function onAnswerInput(){paintChips();updateAnswered();draftSave();txt("recheck-msg","");$("recheck-msg").classList.remove("bad");}
+function goToQuestion(qid){
+  var r=null;S.qRows.forEach(function(x){if(x.q.id===qid)r=x;});if(!r)return;
+  S.qShowAll=true;applyQLimit();r.li.scrollIntoView({block:"center"});
+  r.ta.focus({preventScroll:true});
+  r.li.classList.remove("flash");void r.li.offsetWidth;r.li.classList.add("flash");
+}
+function recheck(){
+  if(S.rechecking||getState()!=="done"||!S.jobId)return;
+  var ans={};S.qRows.forEach(function(r){var v=r.ta.value.trim();if(v)ans[r.q.id]=v;});
+  if(!Object.keys(ans).length)return;
+  var st=S.lastStatus||{};var msg=$("recheck-msg");
+  S.rechecking=true;updateAnswered();msg.classList.remove("bad");msg.textContent="Запускаю повторную проверку…";
+  postJSON("/api/rerun",{job:S.jobId,answers:ans,max_cost:st.model==="offline"?"":String(st.max_cost||"")}).then(function(r){
+    S.rechecking=false;
+    if(!r.ok){msg.textContent=r.error;msg.classList.add("bad");updateAnswered();return;}
+    msg.textContent="";S.backJob=S.jobId;
+    beginJob(String(r.job_id),{doc_name:st.doc_name,model:st.model,depth:st.depth,answers_name:"ответы, введённые в окне",max_cost:st.max_cost});
+  });
+}
+$("recheck-button").addEventListener("click",recheck);
+
+function checkText(c){
+  /* fix_check: {status: resolved|remains|unchecked, note}; «» when absent or malformed */
+  if(!c||typeof c!=="object")return null;var note=c.note?String(c.note):"";
+  if(c.status==="resolved")return ["c-ok","проверено: замечание ушло"+(note?" ("+note+")":"")];
+  if(c.status==="remains")return ["c-bad","замечание остаётся"+(note?": "+note:"")];
+  if(c.status==="unchecked")return ["c-un",note||"исправление не проверено"];
+  return null;
+}
+function renderFindings(d){
+  var fs0=d.findings||[];var list=$("f-list");clear(list);S.fRows=[];
+  /* open findings first, those closed by an author's answer after them (still marked) */
+  var fs=fs0.filter(function(f){return !f.closed_by_answer;}).concat(fs0.filter(function(f){return f.closed_by_answer;}));
+  var nOpen=fs0.filter(function(f){return !f.closed_by_answer;}).length,nClosed=fs0.length-nOpen;
+  txt("f-title","Замечания ("+nOpen+")"+(nClosed?" · закрыто ответом: "+nClosed:""));
+  var fl=$("f-filters");clear(fl);
+  show("findings",true);
+  if(!fs.length){show("f-filters",false);show("f-more",false);
+    var li0=mk("li","quiet","Открытых замечаний нет.");list.appendChild(li0);return;}
+  var counts={all:nOpen,critical:0,major:0,minor:0,closed:nClosed};
+  fs.forEach(function(f){if(!f.closed_by_answer&&counts[f.level]!=null)counts[f.level]++;});
+  FILTERS.concat(nClosed?[["closed","закрыты ответом"]]:[]).forEach(function(x){
+    if(x[0]!=="all"&&!counts[x[0]])return;
+    var b=mk("button","chip",x[1]+" "+counts[x[0]]);b.type="button";b.setAttribute("data-filter",x[0]);b.setAttribute("aria-pressed",x[0]===S.filter?"true":"false");
+    b.addEventListener("click",function(){S.filter=x[0];S.showAll=false;applyFilter();});fl.appendChild(b);});
+  show("f-filters",true);
+  fs.forEach(function(f,i){
+    var li=mk("li","frow");li.id="finding-"+(i+1);
+    var det=mk("details");var sm=mk("summary");
+    sm.appendChild(mk("span","lv lv-"+(f.level||"minor"),f.level_text||"замечание"));
+    sm.appendChild(mk("span","ftitle",f.title));
+    if(f.closed_by_answer)sm.appendChild(mk("span","fclosed","закрыто ответом"));
+    var fc=checkText(f.fix_check);if(fc)sm.appendChild(mk("span","fcheck "+fc[0],fc[1].length>60?fc[1].slice(0,57)+"…":fc[1]));
+    var loc=f.line!=null?"строка "+f.line:(f.location||"");if(loc)sm.appendChild(mk("span","floc",loc));
+    det.appendChild(sm);
+    var body=mk("div","fbody");body.appendChild(mk("h3",null,"Почему это дефект"));
+    if(f.quote){var pq=mk("p");pq.appendChild(mk("span","k","В документе"+(f.location?" ("+f.location+")":"")+":"));body.appendChild(pq);body.appendChild(mk("div","fquote",f.quote));}
+    if(f.problem){var pp=mk("p");pp.appendChild(mk("span","k","В чём проблема: "));pp.appendChild(document.createTextNode(f.problem));body.appendChild(pp);}
+    if(f.found_by){var pf=mk("p");pf.appendChild(mk("span","k","Как найдено: "));pf.appendChild(document.createTextNode(f.found_by));body.appendChild(pf);}
+    if(f.standard){var ps=mk("p");ps.appendChild(mk("span","k","Требование стандарта: "));ps.appendChild(document.createTextNode(f.standard));body.appendChild(ps);}
+    if(fc){var pk=mk("p");pk.appendChild(mk("span","k","Проверка исправления: "));pk.appendChild(document.createTextNode(fc[1]));body.appendChild(pk);}
+    if(f.recommendation){var pr=mk("p");pr.appendChild(mk("span","k","Что сделать: "));pr.appendChild(document.createTextNode(f.recommendation));body.appendChild(pr);}
+    var links=mk("div","flinks");
+    if(S.reportUrl&&f.anchor){var a=mk("a",null,"в отчёте "+f.fid);a.href=S.reportUrl+"#"+encodeURIComponent(f.anchor);a.target="_blank";a.rel="noopener";links.appendChild(a);}
+    if(f.question_id){if(S.qRows.some(function(r){return r.q.id===f.question_id;})){var qb=mk("button","linkish","вопрос автору "+f.question_id);qb.type="button";
+        qb.addEventListener("click",function(){goToQuestion(f.question_id);});links.appendChild(qb);}}
+    if(links.firstChild)body.appendChild(links);
+    det.appendChild(body);li.appendChild(det);list.appendChild(li);
+    S.fRows.push({f:f,li:li,det:det,n:i+1});
+  });
+  applyFilter();
+}
+function applyFilter(){
+  var shown=0,total=0;
+  $("f-filters").querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-filter")===S.filter?"true":"false");});
+  S.fRows.forEach(function(r){
+    var match=S.filter==="all"||(S.filter==="closed"?!!r.f.closed_by_answer:(!r.f.closed_by_answer&&r.f.level===S.filter));
+    if(match)total++;
+    var vis=match&&(S.showAll||shown<FIND_LIMIT);if(vis)shown++;
+    r.li.hidden=!vis;
+  });
+  var more=$("f-more");
+  if(total>shown){more.textContent="Показать все ("+total+")";more.hidden=false;}else more.hidden=true;
+}
+$("f-more").addEventListener("click",function(){S.showAll=true;applyFilter();});
+function openFromHash(){
+  var blk=/^#(unblock|fixes|questions|findings)$/.exec(location.hash||"");
+  if(blk){var be=$(blk[1]);if(be&&!be.hidden)be.scrollIntoView({block:"start"});return;}
+  var m=/^#(f|q)(\d+)$/.exec(location.hash||"");if(!m)return;
+  var n=Number(m[2]);
+  if(m[1]==="f"){var r=S.fRows[n-1];if(r)goToFinding(r.f.fid);}
+  else{S.qShowAll=true;applyQLimit();var t=$("question-"+n);if(t)t.scrollIntoView({block:"center"});}
+}
+function goToFinding(fid){
+  var r=null;S.fRows.forEach(function(x){if(x.f.fid===fid)r=x;});if(!r)return;
+  if(S.filter!=="all"&&!(S.filter==="closed"?r.f.closed_by_answer:(!r.f.closed_by_answer&&S.filter===r.f.level)))S.filter="all";
+  S.showAll=true;applyFilter();
+  r.det.open=true;r.li.scrollIntoView({block:"center"});
+  var sm=r.det.querySelector("summary");if(sm)sm.focus({preventScroll:true});
+  r.li.classList.remove("flash");void r.li.offsetWidth;r.li.classList.add("flash");
+}
+
 /* ---------- result ---------- */
 function setLink(id,file,download){
   var a=$(id);if(!file||!file.url){a.hidden=true;a.removeAttribute("href");return;}
@@ -674,10 +1215,22 @@ function setLink(id,file,download){
   a.href=u;a.hidden=false;if(download)a.setAttribute("download",String(file.name||""));
   a.title=String(file.name||"")+(file.size?" · "+fmtSize(file.size):"");
 }
+function renderReadiness(rd){
+  var box=$("readiness");
+  function line(id,label,x,extra){
+    var p=$(id);clear(p);if(!x||!x.text){p.hidden=true;return false;}
+    p.appendChild(mk("span","rl-k",label+": "));p.appendChild(mk("span",x.ok?"rl-ok":"rl-no",x.text+(extra||"")));p.hidden=false;return true;}
+  if(!rd||typeof rd!=="object"){box.hidden=true;return;}
+  var cov=rd.test&&rd.test.coverage_pct!=null&&isFinite(Number(rd.test.coverage_pct))?" (покрытие критериями приёмки "+Math.round(Number(rd.test.coverage_pct))+" %)":"";
+  var a=line("ready-dev","В разработку",rd.dev,"");var b=line("ready-test","В тестирование",rd.test,cov);
+  box.hidden=!(a||b);
+}
 function showResult(st){
   var r=st.result||{};var lvl=["stop","warn","ok","unknown"].indexOf(r.verdict_level)>=0?r.verdict_level:"unknown";
   show("res-done",true);show("res-fail",false);
   var v=$("verdict");v.className="verdict lvl-"+lvl;txt("verdict-text",r.verdict_text||r.verdict||"Проверка завершена");
+  txt("verdict-note",r.verdict_note||"");show("verdict-note",!!r.verdict_note);
+  renderReadiness(r.readiness);renderStageTimes(r.stage_seconds);
   var diag=r.diagnostic;
   if(diag){
     show("res-numbers",false);show("res-diag",true);
@@ -687,6 +1240,13 @@ function showResult(st){
   }else{
     show("res-numbers",true);show("res-diag",false);
     var f=r.findings||{};var sc=r.score;
+    var af=r.answers&&r.answers.after,pv=r.answers&&r.answers.previous;
+    var kl={"k-score":"Индекс готовности","k-crit":"блокеров","k-maj":"существенных","k-min":"мелких"};
+    if(af){f=af.open||f;sc=af.score;kl={"k-score":"Индекс с учётом ответов"+(pv&&pv.score!=null?" (было "+pv.score+")":""),
+      "k-crit":"блокеров с учётом ответов"+(pv?" (было "+num((pv.findings||{}).critical)+")":""),
+      "k-maj":"существенных с учётом ответов"+(pv?" (было "+num((pv.findings||{}).major)+")":""),
+      "k-min":"мелких с учётом ответов"+(pv?" (было "+num((pv.findings||{}).minor)+")":"")};}
+    Object.keys(kl).forEach(function(id){txt(id,kl[id]);});
     var sv=$("n-score");clear(sv);
     if(sc==null||sc===""){sv.textContent="—";}else{sv.appendChild(document.createTextNode(String(sc)));sv.appendChild(mk("small",null," / 100"));}
     var bar=$("score-bar");bar.className="bar lvl-"+lvl;bar.firstElementChild.style.width=(sc==null?0:Math.max(0,Math.min(100,num(sc))))+"%";
@@ -698,6 +1258,7 @@ function showResult(st){
   if(st.model)meta.push(st.model==="offline"?"без модели":"модель "+st.model);
   if(st.depth)meta.push("глубина: "+labelFor((S.cfg||{}).depths,st.depth));
   if(st.answers_name)meta.push("с ответами автора ("+st.answers_name+")");
+  if(S.fromExample&&!st.answers_name)meta.push("встроенный пример");
   txt("res-meta",meta.join(" · "));
   var calls=num(r.llm_calls),hits=num(r.cache_hits);var rc=$("res-cache");clear(rc);rc.classList.toggle("hit",hits>0);
   if(st.model==="offline"||(st.provider==="offline"&&calls===0&&hits===0)){
@@ -708,6 +1269,7 @@ function showResult(st){
     else rc.appendChild(document.createTextNode("."));
   }
   var files=r.files||[];var byKind={};files.forEach(function(x){if(x&&x.kind&&!byKind[x.kind])byKind[x.kind]=x;});
+  S.letter=byKind.letter&&byKind.letter.url?byKind.letter:null;
   setLink("open-report",byKind.report_html,false);setLink("open-questions",byKind.questions,true);setLink("open-jira",byKind.jira,true);
   var main=[byKind.report_html,byKind.questions,byKind.jira];
   var rest=files.filter(function(x){return x&&main.indexOf(x)<0;});
@@ -723,22 +1285,31 @@ function showResult(st){
   var nb=$("res-notes");nb.hidden=!ws.length;$("res-notes-title").textContent="Примечания к проверке: "+ws.length;
   /* a note about something that was not done must not hide behind a click */
   nb.open=ws.some(function(t){return /потол|не выполнен|пропущен|недоступ|ошибк|неполн|не удалось|не прочитан|не применен/i.test(String(t));});
-  show("retry-button",false);
+  show("retry-button",false);show("back-button",false);
+  S.reportUrl=byKind.report_html&&byKind.report_html.url?String(byKind.report_html.url):"";
+  resetDetails();
   setState("done");window.scrollTo(0,0);
+  if(!diag){renderRerunNote(r);loadDetails(S.jobId);}
 }
 function showFailed(st){
-  stopPoll();
+  stopPoll();resetDetails();
   show("res-done",false);show("res-fail",true);
   txt("fail-text",st.error||"Что-то пошло не так, а программа не объяснила, что именно. Подробности — в журнале ниже.");
-  show("retry-button",!!S.doc);
+  show("retry-button",!!S.doc);show("back-button",!!S.backJob);
   setState("failed");window.scrollTo(0,0);
 }
 $("new-check").addEventListener("click",function(){
-  stopPoll();S.jobId=null;S.lastStatus=null;S.est=null;S.estSeq++;
+  stopPoll();S.jobId=null;S.backJob=null;S.lastStatus=null;S.est=null;S.estSeq++;resetDetails();
   clearDoc();setAnswers(null);docError(null);answersError(null);runMsg("");
   var box=$("estimate");clear(box);box.appendChild(mk("p","est-empty","Здесь появится оценка времени и стоимости — как только вы выберете документ."));
   resetProgress();setState("idle");refreshRun();window.scrollTo(0,0);
   var pick=$("doc-input");try{pick.focus({preventScroll:true});}catch(e){}
+});
+$("back-button").addEventListener("click",function(){
+  var id=S.backJob;if(!id)return;
+  api("/api/status?job="+encodeURIComponent(id)+"&since=0").then(function(st){
+    if(!st.ok||st.state!=="done"){txt("fail-text",st.ok?"Прошлый результат недоступен.":st.error);return;}
+    S.backJob=null;S.jobId=id;resetProgress();applyStatus(st);});
 });
 $("retry-button").addEventListener("click",function(){if(!S.doc)return;setState("ready");refreshRun();startRun();});
 

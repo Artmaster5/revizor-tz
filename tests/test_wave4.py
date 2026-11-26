@@ -233,11 +233,11 @@ class NewRules(tp._Base):
         return [r for f in _run_rules(text, self.dir) for r in f.rule_ids]
 
     def test_registry_and_version(self):
-        self.assertEqual(rules.RULESET_VERSION, "1.1")
-        self.assertEqual(rules.rule_counts(), (27, 8))
+        self.assertEqual(rules.RULESET_VERSION, "1.2")
+        self.assertEqual(rules.rule_counts(), (47, 8))
         for path in ("docs/ARCHITECTURE.md", "README.md"):
             t = (AGENT / path).read_text(encoding="utf-8")
-            self.assertIn("27 основн", t, path)
+            self.assertIn("47 основн", t, path)
 
     def test_flow_happy_path(self):
         self.assertIn("flow-happy-path", self.ids(FLOW_DOC))

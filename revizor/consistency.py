@@ -21,7 +21,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from . import impact as impact_mod, score, verdict
+from . import gate, impact as impact_mod, readiness, score, standard, verdict
 from .merge import SEV_RANK, sort_key
 from .model import REQ_CRITERIA, CriterionVerdict, Finding, Question, RequirementReview, Result
 from .quotes import normalize
@@ -56,6 +56,10 @@ def tally(findings: list[Finding]) -> dict[str, int]:
 def blockers(findings: list[Finding]) -> list[Finding]:
     """Open counted CRITICAL findings in document order: the list at the top of the report and in sections 5 and 6."""
     return sorted((f for f in counted(findings) if f.severity == "CRITICAL"), key=sort_key)
+
+
+def counts_sentence_of(findings: list[Finding]) -> str:
+    return verdict.counts_sentence(findings)
 
 
 def blocker_word(f: Finding) -> str:
@@ -108,6 +112,15 @@ def apply_marks(result: Result) -> None:
 
 _RECHECK = re.compile(r"уровень изменён перепроверкой:\s*(CRITICAL|MAJOR|MINOR)\s*→\s*(CRITICAL|MAJOR|MINOR)\.?\s*(.*)",
                       re.S)
+
+
+def _absorbed_from(g: Finding) -> dict:
+    """The record of a merged finding of an older report (it kept its text), the path read from the re-check's note."""
+    why = g.status_reason or ""
+    by = "code" if why.startswith("повтор: то же место") else ("dedup" if why.startswith("повтор:") else "recheck")
+    return {"title": g.title, "problem": g.problem, "recommendation": g.recommendation, "severity": g.severity,
+            "criterion": g.criterion, "quotes": [{"line": q.line_start, "text": q.text} for q in g.quotes],
+            "source": g.source, "by": by}
 
 
 def rebuild_trail(f: Finding, merged_into_it: list[Finding]) -> None:
@@ -239,6 +252,11 @@ def settle(result: Result) -> None:
         rebuild_trail(f, merged.get(f.fid, []))
         if not f.also and f.stage != "fold_singularity":  # a folded remark lists its places, not titles
             f.also = [g.title for g in merged.get(f.fid, []) if g.title and g.title != f.title][:12]
+        if not f.absorbed and f.stage != "fold_singularity":  # an older report: the full record from the merged cards
+            f.absorbed = [_absorbed_from(g) for g in merged.get(f.fid, []) if g.title and g.title != f.title][:30]
+    capped = gate.cap_blockers(result.findings, result.audit)  # a blocker must name a consequence (gate.py)
+    if capped:
+        result.run.critical_demoted += capped
     result.findings.sort(key=sort_key)
     apply_marks(result)
     clar = score.clarities(result.requirements, result.findings)
@@ -251,6 +269,17 @@ def settle(result: Result) -> None:
     code, text = verdict.decide(result.findings, offline=offline)
     if code != result.verdict:
         result.verdict, result.verdict_text = code, text
+    if capped:  # what the model wrote before the cap carries the old counts and the old after-answers verdict
+        result.verdict_reason = re.sub(r"^По подсчёту программы:[^.]*\.", counts_sentence_of(result.findings),
+                                       result.verdict_reason or "")
+    if result.verdict_after_answers:
+        a_code, a_text = verdict.decide([f for f in result.findings if not f.closed_by_answer], offline=offline)
+        result.verdict_after_answers, result.verdict_after_answers_text = a_code, a_text
+    standard.apply(result.findings)
+    standard.apply(result.rejected)
+    result.readiness = readiness.compute(result)
+    if readiness.add_check_questions(result):  # «как проверим?» for requirements no criterion names
+        result.readiness = readiness.compute(result)
     settle_questions(result.questions, result.findings)
     if any(not q.impact for q in result.questions):  # older reports: what each answer changes is computed here
         impact_mod.apply(result.questions, counted(result.findings), result.requirements, offline=offline)

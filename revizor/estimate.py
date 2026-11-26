@@ -45,9 +45,10 @@ THINKING_SPREAD = (0.7, 1.4)  # low / high edge of the range around the expected
 SECONDS_PER_OUT_TOKEN = 1493 / 351568
 # Wall clock = slice + max(pool, longest call) + skeptic + questions + tests, where all review and set calls share one
 # pool of LLM_CONCURRENCY workers: pool = (sum of their seconds) / workers, but never less than the longest single call.
-# Skeptic chunks also run in parallel. In the measured run the set checks started in the last wave and set_completeness
+# Skeptic chunks, dedup chunks and the checklist request (beside the answers and tests) also run in parallel. In the measured run the set checks started in the last wave and set_completeness
 # (two attempts, 357 s) held the run after the pool had emptied; the pipeline now submits them first.
-DEFAULT_CONCURRENCY = 4
+DEFAULT_CONCURRENCY = 4  # a provider not listed below
+DEFAULT_WORKERS = {"anthropic": 6, "openai": 4, "gemini": 1, "ollama": 1}  # as in llm.DEFAULT_CONCURRENCY
 OUT_STAGE_EXTRA = {"answers": 600, "tests": 1800}
 
 # Expected size of the JSON answers, in tokens (rough, from the answer shapes in prompts.py).
@@ -216,10 +217,11 @@ def output_range(est: Estimate, provider: str, env: Mapping[str, str] | None = N
 def expected_seconds(est: Estimate, provider: str, env: Mapping[str, str] | None = None) -> float:
     """Wall-clock seconds by the schedule described above (the expected value, not an edge of the range)."""
     env = env or {}
+    default_workers = DEFAULT_WORKERS.get(provider, DEFAULT_CONCURRENCY)
     try:
-        workers = max(1, min(32, int(env.get("LLM_CONCURRENCY") or DEFAULT_CONCURRENCY)))
+        workers = max(1, min(32, int(env.get("LLM_CONCURRENCY") or default_workers)))
     except ValueError:
-        workers = DEFAULT_CONCURRENCY
+        workers = default_workers
     locked, over = stage_efforts(env)
     k = SECONDS_PER_OUT_TOKEN
     if provider == "anthropic":
@@ -228,12 +230,14 @@ def expected_seconds(est: Estimate, provider: str, env: Mapping[str, str] | None
         sec = lambda c: c.out_tokens * (LOW_OUT_FACTOR + HIGH_OUT_DEFAULT) / 2 * k
     pool = [sec(c) for c in est.calls if c.stage.startswith(("review", "set_"))]
     skeptic = [sec(c) for c in est.calls if c.stage == "skeptic"]
-    serial = sum(sec(c) for c in est.calls if c.stage in ("slice", "slice_rest", "dedup", "questions", "tests", "checklist"))
-    t = serial
-    if pool:
-        t += max(sum(pool) / min(workers, len(pool)), max(pool))
-    if skeptic:
-        t += sum(skeptic) / min(workers, len(skeptic))
+    dedup = [sec(c) for c in est.calls if c.stage == "dedup"]
+    serial = sum(sec(c) for c in est.calls if c.stage in ("slice", "slice_rest", "questions"))
+    tests = sum(sec(c) for c in est.calls if c.stage == "tests")
+    checklist = sum(sec(c) for c in est.calls if c.stage == "checklist")
+    t = serial + max(tests, checklist)  # the checklist request goes out beside the answers and the tests
+    for group in (pool, skeptic, dedup):  # each group: its calls side by side, never faster than its longest call
+        if group:
+            t += max(sum(group) / min(workers, len(group)), max(group))
     return t
 
 

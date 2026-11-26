@@ -9,7 +9,7 @@ Base folder: the repository root.
 ## Inputs (read only these)
 - the document: `{DOC}`
 - the answer key: `{KEY}` — `defects` (id, severity, title, anchors = verbatim places in the document, why) and `good` (places that are written well);
-- the report in machine form: `{REPORT_JSON}` — made by `python eval/judge_input.py <report>.json -o <short>.json`: every open finding of the report (fid, severity, title, problem, recommendation, quotes with line numbers, and `also`: titles of the same-defect findings the tool merged into this card — the report prints them on the card under «Сюда же», so they are part of what the reader sees), the questions to the author and the list of strengths the report names;
+- the report in machine form: `{REPORT_JSON}` — made by `python eval/judge_input.py <report>.json -o <short>.json`: every open finding of the report (fid, severity, title, problem, recommendation, quotes with line numbers, and `absorbed`: for every same-defect finding that the tool merged into this card its title, problem and quotes with line numbers — the report prints each of them on the card under «Объединено с похожими замечаниями», so they are part of what the reader sees; `also` repeats their titles and is the only field in reports of the older format), the questions to the author and the list of strengths the report names;
 - the mechanical comparison: `{SCORE_TXT}` — for each key defect: «найден» (strict), «место» (same lines, keywords did not match) or «НЕТ».
 
 Do not read any other file. Never read `.env`.
@@ -18,7 +18,7 @@ Do not read any other file. Never read `.env`.
 
 For **each** defect of the key (all of them, including those the program marked as found) decide:
 
-- `found` — a reader who sees only the tool's finding (title + problem + recommendation + quote) would understand **the same problem** the key describes, and would know where it is. The wording may differ. The place may be a different line if it is clearly the same defect.
+- `found` — a reader who sees only the tool's finding (title + problem + recommendation + quote) would understand **the same problem** the key describes (the card of the finding includes its `absorbed` items: count what they say and where they quote as part of that finding), and would know where it is. The wording may differ. The place may be a different line if it is clearly the same defect.
 - `partial` — the finding names only a part of a multi-part defect, or names the problem so vaguely that the author of the document would have to guess what exactly is wrong.
 - `not_found` — nothing in the report tells the reader about this problem. A finding about the same line but about a different problem is `not_found`. A general remark such as «требование неполное» without the specific point is `not_found`.
 

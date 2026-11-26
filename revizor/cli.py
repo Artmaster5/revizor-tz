@@ -8,6 +8,7 @@ a gate must not pass what was not reviewed (the diagnostic report is still writt
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -16,7 +17,7 @@ import time
 from pathlib import Path
 from typing import Callable, Mapping
 
-from . import (__version__, answers as ans_mod, config, exports, loader, pipeline, report_json, report_md, sidefiles,
+from . import (__version__, answers as ans_mod, clarify, config, exports, loader, pipeline, report_json, report_md, sidefiles,
                verdict)
 from .llm import LLMUnavailable, make_backend, normalize_provider
 from .llm import choose_provider
@@ -250,6 +251,11 @@ def execute(args, env: Mapping[str, str], say: Callable[[str], None], injected_b
                           baseline_path=args.baseline or "")
     if interactive_note:
         result.run.warnings.append(interactive_note)
+    if args.answers and result.diagnostic is None:  # the passport names the exact answers file the run used
+        try:
+            result.run.answers_sha256 = hashlib.sha256(Path(args.answers).read_bytes()).hexdigest()
+        except OSError:
+            pass
 
     # the gate for proposed rewrites now runs at the end of pipeline.run, so every path that renders cards gets it
     written = _write_all(result, inp, outp, say, rerun_note=getattr(args, "rerun_note", ""),
@@ -341,6 +347,12 @@ def _write_all(result: Result, inp: str, outp: str, say, rerun_note: str = "",
         tests = sidefiles.tests_md(result)
         if tests:
             files.append((base.with_name(base.stem + ".tests.md"), tests))
+        try:  # the letter to the author, one section per addressee: optional, never breaks the run
+            letter = clarify.letter_md(result, questions_name=base.stem + ".questions.md")
+            if letter:
+                files.append((base.with_name(base.stem + ".letter.md"), letter))
+        except Exception as e:
+            result.run.warnings.append(f"Письмо автору не записано: внутренняя ошибка ({type(e).__name__}).")
         for suffix, text in side:
             files.append((base.with_name(base.stem + suffix), text))
         # details of the review, one-page summary, tracker import, run details, HTML page: optional, never break the run

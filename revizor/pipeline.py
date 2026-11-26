@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Any, Callable
 
-from . import answers as ans_mod, baseline as baseline_mod, consistency, checklist as checklist_mod, gapcheck, impact, loader, rules, score, slicer, testgen, verdict
+from . import answers as ans_mod, baseline as baseline_mod, clarify, consistency, checklist as checklist_mod, gapcheck, impact, loader, rules, score, slicer, testgen, verdict
 from .config import agent_commit, agent_dirty, agent_tag, agent_version
 from .llm import Backend, LLMError, LLMTransient, LLMUnavailable
 from .llm.pricing import cost_note, cost_usd
@@ -65,6 +65,48 @@ STAGE_GROUP = {"slice": "нарезка", "slice_rest": "нарезка", "revie
                "skeptic": "перепроверка", "dedup": "перепроверка", "questions": "вопросы", "answers": "ответы автора", "tests": "тесты",
                "checklist": "чек-лист документа"}
 HEARTBEAT_S = 15.0  # a «still waiting» line after this many silent seconds
+
+_STAGE_PREFIX = re.compile(r"^\[(\d+)/" + str(STEPS) + r"\] ")
+
+
+class StageClock:
+    """Wall-clock seconds of each of the nine stages, measured at the ``[n/9]`` progress lines.
+
+    ``wrap(say)`` returns a ``say`` that appends « · N с» to every ``[n/9]`` line (not to a skipped stage) and records
+    N. A stage lasts from the previous stage line to its own. Stages 4 and 5 share one pool of requests, so the
+    pipeline gives them their own spans through ``set_span`` (pool start → last request of that stage)."""
+
+    def __init__(self, t0: float | None = None) -> None:
+        self.last = time.monotonic() if t0 is None else t0
+        self.sec: dict[int, float] = {}
+        self.span: dict[int, float] = {}
+        self.lock = threading.Lock()
+
+    def set_span(self, n: int, seconds: float) -> None:
+        with self.lock:
+            self.span[n] = max(0.0, seconds)
+
+    def wrap(self, say: Callable[[str], None]) -> Callable[[str], None]:
+        def timed(line: str) -> None:
+            m = _STAGE_PREFIX.match(str(line))
+            if not m:
+                say(line)
+                return
+            n, now = int(m.group(1)), time.monotonic()
+            with self.lock:
+                sec = self.span.pop(n, None)
+                if sec is None:
+                    sec = max(0.0, now - self.last)
+                if n != 4:  # stage 5 starts together with stage 4 (one pool)
+                    self.last = now
+                self.sec[n] = round(sec, 1)
+            skipped = "… пропущено" in str(line)
+            say(line if skipped else f"{line} · {int(round(sec))} с")
+        return timed
+
+    def seconds(self) -> list[float]:
+        with self.lock:
+            return [self.sec.get(n, 0.0) for n in range(1, STEPS + 1)]
 
 
 class Gate:
@@ -227,7 +269,10 @@ class Gate:
 
     def _log(self, entry: dict) -> None:
         with self.lock:
-            self.audit.append(entry)
+            # a stage that runs beside another one collects its entries apart (``sink``) and the pipeline adds them
+            # at the place the sequential run would have written them
+            sink = getattr(self._tls, "sink", None)
+            (self.audit if sink is None else sink).append(entry)
 
 
 # --- prompt inputs shared with the estimate -------------------------------------------------
@@ -334,6 +379,8 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
          answers=None, baseline_path=""):
     audit: list[dict] = []
     warnings = info.warnings
+    clock = StageClock(t0)  # seconds per stage: appended to every «[n/9]» line, kept in ``info.stage_seconds``
+    say = clock.wrap(say)
 
     # 1. load ------------------------------------------------------------------------------
     doc = loader.load(input_path)
@@ -425,7 +472,12 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
         for kind, _b, what in jobs:
             gate.plan("review" if kind == "review" else GAPS_STAGE if kind == "gaps" else what, 1)
         say(f"      Отправляю модели {len(jobs)} запросов (одновременно до {gate.backend.concurrency})…")
-        results = _run_jobs(gate, jobs, rule_findings, requirements, inj, economy=economy)
+        pool_t0, done_at = time.monotonic(), {}
+        results = _run_jobs(gate, jobs, rule_findings, requirements, inj, economy=economy, done_at=done_at)
+        for n_stage, is_review in ((4, True), (5, False)):  # each stage's span: pool start → its last request
+            ends = [done_at[id(j)] for j in jobs if (j[0] == "review") == is_review and id(j) in done_at]
+            if ends:
+                clock.set_span(n_stage, max(ends) - pool_t0)
         if economy and gate.dead and gate.answered == 0:
             # Slicing made no request, so a dead provider (bad key, no quota) shows up only here: fall back to the
             # rules-only report exactly as a failed slicing call does.
@@ -572,24 +624,53 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
         impact.apply(questions, counted_open, requirements, offline=not model_on, reorder=True, findings=findings)
     except Exception as e:
         warnings.append(f"Влияние ответов на итог не посчитано: внутренняя ошибка ({type(e).__name__}).")
+    try:  # a ready assumption for every question, the addressee of the letter, the fingerprint of the question
+        clarify.annotate(questions, counted_open, by_model=q_by_model)
+    except Exception as e:
+        warnings.append(f"Допущения и отпечатки вопросов не добавлены: внутренняя ошибка ({type(e).__name__}).")
     say(f"[8/{STEPS}] Составляю вопросы автору ({'модель' if q_by_model else 'шаблоны правил'})… "
         f"{len(questions)}")
+
+    # 8d is started here, beside 8b and 8c: its request reads only the open findings (id, level, title), which neither
+    # the answers nor the tests change. Its audit entries, warnings and line are kept apart and added after 8c, at the
+    # place a sequential run writes them, so the report does not depend on who finishes first.
+    cl_audit: list[dict] = []
+    cl_unchecked: list[str] = []
+    cl_lines: list[str] = []
+    cl_pool = cl_fut = None
+    if model_on:
+        def _checklist_beside() -> list:
+            t_cl = time.monotonic()
+            gate._tls.sink = cl_audit
+            try:
+                return _checklist_stage(doc, counted_open, gate, inj, cl_audit, cl_unchecked,
+                                        lambda s: cl_lines.append(f"{s} · {int(round(time.monotonic() - t_cl))} с"))
+            finally:
+                gate._tls.sink = None
+        cl_pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="revizor-checklist")
+        cl_fut = cl_pool.submit(_checklist_beside)
 
     # 8b. author's answers (optional) ----------------------------------------------------------------
     applied = None
     if answers is not None:
         try:
             applied = _answers_stage(answers, questions, counted_open, requirements, gate if model_on else None, doc, inj,
-                                     audit, warnings, unchecked, say)
+                                     audit, warnings, unchecked, say, info)
+            try:  # the rule that found a finding is run again on its new wording; a closed finding may stay open
+                clarify.reopen_in_audit(audit, questions, clarify.fix_checks(counted_open, requirements, doc))
+            except Exception as e:
+                warnings.append(f"Проверка исправлений не выполнена: внутренняя ошибка ({type(e).__name__}).")
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception as e:  # optional stage: never breaks the run
             warnings.append(f"Ответы автора не применены: внутренняя ошибка ({type(e).__name__}).")
     # 8c. acceptance-test drafts (optional) -----------------------------------------------------------
     tests: list = []
+    t_tests = time.monotonic()
     try:
         tests = _tests_stage(requirements, counted_open, questions, coverage, gate if model_on else None, depth, inj,
-                             audit, unchecked, say)
+                             audit, unchecked,
+                             lambda s: say(f"{s} · {int(round(time.monotonic() - t_tests))} с"))
     except (KeyboardInterrupt, SystemExit):
         raise
     except Exception as e:
@@ -597,11 +678,25 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
     # 8d. the document's own unfilled review checklist, answered (optional; never changes findings or the verdict) --
     checklist_items: list = []
     try:
-        checklist_items = _checklist_stage(doc, counted_open, gate if model_on else None, inj, audit, unchecked, say)
+        if cl_fut is not None:  # started beside 8b/8c (see above): wait for it, then add what it kept apart
+            try:
+                checklist_items = cl_fut.result()
+            finally:
+                audit.extend(cl_audit)
+                unchecked.extend(cl_unchecked)
+                for s in cl_lines:
+                    say(s)
+        else:
+            t_cl = time.monotonic()
+            checklist_items = _checklist_stage(doc, counted_open, None, inj, audit, unchecked,
+                                               lambda s: say(f"{s} · {int(round(time.monotonic() - t_cl))} с"))
     except (KeyboardInterrupt, SystemExit):
         raise
     except Exception as e:
         warnings.append(f"Ответы на чек-лист из документа не составлены: внутренняя ошибка ({type(e).__name__}).")
+    finally:
+        if cl_pool is not None:
+            cl_pool.shutdown(wait=False)
 
     # 9. reviews, indices, verdict ---------------------------------------------------------------------
     _finish_reviews(reviews, requirements, findings, model_on)
@@ -643,6 +738,7 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
         gate.close()
     _usage(info, backend, warnings, audit)
     info.duration_s = round(time.monotonic() - t0, 2)
+    info.stage_seconds = clock.seconds()
     if baseline_path:
         try:
             entry, warn = baseline_mod.compare(baseline_path, [f for f in open_f if not f.advisory])
@@ -668,6 +764,10 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
         for f in result.findings:
             f.fixed_wording = ""
         warnings.append(f"Проверка предложенных формулировок не выполнена ({type(e).__name__}): они не показаны.")
+    try:  # a wording that the gate withheld fixes nothing; a model finding's wording is only checked for meaning
+        clarify.after_gate(result.findings)
+    except Exception as e:
+        warnings.append(f"Проверка исправлений не выполнена: внутренняя ошибка ({type(e).__name__}).")
     consistency.settle(result)
     try:
         problems = consistency.check_consistency(result)
@@ -687,9 +787,22 @@ ANSWER_CHUNK = 15
 
 
 def _answers_stage(provider, questions: list[Question], counted_open: list[Finding], requirements, gate, doc, inj,
-                   audit, warnings, unchecked, say):
+                   audit, warnings, unchecked, say, info: RunInfo | None = None):
     parsed = provider(questions)
     warnings.extend(parsed.warnings)
+    if info is not None:
+        info.answers_sha256 = getattr(parsed, "sha256", "") or ""
+    fp = getattr(parsed, "doc_fingerprint", "")
+    if fp and doc.sha256 and not doc.sha256.lower().startswith(fp):
+        warnings.append("Файл ответов выдан для другой версии документа: документ изменился с тех пор. Ответы с "
+                        "отпечатком вопроса применены только к тем вопросам, которые не изменились; остальные "
+                        "ответы по номеру могли попасть не на тот вопрос — проверьте их в разделе «Диалог с автором».")
+    for qid in getattr(parsed, "stale", {}):
+        q = next((x for x in questions if x.qid == qid), None)
+        if q is not None:
+            q.answer_effect = ("Ответ не применён: вопрос или документ изменились с тех пор, как выдан файл ответов "
+                               "(отпечаток вопроса не совпал).")
+            audit.append({"type": "decision", "what": "answer_stale", "qid": qid})
     applied = ans_mod.Applied(total=len(questions))
     if not questions:
         if parsed.answers or parsed.unknown:
@@ -740,12 +853,17 @@ def _answers_stage(provider, questions: list[Question], counted_open: list[Findi
         fu.qid = ans_mod.norm_qid(len(questions) + 1)
         questions.append(fu)
         applied.follow_ups += 1
+    if follow:
+        try:
+            clarify.annotate(follow, counted_open, by_model=True)
+        except Exception as e:
+            warnings.append(f"Допущения новых вопросов не добавлены: внутренняя ошибка ({type(e).__name__}).")
     for fid in applied.closed:
         audit.append({"type": "decision", "what": "answer_closes", "fid": fid, "qids": applied.closes.get(fid, [])})
     audit.append({"type": "answers_summary", "answered": applied.answered, "total": applied.total,
                   "closed": sorted(set(applied.closed)), "follow_ups": applied.follow_ups,
                   "injection": applied.rejected_injection, "by_model": applied.by_model, "fixed": applied.fixed,
-                  "closes": applied.closes})
+                  "closes": applied.closes, "stale": sorted(getattr(parsed, "stale", {}))})
     say(f"      Ответы автора: учтено {applied.answered} из {applied.total}, закрыто замечаний {len(set(applied.closed))}"
         + (f", новых вопросов {applied.follow_ups}" if applied.follow_ups else ""))
     return applied
@@ -907,8 +1025,17 @@ def order_jobs(jobs, economy: bool) -> list:
     return [jobs[i] for i in job_order(jobs, economy)]
 
 
-def _run_jobs(gate: Gate, jobs, rule_findings, requirements, inj, economy: bool = False):
+def _run_jobs(gate: Gate, jobs, rule_findings, requirements, inj, economy: bool = False, done_at: dict | None = None):
+    """Run the review and set jobs; results in the ORIGINAL job order. ``done_at`` (optional) receives, per job
+    (key ``id(job)``), the monotonic time its last attempt ended: the pipeline reads the span of stages 4 and 5 from it."""
     def one3(job):
+        try:
+            return one3_inner(job)
+        finally:
+            if done_at is not None:
+                done_at[id(job)] = time.monotonic()
+
+    def one3_inner(job):
         kind, b, what = job
         gate._tls.last_failed = None
         try:
@@ -939,7 +1066,8 @@ def _run_jobs(gate: Gate, jobs, rule_findings, requirements, inj, economy: bool 
     # One pool for review lenses and set checks (the set prompts take only the requirement list and rule hints, not
     # review results). Submission order: the long set checks first, so that they do not start in the last wave;
     # results come back in the ORIGINAL job order, so ids, report and JSON do not depend on completion order.
-    submit = sorted(range(len(jobs)), key=lambda i: (jobs[i][0] not in ("set", "gaps"), i))
+    # (longest first: the critic pass, then the set checks, then the review batches)
+    submit = sorted(range(len(jobs)), key=lambda i: ({"gaps": 0, "set": 1}.get(jobs[i][0], 2), i))
     results: list = [None] * len(jobs)
     with ThreadPoolExecutor(max_workers=workers) as ex:
         futs = {i: ex.submit(one, jobs[i]) for i in submit}
@@ -1115,14 +1243,27 @@ def _skeptic(gate, findings, info, inj, audit, unchecked, say, *, qi=None, econo
         dchunks = [rest[i:i + DEDUP_CHUNK] for i in range(0, len(rest), DEDUP_CHUNK)]
         gate.plan("dedup", len(dchunks))
         groups: list[dict] = []
-        for ch in dchunks:
+
+        def one_dedup(ch):
             try:
-                ans = gate.call("dedup", dedup_user([dedup_line(f) for f in ch], inj))
-                groups += [g for g in ans.get("groups") or [] if isinstance(g, dict)]
+                return gate.call("dedup", dedup_user([dedup_line(f) for f in ch], inj)), ""
             except (LLMError, StageSkipped) as e:
+                return None, _err(e)
+
+        # the chunks are independent (each sees only its own lines): side by side, answers read in chunk order
+        dworkers = max(1, min(len(dchunks), int(getattr(gate.backend, "concurrency", 1) or 1)))
+        if dworkers > 1:
+            with ThreadPoolExecutor(max_workers=dworkers) as pool:
+                dans = list(pool.map(one_dedup, dchunks))
+        else:
+            dans = [one_dedup(ch) for ch in dchunks]
+        for ch, (ans, err) in zip(dchunks, dans):
+            if err:
                 failed += 1
                 unchecked.append(f"Поиск повторов при перепроверке не выполнен для {count(len(ch), W_FINDING)} "
-                                 f"({ch[0].fid}…{ch[-1].fid}): {_err(e)}")
+                                 f"({ch[0].fid}…{ch[-1].fid}): {err}")
+                continue
+            groups += [g for g in ans.get("groups") or [] if isinstance(g, dict)]
         deduped = apply_dedup(findings, groups, injection=info.injection_suspected, audit=audit)
     kept = sum(1 for f in targets if f.status == "open" and not f.advisory)
     info.skeptic_kept, info.skeptic_rejected = kept, out.rejected
@@ -1161,7 +1302,8 @@ def _parse_questions(ans, findings: list[Finding], known: set[str]):
             qid="", text=str(x["text"]).strip(), why=str(x.get("why") or "").strip(),
             addressee=x.get("addressee") or "analyst", options=opts, priority=x.get("priority") or "important",
             finding_ids=[i for i in (str(v).strip() for v in x.get("finding_ids") or []) if i in fids],
-            option_effects=eff, gap=x.get("gap") if x.get("gap") in GAP_TYPES else ""))
+            option_effects=eff, gap=x.get("gap") if x.get("gap") in GAP_TYPES else "",
+            assumption=" ".join(str(x.get("assumption") or "").split())))
     fix = []
     for x in ans.get("fix_first") or []:
         if isinstance(x, dict) and str(x.get("action") or "").strip():
@@ -1194,7 +1336,7 @@ def _template_questions(findings: list[Finding]) -> list[Question]:
         if q is None:
             q = Question(qid="", text=d.text.strip(), why=_first_sentence(f.problem), addressee=d.addressee,
                          options=list(d.options), priority=prio, finding_ids=[f.fid],
-                         gap=d.gap or GAP_BY_CRITERION.get(f.criterion, ""))
+                         gap=d.gap or GAP_BY_CRITERION.get(f.criterion, ""), assumption=d.assumption.strip())
             by_key[key] = q
             order.append(key)
         else:

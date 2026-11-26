@@ -54,6 +54,10 @@ def jira_csv(result: Result) -> str | None:
                 desc.append(f"- {where}: «{text}»")
         if f.recommendation:
             desc += ["", "Как исправить: " + _one_line(f.recommendation)]
+        merged_in = report_md.absorbed_plain(f) if f.stage != "fold_singularity" else []
+        if merged_in:
+            desc += ["", "Объединено с похожими замечаниями:"] + merged_in
+        desc += ["", "Как найдено: " + _one_line(report_md.how_found(f, plain=True))]
         q = questions.get(f.question_id)
         if q is not None:
             desc += ["", f"Вопрос автору {q.qid}: " + _one_line(q.text)]

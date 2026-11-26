@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Оценка одного результата «Ревизора ТЗ» по ключу дефектов.
 
-    python eval/score.py RESULT.json --key KEY.json [--json] [--min-strict 0.5] [--min-organisers 0.8]
+    python eval/score.py RESULT.json --key KEY.json [--json] [--min-strict 0.5] [--min-organisers 0.8] [--no-absorbed]
 
 Правила сопоставления (всё считается кодом, без участия модели):
 
+* Текст и цитаты замечаний, слитых в карточку (поле absorbed, «Сюда же»), считаются частью этой карточки: читатель
+  видит их на ней. Ключ --no-absorbed возвращает прежний счёт (только собственный текст и цитаты замечания).
 * Берутся только открытые замечания (status == "open"), не «наблюдения» (advisory == false).
   Отклонённые, слитые и «наблюдения» не учитываются ни как находки, ни как ложные тревоги.
 * «Место» совпало, если у замечания есть цитата, которая
@@ -147,6 +149,26 @@ def keywords_hit(f: dict, groups: list[list[str]]) -> bool:
     return True
 
 
+def with_absorbed(f: dict) -> dict:
+    """The finding as the reader sees its card: the title, the problem and the quotes of every finding merged into it
+    («Сюда же») count as part of it. A report of the older format has no ``absorbed`` and stays as it is."""
+    items = [a for a in (f.get("absorbed") or []) if isinstance(a, dict)]
+    if not items:
+        return f
+    view = dict(f)
+    view["problem"] = "\n".join([str(f.get("problem") or "")] + [
+        f"{a.get('title') or ''}\n{a.get('problem') or ''}" for a in items])
+    quotes = list(f.get("quotes") or [])
+    for a in items:
+        for q in a.get("quotes") or []:
+            if not isinstance(q, dict):
+                continue
+            line = int(q.get("line") or q.get("line_start") or 0)
+            quotes.append({"line_start": line, "line_end": int(q.get("line_end") or line), "text": q.get("text", "")})
+    view["quotes"] = quotes
+    return view
+
+
 def is_counted(f: dict) -> bool:
     return f.get("status", "open") == "open" and not f.get("advisory", False)
 
@@ -173,9 +195,13 @@ def _brief(f: dict) -> dict:
     }
 
 
-def score_result(result: dict, key: dict, doc_text: str) -> dict:
-    """Чистая функция: результат + ключ + текст документа → словарь с оценками."""
-    findings = [f for f in (result.get("findings") or []) if is_counted(f)]
+def score_result(result: dict, key: dict, doc_text: str, use_absorbed: bool = True) -> dict:
+    """Чистая функция: результат + ключ + текст документа → словарь с оценками.
+
+    ``use_absorbed``: при сопоставлении дефекта с замечанием текст и цитаты слитых в него замечаний считаются частью
+    замечания (читатель видит их на карточке). Ложные тревоги считаются по собственным цитатам замечания."""
+    own = [f for f in (result.get("findings") or []) if is_counted(f)]
+    findings = [with_absorbed(f) for f in own] if use_absorbed else own
     advisory = sum(1 for f in (result.get("findings") or []) if f.get("advisory"))
     defects = key["defects"]
 
@@ -227,7 +253,7 @@ def score_result(result: dict, key: dict, doc_text: str) -> dict:
 
     false_alarms, exempt = [], []
     in_false: set[int] = set()
-    for i, f in enumerate(findings):
+    for i, f in enumerate(own):
         if f.get("severity") not in ("CRITICAL", "MAJOR"):
             continue
         hit = [g for g, ga in g_anchors if any(quote_matches(q, ga) for q in f.get("quotes") or [])]
@@ -242,7 +268,7 @@ def score_result(result: dict, key: dict, doc_text: str) -> dict:
             false_alarms.append(item)
             in_false.add(i)
 
-    unmatched = [_brief(f) for i, f in enumerate(findings) if i not in matched_any and i not in in_false]
+    unmatched = [_brief(f) for i, f in enumerate(own) if i not in matched_any and i not in in_false]
 
     agreement = {"same": 0, "tool_higher": 0, "tool_lower": 0}
     for r in rows:
@@ -261,6 +287,7 @@ def score_result(result: dict, key: dict, doc_text: str) -> dict:
             "duration_s": run.get("duration_s"),
             "doc_name": run.get("doc_name", ""),
         },
+        "options": {"absorbed": use_absorbed},
         "counts": {
             "requirements": len(result.get("requirements") or []),
             "findings_open": len(findings),
@@ -276,7 +303,7 @@ def score_result(result: dict, key: dict, doc_text: str) -> dict:
     }
 
 
-def score_files(result_path: Path, key_path: Path, force: bool = False) -> dict:
+def score_files(result_path: Path, key_path: Path, force: bool = False, use_absorbed: bool = True) -> dict:
     key, doc_path = load_key(key_path)
     try:
         result = json.loads(Path(result_path).read_text(encoding="utf-8"))
@@ -297,7 +324,7 @@ def score_files(result_path: Path, key_path: Path, force: bool = False) -> dict:
         warnings.append(msg)
     if result.get("diagnostic"):
         warnings.append("В результате есть диагностика: документ не был проверен, оценка бессмысленна")
-    out = score_result(result, key, doc_text)
+    out = score_result(result, key, doc_text, use_absorbed=use_absorbed)
     out["warnings"] = warnings
     out["result_file"] = str(result_path)
     out["key_file"] = str(key_path)
@@ -326,6 +353,9 @@ def render_text(rep: dict) -> str:
     L.append(f"Стоимость: {'—' if cost is None else '$%.4f' % cost}"
              f"{' (' + run['cost_note'] + ')' if run.get('cost_note') else ''}; время: {'—' if dur is None else '%.1f с' % dur}")
     c = rep["counts"]
+    L.append("Сопоставление: " + ("слитые в карточку замечания считаются частью замечания (как их видит читатель)"
+                                 if rep.get("options", {}).get("absorbed", True) else
+                                 "только собственный текст и цитаты замечания (--no-absorbed)"))
     L.append(f"Требований: {c['requirements']}; открытых замечаний (без наблюдений): {c['findings_open']}; наблюдений: {c['advisory']}")
     for w in rep["warnings"]:
         L.append(f"ВНИМАНИЕ: {w}")
@@ -371,6 +401,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--json", action="store_true", help="вывести машинный JSON вместо текста")
     ap.add_argument("--min-strict", type=float, help="порог строгой полноты, доля 0..1; ниже — код выхода 2")
     ap.add_argument("--min-organisers", type=float, help="порог строгой полноты по пунктам организаторов, доля 0..1")
+    ap.add_argument("--no-absorbed", action="store_true",
+                    help="старый способ: слитые в карточку замечания не считаются частью замечания (для сравнения двух чисел)")
     ap.add_argument("--force", action="store_true", help="не останавливаться, если имя документа в результате и в ключе разное")
     args = ap.parse_args(argv)
     for name in ("min_strict", "min_organisers"):
@@ -379,7 +411,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"--{name.replace('_', '-')}: нужна доля от 0 до 1 (например 0.5), получено {v}", file=sys.stderr)
             return 1
     try:
-        rep = score_files(Path(args.result), Path(args.key), force=args.force)
+        rep = score_files(Path(args.result), Path(args.key), force=args.force, use_absorbed=not args.no_absorbed)
     except ScoreError as exc:
         print(f"Ошибка: {exc}", file=sys.stderr)
         return 1

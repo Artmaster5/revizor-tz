@@ -7,11 +7,13 @@ re-check are accepted too: ``reject`` ≡ ``drop`` with why «misread», ``merge
 from __future__ import annotations
 
 import os
+import re
 from typing import Any
 
-from .merge import (SEV_RANK, _reason_fits, _str, absorb, blocker_code, findings_overlap, is_rule_sourced,
-                    more_severe_first, note_level, same_topic, sort_key)
+from .merge import (SEV_RANK, _reason_fits, _str, absorb, blocker_code, guard_allows, is_rule_sourced,
+                    more_severe_first, note_level, sort_key)
 from .model import SEVERITIES, Finding
+from .quotes import normalize
 from .textfmt import lines_text, shorten
 
 # --- policy (data) ------------------------------------------------------------------------------------------------
@@ -51,6 +53,59 @@ WHY_RU = {"stated": "документ отвечает прямо", "misread": "
           "clear": "формулировка ясна из текста", "guess": "предположение без опоры на текст", "formal": "оформление"}
 
 
+# --- the ceiling for blockers (a general rule, after the model and the re-check) ---------------------------------
+# A CRITICAL must name a consequence for money, data or the main flow in its own text. Two reasons are checked:
+# «missing_part» (a missing section, a missing mock-up…) and «loss» when the finding is about service text (a hidden
+# instruction for an AI, an invisible character). Without such a consequence the finding is capped at MAJOR and the
+# level trail says so. Nothing here knows any particular document.
+CAP_REASONS = ("missing_part", "loss")
+SERVICE_RULES = ("prompt-injection", "hidden-text")
+_SERVICE_TEXT = re.compile(
+    r"скрыт\w*\s+(?:текст|комментар|инструкц|указани)|невидим\w*\s+символ|"
+    r"(?:указани|инструкци|обращени|текст)\w*\s+(?:для\s+|к\s+)?(?:проверяющ|ии\b|нейросет|ревьюер|агент)|"
+    r"обращ[её]нн\w*\s+к\s+проверяющ|служебн\w*\s+(?:текст|пометк|комментар)")
+_OBJ = (r"(?:деньг|денежн|средств|платеж|оплат|баланс|сумм[аыуе]|комисс|остатк|счет\w*|перевод|"
+        r"данн|персональн|доступ|заказ|учетн\w+ запис|парол)")
+_HARM = (r"(?:потер|утрат|утечк|искаж|дважды|двойн|дублир|недополуч|переплат|убыт|штраф|взлом|несанкционир|подмен|"
+         r"мошенн|компромет|раскры[тв]|пропад|исчез|удален|поврежд|разруш|списан\w*\s+(?:дважды|повторно|неверно|лишн))")
+_CONSEQUENCE = re.compile(
+    r"дважды|двойн\w*\s+(?:списан|оплат|перевод)|несанкционир|мошенн|"
+    r"(?:основн|главн|ключев)\w*\s+(?:сценар|поток|операци|функци|процесс)|"
+    rf"{_HARM}\W+(?:\w+\W+){{0,4}}?{_OBJ}|{_OBJ}\W+(?:\w+\W+){{0,4}}?{_HARM}")
+CAP_WHY = "понижено кодом: в тексте замечания не названо последствие для денег, данных или основного сценария"
+
+
+def names_consequence(text: str) -> bool:
+    """Does the text name a harm to money, data or the main flow? (words, not the place of a section)"""
+    return bool(_CONSEQUENCE.search(normalize(text or "").replace("ё", "е")))
+
+
+def _is_service_text(f: Finding) -> bool:
+    return any(r in SERVICE_RULES for r in f.rule_ids) or bool(_SERVICE_TEXT.search(normalize(f.title + " " + f.problem)))
+
+
+def cap_blockers(findings: list[Finding], audit: list[dict] | None = None) -> int:
+    """Cap open counted CRITICAL findings that name no consequence (see above) at MAJOR; record the step in
+    ``level_trail`` (by «code») and in the audit. Returns how many were lowered. Idempotent."""
+    n = 0
+    for f in findings:
+        if f.status != "open" or f.advisory or f.severity != "CRITICAL" or f.blocker_reason not in CAP_REASONS:
+            continue
+        if f.blocker_reason == "loss" and not _is_service_text(f):
+            continue
+        if names_consequence(f.title + " " + f.problem):
+            continue
+        reason = f.blocker_reason
+        note_level(f, "code", "MAJOR", CAP_WHY)
+        f.severity = "MAJOR"
+        f.blocker_reason = ""
+        n += 1
+        if audit is not None:
+            audit.append({"type": "decision", "what": "critical_capped", "fid": f.fid, "title": f.title,
+                          "reason": reason, "to": "MAJOR"})
+    return n
+
+
 class GateOutcome:
     def __init__(self) -> None:
         self.kept = 0
@@ -66,11 +121,7 @@ class GateOutcome:
 def merge_allowed(target: Finding, f: Finding, guard: str) -> bool:
     """May ``f`` be folded into ``target``? ``guard``: "topic" (one defect by words or checklist item), "place_or_topic"
     (the re-check's old condition: an overlapping quote, a shared requirement or one topic), "none" (always)."""
-    if guard == "none":
-        return True
-    if guard == "place_or_topic":
-        return findings_overlap(target, f) or bool(set(target.req_ids) & set(f.req_ids)) or same_topic(target, f)
-    return same_topic(target, f)
+    return guard_allows(target, f, guard)
 
 
 def decision_of(d: dict) -> tuple[str, str, str]:
@@ -117,6 +168,7 @@ def apply_gate(findings: list[Finding], decisions: list[dict], *, qi: Any = None
     out = GateOutcome()
     by_id = {f.fid: f for f in findings if f.status == "open" and not f.advisory}
     reviewed: set[str] = set()
+    before = {f.fid: (f.severity, f.blocker_reason) for f in by_id.values()}  # levels before this step lowers anything
     merges: list[tuple[Finding, dict, str, str]] = []
     observations: list[tuple[Finding, dict]] = []
 
@@ -282,7 +334,7 @@ def apply_gate(findings: list[Finding], decisions: list[dict], *, qi: Any = None
         if gone is target:
             audit.append({"type": "decision", "what": "skeptic_merge_swapped", "fid": f.fid, "into": target.fid,
                           "survivor": f.fid})
-        absorb(survivor, gone)
+        absorb(survivor, gone, by="recheck", before=before.get(gone.fid))
         gone.status = "merged"
         gone.merged_into = survivor.fid
         gone.status_reason = reason or f"то же, что {survivor.fid}"
@@ -337,7 +389,7 @@ def apply_dedup(findings: list[Finding], groups: list[dict], *, injection: bool,
             survivor, gone = more_severe_first(target, f)
             if injection and is_rule_sourced(gone):
                 survivor, gone = gone, survivor
-            absorb(survivor, gone)
+            absorb(survivor, gone, by="dedup")
             gone.status = "merged"
             gone.merged_into = survivor.fid
             gone.status_reason = (f"повтор: {why}" if why else f"повтор: то же, что {survivor.fid}")
@@ -348,5 +400,6 @@ def apply_dedup(findings: list[Finding], groups: list[dict], *, injection: bool,
 
 
 __all__ = ["HARD_WHY", "SOFT_WHY", "EFFECT", "REASON_NOT_FOR", "FOCUS_ENV", "focus_on", "STATED_NEEDS_QUOTE", "SOFT_ONLY_MINOR", "SOFT_ON_HIGHER",
+           "CAP_REASONS", "SERVICE_RULES", "cap_blockers", "names_consequence",
            "DROP_NEEDS_EMPTY_DIFFER", "MERGE_GUARD", "DEDUP_GUARD", "WHY_RU", "GateOutcome", "apply_gate",
            "apply_dedup", "merge_allowed", "decision_of", "verified_answer"]

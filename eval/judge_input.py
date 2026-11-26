@@ -4,7 +4,7 @@
     python eval/judge_input.py reports/report.json -o reports/report.slim.json
 
 Полный JSON-отчёт весит сотни килобайт (нарезка, карта полноты, журнал решений). Судье нужны только замечания:
-номер, уровень, заголовок, суть, рекомендация, цитаты со строками, и вопросы автору. Ничего не добавляется и не
+номер, уровень, заголовок, суть, рекомендация, цитаты со строками, слитые в карточку замечания (absorbed) и вопросы автору. Ничего не добавляется и не
 пересказывается: поля копируются как есть.
 """
 from __future__ import annotations
@@ -24,7 +24,11 @@ def slim(result: dict) -> dict:
             "fid": f.get("fid"), "severity": f.get("severity"), "criterion": f.get("criterion"), "scope": f.get("scope"),
             "title": f.get("title"), "problem": f.get("problem"), "recommendation": f.get("recommendation"),
             "blocker_reason": f.get("blocker_reason") or None,
-            "also": f.get("also") or None,  # строки «Сюда же» карточки: заголовки слитых в неё повторов
+            "also": f.get("also") or None,  # заголовки слитых в карточку повторов (для старых отчётов — только они)
+            # то, что читатель видит на карточке под «Объединено с похожими замечаниями»: название, суть и цитаты каждого слитого замечания
+            "absorbed": [{"title": a.get("title"), "problem": a.get("problem"),
+                          "quotes": [{"line": q.get("line"), "text": q.get("text")} for q in a.get("quotes") or []]}
+                         for a in f.get("absorbed") or [] if isinstance(a, dict)],
             "quotes": [{"line": q.get("line_start"), "text": q.get("text")} for q in f.get("quotes", [])],
         })
     questions = [{"qid": q.get("qid"), "priority": q.get("priority"), "text": q.get("text"),

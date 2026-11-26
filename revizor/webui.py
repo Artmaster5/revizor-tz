@@ -26,12 +26,15 @@ from pathlib import Path
 from typing import Any, Callable, Mapping
 from urllib.parse import parse_qs, quote, unquote, urlsplit
 
-from . import __version__, cli, config, verdict as verdict_mod
+from . import __version__, answers as ans_mod, cli, config, rewrite_gate, score as score_mod, verdict as verdict_mod
 from .llm import choose_provider, is_placeholder, normalize_provider, review_batch_size_for
 from .llm.pricing import PRICES
-from .model import Result
+from .merge import FOLD_STAGE, SEV_RANK, sort_key
+from .model import CRITERION_RU, Result
 from .pipeline import STEPS
-from .textfmt import num
+from .prompts import GAPS_STAGE
+from .rules import RULES
+from .textfmt import anchor, num, plain_quote, plural, quote_location, shorten
 
 # The nine stages exactly as pipeline.run numbers them in its «[k/9] …» lines (a test keeps the two in step).
 STAGES = ("Чтение документа", "Нарезка на требования", "Проверка правилами", "Проверка каждого требования",
@@ -43,10 +46,16 @@ ANSWER_FORMATS = (".md", ".txt")
 MAX_DOC_MB = 60
 MAX_ANSWERS_MB = 2
 MAX_JSON_BYTES = 64 * 1024
+MAX_RERUN_BYTES = 512 * 1024  # a repeat check carries every typed answer (up to 2000 characters each)
 MAX_UPLOADS = 20
 MAX_JOBS = 20
 MAX_NAME = 120
 DEFAULT_OUT_DIR = "reports/ui"
+EXAMPLE_NAME = "requirements.md"
+EXAMPLE_PATH = Path(__file__).resolve().parents[1] / "docs" / EXAMPLE_NAME  # the example document that ships with the agent
+FIX_STATUSES = ("resolved", "remains", "unchecked")
+ANSWERS_FROM_WINDOW = "ответы, введённые в окне"
+OFFLINE_NOTE = "Итог предварительный: модель не использовалась, проверены только автоматические правила."
 DEPTHS = (("full", "полная"), ("fast", "быстрая"))
 OFFLINE_ID = "offline"
 OFFLINE_LABEL = "без модели — только правила, бесплатно"
@@ -61,6 +70,8 @@ FILE_KINDS = ((".questions.md", "questions", "Анкета для автора")
               (".details.md", "details", "Подробности проверки"),
               (".tests.md", "tests", "Черновики тестов"),
               (".fixed.md", "fixed", "Предложенные исправления текста"),
+              (".letter.md", "letter", "Письмо автору"),
+              (".letter.txt", "letter", "Письмо автору"),
               (".summary.md", "summary", "Краткая сводка"),
               (".diagnostic.md", "other", "Подробности прогона"),
               (".jira.csv", "jira", "Замечания для Jira (CSV)"),
@@ -182,6 +193,8 @@ class Job:
         self.t_end: float | None = None
         self.stages = [{"n": i + 1, "label": label, "state": "pending", "detail": ""} for i, label in enumerate(STAGES)]
         self.stages[0]["state"] = "running"
+        self.stage_t0: dict[int, float] = {1: self.t0}  # stage number → when it began (monotonic)
+        self.stage_sec: dict[int, float] = {}  # stage number → seconds it took
         self.step_text = ""
         self.calls = {"model": 0, "cache": 0}
         self.spent_text = "$0" if provider == "offline" else "$0.00"
@@ -190,6 +203,9 @@ class Job:
         self.error = ""
         self.files: dict[str, Path] = {}  # base name → path; the only files /files/<job>/ serves
         self.doc_upload = self.answers_upload = ""  # upload ids in use (kept while the check runs)
+        self.details: dict | None = None  # questions and findings of a finished check (``/api/details``)
+        self.typed: dict[str, str] = {}  # answers typed on the page for the repeat check that created this job
+        self.previous: dict | None = None  # summary of the check this one repeats, for «what changed»
 
     # progress ------------------------------------------------------------------------------------------------
     def feed(self, line: str) -> None:
@@ -209,15 +225,19 @@ class Job:
             st = self.stages[k - 1]
             st["state"] = "skipped" if detail.startswith("пропущено") else "done"
             st["detail"] = detail
+            if st["state"] == "done":
+                self.stage_sec[k] = max(0.0, time.monotonic() - self.stage_t0.get(k, self.t0))
             # The pipeline prints «[k/9]» right after stage k has finished, so the next stage is the one at work.
             if k < len(self.stages) and self.stages[k]["state"] == "pending":
                 self.stages[k]["state"] = "running"
+                self.stage_t0.setdefault(k + 1, time.monotonic())
             return
         if _SEND_LINE.match(line):
             # stages 4 and 5 share one pool of model requests: both are at work until «[4/9]» and «[5/9]»
             for st in self.stages[3:5]:
                 if st["state"] == "pending":
                     st["state"] = "running"
+                    self.stage_t0.setdefault(st["n"], time.monotonic())
             return
         m = _STEP_LINE.match(line)
         if m:
@@ -246,13 +266,34 @@ class Job:
             self.t_end = time.monotonic()
             self.state = state
 
+    def final_seconds(self, engine: Any = None) -> list[float | None]:
+        """Seconds per stage for the result: the engine's own ``run.stage_seconds`` when it has valid ones, otherwise
+        what the window measured from the stage lines."""
+        got = normalize_stage_seconds(engine)
+        if got is not None:
+            return got
+        with self.lock:
+            return [round(self.stage_sec[n], 1) if n in self.stage_sec else None for n in range(1, len(self.stages) + 1)]
+
     def status(self, since: int = 0) -> dict:
         with self.lock:
             end = self.t_end if self.t_end is not None else time.monotonic()
+            now = time.monotonic()
+            stages = []
+            for st in self.stages:
+                row = dict(st)
+                n = st["n"]
+                if st["state"] == "done" and n in self.stage_sec:
+                    row["seconds"] = round(self.stage_sec[n], 1)
+                elif st["state"] == "running" and n in self.stage_t0:
+                    row["seconds"] = round(max(0.0, now - self.stage_t0[n]), 1)
+                else:
+                    row["seconds"] = None
+                stages.append(row)
             return {"ok": True, "job_id": self.id, "state": self.state, "doc_name": self.doc_name,
                     "answers_name": self.answers_name, "provider": self.provider, "model": self.model,
                     "depth": self.depth, "max_cost": self.max_cost, "elapsed_s": round(end - self.t0, 1),
-                    "stages": [dict(s) for s in self.stages], "step_text": self.step_text,
+                    "stages": stages, "step_text": self.step_text,
                     "calls": dict(self.calls), "spent_text": self.spent_text, "log": self.log[max(0, since):],
                     "log_next": len(self.log), "result": self.result, "error": self.error}
 
@@ -263,6 +304,42 @@ class Job:
 RERUN_NOTE = ("Когда ответите: в окне Ревизора выберите тот же документ, приложите эту анкету в поле «Ответы автора» "
               "и нажмите «Проверить». То же из терминала: `python main.py --input <путь к документу> "
               "--output {output} --answers {answers}`")
+
+
+def normalize_stage_seconds(raw: Any) -> list[float | None] | None:
+    """A list of nine numbers (or None) from what the engine gives: a list, or a dict keyed 1..9; anything else is None."""
+    if isinstance(raw, dict):
+        raw = [raw.get(i, raw.get(str(i))) for i in range(1, len(STAGES) + 1)]
+    if not isinstance(raw, (list, tuple)) or len(raw) != len(STAGES):
+        return None
+    out: list[float | None] = []
+    for v in raw:
+        out.append(round(float(v), 1) if isinstance(v, (int, float)) and not isinstance(v, bool) and v >= 0 else None)
+    return out if any(v is not None for v in out) else None
+
+
+def clean_fix_check(raw: Any) -> dict | None:
+    """``Finding.fix_check`` as the page shows it: {"status": resolved|remains|unchecked, "note": str} or None."""
+    if not isinstance(raw, dict) or raw.get("status") not in FIX_STATUSES:
+        return None
+    return {"status": raw["status"], "note": " ".join(str(raw.get("note") or "").split())[:400]}
+
+
+def clean_readiness(raw: Any) -> dict | None:
+    """``Result.readiness`` as the page shows it; a malformed part is left out, an empty result is None."""
+    if not isinstance(raw, dict):
+        return None
+    out: dict[str, dict] = {}
+    dev, test = raw.get("dev"), raw.get("test")
+    if isinstance(dev, dict) and isinstance(dev.get("text"), str) and dev["text"].strip():
+        out["dev"] = {"ok": bool(dev.get("ok")), "text": " ".join(dev["text"].split())[:300],
+                      "blockers": [str(x)[:40] for x in (dev.get("blockers") or []) if isinstance(x, (str, int))][:50]}
+    if isinstance(test, dict) and isinstance(test.get("text"), str) and test["text"].strip():
+        cov = test.get("coverage_pct")
+        out["test"] = {"ok": bool(test.get("ok")), "text": " ".join(test["text"].split())[:300],
+                       "coverage_pct": round(float(cov)) if isinstance(cov, (int, float)) and not isinstance(cov, bool) else None,
+                       "uncovered": [str(x)[:40] for x in (test.get("uncovered") or []) if isinstance(x, (str, int))][:50]}
+    return out or None
 
 
 def build_argv(*, doc_path: str, out_path: str, depth: str, model: str, provider_arg: str = "auto",
@@ -285,8 +362,228 @@ def build_argv(*, doc_path: str, out_path: str, depth: str, model: str, provider
     return argv
 
 
+LEVEL_TEXT = {"CRITICAL": ("critical", "блокер"), "MAJOR": ("major", "существенное"), "MINOR": ("minor", "мелкое")}
+STAGE_FOUND = {"set_consistency": "модель, сверка разделов между собой",
+               "set_completeness": "модель, проверка набора требований на полноту",
+               "set_standards": "модель, проверка по стандартам и требованиям безопасности"}
+
+
+def found_by(f) -> str:
+    """One plain Russian line: how the finding was found (the rule's own name, the stage and the criterion)."""
+    crit = CRITERION_RU.get(f.criterion, f.criterion or "").lower()
+    ids = list(f.rule_ids) or ([f.source[5:]] if f.source.startswith("rule:") and f.source[5:] else [])
+    rule = ""
+    if ids:
+        rule = "правило без модели: " + "; ".join(RULES[i].title if i in RULES else f"«{i}»" for i in ids)
+    model = ""
+    if f.source != "rule" and not f.source.startswith("rule:"):
+        if f.stage.startswith("review"):
+            model = f"модель, проверка требования по критерию «{crit}»"
+        elif f.stage in STAGE_FOUND:
+            model = STAGE_FOUND[f.stage]
+        elif f.stage == GAPS_STAGE:
+            model = "модель, проход «чего не хватает»" + (
+                " (контрольный вопрос " + ", ".join(f.gap_ids) + ")" if f.gap_ids else "")
+        elif f.stage == FOLD_STAGE:
+            model = f"несколько замечаний об одном требовании сведены в одно, критерий «{crit}»"
+        else:
+            model = f"модель, критерий «{crit}»" if crit else "модель"
+    if model and rule:
+        return model + "; то же нашло и " + rule
+    return model or rule or "проверка документа"
+
+
+def effect_text(crit: int, major: int, minor: int, *, offline: bool = False) -> str:
+    """The small mark on a question: what an answer does to the findings it is linked to («закроет 2 замечания, из них
+    1 блокер»). Without a model only the choice of a ready option closes a finding, and the mark says so."""
+    total = crit + major + minor
+    if not total:
+        return "замечание не закроет: поможет правке текста" if offline else ""
+    head = "выбор варианта закроет " if offline else "закроет "
+    head += f"{total} " + plural(total, ("замечание", "замечания", "замечаний"))
+    if crit:
+        head += " (блокер)" if total == 1 else f", из них {crit} " + plural(crit, ("блокер", "блокера", "блокеров"))
+    return head
+
+
+def _levels(fids: list[str], level_of: dict[str, str]) -> tuple[int, int, int]:
+    return tuple(sum(1 for i in fids if level_of.get(i) == lv) for lv in ("critical", "major", "minor"))  # type: ignore
+
+
+def _qword(k: int) -> str:
+    return f"{k} " + plural(k, ("вопрос", "вопроса", "вопросов"))
+
+
+def unblock_plan(questions: list[dict], findings: list[dict], *, offline: bool = False) -> dict:
+    """The shortest way to «можно начинать», computed from the findings and the question links only.
+
+    Blockers are the open CRITICAL findings. A blocker is settled when an answer closed it. Otherwise it needs an
+    unanswered question linked to it (the fewest questions that cover all such blockers, ties by the pipeline's own
+    order of questions), or, when every linked question is answered and the blocker stayed, a change in the document;
+    a blocker with no question at all is named separately. Without a model an answer closes a finding only when the
+    question is the finding's own template, and the block says so."""
+    blockers = [f for f in findings if f["level"] == "critical"]
+    closed = [f["fid"] for f in blockers if f["closed_by_answer"]]
+    left = [f for f in blockers if not f["closed_by_answer"]]
+    qby = {q["id"]: q for q in questions}
+    fby = {f["fid"]: f for f in findings}
+    order = {q["id"]: k for k, q in enumerate(questions)}
+    linked: dict[str, list[dict]] = {}
+    for f in left:
+        ids = [q["id"] for q in questions if f["fid"] in q["finding_ids"]]
+        if f["question_id"] in qby and f["question_id"] not in ids:
+            ids.append(f["question_id"])
+        linked[f["fid"]] = [qby[i] for i in ids]
+    open_q = {fid: [q for q in qs if not q["answer"]] for fid, qs in linked.items()}
+    uncovered = [f["fid"] for f in left if open_q[f["fid"]]]
+    need: list[dict] = []
+    while uncovered:
+        pool = {q["id"]: q for fid in uncovered for q in open_q[fid]}
+        best = max(pool.values(), key=lambda q: (sum(1 for i in uncovered if q in open_q[i]), -order[q["id"]]))
+        cover = [i for i in uncovered if best in open_q[i]]
+        need.append({"qid": best["id"], "fids": cover, "question": best.get("text", ""),
+                     "titles": [fby[i]["title"] for i in cover]})
+        uncovered = [i for i in uncovered if i not in cover]
+    need.sort(key=lambda n: order[n["qid"]])
+    not_closed = [{"fid": f["fid"], "title": f["title"], "qids": [q["id"] for q in linked[f["fid"]]],
+                   "what_to_do": f["recommendation"]} for f in left if not open_q[f["fid"]] and linked[f["fid"]]]
+    no_question = [{"fid": f["fid"], "title": f["title"], "what_to_do": f["recommendation"]}
+                   for f in left if not linked[f["fid"]]]
+    lines: list[str] = []
+    again = bool(closed) or any(q["answer"] for q in questions)
+    if not blockers:
+        state = "none"
+    elif not left:
+        state = "all_closed"
+        lines.append("Все блокеры закрыты ответами: внесите ответы в документ и проверьте его ещё раз.")
+    elif need:
+        state = "need"
+        fids = sorted(i for n in need for i in n["fids"])
+        qids = ", ".join(n["qid"] for n in need)
+        many = len(fids) > 1
+        if again and len(need) == 1:
+            lines.append(f"Осталось ответить на {qids}: он закрывает "
+                         + ("последние блокеры " if many and len(fids) == len(left) else
+                            "последний блокер " if len(fids) == 1 and len(left) == 1 else
+                            "блокеры " if many else "блокер ") + ", ".join(fids) + ".")
+        elif again:
+            lines.append(f"Осталось ответить на {_qword(len(need))}: {qids} "
+                         f"({'закроют блокеры' if many else 'закроет блокер'} {', '.join(fids)}).")
+        else:
+            lines.append(f"Чтобы снять запрет на старт, ответьте на {_qword(len(need))}: {qids} "
+                         f"({'закроют блокеры' if many else 'закроет блокер'} {', '.join(fids)}).")
+        if offline:
+            lines.append("Без модели ответ закрывает замечание, только если выбран готовый вариант из подсказок.")
+    else:
+        state = "stuck"
+    for x in not_closed:
+        lines.append(f"Блокер {x['fid']}: ответ на {', '.join(x['qids'])} учтён, но блокер остался открытым. "
+                     + (f"Что нужно: {shorten(x['what_to_do'], 220)}" if x["what_to_do"] else x["title"]))
+    for x in no_question:
+        lines.append(f"Блокер {x['fid']} ответом не снять: вопроса к нему нет, нужно изменить сам документ. "
+                     + (f"Что нужно: {shorten(x['what_to_do'], 220)}" if x["what_to_do"] else x["title"]))
+    return {"state": state, "blockers": len(blockers), "closed": closed, "left": [f["fid"] for f in left],
+            "need": need, "not_closed": not_closed, "no_question": no_question, "lines": lines}
+
+
+def fixes_from(result: Result, questions: list[dict], findings: list[dict] | None = None) -> list[dict]:
+    """For every answer that was taken: the place, the answer and the corrected wording the pipeline produced for it
+    (after its own gate), if any. No wording means no text: nothing is made up here."""
+    rows, _withheld = rewrite_gate.plan(result)
+    checks = {f["fid"]: f["fix_check"] for f in findings or [] if f.get("fix_check")}
+    used: dict[int, str] = {}
+    out = []
+    for q in questions:
+        if not q["answer"] or "обращённый к проверяющему" in q["answer_effect"]:
+            continue
+        wording = None
+        for k, r in enumerate(rows):
+            if set(r.fids) & set(q["finding_ids"]):
+                if k in used:
+                    wording = {"rid": r.rid, "before": "", "after": "", "same_as": used[k]}
+                else:
+                    used[k] = q["id"]
+                    wording = {"rid": r.rid, "before": shorten(" ".join(plain_quote(r.before).split()), 700),
+                               "after": r.after, "same_as": ""}
+                break
+        out.append({"qid": q["id"], "text": q["text"], "answer": q["answer"], "effect": q["answer_effect"],
+                    "line": q["line"], "location": q["location"], "quote": q["quote"], "closed": list(q["closed"]),
+                    "fix_checks": [{"fid": fid, **fc} for fid in q["closed"] if (fc := checks.get(fid))],
+                    "wording": wording})
+    return out
+
+
+def details_from(result: Result, *, offline: bool = False) -> dict:
+    """Questions and open findings of a finished check for the page (the shape of ``/api/details``).
+    The author's typed answers are put in by the caller."""
+    open_f = [f for f in result.findings if f.status == "open" and not f.advisory]
+    open_f.sort(key=lambda f: (SEV_RANK.get(f.severity, 9),) + sort_key(f))
+    findings = []
+    for f in open_f:
+        q = f.quotes[0] if f.quotes else None
+        level, level_text = LEVEL_TEXT.get(f.severity, ("minor", "мелкое"))
+        findings.append({"fid": f.fid, "level": level, "level_text": level_text, "title": f.title,
+                         "problem": f.problem, "recommendation": f.recommendation,
+                         "line": q.line_start if q else None, "location": quote_location(q) if q else "",
+                         "quote": shorten(" ".join(plain_quote(q.text).split()), 600) if q else "",
+                         "found_by": found_by(f), "question_id": f.question_id, "anchor": anchor(f.fid),
+                         "closed_by_answer": bool(f.closed_by_answer),
+                         "fix_check": clean_fix_check(getattr(f, "fix_check", None)),
+                         "standard": " ".join(str(getattr(f, "standard", "") or "").split())[:300]})
+    level_of = {f["fid"]: f["level"] for f in findings}
+    by_obj = {f.fid: f for f in open_f}
+    closes_map = dict((ans_mod.summary(result.audit) or {}).get("closes") or {})
+    questions = []
+    for q in result.questions:
+        qt = q.quote
+        closable = [i for i in q.finding_ids if i in by_obj and not by_obj[i].closed_by_answer]
+        option_closes = [i for i in closable if ans_mod.same_question(q, by_obj[i])]
+        crit, major, minor = _levels(option_closes if offline else closable, level_of)
+        questions.append({"id": q.qid, "text": q.text, "why": q.why, "finding_ids": list(q.finding_ids),
+                          "line": qt.line_start if qt else None, "location": quote_location(qt) if qt else "",
+                          "quote": shorten(" ".join(plain_quote(qt.text).split()), 600) if qt else "",
+                          "options": list(q.options), "priority": q.priority, "answer": q.answer,
+                          "answer_effect": q.answer_effect,
+                          "assumption": " ".join(str(getattr(q, "assumption", "") or "").split())[:400],
+                          "addressee": str(getattr(q, "addressee", "") or ""), "closes": closable, "option_closes": option_closes,
+                          "closed": [fid for fid, qids in closes_map.items() if q.qid in qids],
+                          "effect": {"critical": crit, "major": major, "minor": minor,
+                                     "text": effect_text(crit, major, minor, offline=offline)}})
+    return {"questions": questions, "findings": findings, "fixes": fixes_from(result, questions, findings), "offline": offline,
+            "observations": sum(1 for f in result.findings if f.status == "open" and f.advisory)}
+
+
+def answers_file_text(answers: dict[str, str]) -> str:
+    """The author's answers in the questionnaire format that ``--answers`` reads (``### В-01`` and «Ответ: …»).
+    Line breaks are folded into spaces: an answer must never look like the next question's heading."""
+    out = ["# Ответы автора, введённые в окне Ревизора", ""]
+    for qid, text in answers.items():
+        out += [f"### {qid}", "", "Ответ: " + " ".join(str(text).split()), ""]
+    return "\n".join(out)
+
+
+def previous_snapshot(job: "Job") -> dict | None:
+    """What the previous check showed: open findings (without those closed by answers, when it had answers) and index."""
+    r = job.result
+    if not r:
+        return None
+    after = (r.get("answers") or {}).get("after")
+    return {"job_id": job.id, "verdict": r.get("verdict"), "verdict_text": r.get("verdict_text"),
+            "verdict_level": r.get("verdict_level"),
+            "score": after["score"] if after else r.get("score"),
+            "findings": dict(after["open"] if after else (r.get("findings") or {}))}
+
+
+def split_verdict(text: str) -> tuple[str, str]:
+    """(short verdict, quiet note). The window keeps the big line short: «(модель не использовалась …)» becomes a note."""
+    if text.endswith(verdict_mod.OFFLINE_TAIL):
+        return text[:-len(verdict_mod.OFFLINE_TAIL)], OFFLINE_NOTE
+    return text, ""
+
+
 def result_summary(result: Result, written: list[Path], job_id: str, report_stem: str,
-                   out_dir: str) -> tuple[dict, dict[str, Path]]:
+                   out_dir: str, *, with_answers: bool = False, previous: dict | None = None
+                   ) -> tuple[dict, dict[str, Path]]:
     """The «result» object of the contract, built from the Result itself (not from printed text)."""
     r = result.run
     if result.diagnostic is None:
@@ -312,9 +609,11 @@ def result_summary(result: Result, written: list[Path], job_id: str, report_stem
             size = 0
         listed.append({"name": name, "kind": kind, "label": label, "size": size,
                        "url": f"/files/{job_id}/{quote(name, safe='')}"})
+    vtext, vnote = split_verdict(result.verdict_text)
     return {
         "verdict": result.verdict,
-        "verdict_text": result.verdict_text,
+        "verdict_text": vtext,
+        "verdict_note": vnote,
         "verdict_level": VERDICT_LEVEL.get(result.verdict, "unknown"),
         "score": r.score,
         "requirements": len(result.requirements),
@@ -329,7 +628,39 @@ def result_summary(result: Result, written: list[Path], job_id: str, report_stem
         "warnings": list(r.warnings),
         "out_dir": out_dir,
         "files": listed,
+        "answers": _answers_block(result, previous) if with_answers and result.diagnostic is None else None,
+        "readiness": None if result.diagnostic is not None else clean_readiness(
+            getattr(result, "readiness", None) or getattr(r, "readiness", None)),
+        "stage_seconds": None,
     }, files
+
+
+def _answers_block(result: Result, previous: dict | None) -> dict:
+    """What the author's answers did in this check (null in the result when the check had no answers file).
+    ``after``: the same numbers as if the answers were already put into the document (findings closed by an answer
+    left out; index by the pipeline's own functions; the verdict the pipeline computed as ``verdict_after_answers``)."""
+    sm = ans_mod.summary(result.audit) or {}
+    closed = list(sm.get("closed") or [])
+    open_f = [f for f in result.findings if f.status == "open"]
+    counted = [f for f in open_f if not f.advisory]
+    kept = [f for f in counted if not f.closed_by_answer]
+    closed_f = [f for f in counted if f.closed_by_answer]
+    sev = {s: sum(1 for f in kept if f.severity == s) for s in ("CRITICAL", "MAJOR", "MINOR")}
+    left = [f.fid for f in kept if f.severity == "CRITICAL"]
+    after_score = result.run.score
+    if closed_f:
+        clar = score_mod.clarities(result.requirements, [f for f in open_f if not f.closed_by_answer])
+        after_score = score_mod.readiness(clar, [f for f in open_f if not f.closed_by_answer])[0]
+    code = result.verdict_after_answers or result.verdict
+    atext = result.verdict_after_answers_text or result.verdict_text
+    atext, anote = split_verdict(atext)
+    after = {"open": {"total": len(kept), "critical": sev["CRITICAL"], "major": sev["MAJOR"], "minor": sev["MINOR"]},
+             "closed_count": len(closed_f), "closed_critical": sum(1 for f in closed_f if f.severity == "CRITICAL"),
+             "left_blockers": left, "score": after_score, "verdict": code, "verdict_text": atext,
+             "verdict_note": anote, "verdict_level": VERDICT_LEVEL.get(code, "unknown")}
+    return {"taken": int(sm.get("answered") or 0), "total": int(sm.get("total") or len(result.questions)),
+            "closed": closed, "closed_count": len(closed), "follow_ups": int(sm.get("follow_ups") or 0),
+            "by_model": bool(sm.get("by_model")), "after": after, "previous": previous}
 
 
 # -- estimate ---------------------------------------------------------------------------------------------------
@@ -415,7 +746,8 @@ class UIServer:
                  defaults: Mapping[str, Any] | None = None, provider: str = "auto", no_cache: bool = False,
                  backend=None, page_path: str | Path | None = None, preload: str | None = None,
                  log: Callable[[str], None] | None = None, max_doc_bytes: int = MAX_DOC_MB * 1024 * 1024,
-                 max_answers_bytes: int = MAX_ANSWERS_MB * 1024 * 1024) -> None:
+                 max_answers_bytes: int = MAX_ANSWERS_MB * 1024 * 1024,
+                 example_path: str | Path | None = None) -> None:
         self.env = dict(env)
         self.port = port
         self.out_dir = str(out_dir)
@@ -430,6 +762,7 @@ class UIServer:
         self._log_lock = threading.Lock()
         self.provider, self.provider_note = active_provider(self.provider_arg, self.env)
         self.models, self.default_model = model_choices(self.provider, self.env, defaults.get("model"))
+        self.example_path = Path(example_path) if example_path else EXAMPLE_PATH
         self.default_depth = defaults.get("depth") if defaults.get("depth") in ("full", "fast") else "full"
         self.default_cap = str(defaults.get("max_cost") or "")
         self.lock = threading.Lock()
@@ -491,8 +824,44 @@ class UIServer:
                 "formats": list(DOC_FORMATS), "max_doc_mb": _mb(self.max_doc_bytes),
                 "max_answers_mb": _mb(self.max_answers_bytes),
                 "default_cap": self.default_cap, "out_dir": self.out_dir, "stages": list(STAGES),
+                "example": ({"name": EXAMPLE_NAME, "size": self.example_path.stat().st_size}
+                            if self.example_path.is_file() else None),
                 "preloaded": ({"upload_id": pre["id"], "name": pre["name"], "size": pre["size"]} if pre else None),
                 "job": latest.status(0) if latest else None}
+
+    def example(self, body: dict) -> dict:
+        """«Попробовать на примере»: the example document is stored like an upload. With no key (rules only, free) the
+        check starts at once; with a key nothing is started: the page shows the estimate and the cost cap as for any
+        upload (whether the model answers are already in the cache cannot be known without building the prompts)."""
+        src = self.example_path
+        if not src.is_file():
+            raise ApiError(404, "Примера в этой установке нет.")
+        uid = secrets.token_hex(8)
+        folder = self.temp_root / uid
+        dest = folder / EXAMPLE_NAME
+        try:
+            folder.mkdir()
+            shutil.copyfile(src, dest)
+        except OSError:
+            shutil.rmtree(folder, ignore_errors=True)
+            raise ApiError(400, "Пример не удалось загрузить.")
+        entry = {"id": uid, "kind": "doc", "name": EXAMPLE_NAME, "path": dest, "size": dest.stat().st_size,
+                 "t": time.monotonic(), "pinned": False}
+        with self.lock:
+            self.uploads[uid] = entry
+            self._drop_old_uploads()
+        out = {"ok": True, "upload_id": uid, "name": EXAMPLE_NAME, "size": entry["size"], "mode": "ready",
+               "job_id": None}
+        if self.provider == "offline":
+            try:
+                out["job_id"] = self._start(entry, None, OFFLINE_ID, self.default_depth, "")["job_id"]
+                out["mode"] = "offline"
+            except ApiError:
+                with self.lock:
+                    self.uploads.pop(uid, None)
+                shutil.rmtree(folder, ignore_errors=True)
+                raise
+        return out
 
     def upload(self, kind: str, raw_name: str, length: int | None, rfile) -> dict:
         if kind not in ("doc", "answers"):
@@ -540,7 +909,10 @@ class UIServer:
         return {"ok": True, "upload_id": uid, "name": name, "size": got}
 
     def _drop_old_uploads(self) -> None:
-        busy = {self.running.doc_upload, self.running.answers_upload} if self.running is not None else set()
+        busy: set[str] = set()
+        for j in (self.running, self.latest):
+            if j is not None:
+                busy |= {j.doc_upload, j.answers_upload}
         own = sorted((u for u in self.uploads.values() if not u["pinned"]), key=lambda u: u["t"])
         excess = len(own) - MAX_UPLOADS
         for u in own:
@@ -601,6 +973,10 @@ class UIServer:
         model = self._model(body.get("model"))
         depth = self._depth(body.get("depth", "full"))
         cap = self._cap(body.get("max_cost"))
+        return self._start(doc, ans, model, depth, cap)
+
+    def _start(self, doc: dict, ans: dict | None, model: str, depth: str, cap: str, *, typed: dict | None = None,
+               previous: Job | None = None, answers_label: str = "") -> dict:
         stem = Path(doc["name"]).stem or "document"
         out_path = Path(self.out_dir) / (stem + ("_answered" if ans else "") + ".md")
         argv = build_argv(doc_path=str(doc["path"]), out_path=str(out_path), depth=depth, model=model,
@@ -610,19 +986,100 @@ class UIServer:
         with self.lock:
             if self.running is not None:
                 raise ApiError(409, "Проверка уже идёт: дождитесь её окончания.")
-            job = Job(secrets.token_hex(8), doc_name=doc["name"], answers_name=ans["name"] if ans else "",
+            job = Job(secrets.token_hex(8), doc_name=doc["name"], answers_name=(answers_label or ans["name"]) if ans else "",
                       provider=provider, model=model, depth=depth, max_cost=cap, out_dir=self.out_dir,
                       report_stem=out_path.stem)
             job.doc_upload, job.answers_upload = doc["id"], ans["id"] if ans else ""
+            job.typed = dict(typed or {})
+            job.previous = previous_snapshot(previous) if previous is not None else None
             self.running = job
             self.latest = job
             self.jobs[job.id] = job
             while len(self.jobs) > MAX_JOBS:
                 self.jobs.pop(next(iter(self.jobs)))
         backend = None if model == OFFLINE_ID else self.backend
-        self._say(f"Проверка начата: {doc['name']} · {model} · глубина {depth}")
+        self._say(f"Проверка начата: {doc['name']} · {model} · глубина {depth}"
+                  + (" · с ответами автора" if ans else ""))
         threading.Thread(target=self._work, args=(job, argv, backend), name="revizor-ui-check", daemon=True).start()
         return {"ok": True, "job_id": job.id}
+
+    def _job(self, job_id: Any) -> Job:
+        with self.lock:
+            job = self.jobs.get(job_id) if isinstance(job_id, str) and job_id else self.latest
+        if job is None:
+            raise ApiError(404, "Такой проверки нет.")
+        return job
+
+    def details(self, query: dict) -> dict:
+        """Questions (with the typed answers) and open findings of a finished check."""
+        job = self._job((query.get("job") or [""])[0])
+        with job.lock:
+            d, state, typed = job.details, job.state, dict(job.typed)
+        if state == "running":
+            raise ApiError(409, "Проверка ещё идёт: подробности будут, когда она закончится.")
+        if d is None:
+            raise ApiError(404, "У этой проверки нет подробностей: отчёт не записан или документ не прочитан.")
+        questions = []
+        for q in d["questions"]:
+            row = dict(q)
+            row["answer"] = typed.get(q["id"], q["answer"])
+            questions.append(row)
+        findings = [dict(f) for f in d["findings"]]
+        return {"ok": True, "job_id": job.id, "questions": questions, "findings": findings,
+                "unblock": unblock_plan(questions, findings, offline=d["offline"]), "fixes": d["fixes"],
+                "offline": d["offline"], "observations": d["observations"]}
+
+    def rerun(self, body: dict) -> dict:
+        """The check again, same document, model and depth, plus the answers typed on the page."""
+        job = self._job(body.get("job"))
+        raw = body.get("answers")
+        if not isinstance(raw, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in raw.items()):
+            raise ApiError(400, "Ответы должны прийти списком «номер вопроса — текст».")
+        cap = self._cap(body.get("max_cost"))
+        with job.lock:
+            d, state = job.details, job.state
+        if state == "running" or self.running is not None:
+            raise ApiError(409, "Проверка уже идёт: дождитесь её окончания.")
+        if d is None or not d["questions"]:
+            raise ApiError(400, "У этой проверки нет вопросов, на которые можно ответить.")
+        known = {q["id"]: q for q in d["questions"]}
+        typed: dict[str, str] = {}
+        for qid, text in raw.items():
+            q = known.get(qid)
+            if q is None:
+                continue
+            text = " ".join(text.split())[:ans_mod.MAX_ANSWER_CHARS]
+            if ans_mod.interpret(q["id"], text, q["options"]) is not None:
+                typed[q["id"]] = text
+        if not typed:
+            raise ApiError(400, "Ни на один вопрос нет ответа: впишите хотя бы один.")
+        with self.lock:
+            doc = self.uploads.get(job.doc_upload)
+        if doc is None or not Path(doc["path"]).is_file():
+            raise ApiError(404, "Документ больше не хранится в окне: загрузите его ещё раз и проверьте заново.")
+        uid = secrets.token_hex(8)
+        folder = self.temp_root / uid
+        dest = folder / "answers.md"
+        data = answers_file_text(typed).encode("utf-8")
+        try:
+            folder.mkdir()
+            dest.write_bytes(data)
+        except OSError:
+            shutil.rmtree(folder, ignore_errors=True)
+            raise ApiError(400, "Ответы не удалось сохранить.")
+        entry = {"id": uid, "kind": "answers", "name": "answers.md", "path": dest, "size": len(data),
+                 "t": time.monotonic(), "pinned": False}
+        with self.lock:
+            self.uploads[uid] = entry
+            self._drop_old_uploads()
+        try:
+            return self._start(doc, entry, job.model, job.depth, cap, typed=typed, previous=job,
+                               answers_label=ANSWERS_FROM_WINDOW)
+        except ApiError:
+            with self.lock:
+                self.uploads.pop(uid, None)
+            shutil.rmtree(folder, ignore_errors=True)
+            raise
 
     def _work(self, job: Job, argv: list[str], backend) -> None:
         try:
@@ -639,7 +1096,11 @@ class UIServer:
                 last = next((x for x in reversed(job.log) if x.startswith("Не удалось")), "")
                 job.finish("failed", error=last or "Отчёт не записан.")
             else:
-                summary, files = result_summary(result, written, job.id, job.report_stem, self.out_dir)
+                summary, files = result_summary(result, written, job.id, job.report_stem, self.out_dir,
+                                                with_answers=bool(job.answers_upload), previous=job.previous)
+                summary["stage_seconds"] = job.final_seconds(getattr(result.run, "stage_seconds", None))
+                if result.diagnostic is None:
+                    job.details = details_from(result, offline=job.model == OFFLINE_ID or job.provider == "offline")
                 job.finish("done", result=summary, files=files)
         except cli.UsageError as e:
             job.finish("failed", error=f"Ошибка в параметрах: {str(e)[:300]}")
@@ -730,11 +1191,11 @@ class _Handler(BaseHTTPRequestHandler):
             return None
         return int(raw.strip())
 
-    def _read_json(self) -> dict:
+    def _read_json(self, limit: int = MAX_JSON_BYTES) -> dict:
         n = self._length()
         if n is None:
             raise ApiError(400, "Не указан размер запроса (Content-Length).")
-        if n > MAX_JSON_BYTES:
+        if n > limit:
             self.close_connection = True
             raise ApiError(413, "Запрос слишком большой.")
         try:
@@ -790,6 +1251,8 @@ class _Handler(BaseHTTPRequestHandler):
             self._json(200, ui.config())
         elif path == "/api/status":
             self._json(200, ui.status(parse_qs(parts.query)))
+        elif path == "/api/details":
+            self._json(200, ui.details(parse_qs(parts.query)))
         elif path.startswith("/files/"):
             self._file(path, parse_qs(parts.query))
         else:
@@ -834,6 +1297,10 @@ class _Handler(BaseHTTPRequestHandler):
             self._json(200, ui.estimate(self._read_json()))
         elif parts.path == "/api/run":
             self._json(200, ui.run(self._read_json()))
+        elif parts.path == "/api/example":
+            self._json(200, ui.example(self._read_json()))
+        elif parts.path == "/api/rerun":
+            self._json(200, ui.rerun(self._read_json(MAX_RERUN_BYTES)))
         else:
             raise ApiError(404, "Не найдено.")
 

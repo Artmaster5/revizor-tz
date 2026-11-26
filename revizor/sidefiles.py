@@ -5,7 +5,7 @@ import csv
 import io
 import os
 
-from . import answers as ans_mod, rewrite_gate
+from . import answers as ans_mod, clarify, rewrite_gate
 from .report_md import impact_text
 from .model import ADDRESSEE_RU, GAP_RU, TEST_KIND_RU, Question, Result
 from .textfmt import blockquote, lines_text, plain_quote, md, md_cell, quote_location, shorten
@@ -46,7 +46,11 @@ def questions_md(result: Result, *, input_path: str, output_path: str, questions
            "Как отвечать: под каждым вопросом впишите после «Ответ:» букву варианта (а, б, в, г) или свой ответ "
            "одной-двумя фразами. Пустой ответ или «не знаю» означает «пока не знаю». Номера вопросов и слово «Ответ:» "
            "не меняйте. Порядок — от блокирующих к желательным. Затем запустите команду из последней строки файла: "
-           "агент учтёт ответы, перепишет отчёт и покажет, что изменится.", ""]
+           "агент учтёт ответы, перепишет отчёт и покажет, что изменится. Строки «Отпечаток вопроса» и «Отпечаток документа» "
+           "тоже не меняйте: по ним агент убеждается, что ответ относится именно к этому вопросу и этой версии документа. "
+           "Если ответа не будет, команда считает так, как написано в строке «Если автор не ответит».", ""]
+    if r.doc_sha256:
+        out += [f"Отпечаток документа: {r.doc_sha256[:12]}", ""]
     for q in result.questions:
         who = ADDRESSEE_RU.get(q.addressee, q.addressee)
         out.append(f"### {q.qid} · {PRIORITY_ONE.get(q.priority, q.priority)} · кому: {md(who)}")
@@ -69,6 +73,11 @@ def questions_md(result: Result, *, input_path: str, output_path: str, questions
                 out.append(f"{LETTERS[k]}) {md(o)}" + (f" — что изменится: {md(eff)}" if eff else ""))
         if q.finding_ids:
             out += ["", "Замечания в отчёте: " + ", ".join(q.finding_ids)]
+        line = clarify.assumption_line(q)
+        if line:
+            out += ["", md(line)]
+        if q.fingerprint:  # the answers file carries it back: an answer is applied only to the question it was given for
+            out += ["", f"Отпечаток вопроса: {q.fingerprint}"]
         out += ["", "Ответ:" + (" " + _answer_cell(q) if q.answer else ""), ""]
     out.append(rerun_line(input_path, output_path, questions_path))
     return "\n".join(out) + "\n"

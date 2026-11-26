@@ -171,6 +171,13 @@ def make_backend(provider: str, env: Mapping[str, str], *, model: str | None = N
     return backend
 
 
+# Requests in flight at once, by provider (LLM_CONCURRENCY overrides). Claude: 6 (was 4). The pool of the review and set
+# checks is held by its longest request (the critic pass, 3–4 minutes), and 6 workers already reach that bound
+# on a 50-requirement document; a rate-limit answer (429) is repeated after the wait the server names (base.py,
+# four attempts, backoff up to 30 s). Gemini's free tier and a local Ollama keep 1, other OpenAI-compatible servers 4.
+DEFAULT_CONCURRENCY = {"anthropic": 6, "openai": 4, "gemini": 1, "ollama": 1}
+
+
 def _make(p: str, provider: str, env: Mapping[str, str], *, model: str | None, cache: DiskCache, use_cache: bool,
           timeout: float, max_tokens_override: int | None) -> Backend:
     common = dict(cache=cache, use_cache=use_cache)
@@ -186,7 +193,8 @@ def _make(p: str, provider: str, env: Mapping[str, str], *, model: str | None, c
             effort=_get(env, "ANTHROPIC_EFFORT"),
             stage_overrides=_get(env, "ANTHROPIC_EFFORT_STAGES"),
             base_url=_get(env, "ANTHROPIC_BASE_URL") or None, timeout=timeout,
-            concurrency=_int(env, "LLM_CONCURRENCY", 4, 1, 32) or 4,
+            concurrency=_int(env, "LLM_CONCURRENCY", DEFAULT_CONCURRENCY["anthropic"], 1, 32)
+            or DEFAULT_CONCURRENCY["anthropic"],
             max_tokens_override=max_tokens_override, **common)
 
     if p == "gemini":

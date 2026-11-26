@@ -583,6 +583,17 @@ def _gate_answer(user: str) -> dict:
 
 
 class FullRun(tp._Base):
+    def setUp(self):
+        super().setUp()
+        # this test is about the re-check; a rule that fires on the fixture's range («от 1 000 до 1 000 000»)
+        # would fold into the observation's finding and make it a rule finding, which the re-check never removes
+        real = pipeline.rules.run_rules
+        quiet = mock.patch.object(
+            pipeline.rules, "run_rules",
+            lambda *a, **k: [x for x in real(*a, **k) if "step-missing" not in x.rule_ids])
+        quiet.start()
+        self.addCleanup(quiet.stop)
+
     def script(self):
         inner = tp.make_script(skeptic=_gate_answer)
 
@@ -607,6 +618,10 @@ class FullRun(tp._Base):
         self.assertEqual([x.title for x in merged], ["Не описан отказ сервиса push"])
         survivor = next(x for x in res.findings if x.fid == merged[0].merged_into)
         self.assertEqual(survivor.title, "Нет сценария отказа сервиса push")
+        # the merged-away finding is on the survivor's card with its own wording and place, not by title only
+        (rec,) = survivor.absorbed
+        self.assertEqual((rec["title"], rec["by"]), ("Не описан отказ сервиса push", "recheck"))
+        self.assertTrue(rec["problem"] and rec["quotes"])
         self.assertEqual([x.title for x in res.rejected if x.status == "rejected"], ["Слабое замечание к набору"])
 
         # the observation is nowhere a defect is counted or linked
@@ -618,6 +633,7 @@ class FullRun(tp._Base):
         self.assertNotIn(o.title, sidefiles.findings_csv(res) or "")
 
         md = report_md.render(res)
+        self.assertIn("Объединено с похожими замечаниями (1):", report_md.render_details(res, "r.md", md))
         block = md.split('<a id="s4-obs"></a>', 1)[1].split("\n### ", 2)[1]
         self.assertIn(f"**{o.fid}**", block)
         self.assertIn("  - Почему не в основном списке: деталь проектирования — Формат суммы решает команда", block)

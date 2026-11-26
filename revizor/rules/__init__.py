@@ -4,16 +4,20 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from ..merge import rule_blocker
+from ..merge import absorbed_record, rule_blocker
 from ..model import SEVERITIES, Finding, Requirement, Skipped, SourceDoc
 from ._common import Ctx
 from .advisory_rules import ADVISORY_RULES
 from .api_rules import API_RULES
+from .crosscheck_rules import CROSSCHECK_RULES
+from .glossary_rules import GLOSSARY_RULES
 from .safety_rules import SAFETY_RULES
 from .set_rules import SET_RULES
 from .text_rules import TEXT_RULES
+from .time_rules import TIME_RULES
+from .value_rules import VALUE_RULES
 
-RULESET_VERSION = "1.1"
+RULESET_VERSION = "1.2"
 
 
 @dataclass
@@ -59,6 +63,29 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("prompt-injection", "set_feasibility", "MAJOR", "set", "Текст, обращённый к проверяющему или ИИ"),
     _R("hidden-text", "set_feasibility", "MINOR", "set", "Скрытый текст: HTML-комментарии и невидимые символы"),
     _R("sensitive-data", "set_feasibility", "MAJOR", "set", "Похожие на настоящие номера карт и ИИН"),
+    # time, periods, quantities and thresholds (one grouped finding per rule per document)
+    _R("time-zone-missing", "set_completeness", "MINOR", "set", "Время или граница дня без часового пояса"),
+    _R("period-boundary", "set_completeness", "MINOR", "set", "Срок или период без «включительно / не включая»"),
+    _R("days-without-kind", "set_completeness", "MINOR", "set", "Срок в днях без «календарных / рабочих»"),
+    _R("month-end-day", "set_completeness", "MINOR", "set", "Ежемесячное действие в день 29–31 без правила для коротких месяцев"),
+    _R("period-undefined", "set_completeness", "MINOR", "set", "Лимит «в месяц» или «в сутки» без определения периода"),
+    _R("relative-period", "set_completeness", "MINOR", "set", "«Прошлый», «закрытый», «отчётный» период без определения"),
+    _R("rounding-missing", "set_completeness", "MAJOR", "set", "Расчёт денег (процент, доля, курс) без правила округления"),
+    _R("value-without-unit", "set_completeness", "MINOR", "set", "Число без единицы: сумма без валюты, срок без единицы, размер без единицы"),
+    _R("step-missing", "set_completeness", "MINOR", "set", "Настраиваемое значение в диапазоне без шага"),
+    _R("threshold-conflict", "set_consistency", "MAJOR", "set", "Одна граница описана по-разному («более N» и «от N»)"),
+    _R("limit-no-behaviour", "set_completeness", "MINOR", "set", "Лимит без описания, что происходит при превышении"),
+    # terms (one grouped finding per rule per document)
+    _R("abbreviation-undefined", "comprehensibility", "MINOR", "set", "Сокращения без расшифровки"),
+    _R("term-defined-twice", "set_consistency", "MINOR", "set", "Один термин определён в двух местах по-разному"),
+    _R("condition-undefined", "comprehensibility", "MINOR", "set", "Условие зависит от понятия, которое нигде не определено"),
+    # one document against itself: value sets, examples against tables, numbers against rules
+    _R("set-members-differ", "set_consistency", "MAJOR", "set", "Один перечень (статусы, роли, коды) в двух местах с разным составом"),
+    _R("example-field-mismatch", "set_consistency", "MINOR", "set", "Поля в примере и в таблице полей не совпадают"),
+    _R("parameter-two-values", "set_consistency", "MAJOR", "set", "Один параметр назван двумя разными числами"),
+    _R("example-arithmetic", "set_consistency", "MAJOR", "set", "Расчёт в примере не сходится при пересчёте"),
+    _R("example-out-of-range", "set_consistency", "MINOR", "set", "Пример нарушает диапазон или формат своего параметра"),
+    _R("requirement-without-criterion", "traceability", "MINOR", "set", "Требования без критерия приёмки, когда критерии ссылаются на номера"),
     # advisory observations (low precision, never affect the verdict)
     _R("negative-wording", "unambiguity", "MINOR", "requirement", "Отрицательная формулировка", True),
     _R("vague-pronoun", "unambiguity", "MINOR", "requirement", "Местоимение без ясного предмета", True),
@@ -70,7 +97,7 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("example-in-requirement", "completeness", "MINOR", "requirement", "Пример вместо полного перечня", True),
 ]}
 
-_IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **SAFETY_RULES, **ADVISORY_RULES}
+_IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **SAFETY_RULES, **TIME_RULES, **VALUE_RULES, **GLOSSARY_RULES, **CROSSCHECK_RULES, **ADVISORY_RULES}
 assert set(_IMPL) == set(RULES), set(_IMPL) ^ set(RULES)
 
 last_errors: list[str] = []
@@ -117,11 +144,13 @@ def _drop_echoes(found: list[Finding]) -> list[Finding]:
         if f.advisory:
             m = re.search(r"«([^»]+)»", f.title)
             word = m.group(1).lower() if m else ""
-            echo = word and any(
-                word in n.title.lower() and any(q.line_start <= fq.line_end and fq.line_start <= q.line_end
-                                                for q in n.quotes for fq in f.quotes)
-                for n in normal)
-            if echo:
+            twin = next((n for n in normal if word and word in n.title.lower()
+                         and any(q.line_start <= fq.line_end and fq.line_start <= q.line_end
+                                 for q in n.quotes for fq in f.quotes)), None)
+            if twin is not None:
+                rec = absorbed_record(f, "code")  # the dropped observation stays visible on the survivor
+                if not any(x.get("title") == rec["title"] and x.get("by") == "code" for x in twin.absorbed):
+                    twin.absorbed.append(rec)
                 continue
         out.append(f)
     return out

@@ -8,8 +8,7 @@ import typing
 from pathlib import Path
 from typing import Any
 
-from . import answers as ans_mod, baseline as baseline_mod, score
-from .merge import STANDARDS
+from . import answers as ans_mod, baseline as baseline_mod, readiness as readiness_mod, score, standard as standard_mod
 from . import model as model_mod
 from .model import REQ_CRITERIA, SET_CRITERIA, Result
 from .report_md import advisory, counted, sev_counts, stage_rows, test_totals, verdict_after_blockers
@@ -49,14 +48,27 @@ def summary(result: Result) -> dict[str, Any]:
     }
 
 
+def passport(result: Result) -> dict[str, Any]:
+    """The run passport: what a reader needs to repeat or check the run (the same facts as the report's section 1)."""
+    r = result.run
+    return {"doc_name": r.doc_name, "doc_sha256": r.doc_sha256, "answers_sha256": r.answers_sha256,
+            "ruleset_version": r.rules_version, "agent_version": r.agent_version, "provider": r.provider,
+            "model": r.model, "model_version": r.model_version, "started_at": r.started_at,
+            "duration_s": r.duration_s, "cost_usd": r.cost_usd, "mode": r.mode}
+
+
 def to_data(result: Result) -> dict[str, Any]:
     data = result.to_dict()
     rows = stage_rows(result)
     if rows and isinstance(data.get("run"), dict):
         data["run"]["stage_usage"] = rows
     for f in data.get("findings", []) + data.get("rejected", []):
-        f["standard"] = STANDARDS.get(f.get("criterion", ""), "")
-    return {"format": REPORT_FORMAT, "summary": summary(result), **data}
+        f["standard"] = f.get("standard") or standard_mod.standard_for(f.get("criterion", ""), f.get("rule_ids") or [])
+        if f.get("fix_check") is None:  # absent, not null, when there was nothing to check
+            f.pop("fix_check", None)
+    if result.diagnostic is None and not data.get("readiness"):
+        data["readiness"] = readiness_mod.compute(result)  # a result that was not settled (old report, tests)
+    return {"format": REPORT_FORMAT, "summary": summary(result), "passport": passport(result), **data}
 
 
 def render(result: Result) -> str:
