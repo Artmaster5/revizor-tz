@@ -209,7 +209,8 @@ class ModelApplyTests(Base):
         self.assertIn("не выполнен", next(x for x in res.questions if x.qid == blockers[0].qid).answer_effect)
         md = report_md.render(res)
         self.assertNotIn("READY", res.verdict)
-        self.assertIn("замечания остаются открытыми", md)
+        self.assertIn("замечания остаются", md)                              # the dialog line of the main report
+        self.assertIn("замечания остаются открытыми", report_md.render_details(res))  # the full effect
 
     def test_model_obedience_is_limited_to_linked_findings_and_wrapped_as_data(self):
         base, _ = self.run_fake()

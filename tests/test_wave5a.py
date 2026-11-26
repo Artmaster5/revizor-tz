@@ -96,8 +96,9 @@ class InvariantMarks(_Fake):
         s3 = md.split('<a id="s3"></a>', 1)[1]
         row = next(ln for ln in s3.splitlines() if ln.startswith("| [REQ-004](#req-004)"))
         self.assertIn(f"[⚠️](#{fid.lower()})", row)
-        card = md.split('<a id="req-004"></a>', 1)[1].split("<a id=", 1)[0]
-        self.assertIn(f"[{fid}](#{fid.lower()})", card)
+        det = report_md.render_details(res)  # the requirement block lives in the details file
+        card = det.split('<a id="x-req-004"></a>', 1)[1].split("<a id=", 1)[0]
+        self.assertIn(f"[{fid}](#x-{fid.lower()})", card)
 
 
 class InvariantClarity(_Fake):
@@ -110,8 +111,8 @@ class InvariantClarity(_Fake):
 
     def test_band_word_only_with_linked_findings(self):
         res = self.base()
-        md = report_md.render(res)
-        clean = md.split('<a id="s3-clean"></a>', 1)[1].split('<a id="s4">', 1)[0]
+        md = report_md.render_details(res)
+        clean = md.split('<a id="x-s3-clean"></a>', 1)[1].split('<a id="x-part-b">', 1)[0]
         for word in ("использовать нельзя", "нужна доработка", "есть замечания"):
             self.assertNotIn(word, clean)
 
@@ -309,10 +310,12 @@ class Length(unittest.TestCase):
         res = _offline(AGENT / "docs" / "requirements.md")
         md = report_md.render(res)
         self.assertLessEqual(len(md.split()), self.OFFLINE_MAX)
-        for f in res.findings:  # nothing a reader needs is cut: every problem and recommendation is printed
+        det = report_md.render_details(res, main_text=md)
+        for f in res.findings:  # nothing a reader needs is cut: every problem and recommendation is in the details
             if f.status == "open" and not f.advisory:
-                card = md.split(f'<a id="{f.fid.lower()}"></a>', 1)[1].split("<a id=", 1)[0]
-                self.assertTrue(f.recommendation[:40] in md or "как в [D-" in card, f.fid)
+                self.assertIn(f'<a id="{f.fid.lower()}"></a>', md, f.fid)
+                card = det.split(f'<a id="x-{f.fid.lower()}"></a>', 1)[1].split("<a id=", 1)[0]
+                self.assertTrue(f.recommendation[:40] in det or "как в [D-" in card, f.fid)
 
     def test_card_prints_each_quote_line_once(self):
         res = _offline(AGENT / "docs" / "requirements.md")

@@ -2,7 +2,11 @@
 
 Layout rules (brief 5A): the first screen tells what to do; every count, mark and blocker list comes from
 ``consistency`` so the head, the body and the JSON agree; a document line is printed once per card; full requirement
-cards only where there is something to say; run details live in the diagnostic side file (``render_run_details``)."""
+cards only where there is something to say; run details live in the diagnostic side file (``render_run_details``).
+
+Layout 2: the main report (``render``) prints CRITICAL findings as full cards, MAJOR as three-line cards and MINOR as
+one table per section; the full cards, the requirement blocks, the completeness map and the questions in full go to
+the details file (``render_details``, ``<stem>.details.md``, anchors prefixed ``x-``)."""
 from __future__ import annotations
 
 import contextvars
@@ -12,17 +16,22 @@ from datetime import datetime
 
 from . import answers as ans_mod, baseline as baseline_mod, consistency, gapcheck, impact as impact_mod, rules as rules_mod, score, verdict
 from .config import version_label
-from .consistency import BLOCKER_SHORT, blockers as _blocker_list, fix_links, marks_of, tally, trail_line
+from .consistency import BLOCKER_SHORT, blockers as _blocker_list, fix_links, marks_of, tally
 from .merge import FAMILY, FOLD_STAGE, STANDARDS
 from .model import (ADDRESSEE_RU, BLOCKER_RU, CHECKLIST_VERDICT_RU, CRITERION_RU, GAP_RU, KIND_RU, PRIORITY_RU, REQ_CRITERIA, SET_CRITERIA,
                     SEVERITY_ICON, SKIP_CATEGORY_RU, TEST_KIND_RU, Finding, Question, Quote, Requirement, Result)
 from .prompts import FORMAT_RU, GAPS_NAME, GAPS_STAGE, LENS_BY_STAGE, SET_NAME
 from .quotes import normalize
-from .textfmt import (plain_quote, W_BLOCK, W_CALL, W_OBSERVATION, W_QUESTION, W_REQ, anchor, blockquote, count, dec,
+from .textfmt import (plain_quote, W_BLOCK, W_CALL, W_FINDING, W_OBSERVATION, W_QUESTION, W_REQ, anchor, blockquote, count, dec,
                       duration_text, last_section, lines_text, location, md, md_cell, num, plural,
                       quote_location, shorten, size_text, usd)
 
-TABLE_QUOTE = 220   # section 2: the requirement's exact text up to this many characters, cut at a word boundary
+TABLE_QUOTE = 120   # section 2: the requirement's exact text up to this many characters, cut at a word boundary
+WHERE_QUOTE = 100   # the first quote on a compact card of the main report (the spec allows up to 140)
+Q_TABLE = 90        # a question in the table of section 7 of the main report
+BRIEF_QUOTES = 3    # quotes on a full card of the main report; the rest are counted, all are in the details
+DIALOG_CUT = 90     # question and answer on a line of the dialog in the main report
+COVERAGE_WORDS = 120  # a longer coverage block goes to the details file, the main report keeps one line
 CARD_QUOTE = 500
 QUOTES_SHOWN = 4    # quotes printed per finding; the rest are counted
 ALSO_SHOWN = 3      # titles of merged findings printed per card
@@ -203,26 +212,40 @@ def _said_ref(refs: list[str]) -> str:
     return "как в " + links(refs[:3])
 
 
-def render(result: Result) -> str:
+DEFAULT_NAME = "report.md"
+LAYOUT = "2: короткий отчёт и файл подробностей"
+RERENDERED = "; перерисован из сохранённого результата, модель не вызывалась"
+
+
+def details_name(name: str = DEFAULT_NAME) -> str:
+    """«report.md» → «report.details.md»: the details file that goes with the main report."""
+    stem = name[:-3] if name.endswith(".md") else name.rsplit(".", 1)[0] if "." in name else name
+    return (stem or "report") + ".details.md"
+
+
+def render(result: Result, name: str = DEFAULT_NAME, *, rerendered: bool = False) -> str:
+    """The main report («вёрстка 2»): compact findings that link to ``details_name(name)``.
+    ``name`` is the file name the report is written under; ``rerendered`` marks a re-render without the model."""
     if result.diagnostic is not None:
         return render_diagnostic(result)
     token = _SAID.set({})
     try:
-        return _render(result)
+        return _render(result, name or DEFAULT_NAME, rerendered)
     finally:
         _SAID.reset(token)
 
 
-def _render(result: Result) -> str:
+def _render(result: Result, name: str, rerendered: bool) -> str:
+    dname = details_name(name)
     parts = [
-        _head(result),
-        _passport(result),
+        _head(result, dname),
+        _passport(result, rerendered),
         _slicing(result),
-        _per_requirement(result),
-        _set_level(result),
+        _per_requirement(result, dname),
+        _set_level(result, dname),
         _summary(result),
         _final(result),
-        _questions(result),
+        _questions(result, name),
     ]
     if result.tests:
         parts.append(_tests(result))
@@ -234,7 +257,7 @@ def _h2(key: str) -> str:
     return f'<a id="{key}"></a>\n## {SECTIONS[key]}'
 
 
-def _head(result: Result) -> str:
+def _head(result: Result, dname: str = "") -> str:
     r = result.run
     lines = ["# Отчёт о статической проверке требований", ""]
     when = _when(r.started_at)
@@ -245,6 +268,9 @@ def _head(result: Result) -> str:
     lines.append("")
     lines.append("**Разделы:** " + " · ".join(
         f"[{t}](#{k})" for k, t in SECTIONS.items() if k != "s8" or result.tests))
+    if dname:
+        lines += ["", "Полные карточки с цитатами, разбор по каждому требованию, карта полноты и вопросы с вариантами "
+                  f"ответов — в файле `{md_code(dname)}`."]
     return "\n".join(lines)
 
 
@@ -257,15 +283,18 @@ def first_screen(result: Result) -> list[str]:
     head = result.verdict_text
     if is_offline(result) and result.verdict in verdict.TEXT and head.endswith(verdict.OFFLINE_TAIL):
         head = verdict.TEXT[result.verdict] + " (итог предварительный)"  # the ⚠️ line below says why
+    sm = ans_mod.summary(result.audit)
+    answered = bool(sm and sm.get("total"))
     lines = [f"> **Итог:** {md_plain(head)}",
              f"> Замечаний {num(t['total'])}: {counts_line(result)} · вопросов автору {num(len(result.questions))} · "
-             f"требований {num(len(result.requirements))}"]
+             f"требований {num(len(result.requirements))}" + (" · " + closed_by_answers_text(result) if answered else "")]
     if r.score is not None:
         prelim = ", предварительно" if is_offline(result) else ""
         clash = (result.verdict == "BLOCKED" and r.score >= 60) or (result.verdict == "CONDITIONAL" and r.score >= 85)
         lines.append(f"> Индекс готовности документа: **{r.score} из 100** — {score.readiness_band(r.score)}{prelim}."
-                     + (" Вердикт определяют блокеры, а не индекс." if clash else ""))
-    sm = ans_mod.summary(result.audit)
+                     + (" Вердикт определяют блокеры, а не индекс." if clash else "")
+                     + (" Индекс считается по тексту документа; пока ответы не внесены в текст, он прежний."
+                        if answered else ""))
     if sm and sm.get("total"):
         line = (f"> 💬 Ответы автора учтены: {sm.get('answered', 0)} из {sm['total']}. "
                 f"Закрыто замечаний: {len(sm.get('closed') or [])}.")
@@ -326,6 +355,20 @@ def first_screen(result: Result) -> list[str]:
     return lines
 
 
+def closed_by_answers_text(result: Result) -> str:
+    """«ответы автора закрывают 16 замечаний, из них блокеров 4; после внесения ответов в текст останется 50, блокеров 1» from
+    ``closed_by_answer`` of the counted findings."""
+    c = counted(result)
+    closed = [f for f in c if f.closed_by_answer]
+    if not closed:
+        return "ответы автора замечаний не закрывают"
+    crit = sum(1 for f in closed if f.severity == "CRITICAL")
+    left = len(c) - len(closed)
+    left_crit = sum(1 for f in c if f.severity == "CRITICAL" and not f.closed_by_answer)
+    return (f"ответы автора закрывают {count(len(closed), W_FINDING)}, из них блокеров {crit}; "
+            f"после внесения ответов в текст останется {left}, блокеров {left_crit}")
+
+
 def _merged_actions(actions) -> list[tuple[str, list[str]]]:
     """Fix actions with the same text become one line that links every finding they fix."""
     out: dict[str, list[str]] = OrderedDict()
@@ -352,6 +395,9 @@ def _q_gain(q: Question, result: Result) -> str:
         crit = [fid for fid in im.get("closes") or q.finding_ids
                 if any(f.fid == fid and f.severity == "CRITICAL" for f in counted(result))]
         if k == 1 and crit:
+            asked = [x for x in result.questions if not x.answer and crit[0] in x.finding_ids]
+            if len(asked) > 1:
+                return f" — один из {len(asked)} вопросов к блокеру {link(crit[0])}"
             return f" — снимет блокер {link(crit[0])}"
         return f" — снимет {k} {plural(k, ('блокер', 'блокера', 'блокеров'))}"
     d = int(im.get("index_delta") or 0)
@@ -476,7 +522,7 @@ def recheck_line(result: Result) -> str:
     return line
 
 
-def _passport(result: Result) -> str:
+def _passport(result: Result, rerendered: bool = False) -> str:
     r = result.run
     rows: list[tuple[str, str]] = []
     doc = f"`{md_code(r.doc_name)}` · {FORMAT_RU.get(r.doc_format, r.doc_format)} · {size_text(r.doc_size_bytes)} · "
@@ -501,6 +547,7 @@ def _passport(result: Result) -> str:
     rows.append(("Версия агента", version_label(md(r.agent_version), md_code(r.agent_commit), md(r.rules_version),
                                                 tag=md_code(r.agent_tag), dirty=r.agent_dirty)))
     rows.append(("Режим", MODE_RU.get(r.mode, r.mode)))
+    rows.append(("Вёрстка отчёта", LAYOUT + (RERENDERED if rerendered else "")))
     rows.append(("Время анализа", duration_text(r.duration_s)))
     rows.append(("Стоимость прогона", (f"{usd(r.cost_usd)} ({md(r.cost_note)})" if r.cost_note else usd(r.cost_usd))
                  + (f"; обращений к модели {num(r.llm_calls)}" if r.llm_calls else "")))
@@ -539,16 +586,15 @@ def _slicing(result: Result) -> str:
     how = "моделью" if any(r.origin == "model" for r in result.requirements) else "эвристикой (без модели)"
     out.append(f"Требования выделены {how}; номера REQ-… присвоены программой по порядку документа. "
                f"Найдено {count(len(result.requirements), W_REQ)}. Формулировка — точная цитата; длинная обрезана, "
-               "только если полный текст есть в карточке раздела 3. Ясность каждого требования — в матрице раздела 3.")
+               "полный текст — в файле подробностей. Ясность каждого требования — в матрице раздела 3.")
     out.append("")
     if result.requirements:
-        placed, _with, _without = card_plan(result)
         out.append("| ID (в документе) | Тип | Формулировка (цитата) | Где |")
         out.append("| :--- | :--- | :--- | :--- |")
         for r in result.requirements:
-            limit = TABLE_QUOTE if placed.get(r.rid) else 100_000
-            out.append(f"| {link(r.rid)}{' ' + md(r.doc_id) if r.doc_id else ''} | {KIND_RU.get(r.kind, r.kind)} | "
-                       f"{md_cell(plain_quote(r.quote), limit)} | {location(r.line_start, r.line_end, r.page)} |")
+            out.append(f'| <a id="{anchor(r.rid)}"></a>{r.rid}{" " + md(r.doc_id) if r.doc_id else ""} | '
+                       f"{KIND_RU.get(r.kind, r.kind)} | {md_cell(plain_quote(r.quote), TABLE_QUOTE)} | "
+                       f"{location(r.line_start, r.line_end, r.page)} |")
     else:
         out.append("Требований в документе не найдено.")
     if result.skipped:
@@ -582,8 +628,10 @@ class Shown:
 
 
 def _quote_items(f: Finding, shown: Shown | None, with_rid: bool, cap: int | None = QUOTES_SHOWN) -> list[str]:
-    """Each distinct quote once; a quote the card has already printed is named by its line only."""
-    shown = shown if shown is not None else Shown()
+    """Each distinct quote once. A quote inside one this card has already printed is skipped; a quote of the
+    requirement printed right above the card (``shown``) is named by its place only."""
+    above = shown if shown is not None else Shown()
+    mine = Shown()
     seen: set[tuple[int, int, str]] = set()
     items: list[str] = []
     rest: list[Quote] = []
@@ -595,16 +643,20 @@ def _quote_items(f: Finding, shown: Shown | None, with_rid: bool, cap: int | Non
         if cap is not None and len(items) >= cap:
             rest.append(q)
             continue
-        if shown.has(q):
+        if mine.has(q):
+            continue
+        if above.has(q):
             where = quote_location(q) + (f", {link(q.rid)}" if with_rid and q.rid else "")
-            if f"{where} (цитата выше)" not in items:
-                items.append(f"{where} (цитата выше)")
+            if where not in items:
+                items.append(where)
         else:
             items.append(_quote_line(q, with_rid=with_rid))
-            shown.add(q.line_start, q.line_end, q.text)
+            mine.add(q.line_start, q.line_end, q.text)
     if rest:
-        ls = ", ".join(str(q.line_start) for q in rest[:12]) + ("…" if len(rest) > 12 else "")
-        items.append(f"и ещё {len(rest)} {plural(len(rest), ('место', 'места', 'мест'))}: строки {ls}")
+        nums = list(dict.fromkeys(q.line_start for q in rest))  # one line may carry several quotes
+        ls = ", ".join(str(n) for n in nums[:12]) + ("…" if len(nums) > 12 else "")
+        word = "строка" if len(nums) == 1 else "строки"
+        items.append(f"и ещё {len(rest)} {plural(len(rest), ('цитата', 'цитаты', 'цитат'))}: {word} {ls}")
     return items
 
 
@@ -622,7 +674,7 @@ def _also_line(f: Finding) -> str:
         return ""
     shown = "; ".join(f"«{md(shorten(t, 90))}»" for t in f.also[:ALSO_SHOWN])
     more = f" и ещё {len(f.also) - ALSO_SHOWN}" if len(f.also) > ALSO_SHOWN else ""
-    return "Сюда же: " + shown + more
+    return "Объединено с похожими замечаниями: " + shown + more
 
 
 def _see_also_line(f: Finding, with_rid: bool) -> str:
@@ -633,12 +685,60 @@ def _see_also_line(f: Finding, with_rid: bool) -> str:
     return "См. также (место из объединённого повтора, на отметки не влияет): " + "; ".join(parts) + more
 
 
-def card(f: Finding, *, show_req_links: bool, shown: Shown | None = None) -> str:
-    """A finding. CRITICAL and MAJOR get a full card; MINOR costs two or three lines."""
+_BY_RU = {"model": "модель", "rule": "правило", "skeptic": "перепроверка", "merge": "объединение", "code": "программа",
+          "answer": "ответ автора"}
+_FID = re.compile(r"^D-\d+$")
+
+
+def _merged_with(w: str) -> str:
+    """What ``merge.note_level`` stored in ``with``: a finding id, «правило a, b» or the start of a title."""
+    w = (w or "").strip()
+    if not w:
+        return "объединено с другим замечанием"
+    if _FID.match(w):
+        return f"объединено с замечанием {w}"
+    if w.startswith("правило "):
+        ids = [x.strip() for x in w[len("правило "):].split(",") if x.strip()]
+        word = "правилом" if len(ids) == 1 else "правилами"
+        return f"объединено с {word} " + ", ".join(f"`{md_code(x)}`" for x in ids)
+    return f"объединено с замечанием «{md(shorten(w, 80))}»"
+
+
+def level_trail_text(f: Finding) -> str:
+    """«модель — MINOR → объединено с правилом `x` — MAJOR (причина) → перепроверка — MINOR (причина)»;
+    "" when the level never changed. Ends with the card's level."""
+    t = f.level_trail
+    if len(t) < 2:
+        return ""
+    parts = []
+    for k, e in enumerate(t):
+        by = e.get("by", "")
+        if by == "merge":
+            who = _merged_with(e.get("with", ""))
+        elif by == "rule" and f.rule_ids:
+            who = ("правило " if len(f.rule_ids) == 1 else "правила ") + ", ".join(f"`{md_code(x)}`" for x in f.rule_ids)
+        else:
+            who = md(_BY_RU.get(by, by))
+        part = f"{who} — {md(e.get('level', ''))}"
+        if k and e.get("why"):
+            why = e["why"].rstrip(".")
+            part += f" ({md(why[:150].rsplit(' ', 1)[0] + '…' if len(why) > 150 else why)})"
+        parts.append(part)
+    return " → ".join(parts)
+
+
+def more_link(f: Finding, dname: str) -> str:
+    return f"[подробно]({dname}#x-{anchor(f.fid)})" if dname else ""
+
+
+def card(f: Finding, *, show_req_links: bool, shown: Shown | None = None, brief: bool = False, more: str = "") -> str:
+    """A finding. CRITICAL and MAJOR get a full card; MINOR costs two or three lines.
+    ``brief`` (the main report): without merged titles, places of repeats, the level trail and the source;
+    ``more`` is appended to the last line (the link to the details file)."""
     crit = CRITERION_RU.get(f.criterion, f.criterion)
     head = f"**{f.fid} · {_sev(f)} · {crit}.** {md(f.title)}"
     folded = f.stage == FOLD_STAGE
-    quotes = _place_list(f) if folded else _quote_items(f, shown, show_req_links)
+    quotes = _place_list(f) if folded else _quote_items(f, shown, show_req_links, BRIEF_QUOTES if brief else QUOTES_SHOWN)
     tail: list[str] = []
     if f.question_id:
         tail.append("вопрос автору " + link(f.question_id))
@@ -646,9 +746,13 @@ def card(f: Finding, *, show_req_links: bool, shown: Shown | None = None) -> str
         extra = [r for r in f.req_ids if not any(q.rid == r for q in f.quotes)]
         if extra:
             tail.append("затронуты " + links(extra[:8]) + (f" и ещё {len(extra) - 8}" if len(extra) > 8 else ""))
-    tail.append("источник: " + _source(f))
-    extra_lines = [x for x in (_see_also_line(f, show_req_links), _also_line(f),
-                               ("Уровень: " + md(trail_line(f))) if trail_line(f) else "") if x]
+    if not brief:
+        tail.append("источник: " + _source(f))
+    if more:
+        tail.append(more)
+    trail = level_trail_text(f)
+    extra_lines = [] if brief else [x for x in (_see_also_line(f, show_req_links), _also_line(f),
+                                                ("Уровень: " + trail) if trail else "") if x]
     problem, p_refs = _once(f.problem, f.fid)
     problem = md(problem) + ((" " if problem else "") + _cap(_said_ref(p_refs)) + "." if p_refs else "")
     rec, r_refs = _once(f.recommendation, f.fid)
@@ -681,12 +785,63 @@ def card(f: Finding, *, show_req_links: bool, shown: Shown | None = None) -> str
     if f.severity == "CRITICAL" and f.status == "open" and not f.advisory:
         items.append("Почему блокер: " + BLOCKER_RU.get(f.blocker_reason, "основание не указано"))
     items += extra_lines
-    items.append(_cap("; ".join(tail)))
+    if tail:
+        items.append(_cap("; ".join(tail)))
     for it in items:
         lines.append(it if it.startswith("  - ") else "- " + it)
     return "\n".join(lines)
 
 
+
+def _req_refs(f: Finding, cap: int = 3) -> str:
+    return links(f.req_ids[:cap]) + (f" и ещё {len(f.req_ids) - cap}" if len(f.req_ids) > cap else "")
+
+
+def _place(f: Finding, cap: int = 3) -> str:
+    """Lines and requirements of a finding for the compact forms; never empty."""
+    parts = [x for x in (_where(f), _req_refs(f, cap)) if x]
+    return ", ".join(parts) if parts else "весь документ"
+
+
+def compact_card(f: Finding, dname: str) -> str:
+    """A MAJOR finding in the main report: head, place with the first quote, the full recommendation."""
+    crit = CRITERION_RU.get(f.criterion, f.criterion)
+    head = f"**{f.fid} · {_sev(f)} · {crit}.** {md(f.title)}"
+    where = _place(f)
+    if f.quotes:
+        where += f": «{md(shorten(' '.join(plain_quote(f.quotes[0].text).split()), WHERE_QUOTE))}»"
+    tail = [x for x in ((("вопрос автору " + link(f.question_id)) if f.question_id else ""), more_link(f, dname)) if x]
+    rec = _cap(md(f.recommendation)) if f.recommendation else ""
+    if f.fixed_wording:
+        rec += (" " if rec else "") + "Готовая формулировка — в файле `*.fixed.md`."
+    last = ("Как исправить: " + rec) if rec else ""
+    if tail:
+        last = f"{last} · {'; '.join(tail)}" if last else _cap("; ".join(tail))
+    lines = [f'<a id="{anchor(f.fid)}"></a>', head, "", f"- Где: {where}"]
+    if last:
+        lines.append("- " + last)
+    return "\n".join(lines)
+
+
+def minor_table(items: list[Finding]) -> str:
+    out = ["| Замечание | Где | Что не так |", "| :--- | :--- | :--- |"]
+    for f in items:
+        crit = CRITERION_RU.get(f.criterion, f.criterion)
+        out.append(f'| <a id="{anchor(f.fid)}"></a>{f.fid} · {md(crit)} | {_place(f, 2)} | {md_cell(f.title)} |')
+    return "\n".join(out)
+
+
+def findings_brief(items: list[Finding], dname: str) -> str:
+    """The main report's form of a group of findings: CRITICAL — full card, MAJOR — compact card, MINOR — one table."""
+    out = []
+    for f in items:
+        if f.severity == "CRITICAL":
+            out.append(card(f, show_req_links=True, brief=True, more=more_link(f, dname)))
+    out += [compact_card(f, dname) for f in items if f.severity == "MAJOR"]
+    minors = [f for f in items if f.severity not in ("CRITICAL", "MAJOR")]
+    if minors:
+        out.append(f"Мелкие замечания ({len(minors)}):\n\n" + minor_table(minors))
+    return "\n\n".join(out)
 
 
 # --- section 3 --------------------------------------------------------------------------------------
@@ -713,21 +868,48 @@ def card_plan(result: Result) -> tuple[dict[str, list[Finding]], list[Requiremen
     return placed, with_card, without
 
 
-def _per_requirement(result: Result) -> str:
+def _per_requirement(result: Result, dname: str = "") -> str:
+    """Main report: legend, matrix, the findings about single requirements in compact form."""
     out = [_h2("s3"), ""]
-    offline = is_offline(result)
-    if offline:
+    out += _s3_legend(result, "")
+    reviews = {rv.rid: rv for rv in result.reviews}
+    if result.requirements:
+        out += ["", _matrix(result, reviews)]
+    placed, with_card, _without = card_plan(result)
+    own = [f for r in with_card for f in placed.get(r.rid, [])]
+    sc = sev_counts(own)
+    out.append("")
+    if own:
+        out += [f"**Замечания к отдельным требованиям ({len(own)}): блокеров {sc['CRITICAL']} · существенных "
+                f"{sc['MAJOR']} · мелких {sc['MINOR']}**", "", findings_brief(own, dname)]
+    else:
+        out.append("**Замечаний к отдельным требованиям нет.**")
+    if dname:
+        out += ["", f"Цитаты, ход перепроверки и разбор по каждому требованию — в файле `{md_code(dname)}`, раздел А."]
+    return "\n".join(out)
+
+
+def _s3_legend(result: Result, tail: str) -> list[str]:
+    out = []
+    if is_offline(result):
         out.append("Без модели каждое требование проверено только автоматическими правилами (размытые слова, "
                    "заглушки, сроки без условий, незакрытые перечни, несколько требований в одном пункте и др.); "
                    "смысловые критерии не проверялись (❔).")
     else:
         out.append("Обозначения: ✅ нарушений нет · ⚠️ есть замечание (ссылка ведёт к нему) · — неприменим · "
                    "❔ не проверялось.")
-    out.append(CLARITY_LEGEND + " Карточки ниже — только у требований, к которым есть замечания.")
+    out.append(CLARITY_LEGEND + tail)
+    return out
+
+
+def _per_requirement_details(result: Result) -> str:
+    """Details file, part А: a block per requirement with its findings in full, then the clean requirements."""
+    out = ['<a id="part-a"></a>', "## А. Разбор по каждому требованию", ""]
+    offline = is_offline(result)
+    out += _s3_legend(result, " Карточки ниже — только у требований, к которым есть замечания; матрица "
+                              "«требование × критерий» — в разделе 3 отчёта.")
     reviews = {rv.rid: rv for rv in result.reviews}
     placed, with_card, without = card_plan(result)
-    if result.requirements:
-        out += ["", _matrix(result, reviews)]
     for r in with_card:
         out.append("")
         out.append(_req_block(r, placed.get(r.rid, []), result, reviews.get(r.rid), offline))
@@ -852,29 +1034,72 @@ def _no_findings_table(result: Result, reqs: list[Requirement]) -> str:
 # --- section 4 -------------------------------------------------------------------------------------------
 
 
-def _set_level(result: Result) -> str:
-    out = [_h2("s4"), ""]
-    offline = is_offline(result)
-    out.append("Здесь замечания к документу в целом: противоречия между разделами, пропуски, стандарты, термины, "
-               "нумерация. " + ("Без модели — только то, что находят автоматические правила." if offline else ""))
+def set_groups(result: Result) -> list[tuple[str, str, str, list[Finding]]]:
+    """(number, title, set criterion, findings) of the subsections 4.1–4.5."""
     c = counted(result)
     orphans = [f for f in c if f.scope == "requirement" and not f.req_ids]
-    rid_set = {r.rid for r in result.requirements}
+    out = []
     for numb, title, crit, fams in SUBSECTIONS:
         items = [f for f in c if f.scope == "set" and f.criterion == crit]
         # folded formal remarks keep their requirement criterion: they go to the subsection of its family
         items += [f for f in c if f.scope == "set" and f.criterion not in SET_CRITERIA and FAMILY.get(f.criterion) in fams]
         items += [f for f in orphans if FAMILY.get(f.criterion) in fams]
+        out.append((numb, title, crit, items))
+    return out
+
+
+def _set_subsections(result: Result, dname: str, details: bool) -> list[str]:
+    offline = is_offline(result)
+    rid_set = {r.rid for r in result.requirements}
+    out: list[str] = []
+    for numb, title, crit, items in set_groups(result):
         out += ["", f"### {numb} {title}", ""]
         if items:
-            out.append("\n\n".join(card(f, show_req_links=True) for f in items))
+            out.append("\n\n".join(card(f, show_req_links=True) for f in items) if details
+                       else findings_brief(items, dname))
         else:
             out.append("Нарушений не найдено." if not offline else
                        "Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.")
         if crit == "traceability":
-            out += ["", _coverage_block(result, rid_set, offline)]
+            block = _coverage_block(result, rid_set, offline)
+            if not details and len(block.split()) > COVERAGE_WORDS:
+                block = _coverage_line(result, rid_set, dname)
+            out += ["", block]
+    return out
+
+
+def _set_level_details(result: Result) -> str:
+    """Details file, part Б: today's 4.1–4.5 with full cards and the coverage block."""
+    return "\n".join(['<a id="part-b"></a>', "## Б. Замечания к набору требований"]
+                     + _set_subsections(result, "", True))
+
+
+def _coverage_line(result: Result, rid_set: set[str], dname: str) -> str:
+    covered = {rid for row in result.coverage for rid in row.covers}
+    acc = {row.acceptance_rid for row in result.coverage}
+    need = [r.rid for r in result.requirements
+            if r.rid not in covered and r.rid not in acc and r.kind not in ("acceptance", "goal", "other")]
+    return (f"Покрытие: {count(len(acc), ('критерий', 'критерия', 'критериев'))} приёмки проверяют "
+            f"{count(len(covered & rid_set), W_REQ)}; без критерия приёмки — {len(need)}. Таблица покрытия — в файле "
+            f"`{md_code(dname)}`, раздел Б.")
+
+
+def _gap_line(result: Result, dname: str) -> str:
+    t = gapcheck.totals(result.gap_map)
+    return "\n".join(['<a id="s4-gaps"></a>', "### Карта полноты: контрольные вопросы к документу", "",
+                      f"Вопросов {len(result.gap_map)}: описано {t['covered']} · пробелов {t['gap']} · не относится "
+                      f"{t['na']} · не оценено {t['unchecked']}. Ответ на каждый вопрос и на чём он основан — в файле "
+                      f"`{md_code(dname)}`, раздел В."])
+
+
+def _set_level(result: Result, dname: str = "") -> str:
+    out = [_h2("s4"), ""]
+    offline = is_offline(result)
+    out.append("Здесь замечания к документу в целом: противоречия между разделами, пропуски, стандарты, термины, "
+               "нумерация. " + ("Без модели — только то, что находят автоматические правила." if offline else ""))
+    out += _set_subsections(result, dname, False)
     if result.gap_map:
-        out += ["", _gap_map_block(result)]
+        out += ["", _gap_line(result, dname)]
     adv = advisory(result)
     out += ["", '<a id="s4-obs"></a>', "### Наблюдения (проверьте сами, на итог не влияют)", ""]
     if adv:
@@ -911,11 +1136,11 @@ def gap_answer(cell) -> str:
     return "? не оценено"
 
 
-def _gap_map_block(result: Result) -> str:
+def _gap_map_block(result: Result, heading: bool = True) -> str:
     cells = result.gap_map
     t = gapcheck.totals(cells)
-    out = ['<a id="s4-gaps"></a>', "### Карта полноты: контрольные вопросы к документу", "",
-           f"Агент обязан ответить на каждый из {len(cells)} вопросов — так ни один типовой пробел не пропускается молча. "
+    out = ['<a id="s4-gaps"></a>', "### Карта полноты: контрольные вопросы к документу", ""] if heading else []
+    out += [f"Агент обязан ответить на каждый из {len(cells)} вопросов — так ни один типовой пробел не пропускается молча. "
            "Карта сама не меняет индексы и итог: на них влияют только связанные замечания.", "",
            f"Итого: описано {t['covered']} · пробелов {t['gap']} · не относится {t['na']} · не оценено {t['unchecked']}."]
     rated = [c for c in cells if c.status != "unchecked"]
@@ -1102,11 +1327,52 @@ def _final(result: Result) -> str:
 # --- section 7 ------------------------------------------------------------------------------------------
 
 
-def _questions(result: Result) -> str:
+PRIORITY_ONE = {"blocker": "блокирующий", "important": "важный", "nice": "желательный"}
+
+
+def _questions(result: Result, name: str = "") -> str:
+    """Main report: the intro, one line per answered question, a table of the questions."""
     out = [_h2("s7"), ""]
     if not result.questions:
         out.append("Вопросов нет.")
         return "\n".join(out)
+    out += _questions_intro(result)
+    out += _dialog_brief(result)
+    out += ["", "| № | Вопрос | Кому | Приоритет | К замечаниям |", "| :--- | :--- | :--- | :--- | :--- |"]
+    for prio in ("blocker", "important", "nice"):
+        for q in (x for x in result.questions if x.priority == prio):
+            who = ADDRESSEE_RU.get(q.addressee, q.addressee)
+            to = links(q.finding_ids) if q.finding_ids else (quote_location(q.quote) if q.quote is not None else "—")
+            pr = PRIORITY_ONE.get(q.priority, q.priority) + ("; есть ответ" if q.answer else "")
+            out.append(f'| <a id="{anchor(q.qid)}"></a>{q.qid} | {md_cell(q.text, Q_TABLE)} | {md_cell(who)} | {pr} | {to} |')
+    stem = name[:-3] if name.endswith(".md") else name
+    qfile = f"`{md_code(stem)}.questions.md`" if stem else "`*.questions.md`"
+    where = f"; вопросы полностью — в файле `{md_code(details_name(name))}`, раздел Г" if name else ""
+    out += ["", f"Варианты ответа и что изменит каждый — в файле-анкете {qfile}{where}."]
+    return "\n".join(out)
+
+
+def _questions_details(result: Result) -> str:
+    """Details file, part Г: today's section 7 in full."""
+    out = ['<a id="part-g"></a>', "## Г. Вопросы автору полностью", ""]
+    if not result.questions:
+        out.append("Вопросов нет.")
+        return "\n".join(out)
+    out += _questions_intro(result)
+    by_fid = {f.fid: f for f in result.findings}
+    out += _dialog(result)
+    for prio in ("blocker", "important", "nice"):
+        qs = [q for q in result.questions if q.priority == prio]
+        if not qs:
+            continue
+        out += ["", f"### {PRIORITY_RU[prio]} ({len(qs)})"]
+        for q in qs:
+            out += ["", question_block(q, by_fid, impact_text(q, result))]
+    return "\n".join(out)
+
+
+def _questions_intro(result: Result) -> list[str]:
+    out: list[str] = []
     after = verdict_after_blockers(result)
     if after is not None:
         out.append(f"Если автор ответит на блокирующие вопросы и внесёт правки, вердикт станет: **{md(after[1])}**.")
@@ -1127,16 +1393,44 @@ def _questions(result: Result) -> str:
     out.append(f"{count(len(result.questions), W_QUESTION).capitalize()} составлено {src}. "
                "Ответы удобно вписать в файл-анкету рядом с отчётом (`*.questions.md`): там у каждого вопроса есть "
                "варианты ответа.")
-    by_fid = {f.fid: f for f in result.findings}
-    out += _dialog(result)
-    for prio in ("blocker", "important", "nice"):
-        qs = [q for q in result.questions if q.priority == prio]
-        if not qs:
-            continue
-        out += ["", f"### {PRIORITY_RU[prio]} ({len(qs)})"]
-        for q in qs:
-            out += ["", question_block(q, by_fid, impact_text(q, result))]
-    return "\n".join(out)
+    return out
+
+
+def _closed_by(result: Result) -> dict[str, list[str]]:
+    """question id → the counted findings its answer closed (``answers_summary.closes`` of the audit)."""
+    sm = ans_mod.summary(result.audit) or {}
+    live = {f.fid for f in counted(result) if f.closed_by_answer}
+    out: dict[str, list[str]] = {}
+    closes = sm.get("closes")
+    if isinstance(closes, dict):
+        for fid, qids in closes.items():
+            if fid in live:
+                for qid in qids or []:
+                    out.setdefault(qid, []).append(fid)
+    else:  # an older result: the findings of the question that are closed
+        for q in result.questions:
+            out[q.qid] = [i for i in q.finding_ids if i in live]
+    return out
+
+
+def _dialog_brief(result: Result) -> list[str]:
+    """«Диалог с автором» in the main report: a line per answered question."""
+    sm = ans_mod.summary(result.audit)
+    if not sm or not sm.get("total"):
+        return []
+    closed = _closed_by(result)
+    out = ["", "### Диалог с автором", "",
+           f"Ответы автора учтены: {sm.get('answered', 0)} из {sm['total']}. Закрыто замечаний: {len(sm.get('closed') or [])}"
+           + (f"; новых вопросов из ответов: {sm['follow_ups']}" if sm.get("follow_ups") else "") + ".", ""]
+    for q in (x for x in result.questions if x.answer):
+        fids = closed.get(q.qid) or []
+        eff = ("закрывает " + links(fids)) if fids else "замечания остаются"
+        out.append(f"- {link(q.qid)}: {md(shorten(q.text, DIALOG_CUT))} → «{md(shorten(q.answer, DIALOG_CUT))}» → {eff}")
+    left_q = [q.qid for q in result.questions if not q.answer]
+    open_n = sum(1 for f in counted(result) if not f.closed_by_answer)
+    out += ["", f"Что остаётся открытым: замечаний {open_n} из {len(counted(result))}"
+            + (f"; вопросов без ответа: {len(left_q)}" if left_q else "") + "."]
+    return out
 
 
 def _dialog(result: Result) -> list[str]:
@@ -1309,6 +1603,54 @@ def _appendix(result: Result) -> str:
                 f"({len(result.dropped)}). Журнал решений — в JSON-версии (поле `audit`, только хэши текстов): "
                 f"{count(calls, W_CALL)} к модели, {count(decisions, ('решение', 'решения', 'решений'))} программы."]
     return "\n".join(out)
+
+
+# --- details file (``*.details.md``) -------------------------------------------------------------------------
+
+_A_ID = re.compile(r'<a id="([^"]+)"></a>')
+_A_LINK = re.compile(r"\[([^\]\n]+)\]\(#([^)\s]+)\)")
+
+
+def render_details(result: Result, name: str = DEFAULT_NAME, main_text: str | None = None) -> str | None:
+    """``<stem>.details.md``: what the main report prints in short — the requirement blocks with full cards (А), the
+    set findings with full cards (Б), the completeness map (В) and the questions in full (Г). Every anchor here is
+    prefixed ``x-``; a link to something that only the main report prints leads into ``name``. None for an
+    unreadable document."""
+    if result.diagnostic is not None:
+        return None
+    name = name or DEFAULT_NAME
+    if main_text is None:
+        main_text = render(result, name)
+    main_ids = set(_A_ID.findall(main_text))
+    token = _SAID.set({})
+    try:
+        r = result.run
+        parts = [f"# Подробности проверки: «{md(r.doc_title or r.doc_name)}»",
+                 f"Документ `{md_code(r.doc_name)}`. Этот файл дополняет отчёт `{md_code(name)}`: там — итог, матрица и "
+                 "короткие формы замечаний.\nЗдесь — полные карточки с цитатами и ходом перепроверки, разбор по каждому "
+                 "требованию, карта полноты и вопросы автору с вариантами ответов.",
+                 "**Части:** [А. Разбор по каждому требованию](#part-a) · [Б. Замечания к набору требований](#part-b)"
+                 + (" · [В. Карта полноты](#part-v)" if result.gap_map else "") + " · [Г. Вопросы автору полностью](#part-g)",
+                 _per_requirement_details(result),
+                 _set_level_details(result)]
+        if result.gap_map:
+            parts.append("\n".join(['<a id="part-v"></a>', "## В. Карта полноты", "", _gap_map_block(result, False)]))
+        parts.append(_questions_details(result))
+        text = "\n\n".join(p.strip("\n") for p in parts if p) + "\n"
+    finally:
+        _SAID.reset(token)
+    text = _A_ID.sub(lambda m: f'<a id="x-{m.group(1)}"></a>', text)
+    own = set(_A_ID.findall(text))
+
+    def sub(m: re.Match) -> str:
+        target = m.group(2)
+        if "x-" + target in own:
+            return f"[{m.group(1)}](#x-{target})"
+        if target in main_ids:
+            return f"[{m.group(1)}]({name}#{target})"
+        return m.group(1)
+
+    return _A_LINK.sub(sub, text)
 
 
 # --- run details: the diagnostic side file ------------------------------------------------------------------

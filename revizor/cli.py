@@ -39,7 +39,7 @@ def build_parser() -> argparse.ArgumentParser:
                 description="Ревизор ТЗ — статическая проверка документа с требованиями. Пишет отчёт на русском.")
     p.add_argument("paths", nargs="*", help="вход и выход без ключей: <документ> <отчёт.md>")
     p.add_argument("--input", "-i", help="документ с требованиями (.md, .txt, .pdf, .docx)")
-    p.add_argument("--output", "-o", help="куда записать отчёт (.md или .json); рядом появятся .json и анкета вопросов")
+    p.add_argument("--output", "-o", help="куда записать отчёт (.md или .json); рядом появятся .json, файл подробностей (.details.md), анкета вопросов и другие файлы")
     p.add_argument("--provider", default="auto",
                    help="auto | anthropic | gemini | openai | ollama | offline. По умолчанию auto: берётся первый найденный ключ в "
                         "порядке ANTHROPIC_API_KEY, GEMINI_API_KEY (или GOOGLE_API_KEY), OPENAI_API_KEY, OLLAMA_BASE_URL; "
@@ -261,7 +261,7 @@ def _write_all(result: Result, inp: str, outp: str, say) -> list[Path] | None:
             if ext in (".html", ".htm"):
                 main_path = out.with_suffix(".md")
                 say(f"Отчёт в HTML пока не поддерживается — записываю Markdown: {main_path}")
-            md_text = report_md.render(result)
+            md_text = report_md.render(result, main_path.name)
             files.append((main_path, md_text))
             files.append((main_path.with_suffix(".json"), report_json.render(result)))
         base = files[0][0]
@@ -277,7 +277,7 @@ def _write_all(result: Result, inp: str, outp: str, say) -> list[Path] | None:
             files.append((base.with_name(base.stem + ".tests.md"), tests))
         for suffix, text in side:
             files.append((base.with_name(base.stem + suffix), text))
-        # one-page summary, tracker import, run details, HTML page: optional, never break the run
+        # details of the review, one-page summary, tracker import, run details, HTML page: optional, never break the run
         files += exports.extra_files(result, base, md_text)
     except Exception as e:  # rendering bug: say so plainly
         say(f"Не удалось собрать отчёт: внутренняя ошибка ({type(e).__name__}: {str(e)[:200]}).")

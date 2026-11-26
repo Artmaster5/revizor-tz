@@ -102,7 +102,7 @@ class CriticPass(Base):
         st2 = self.cell(res, "ST2")
         self.assertEqual(st2.status, "covered")
         self.assertGreater(st2.line, 0)
-        md = report_md.render(res)
+        md = report_md.render_details(res)  # the map in full lives in the details file
         self.assertIn(f"✅ описано — строка {st2.line}", md)
         self.assertIn("? цитата не подтверждена", md)
 
@@ -134,7 +134,7 @@ class CriticPass(Base):
         res, _ = self.run_gaps(lambda u: all_na(u, **extra))
         cell = self.cell(res, "VL3")
         self.assertEqual(cell.status, "rejected")
-        self.assertIn("✅ пробел не подтвердился при перепроверке", report_md.render(res))
+        self.assertIn("✅ пробел не подтвердился при перепроверке", report_md.render_details(res))
 
     def test_gap_with_lost_quotes_is_unverified(self):
         extra = {"VL1": gap_item("VL1", "Нет шага", "этого текста нет в документе совсем")}
@@ -158,11 +158,14 @@ class CriticPass(Base):
         res, _ = self.run_gaps(lambda u: all_na(u, **extra))
         md = report_md.render(res)
         self.assertIn("### Карта полноты: контрольные вопросы к документу", md)
-        self.assertIn("Агент обязан ответить на каждый из 35 вопросов", md)
+        self.assertIn("Вопросов 35: описано", md)                 # the main report: one line and a pointer
         self.assertLess(md.index("Карта полноты"), md.index('<a id="s4-obs">'))
-        self.assertIn("Вопросы для службы безопасности и комплаенса", md)
         self.assertRegex(md, r"\| Контрольных вопросов к документу \| 35, из них пробелов 1 \|")
-        self.assertIn("⚠️ пробел — [D-", md)
+        det = report_md.render_details(res)                       # the map in full: details, part В
+        self.assertIn("## В. Карта полноты", det)
+        self.assertIn("Агент обязан ответить на каждый из 35 вопросов", det)
+        self.assertIn("Вопросы для службы безопасности и комплаенса", det)
+        self.assertIn("⚠️ пробел — [D-", det)
         data = json.loads(report_json.render(res))
         self.assertEqual(len(data["gap_map"]), 35)
         self.assertEqual(set(data["gap_map"][0]), {"id", "group", "title", "status", "line", "finding_ids", "checked", "note"})
@@ -194,7 +197,7 @@ class OfflineMap(Base):
         self.assertEqual(self.cell(res, "ST1").note, "без модели не оценивается")
         md = report_md.render(res)
         self.assertIn("Карта полноты", md)
-        self.assertIn("| NP2. Ветки ошибок на схемах | ⚠️ пробел — [D-", md)
+        self.assertIn("| NP2. Ветки ошибок на схемах | ⚠️ пробел — [D-", report_md.render_details(res))
 
     def test_rule_cell_overrides_model_covered(self):
         res, _ = self.run_gaps(lambda u: all_na(u, NP2={"id": "NP2", "status": "covered",
@@ -340,10 +343,11 @@ class Impact(tp._Base):
     def test_report_lines_and_head(self):
         res = pipeline.run(str(AGENT / "docs" / "requirements.md"))
         md = report_md.render(res)
-        self.assertRegex(md, r"Что изменит ответ в итоге: закроет 1 из \d+ блокер\w*")
+        det = report_md.render_details(res)  # the questions in full: details, part Г
+        self.assertRegex(det, r"Что изменит ответ в итоге: закроет 1 из \d+ блокер\w*")
         # a line that changes nothing is not printed; an unchanged index is not printed as «54 → 54»
-        self.assertNotIn("на вердикт не влияет\n", md)
-        for a, b in re.findall(r"индекс готовности (\d+) → (\d+)", md):
+        self.assertNotIn("на вердикт не влияет\n", det)
+        for a, b in re.findall(r"индекс готовности (\d+) → (\d+)", md + det):
             self.assertNotEqual(a, b)
         self.assertIn("Чтобы снять все блокеры, нужны ответы на вопросы: [В-01]", md)
         for q in res.questions:
@@ -374,7 +378,8 @@ class LensAndMatrix(tp._Base):
         md = report_md.render(res)
         s3 = md.split('<a id="s3">', 1)[1].split('<a id="s4">', 1)[0]
         self.assertIn("Матрица «требование × критерий»", s3)
-        self.assertLess(s3.index("Матрица"), s3.index('<a id="req-001">'))
+        s2 = md.split('<a id="s2">', 1)[1].split('<a id="s3">', 1)[0]
+        self.assertIn('<a id="req-001"></a>REQ-001 Ф-1 |', s2)  # the matrix links land on the rows of section 2
         self.assertIn("| [REQ-001](#req-001) Ф-1 |", s3)
         self.assertRegex(s3, r"\[⚠️\]\(#d-\d{3}\)")
         self.assertRegex(s3, r"Пустых клеток \(не проверено\): \d+\.")

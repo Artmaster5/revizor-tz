@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from revizor import exports, report_md  # noqa: E402
 from revizor.report_html import render_html  # noqa: E402
 
 DEFAULT_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -72,6 +73,10 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     out = Path(a.out_dir).resolve()
     out.mkdir(parents=True, exist_ok=True)
+    # the details file next to the report makes one page with it, as in the agent's own HTML export
+    details = src.with_name(report_md.details_name(src.name))
+    if details.is_file():
+        text = exports.one_page_md(text, details.read_text(encoding="utf-8-sig"), src.name)
     page = render_html(text, theme="light")
     prof = Path(tempfile.mkdtemp(prefix="shots-profile-"))
     try:

@@ -1,5 +1,6 @@
-"""Extra files next to the report: the page summary (``*.summary.md``), the import file for a task tracker
-(``*.jira.csv``), the run details (``*.diagnostic.md``) and the HTML page (``*.html``).
+"""Extra files next to the report: the details of the review (``*.details.md``), the page summary
+(``*.summary.md``), the import file for a task tracker (``*.jira.csv``), the run details (``*.diagnostic.md``) and
+the HTML page (``*.html``: the report and its details on one page).
 
 ``extra_files`` never raises: a file that cannot be built is skipped and a warning is added to the run."""
 from __future__ import annotations
@@ -62,15 +63,29 @@ def jira_csv(result: Result) -> str | None:
     return "﻿" + buf.getvalue()
 
 
-def html_page(result: Result, md_text: str) -> str | None:
-    """The report as a self-contained HTML page when ``revizor.report_html`` is importable, else None.
-    The verdict card gets a class by the verdict (``verdict-blocked`` / ``-conditional`` / ``-ready``)."""
+def one_page_md(md_text: str, details_text: str | None, md_name: str) -> str:
+    """The main report followed by its details as one Markdown text: the links between the two files become links
+    inside the page, so the HTML has no link to a ``.md`` file."""
+    if not details_text:
+        return md_text
+    dname = report_md.details_name(md_name)
+    main = md_text.replace(f"]({dname}#", "](#")
+    details = details_text.replace(f"]({md_name}#", "](#")
+    if details.startswith("# "):
+        details = '<a id="x-top"></a>\n## ' + details[2:]
+    return main.rstrip("\n") + "\n\n" + details
+
+
+def html_page(result: Result, md_text: str, details_text: str | None = None, md_name: str = "") -> str | None:
+    """The report (and its details file, when given) as a self-contained HTML page when ``revizor.report_html`` is
+    importable, else None. The verdict card gets a class by the verdict (``verdict-blocked`` / ``-conditional`` /
+    ``-ready``)."""
     try:
         from . import report_html
     except ImportError:
         return None
     title = f"Ревизор ТЗ — {result.run.doc_title or result.run.doc_name}"
-    page = report_html.render_html(md_text, title)
+    page = report_html.render_html(one_page_md(md_text, details_text, md_name or report_md.DEFAULT_NAME), title)
     cls = VERDICT_CLASS.get(result.verdict or "")
     if cls:
         page = page.replace('<blockquote class="verdict">', f'<blockquote class="verdict {cls}">', 1)
@@ -94,17 +109,32 @@ def extra_files(result: Result, base: Path, md_text: str | None = None) -> list[
         if item is not None:
             out.append(item)
 
+    md_name = side(".md").name
+    render_error = ""
+    if md_text is None:
+        try:
+            md_text = report_md.render(result, md_name)
+        except Exception as e:
+            render_error = type(e).__name__
+    details: list[str] = []
     if result.diagnostic is None:
-        md_name = side(".md").name
+        def build_details():
+            text = report_md.render_details(result, md_name, md_text) if md_text is not None else None
+            if text:
+                details.append(text)
+                # next to a JSON report no Markdown report is written: the details go only into the HTML page
+                return (side(".details.md"), text) if base.suffix.lower() != ".json" else None
+            return None
+
+        if md_text is not None:
+            attempt("Файл подробностей проверки", build_details)
         attempt("Краткая сводка", lambda: (side(".summary.md"), report_md.summary_md(result, md_name)))
         attempt("Файл для импорта в трекер", lambda: (lambda t: (side(".jira.csv"), t) if t else None)(jira_csv(result)))
         attempt("Файл подробностей прогона",
                 lambda: (side(".diagnostic.md"), report_md.render_run_details(result)))
     if md_text is None:
-        try:
-            md_text = report_md.render(result)
-        except Exception as e:
-            result.run.warnings.append(f"HTML-версия отчёта не записана: внутренняя ошибка ({type(e).__name__}).")
-            return out
-    attempt("HTML-версия отчёта", lambda: (lambda h: (side(".html"), h) if h else None)(html_page(result, md_text)))
+        result.run.warnings.append(f"HTML-версия отчёта не записана: внутренняя ошибка ({render_error}).")
+        return out
+    attempt("HTML-версия отчёта", lambda: (lambda h: (side(".html"), h) if h else None)(
+        html_page(result, md_text, details[0] if details else None, md_name)))
     return out

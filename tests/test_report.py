@@ -167,10 +167,12 @@ class OfflineReportTests(unittest.TestCase):
         self.assertEqual(links - targets, set())
 
     def test_every_finding_has_quote_fix_and_standard(self):
+        details = report_md.render_details(self.result, main_text=self.md)  # full cards live in the details file
         for f in self.result.findings:
             self.assertTrue(f.quotes, f.fid)
-            card = self.md.split(f'<a id="{textfmt.anchor(f.fid)}"></a>', 1)[1][:4000]
+            self.assertIn(f'<a id="{textfmt.anchor(f.fid)}"></a>', self.md, f.fid)
             if not f.advisory:
+                card = details.split(f'<a id="x-{textfmt.anchor(f.fid)}"></a>', 1)[1][:4000]
                 self.assertIn("Как исправить", card.split("<a id=")[0], f.fid)
         # the standard behind each criterion is named once, in the criteria table of section 5
         s5 = self.md.split("**Замечания по критериям качества**", 1)[1].split("\n\n", 2)[1]

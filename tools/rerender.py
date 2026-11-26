@@ -5,7 +5,8 @@
 Loads the JSON back into the dataclasses (``report_json.load_result``), brings an older result in line with the
 current rules (``remerge``: duplicate merges and the fold of formal remarks; ``consistency.settle``: marks,
 clarity, indices, verdict, question priority, strengths, level trail), runs the rewrite gate, and writes the Markdown report with the usual side files
-(questionnaire, rewrites, tests, CSV for a spreadsheet and for Jira, summary, run details, HTML).
+(questionnaire, rewrites, tests, CSV for a spreadsheet and for Jira, details of the review, summary, run details,
+HTML). The passport of the re-rendered report says that the model was not called.
 ``--as-is`` skips ``settle`` and shows the saved numbers unchanged. The source JSON is never modified.
 """
 from __future__ import annotations
@@ -52,7 +53,7 @@ def prepare(result: Result, *, as_is: bool = False) -> Result:
 
 
 def files_for(result: Result, out: Path, *, side_files: bool = True) -> list[tuple[Path, str]]:
-    md_text = report_md.render(result)
+    md_text = report_md.render(result, out.name, rerendered=True)
     files = [(out, md_text)]
     if not side_files or result.diagnostic is not None:
         return files
