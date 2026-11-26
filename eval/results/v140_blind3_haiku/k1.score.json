@@ -1,0 +1,713 @@
+{
+  "document": "k1_statement.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.014097,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 80.47,
+    "doc_name": "k1_statement.md"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 55,
+    "findings_open": 97,
+    "advisory": 1
+  },
+  "recall": {
+    "overall": {
+      "total": 12,
+      "strict": 10,
+      "loose": 12,
+      "strict_share": 0.8333333333333334,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 2,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 6,
+        "strict": 6,
+        "loose": 6,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 2,
+        "loose": 4,
+        "strict_share": 0.5,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 12,
+        "strict": 10,
+        "loose": 12,
+        "strict_share": 0.8333333333333334,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 8,
+    "tool_higher": 2,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "K1-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Ф-6 разрешает отправку выписки только на подтверждённый в профиле e-mail, а API принимает произвольный параметр email и отправляет файл на него.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-044",
+        "D-103",
+        "D-105",
+        "D-111"
+      ],
+      "loose_fids": [
+        "D-041",
+        "D-044",
+        "D-093",
+        "D-103",
+        "D-105",
+        "D-111"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Метод, который создаёт выписку и отправляет письмо (изменяет состояние, побочный эффект), объявлен как GET.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-062",
+        "D-093",
+        "D-095"
+      ],
+      "loose_fids": [
+        "D-062",
+        "D-093",
+        "D-095"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-03",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Границы периода по Ф-3 определяются по времени устройства клиента, а весь документ — по времени Алматы (UTC+5).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-030"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-030"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K1-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Максимальный период: в Ф-2 — 12 месяцев, в API — 6 месяцев.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-008",
+        "D-025",
+        "D-108"
+      ],
+      "loose_fids": [
+        "D-008",
+        "D-024",
+        "D-025",
+        "D-107",
+        "D-108",
+        "D-141"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K1-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Для мультивалютного счёта не определено, в какой валюте (или по каким валютам раздельно) формируется выписка; в ответе одно поле currency.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-008",
+        "D-017",
+        "D-021"
+      ],
+      "loose_fids": [
+        "D-008",
+        "D-017",
+        "D-021"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«Все операции» не определены: входят ли заблокированные (холды, не проведённые) суммы, отменённые операции; какой датой (авторизации или проводки) операция относится к периоду.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-032",
+        "D-034",
+        "D-036"
+      ],
+      "loose_fids": [
+        "D-032",
+        "D-034",
+        "D-036",
+        "D-137"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описан сбой отправки письма (недоставка, отказ MailService) и большой размер вложения: API отвечает 200 синхронно, статус FAILED в модели данных нигде не объяснён.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-008",
+        "D-088",
+        "D-090",
+        "D-091"
+      ],
+      "loose_fids": [
+        "D-008",
+        "D-088",
+        "D-090",
+        "D-091"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Требование «PDF должен быть качественным и удобным для чтения» непроверяемо.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-051"
+      ],
+      "loose_fids": [
+        "D-051"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-09",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В функциональное требование Ф-9 вынесены детали макета (логотип 40×40 px, шрифт Roboto 10 pt).",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-054",
+        "D-053"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K1-10",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Ф-12 дублирует Ф-5 (выписка в PDF).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-068",
+        "D-069",
+        "D-070"
+      ],
+      "loose_fids": [
+        "D-068",
+        "D-069",
+        "D-070"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Тип accountId: в path — string, в ответе — integer.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-106"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K1-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Блок согласующих пуст.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-142",
+        "D-143"
+      ],
+      "loose_fids": [
+        "D-037",
+        "D-142",
+        "D-143"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-037",
+      "severity": "MAJOR",
+      "title": "Способ подписи PDF отложен на этап проектирования",
+      "line": 44,
+      "good_anchor": "Қол қою тәсілін жобалау кезеңінде ақпараттық қауіпсіздік департаменті айқындайды."
+    },
+    {
+      "fid": "D-063",
+      "severity": "MAJOR",
+      "title": "Не описан ответ на ссылку после истечения срока",
+      "line": 50,
+      "good_anchor": "Дайын файлға сілтеме 30 күн бойы жарамды, одан кейін файл StatementService қоймасынан жойылады."
+    },
+    {
+      "fid": "D-064",
+      "severity": "MAJOR",
+      "title": "Ссылка на выписку не защищена проверкой прав доступа",
+      "line": 50,
+      "good_anchor": "Дайын файлға сілтеме 30 күн бойы жарамды, одан кейін файл StatementService қоймасынан жойылады."
+    },
+    {
+      "fid": "D-066",
+      "severity": "MAJOR",
+      "title": "Ссылка на PDF не требует авторизации: любой, у кого она есть, получит выписку",
+      "line": 50,
+      "good_anchor": "Дайын файлға сілтеме 30 күн бойы жарамды, одан кейін файл StatementService қоймасынан жойылады."
+    },
+    {
+      "fid": "D-124",
+      "severity": "MAJOR",
+      "title": "Не определено, какие запросы учитываются в лимите",
+      "line": 113,
+      "good_anchor": "Бір клиент тәулігіне 10 үзінді көшірмеден артық сұрай алмайды. Лимит Алматы уақытымен 00:00-де жаңарады."
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-025",
+      "severity": "CRITICAL",
+      "title": "Период выписки: до 12 месяцев в Ф-2 и до 6 месяцев в параметре dateTo",
+      "line": 41,
+      "good_anchor": "12 айлық кезеңге арналған PDF файлы сұраныстардың 95 %-ында 5 секундтан аспай қалыптастырылады",
+      "confirms": [
+        "K1-04"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Название задачи в заголовке и в таблице различается",
+      "line": 1
+    },
+    {
+      "fid": "D-002",
+      "severity": "MINOR",
+      "title": "Нет выключателя функции и плана отката для нового функционала",
+      "line": 13
+    },
+    {
+      "fid": "D-003",
+      "severity": "MINOR",
+      "title": "В перечне затронутых систем нет API-шлюза и StatementService",
+      "line": 14
+    },
+    {
+      "fid": "D-004",
+      "severity": "MAJOR",
+      "title": "Не описан начальный остаток, если счёт открыт позже dateFrom",
+      "line": 26
+    },
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Не указан момент, до которого учитываются операции конечного остатка",
+      "line": 27
+    },
+    {
+      "fid": "D-006",
+      "severity": "MINOR",
+      "title": "Не задана точность сумм в выписке",
+      "line": 27
+    },
+    {
+      "fid": "D-009",
+      "severity": "MINOR",
+      "title": "Схема архитектуры записана одной строкой без веток ошибок",
+      "line": 32
+    },
+    {
+      "fid": "D-010",
+      "severity": "MINOR",
+      "title": "Стрелки не определяют тип связи",
+      "line": 33
+    },
+    {
+      "fid": "D-011",
+      "severity": "MINOR",
+      "title": "Не описан контракт взаимодействия с DocService и MailService",
+      "line": 33
+    },
+    {
+      "fid": "D-012",
+      "severity": "MINOR",
+      "title": "Нет ожидаемого результата для кнопок и полей экрана",
+      "line": 36
+    },
+    {
+      "fid": "D-013",
+      "severity": "MINOR",
+      "title": "Не описано, что показано в полях периода при первом открытии",
+      "line": 36
+    },
+    {
+      "fid": "D-015",
+      "severity": "MAJOR",
+      "title": "Неясно поведение кнопки «Поштаға жіберу»",
+      "line": 37
+    },
+    {
+      "fid": "D-014",
+      "severity": "MINOR",
+      "title": "Не определено, откуда берётся адрес для отправки на почту",
+      "line": 37
+    },
+    {
+      "fid": "D-016",
+      "severity": "MAJOR",
+      "title": "Не описаны состояния кнопок, ошибки ввода и подтверждение на экране",
+      "line": 37
+    },
+    {
+      "fid": "D-019",
+      "severity": "MINOR",
+      "title": "Не указана опорная дата для 3 лет",
+      "line": 40
+    },
+    {
+      "fid": "D-020",
+      "severity": "MINOR",
+      "title": "Не сказано, от какой даты считаются 3 года",
+      "line": 40
+    },
+    {
+      "fid": "D-022",
+      "severity": "MINOR",
+      "title": "Неясно, весь ли период должен быть в 3 годах",
+      "line": 41
+    },
+    {
+      "fid": "D-039",
+      "severity": "MAJOR",
+      "title": "Нет критерия проверки корректной ЭЦҚ-подписи",
+      "line": 44
+    },
+    {
+      "fid": "D-043",
+      "severity": "MINOR",
+      "title": "Результат описан через действие клиента",
+      "line": 45
+    },
+    {
+      "fid": "D-046",
+      "severity": "MINOR",
+      "title": "Не заданы тексты сообщений, их язык и поведение при сбое почты",
+      "line": 45
+    },
+    {
+      "fid": "D-047",
+      "severity": "MINOR",
+      "title": "Не описан язык при языке интерфейса вне списка",
+      "line": 46
+    },
+    {
+      "fid": "D-048",
+      "severity": "MINOR",
+      "title": "Язык по умолчанию из Ф-7 не отражён в параметре lang API",
+      "line": 46
+    },
+    {
+      "fid": "D-056",
+      "severity": "MINOR",
+      "title": "Название шрифта без причины",
+      "line": 48
+    },
+    {
+      "fid": "D-065",
+      "severity": "MINOR",
+      "title": "Момент удаления файла не задан",
+      "line": 50
+    },
+    {
+      "fid": "D-067",
+      "severity": "MINOR",
+      "title": "Не описано, что видно при изменении операции задним числом",
+      "line": 50
+    },
+    {
+      "fid": "D-072",
+      "severity": "MAJOR",
+      "title": "Не задан объём данных для проверки производительности",
+      "line": 54
+    },
+    {
+      "fid": "D-071",
+      "severity": "MINOR",
+      "title": "Не определён момент окончания измерения времени",
+      "line": 54
+    },
+    {
+      "fid": "D-074",
+      "severity": "MINOR",
+      "title": "Не задана доступность сервиса и время ответа для остальных запросов",
+      "line": 54
+    },
+    {
+      "fid": "D-073",
+      "severity": "MINOR",
+      "title": "Нет описания ожидания результата: синхронный ответ или очередь",
+      "line": 54
+    },
+    {
+      "fid": "D-075",
+      "severity": "MINOR",
+      "title": "Нефункциональные, интеграционные и приёмочные требования без номеров",
+      "line": 54
+    },
+    {
+      "fid": "D-076",
+      "severity": "MAJOR",
+      "title": "Не указано, какие хранилища входят в требование",
+      "line": 55
+    },
+    {
+      "fid": "D-078",
+      "severity": "MINOR",
+      "title": "Гарантия хранения только в Казахстане не учитывает почтовую передачу",
+      "line": 55
+    },
+    {
+      "fid": "D-077",
+      "severity": "MINOR",
+      "title": "Нельзя проверить место хранения по формулировке",
+      "line": 55
+    },
+    {
+      "fid": "D-079",
+      "severity": "MINOR",
+      "title": "Нет требований к журналу запросов и отправок выписок",
+      "line": 55
+    },
+    {
+      "fid": "D-080",
+      "severity": "MINOR",
+      "title": "Не сказано, где работают DocService и MailService",
+      "line": 55
+    },
+    {
+      "fid": "D-082",
+      "severity": "MINOR",
+      "title": "У полей statement_request не заданы типы, длина и обязательность",
+      "line": 58
+    },
+    {
+      "fid": "D-083",
+      "severity": "MINOR",
+      "title": "В требованиях указаны имена таблиц, классов и методов АБС",
+      "line": 58
+    },
+    {
+      "fid": "D-084",
+      "severity": "MAJOR",
+      "title": "Не описаны переходы статусов и удаление записей",
+      "line": 59
+    },
+    {
+      "fid": "D-085",
+      "severity": "MINOR",
+      "title": "Персональные данные (email) хранятся 5 лет без защиты",
+      "line": 59
+    },
+    {
+      "fid": "D-092",
+      "severity": "MINOR",
+      "title": "Условие «если нужно» не привязано к параметру",
+      "line": 71
+    },
+    {
+      "fid": "D-099",
+      "severity": "MAJOR",
+      "title": "Не описан результат для периода без операций",
+      "line": 80
+    },
+    {
+      "fid": "D-100",
+      "severity": "MINOR",
+      "title": "Не описано, что делать при недоступности АБЖ или DocService",
+      "line": 80
+    },
+    {
+      "fid": "D-117",
+      "severity": "MAJOR",
+      "title": "Не описан ответ на отсутствующий или неверный формат дат",
+      "line": 110
+    },
+    {
+      "fid": "D-119",
+      "severity": "MAJOR",
+      "title": "Коды ошибок описаны только для одной ошибки валидации",
+      "line": 110
+    },
+    {
+      "fid": "D-120",
+      "severity": "MAJOR",
+      "title": "Не описаны ошибки ввода и отмена формирования клиентом",
+      "line": 110
+    },
+    {
+      "fid": "D-121",
+      "severity": "MINOR",
+      "title": "Неверные lang и email: не описан код ответа 400 для этих параметров",
+      "line": 110
+    },
+    {
+      "fid": "D-122",
+      "severity": "MINOR",
+      "title": "Не задан единый формат ошибок и тело для 401, 404 и 500",
+      "line": 111
+    },
+    {
+      "fid": "D-125",
+      "severity": "MINOR",
+      "title": "Нет кода 429 с заголовком Retry-After и правил для клиента",
+      "line": 113
+    },
+    {
+      "fid": "D-126",
+      "severity": "MAJOR",
+      "title": "Не описано состояние заявки и тело ответа при 500",
+      "line": 114
+    },
+    {
+      "fid": "D-127",
+      "severity": "MINOR",
+      "title": "Не описано, отправлено ли письмо при ошибке 500",
+      "line": 114
+    },
+    {
+      "fid": "D-128",
+      "severity": "MINOR",
+      "title": "Фраза «файл не формируется» не имеет наблюдаемого признака",
+      "line": 114
+    },
+    {
+      "fid": "D-129",
+      "severity": "MAJOR",
+      "title": "Диапазон тест-кейсов Ф-1–Ф-11 не включает Ф-12",
+      "line": 117
+    },
+    {
+      "fid": "D-131",
+      "severity": "MINOR",
+      "title": "Ф-12 и статусы API не входят в список тестов",
+      "line": 117
+    },
+    {
+      "fid": "D-133",
+      "severity": "MAJOR",
+      "title": "Критерии приёмки не покрывают большинство требований",
+      "line": 118
+    },
+    {
+      "fid": "D-135",
+      "severity": "MINOR",
+      "title": "Начальный и конечный остатки не заданы числами",
+      "line": 124
+    },
+    {
+      "fid": "D-139",
+      "severity": "MINOR",
+      "title": "Нет проверки границ периода 23:59:59 и 00:00:00",
+      "line": 125
+    },
+    {
+      "fid": "D-138",
+      "severity": "MINOR",
+      "title": "Не указано, какой часовой пояс у времени 23:40",
+      "line": 125
+    },
+    {
+      "fid": "D-140",
+      "severity": "MINOR",
+      "title": "Не ясно, что считается выпиской для лимита",
+      "line": 126
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_blind3_haiku/k1.json",
+  "key_file": "eval/blind3/k1_statement.md.key.json"
+}

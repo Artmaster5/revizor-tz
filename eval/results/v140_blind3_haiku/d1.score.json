@@ -1,0 +1,776 @@
+{
+  "document": "d1_prepayment.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.012688,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 70.33,
+    "doc_name": "d1_prepayment.md"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 57,
+    "findings_open": 101,
+    "advisory": 8
+  },
+  "recall": {
+    "overall": {
+      "total": 15,
+      "strict": 15,
+      "loose": 15,
+      "strict_share": 1.0,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 3,
+        "loose": 3,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 7,
+        "strict": 7,
+        "loose": 7,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 5,
+        "strict": 5,
+        "loose": 5,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 15,
+        "strict": 15,
+        "loose": 15,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 9,
+    "tool_higher": 6,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "D1-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Способ пересчёта по умолчанию: в Ф-4 — уменьшение платежа (срок сохраняется), в API recalcMode по умолчанию TERM (сокращение срока).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-035",
+        "D-129"
+      ],
+      "loose_fids": [
+        "D-035",
+        "D-129",
+        "D-130"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Сумма в API передаётся в тиынах, а критерий приёмки для погашения 150 000 ₸ ожидает в запросе \"amount\": 150000 (это 1 500 ₸).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-010",
+        "D-027",
+        "D-028"
+      ],
+      "loose_fids": [
+        "D-010",
+        "D-027",
+        "D-028",
+        "D-126",
+        "D-127"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-03",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Раздел «Требования к тестированию» фактически пуст: тест-кейсы обещаны после разработки.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-144",
+        "D-145"
+      ],
+      "loose_fids": [
+        "D-144",
+        "D-145"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Срок подачи: по Ф-3 заявка на плановую дату — не позднее 23:00 предыдущего дня, а по разделу интеграции заявка, поступившая в АБС в плановую дату до 18:00, исполняется в тот же день.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-010",
+        "D-032",
+        "D-106"
+      ],
+      "loose_fids": [
+        "D-010",
+        "D-032",
+        "D-034",
+        "D-108",
+        "D-106"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D1-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Минимальная сумма: в Ф-2 — 10 000 ₸, в API — 50 000 (к тому же в поле, заданном в тиынах).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-027",
+        "D-028"
+      ],
+      "loose_fids": [
+        "D-027",
+        "D-028",
+        "D-030",
+        "D-126",
+        "D-127"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D1-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Сумма, равная остатку основного долга, разрешена Ф-2, но это фактически полное погашение, которое выведено из рамок; что происходит с кредитом, графиком и начисленным вознаграждением — не описано.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-027",
+        "D-028",
+        "D-030"
+      ],
+      "loose_fids": [
+        "D-005",
+        "D-009",
+        "D-027",
+        "D-028",
+        "D-030"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D1-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не указано, с какого счёта списывать, если у клиента несколько текущих счетов в тенге; в API нет параметра счёта.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-037",
+        "D-038",
+        "D-096"
+      ],
+      "loose_fids": [
+        "D-037",
+        "D-038",
+        "D-096"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описан главный сбой основного потока: в плановую дату денег на счёте не хватает на заявку (и очередной платёж) — частичное исполнение, отказ, статус REJECTED, уведомление?",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-020",
+        "D-037",
+        "D-096"
+      ],
+      "loose_fids": [
+        "D-020",
+        "D-037",
+        "D-050",
+        "D-096"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Для пересчёта нового платежа не задано округление (до тиына/тенге, в какую сторону) и куда относится остаток округления (последний платёж).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-041",
+        "D-045",
+        "D-046"
+      ],
+      "loose_fids": [
+        "D-041",
+        "D-045",
+        "D-046"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-10",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "НФТ «выдерживать высокую нагрузку в дни массовых платежей и не допускать деградации» непроверяемо.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-010",
+        "D-084",
+        "D-085",
+        "D-086",
+        "D-090"
+      ],
+      "loose_fids": [
+        "D-010",
+        "D-084",
+        "D-085",
+        "D-086",
+        "D-090",
+        "D-094"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В функциональное требование Ф-11 вынесены детали дизайна кнопки (цвет, высота, шрифт, расположение).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-070",
+        "D-071"
+      ],
+      "loose_fids": [
+        "D-068",
+        "D-070",
+        "D-071"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Ф-13 дублирует Ф-10 (push после исполнения заявки).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-063",
+        "D-064",
+        "D-065",
+        "D-074"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-058",
+        "D-063",
+        "D-064",
+        "D-065",
+        "D-074"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D1-13",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Ссылка «см. п. 7.3» ведёт в никуда: нумерованных пунктов в документе нет.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-074"
+      ],
+      "loose_fids": [
+        "D-074"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D1-14",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Не указаны версия и дата документа.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-003"
+      ],
+      "loose_fids": [
+        "D-003"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D1-15",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "(Найдено при перечитывании.) Предварительный расчёт вызывается отдельным запросом (Sequence, Ф-7), но метод в разделе API не описан: описан только POST создания заявки.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-002",
+        "D-078"
+      ],
+      "loose_fids": [
+        "D-002",
+        "D-020",
+        "D-078"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-055",
+      "severity": "MAJOR",
+      "title": "Не описан результат успешной отмены",
+      "line": 58,
+      "good_anchor": "Клиент может отменить заявку не позднее 23:00 дня, предшествующего плановой дате."
+    },
+    {
+      "fid": "D-121",
+      "severity": "MAJOR",
+      "title": "Непонятно, что вернёт повтор после ошибки первого запроса",
+      "line": 102,
+      "good_anchor": "Повтор запроса с тем же `Idempotency-Key` в течение 24 часов возвращает исходный ответ"
+    },
+    {
+      "fid": "D-154",
+      "severity": "MAJOR",
+      "title": "Выключатель функции описан только кнопкой, не описано состояние заявок",
+      "line": 159,
+      "good_anchor": "Флаг `prepayment.enabled` скрывает кнопку в приложении"
+    },
+    {
+      "fid": "D-155",
+      "severity": "MAJOR",
+      "title": "Схема отката отмечена как проверенная, но описан только флаг кнопки",
+      "line": 159,
+      "good_anchor": "Флаг `prepayment.enabled` скрывает кнопку в приложении"
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-028",
+      "severity": "MAJOR",
+      "title": "Верхняя граница суммы: «остаток основного долга» и «остаток долга»",
+      "line": 51,
+      "good_anchor": "Непогашенная часть выданной суммы кредита без учёта начисленного вознаграждения и неустойки",
+      "confirms": [
+        "D1-02",
+        "D1-05",
+        "D1-06"
+      ]
+    },
+    {
+      "fid": "D-145",
+      "severity": "MAJOR",
+      "title": "Критерии приёмки покрывают пять случаев из многих правил",
+      "line": 142,
+      "good_anchor": "Клиент может отменить заявку не позднее 23:00 дня, предшествующего плановой дате.",
+      "confirms": [
+        "D1-03"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Название задачи в заголовке и в таблице не совпадает",
+      "line": 1
+    },
+    {
+      "fid": "D-004",
+      "severity": "MINOR",
+      "title": "Неточная статистика «около 38 000» в цели",
+      "line": 19
+    },
+    {
+      "fid": "D-006",
+      "severity": "MINOR",
+      "title": "Не задан формат передачи времени в API и БД",
+      "line": 31
+    },
+    {
+      "fid": "D-007",
+      "severity": "MAJOR",
+      "title": "Термин «просрочка» не определён, от него зависит показ кнопки",
+      "line": 34
+    },
+    {
+      "fid": "D-011",
+      "severity": "MAJOR",
+      "title": "Маршрут вызова: в архитектуре через API-шлюз, на диаграмме напрямую",
+      "line": 38
+    },
+    {
+      "fid": "D-012",
+      "severity": "MAJOR",
+      "title": "Не описано, когда и что отправляется по SMS",
+      "line": 39
+    },
+    {
+      "fid": "D-016",
+      "severity": "MINOR",
+      "title": "Не описано начальное состояние полей экрана",
+      "line": 42
+    },
+    {
+      "fid": "D-017",
+      "severity": "MAJOR",
+      "title": "Не описан шаг подтверждения на экране",
+      "line": 43
+    },
+    {
+      "fid": "D-018",
+      "severity": "MINOR",
+      "title": "Одна и та же кнопка названа по-разному",
+      "line": 43
+    },
+    {
+      "fid": "D-019",
+      "severity": "MAJOR",
+      "title": "Нет ветки на отказ АБС при регистрации и исполнении",
+      "line": 46
+    },
+    {
+      "fid": "D-021",
+      "severity": "MAJOR",
+      "title": "Не задан порог просрочки",
+      "line": 50
+    },
+    {
+      "fid": "D-024",
+      "severity": "MAJOR",
+      "title": "Просрочка или закрытие кредита после создания заявки",
+      "line": 50
+    },
+    {
+      "fid": "D-025",
+      "severity": "MAJOR",
+      "title": "API не проверяет, что кредит беззалоговый и в тенге, как требует Ф-1",
+      "line": 50
+    },
+    {
+      "fid": "D-042",
+      "severity": "MAJOR",
+      "title": "Какая ставка «действующая»",
+      "line": 55
+    },
+    {
+      "fid": "D-044",
+      "severity": "MINOR",
+      "title": "Не определён способ подсчёта оставшихся месяцев",
+      "line": 55
+    },
+    {
+      "fid": "D-048",
+      "severity": "MINOR",
+      "title": "Не описан возврат кнопки «Погасить досрочно»",
+      "line": 57
+    },
+    {
+      "fid": "D-052",
+      "severity": "MAJOR",
+      "title": "Нет способа узнать статус заявки после создания, кроме push",
+      "line": 57
+    },
+    {
+      "fid": "D-054",
+      "severity": "MINOR",
+      "title": "«Ожидает исполнения» в Ф-8 и PENDING в таблицах — разные названия",
+      "line": 57
+    },
+    {
+      "fid": "D-053",
+      "severity": "MINOR",
+      "title": "Отмена заявки (Ф-8, Ф-9) описана в документе, которого нет в пакете",
+      "line": 57
+    },
+    {
+      "fid": "D-056",
+      "severity": "MAJOR",
+      "title": "Нет ответа на отмену после 23:00",
+      "line": 58
+    },
+    {
+      "fid": "D-057",
+      "severity": "MINOR",
+      "title": "Не описано, что делать при ошибочном исполнении АБС",
+      "line": 58
+    },
+    {
+      "fid": "D-059",
+      "severity": "MINOR",
+      "title": "Неясно, какая сумма указывается в push-уведомлении",
+      "line": 59
+    },
+    {
+      "fid": "D-067",
+      "severity": "MINOR",
+      "title": "Не описано состояние кнопки «Погасить»",
+      "line": 60
+    },
+    {
+      "fid": "D-080",
+      "severity": "MAJOR",
+      "title": "Не описано поведение при недоступности АБС",
+      "line": 66
+    },
+    {
+      "fid": "D-081",
+      "severity": "MINOR",
+      "title": "Не указано, где измеряется время ответа",
+      "line": 70
+    },
+    {
+      "fid": "D-082",
+      "severity": "MINOR",
+      "title": "Не задан момент начала и конца измерения",
+      "line": 70
+    },
+    {
+      "fid": "D-091",
+      "severity": "MINOR",
+      "title": "Персональные идентификаторы в журналах без защиты",
+      "line": 72
+    },
+    {
+      "fid": "D-092",
+      "severity": "MINOR",
+      "title": "Не сказано, что писать для обращений без сессии",
+      "line": 72
+    },
+    {
+      "fid": "D-093",
+      "severity": "MINOR",
+      "title": "Запросы без сессии не имеют идентификатора клиента",
+      "line": 72
+    },
+    {
+      "fid": "D-095",
+      "severity": "MINOR",
+      "title": "Не сказано, кто и когда меняет статус заявки",
+      "line": 72
+    },
+    {
+      "fid": "D-097",
+      "severity": "MINOR",
+      "title": "Имена таблицы и колонок заданы без причины",
+      "line": 75
+    },
+    {
+      "fid": "D-098",
+      "severity": "MINOR",
+      "title": "Не описано, где хранятся Idempotency-Key и признаки кредита",
+      "line": 75
+    },
+    {
+      "fid": "D-101",
+      "severity": "MINOR",
+      "title": "Не указаны основание обработки и удаление после 5 лет",
+      "line": 77
+    },
+    {
+      "fid": "D-104",
+      "severity": "MAJOR",
+      "title": "Нет действий при недоступности АБС и потере ответа из очереди",
+      "line": 81
+    },
+    {
+      "fid": "D-109",
+      "severity": "MINOR",
+      "title": "Проектные детали внутри требований: классы, таблицы, поля БД",
+      "line": 93
+    },
+    {
+      "fid": "D-110",
+      "severity": "MINOR",
+      "title": "Идентификатор кредита в адресной строке",
+      "line": 94
+    },
+    {
+      "fid": "D-111",
+      "severity": "MAJOR",
+      "title": "Не описано, что делать без Idempotency-Key",
+      "line": 95
+    },
+    {
+      "fid": "D-112",
+      "severity": "MINOR",
+      "title": "Проверка «одна заявка» не защищена от параллельных запросов",
+      "line": 99
+    },
+    {
+      "fid": "D-113",
+      "severity": "MINOR",
+      "title": "Просрочка не измерена порогом",
+      "line": 99
+    },
+    {
+      "fid": "D-115",
+      "severity": "MAJOR",
+      "title": "Не сказано, по каким правилам проверяется сумма",
+      "line": 100
+    },
+    {
+      "fid": "D-118",
+      "severity": "MAJOR",
+      "title": "Нет компенсации, если заявка в АБС создана, а локально не сохранена",
+      "line": 101
+    },
+    {
+      "fid": "D-120",
+      "severity": "MINOR",
+      "title": "Нет правила для повтора ключа с другой суммой",
+      "line": 102
+    },
+    {
+      "fid": "D-123",
+      "severity": "MINOR",
+      "title": "Не указан момент начала отсчёта 24 часов",
+      "line": 102
+    },
+    {
+      "fid": "D-124",
+      "severity": "MINOR",
+      "title": "Нет поля для Idempotency-Key и сохранённого ответа — повтор не реализуем",
+      "line": 102
+    },
+    {
+      "fid": "D-125",
+      "severity": "MINOR",
+      "title": "Не задан допустимый набор символов для loanId",
+      "line": 109
+    },
+    {
+      "fid": "D-131",
+      "severity": "MINOR",
+      "title": "Не задан формат и уникальность requestId",
+      "line": 125
+    },
+    {
+      "fid": "D-132",
+      "severity": "MINOR",
+      "title": "Не ясно, какой идентификатор заявки возвращается",
+      "line": 125
+    },
+    {
+      "fid": "D-133",
+      "severity": "MINOR",
+      "title": "Даты: в критериях ДД.ММ.ГГГГ, в API YYYY-MM-DD без правила пересчёта",
+      "line": 127
+    },
+    {
+      "fid": "D-135",
+      "severity": "MINOR",
+      "title": "Не задано, что возвращается в newPayment при TERM",
+      "line": 128
+    },
+    {
+      "fid": "D-136",
+      "severity": "MAJOR",
+      "title": "Код INVALID_AMOUNT возвращается и для способа пересчёта",
+      "line": 133
+    },
+    {
+      "fid": "D-143",
+      "severity": "MINOR",
+      "title": "Ссылка на отмену вынесена в другой документ, которого нет здесь",
+      "line": 139
+    },
+    {
+      "fid": "D-146",
+      "severity": "MINOR",
+      "title": "Критерии приёмки не ссылаются на требования",
+      "line": 146
+    },
+    {
+      "fid": "D-148",
+      "severity": "MAJOR",
+      "title": "Сумма в тенге и в запросе без пересчёта в тиыны",
+      "line": 148
+    },
+    {
+      "fid": "D-151",
+      "severity": "MINOR",
+      "title": "Кредит в условии не назван",
+      "line": 150
+    },
+    {
+      "fid": "D-156",
+      "severity": "MINOR",
+      "title": "Не задано начальное значение флага prepayment.enabled",
+      "line": 159
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_blind3_haiku/d1.json",
+  "key_file": "eval/blind3/d1_prepayment.md.key.json"
+}

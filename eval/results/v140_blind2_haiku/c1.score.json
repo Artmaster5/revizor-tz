@@ -1,0 +1,825 @@
+{
+  "document": "c1_card_reissue.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.100136,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 366.66,
+    "doc_name": "c1_card_reissue.md"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 73,
+    "findings_open": 99,
+    "advisory": 5
+  },
+  "recall": {
+    "overall": {
+      "total": 21,
+      "strict": 18,
+      "loose": 20,
+      "strict_share": 0.8571428571428571,
+      "loose_share": 0.9523809523809523
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 4,
+        "strict": 4,
+        "loose": 4,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 10,
+        "strict": 9,
+        "loose": 10,
+        "strict_share": 0.9,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 7,
+        "strict": 5,
+        "loose": 6,
+        "strict_share": 0.7142857142857143,
+        "loose_share": 0.8571428571428571
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 21,
+        "strict": 18,
+        "loose": 20,
+        "strict_share": 0.8571428571428571,
+        "loose_share": 0.9523809523809523
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 13,
+    "tool_higher": 4,
+    "tool_lower": 1
+  },
+  "defects": [
+    {
+      "id": "C1-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Метод создания заявки (изменение состояния, списание комиссии) объявлен как GET",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-130"
+      ],
+      "loose_fids": [
+        "D-130",
+        "D-136",
+        "D-137"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Момент блокировки старой карты при утере и краже противоречит между Ф-3 и Sequence Diagram",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-038",
+        "D-041",
+        "D-079"
+      ],
+      "loose_fids": [
+        "D-038",
+        "D-039",
+        "D-041",
+        "D-063",
+        "D-079"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-03",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Комиссия списывается до проверки активной заявки, при отказе 409 не возвращается, а повтор запроса не защищён идемпотентностью",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-011",
+        "D-022",
+        "D-114",
+        "D-144",
+        "D-146",
+        "D-147",
+        "D-170"
+      ],
+      "loose_fids": [
+        "D-011",
+        "D-022",
+        "D-057",
+        "D-114",
+        "D-123",
+        "D-144",
+        "D-145",
+        "D-146",
+        "D-147",
+        "D-170"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-04",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Требуется хранить полный номер карты (PAN) и срок действия в базе заявок",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-098",
+        "D-099",
+        "D-103"
+      ],
+      "loose_fids": [
+        "D-098",
+        "D-099",
+        "D-102",
+        "D-103",
+        "D-104"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "C1-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Срок доставки курьером задан как «в кратчайшие сроки»",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-073"
+      ],
+      "loose_fids": [
+        "D-004",
+        "D-073"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Причина «Украдена» есть в UI и Ф-3, но отсутствует в перечне reason API",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-014",
+        "D-041",
+        "D-150"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "C1-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Перевыпуск по истечении срока бесплатный по Ф-4, но в критерии приёмки за него списана комиссия",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-102"
+      ],
+      "loose_fids": [
+        "D-051",
+        "D-102"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Окно перевыпуска по сроку: 60 дней в UI и 45 дней в правилах API",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-015"
+      ],
+      "loose_fids": [
+        "D-015"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C1-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описано поведение при недостатке средств для комиссии и при отказе АБС в списании",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-047",
+        "D-056",
+        "D-057"
+      ],
+      "loose_fids": [
+        "D-047",
+        "D-056",
+        "D-057"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-10",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Нефункциональное требование о надёжности и пиковой нагрузке без чисел",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-011",
+        "D-089"
+      ],
+      "loose_fids": [
+        "D-006",
+        "D-011",
+        "D-089",
+        "D-093"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-11",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Термин «премиальная карта» не определён, хотя от него зависит комиссия",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-049"
+      ],
+      "loose_fids": [
+        "D-049"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-12",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Поле ответа trackNumber не описано: нет логики, описания и источника",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-166"
+      ],
+      "loose_fids": [
+        "D-166",
+        "D-167"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-13",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Граница 16:00 и «рабочий день» заданы без часового пояса и календаря",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-075"
+      ],
+      "loose_fids": [
+        "D-075",
+        "D-074"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-14",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Отмена заявки описана без возврата комиссии и без метода API",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-011",
+        "D-038",
+        "D-047",
+        "D-063"
+      ],
+      "loose_fids": [
+        "D-011",
+        "D-038",
+        "D-047",
+        "D-063"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C1-15",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Цели без связи с требованиями и без способа измерения",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-003",
+        "D-004"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "C1-16",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Раздел «Тестирование требований» оставлен заглушкой",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-115"
+      ],
+      "loose_fids": [
+        "D-115"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C1-17",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Версия, дата документа, чек-лист ревью и блок согласующих не заполнены",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-126"
+      ],
+      "loose_fids": [
+        "D-126"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-18",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Номер Ф-4 использован дважды для разных требований",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-011",
+        "D-046",
+        "D-144"
+      ],
+      "loose_fids": [
+        "D-011",
+        "D-038",
+        "D-046",
+        "D-047",
+        "D-102",
+        "D-144"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C1-19",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Ф-6 объединяет уведомления по трём каналам, просмотр статуса и отмену заявки",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-011",
+        "D-064"
+      ],
+      "loose_fids": [
+        "D-011",
+        "D-060",
+        "D-059",
+        "D-062",
+        "D-064"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-20",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В требования к данным записано проектное решение: таблица, СУБД и партиционирование",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-105"
+      ],
+      "loose_fids": [
+        "D-105",
+        "D-107"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C1-21",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Критерии приёмки покрывают только часть требований (нет для Ф-6–Ф-9, отмены, доставки)",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-027",
+      "severity": "MAJOR",
+      "title": "Критерий «ближайшее отделение» не определён",
+      "line": 53,
+      "good_anchor": "Если курьер не смог вручить карту за две попытки, карта передаётся в ближайшее к адресу доставки отделение"
+    },
+    {
+      "fid": "D-029",
+      "severity": "MAJOR",
+      "title": "Переадресация в отделение после двух неудачных доставок не описана в API и статусах",
+      "line": 53,
+      "good_anchor": "Если курьер не смог вручить карту за две попытки, карта передаётся в ближайшее к адресу доставки отделение"
+    },
+    {
+      "fid": "D-124",
+      "severity": "MAJOR",
+      "title": "Критерии приёмки покрывают только 4 сценария из множества описанных",
+      "line": 107,
+      "good_anchor": "Дополнительная карта, выпущенная на имя супруга | Открыть карточку карты в приложении"
+    },
+    {
+      "fid": "D-138",
+      "severity": "MAJOR",
+      "title": "Нет ответа для карты, которая принадлежит клиенту, но не подходит",
+      "line": 158,
+      "good_anchor": "Перевыпуск доступен держателю действующей дебетовой карты, выпущенной на его имя."
+    },
+    {
+      "fid": "D-154",
+      "severity": "MAJOR",
+      "title": "Адрес клиента передаётся в адресной строке",
+      "line": 167,
+      "good_anchor": "10–250 | При COURIER | Город из справочника CITIES, улица, дом, квартира"
+    },
+    {
+      "fid": "D-159",
+      "severity": "MAJOR",
+      "title": "Не задан формат строки адреса",
+      "line": 189,
+      "good_anchor": "10–250 | При COURIER | Город из справочника CITIES, улица, дом, квартира"
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-022",
+      "severity": "MAJOR",
+      "title": "Повтор после ошибки сервера может привести к двойному списанию комиссии",
+      "line": 52,
+      "good_anchor": "Время ответа метода создания заявки — не более 2 секунд для 95% запросов при нагрузке до 50 запросов в секунду.",
+      "confirms": [
+        "C1-03"
+      ]
+    },
+    {
+      "fid": "D-098",
+      "severity": "MAJOR",
+      "title": "Полный PAN в открытом виде противоречит требованиям PCI DSS",
+      "line": 87,
+      "good_anchor": "Срок хранения заявок — 5 лет с даты перехода заявки в конечный статус.",
+      "confirms": [
+        "C1-04"
+      ]
+    },
+    {
+      "fid": "D-102",
+      "severity": "MAJOR",
+      "title": "Суммы в тиынах и в тенге без правила пересчёта",
+      "line": 87,
+      "good_anchor": "| `fee` | integer | В тиынах, 0 для бесплатного перевыпуска | Списанная комиссия | `fee_tiyn` |",
+      "confirms": [
+        "C1-07"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Название задачи и документа написано по-разному",
+      "line": 1
+    },
+    {
+      "fid": "D-002",
+      "severity": "MINOR",
+      "title": "Список систем в разных разделах не совпадает",
+      "line": 18
+    },
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Не описано, что делать, если карта уже TEMP_BLOCKED",
+      "line": 29
+    },
+    {
+      "fid": "D-007",
+      "severity": "MINOR",
+      "title": "Схемы вызовов расходятся: шлюз и контроллер учтены не везде",
+      "line": 36
+    },
+    {
+      "fid": "D-010",
+      "severity": "MAJOR",
+      "title": "Недоступность АБС и процессинга не описана",
+      "line": 37
+    },
+    {
+      "fid": "D-012",
+      "severity": "MAJOR",
+      "title": "Состав данных для курьера и место хранения не описаны",
+      "line": 38
+    },
+    {
+      "fid": "D-017",
+      "severity": "MAJOR",
+      "title": "Не описан ввод и проверка адреса доставки на экране 2",
+      "line": 47
+    },
+    {
+      "fid": "D-018",
+      "severity": "MINOR",
+      "title": "Справочник отделений назван без имени",
+      "line": 47
+    },
+    {
+      "fid": "D-019",
+      "severity": "MINOR",
+      "title": "Способ получения при первом открытии экрана не задан",
+      "line": 47
+    },
+    {
+      "fid": "D-020",
+      "severity": "MAJOR",
+      "title": "Единицы суммы комиссии на экране не заданы",
+      "line": 49
+    },
+    {
+      "fid": "D-021",
+      "severity": "MAJOR",
+      "title": "Нет экрана для ответа 409 и кнопки «Повторить»",
+      "line": 52
+    },
+    {
+      "fid": "D-024",
+      "severity": "MAJOR",
+      "title": "Экран не описан при обрыве сети, тайм-ауте и истёкшей сессии",
+      "line": 52
+    },
+    {
+      "fid": "D-030",
+      "severity": "MAJOR",
+      "title": "В push попадает адрес отделения, видный на заблокированном экране",
+      "line": 53
+    },
+    {
+      "fid": "D-033",
+      "severity": "MINOR",
+      "title": "Условие блокировки старой карты не перечислено",
+      "line": 58
+    },
+    {
+      "fid": "D-034",
+      "severity": "MAJOR",
+      "title": "Схема процесса (BPMN) показывает только успешный путь",
+      "line": 58
+    },
+    {
+      "fid": "D-035",
+      "severity": "MINOR",
+      "title": "BPMN-схема — одна строка без ветвлений ошибок",
+      "line": 58
+    },
+    {
+      "fid": "D-037",
+      "severity": "MINOR",
+      "title": "Термин «держатель» не определён, при этом используются разные слова",
+      "line": 61
+    },
+    {
+      "fid": "D-040",
+      "severity": "MINOR",
+      "title": "«Продолжает работать» не определено",
+      "line": 63
+    },
+    {
+      "fid": "D-042",
+      "severity": "MINOR",
+      "title": "Не ясно, что сохраняется при перевыпуске",
+      "line": 64
+    },
+    {
+      "fid": "D-070",
+      "severity": "MINOR",
+      "title": "Не определено, какой день считается первым",
+      "line": 68
+    },
+    {
+      "fid": "D-078",
+      "severity": "MAJOR",
+      "title": "Не определено событие «после получения»",
+      "line": 70
+    },
+    {
+      "fid": "D-082",
+      "severity": "MINOR",
+      "title": "Постановка в производство в диаграмме не учитывает время 16:00",
+      "line": 75
+    },
+    {
+      "fid": "D-083",
+      "severity": "MINOR",
+      "title": "Способ получения событий от процессинга не описан",
+      "line": 76
+    },
+    {
+      "fid": "D-084",
+      "severity": "MINOR",
+      "title": "Возврат комиссии при ошибке зависит от АБС без описания сбоя",
+      "line": 77
+    },
+    {
+      "fid": "D-096",
+      "severity": "MINOR",
+      "title": "Не описано поведение выше 50 запросов в секунду",
+      "line": 84
+    },
+    {
+      "fid": "D-094",
+      "severity": "MINOR",
+      "title": "Нет поведения при задержке внешних систем сверх 2 секунд",
+      "line": 84
+    },
+    {
+      "fid": "D-095",
+      "severity": "MINOR",
+      "title": "Не определено, как измерять время ответа",
+      "line": 84
+    },
+    {
+      "fid": "D-100",
+      "severity": "MINOR",
+      "title": "Не ясно, какое поле хранится: адрес или код отделения",
+      "line": 87
+    },
+    {
+      "fid": "D-101",
+      "severity": "MINOR",
+      "title": "Не задан формат времени в истории статусов",
+      "line": 87
+    },
+    {
+      "fid": "D-108",
+      "severity": "MINOR",
+      "title": "Не описано действие по истечении срока хранения",
+      "line": 89
+    },
+    {
+      "fid": "D-117",
+      "severity": "MINOR",
+      "title": "Критерии приёмки не ссылаются на требования",
+      "line": 102
+    },
+    {
+      "fid": "D-118",
+      "severity": "MAJOR",
+      "title": "Не описан сценарий недостатка средств на комиссию",
+      "line": 104
+    },
+    {
+      "fid": "D-120",
+      "severity": "MINOR",
+      "title": "Нет адреса доставки в исходных условиях",
+      "line": 104
+    },
+    {
+      "fid": "D-121",
+      "severity": "MINOR",
+      "title": "Состояние «заблокирована» не определено",
+      "line": 104
+    },
+    {
+      "fid": "D-125",
+      "severity": "MINOR",
+      "title": "Чек-лист ревью не заполнен",
+      "line": 109
+    },
+    {
+      "fid": "D-127",
+      "severity": "MINOR",
+      "title": "Нет описания отката и выключателя функции",
+      "line": 118
+    },
+    {
+      "fid": "D-132",
+      "severity": "MINOR",
+      "title": "Способ аутентификации: токен или сессия",
+      "line": 145
+    },
+    {
+      "fid": "D-134",
+      "severity": "MINOR",
+      "title": "Два базовых URL без правила выбора",
+      "line": 147
+    },
+    {
+      "fid": "D-135",
+      "severity": "MAJOR",
+      "title": "Разные пути одного метода в Dev и Prod",
+      "line": 148
+    },
+    {
+      "fid": "D-149",
+      "severity": "MINOR",
+      "title": "Гонка при параллельных запросах на одну карту",
+      "line": 161
+    },
+    {
+      "fid": "D-155",
+      "severity": "MINOR",
+      "title": "Порядок вызова АБС и процессинга не определён",
+      "line": 172
+    },
+    {
+      "fid": "D-156",
+      "severity": "MINOR",
+      "title": "Имена внутренних классов в схеме потока",
+      "line": 172
+    },
+    {
+      "fid": "D-160",
+      "severity": "MINOR",
+      "title": "Не задан результат для адреса вне справочника CITIES",
+      "line": 189
+    },
+    {
+      "fid": "D-165",
+      "severity": "MINOR",
+      "title": "Нет машинного кода ошибки и закрытого списка кодов",
+      "line": 196
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_blind2_haiku/c1.json",
+  "key_file": "eval/blind2/c1_card_reissue.md.key.json"
+}

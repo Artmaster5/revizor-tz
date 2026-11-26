@@ -1,0 +1,639 @@
+{
+  "document": "e1_travel_insurance_api.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "full",
+    "cost_usd": 1.306619,
+    "cost_note": "по тарифу claude-sonnet-5-5: $2 / $10 за 1 млн токенов (вход / выход)",
+    "duration_s": 179.07,
+    "doc_name": "e1_travel_insurance_api.md"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 52,
+    "findings_open": 80,
+    "advisory": 14
+  },
+  "recall": {
+    "overall": {
+      "total": 14,
+      "strict": 14,
+      "loose": 14,
+      "strict_share": 1.0,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 3,
+        "loose": 3,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 7,
+        "strict": 7,
+        "loose": 7,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 4,
+        "loose": 4,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 14,
+        "strict": 14,
+        "loose": 14,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 10,
+    "tool_higher": 1,
+    "tool_lower": 3
+  },
+  "defects": [
+    {
+      "id": "E1-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Возврат при отмене: в 5.4 — премия минус 20 % при любой отмене, в 8.1 — полный возврат в течение 14 дней до начала поездки.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-063",
+        "D-064"
+      ],
+      "loose_fids": [
+        "D-063",
+        "D-064",
+        "D-090"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Единицы суммы: котировка возвращает premium в тенге с копейками (12500.00), выпуск полиса требует amount в тиынах, а пример передаёт \"amount\": 12500.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-015",
+        "D-039",
+        "D-040"
+      ],
+      "loose_fids": [
+        "D-015",
+        "D-023",
+        "D-039",
+        "D-040"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "E1-03",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Выпуск полиса после списания премии: при тайм-ауте результат неизвестен, повтор не поддерживается и может создать второй полис; ключа идемпотентности и сценария восстановления нет.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-056"
+      ],
+      "loose_fids": [
+        "D-056"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "E1-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Котировка допускает до 5 путешественников, а выпуск полиса принимает одного insured (объект, не массив).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-023",
+        "D-049"
+      ],
+      "loose_fids": [
+        "D-023",
+        "D-048",
+        "D-049"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Начало и конец покрытия (00:00 / 23:59) без часового пояса, при том что все временные метки — в UTC: возможен разрыв покрытия в 5 часов для клиента в Казахстане.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-025",
+        "D-036"
+      ],
+      "loose_fids": [
+        "D-013",
+        "D-025",
+        "D-036"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Возрастная граница: «over 70» — включается ли ровно 70; на какую дату считается возраст (покупка, начало поездки); 75 включительно?",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-015",
+        "D-019"
+      ],
+      "loose_fids": [
+        "D-015",
+        "D-019"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Список стран повышенного риска не определён и меняется «время от времени»; способа получить его через API нет, а он меняет премию на 30 %.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-020"
+      ],
+      "loose_fids": [
+        "D-020"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Шаблон ИИН ^\\d{11}$ — 11 цифр, а ИИН в Казахстане из 12 цифр (и пример содержит 12).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-053"
+      ],
+      "loose_fids": [
+        "D-053"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Повтор вебхуков «до подтверждения»: нет лимита попыток и интервалов, идентификатора события для дедупликации и гарантии порядка.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-072",
+        "D-075",
+        "D-076"
+      ],
+      "loose_fids": [
+        "D-072",
+        "D-075",
+        "D-076"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "E1-10",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "SLA «highly available and responds quickly» непроверяемо: нет процента доступности и времени ответа.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-101",
+        "D-102",
+        "D-105",
+        "D-106"
+      ],
+      "loose_fids": [
+        "D-101",
+        "D-102",
+        "D-105",
+        "D-106"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "«Сообщения об ошибках понятны пользователю и могут показываться как есть» — непроверяемо, язык сообщений (каз./рус.) не задан.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-086",
+        "D-084",
+        "D-087"
+      ],
+      "loose_fids": [
+        "D-086",
+        "D-084",
+        "D-087"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "E1-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Требование к экрану оплаты банка (логотип Pantone, 48 px, шрифт 12 pt) вынесено в спецификацию API.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-094",
+        "D-098"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-094",
+        "D-098"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-13",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Срок жизни токена дублируется в 4.1 и 9.3.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-003",
+        "D-007",
+        "D-030",
+        "D-031"
+      ],
+      "loose_fids": [
+        "D-003",
+        "D-007",
+        "D-030",
+        "D-031",
+        "D-108"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-14",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Статус «draft», история ревизий TBD: нет версии и даты документа.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-003"
+      ],
+      "loose_fids": [
+        "D-001",
+        "D-002",
+        "D-003"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-006",
+      "severity": "MAJOR",
+      "title": "Не описаны сбои после списания: отказ выпуска и возврат денег",
+      "line": 22,
+      "good_anchor": "Issuing a policy with an expired quote returns `410 Gone` with code"
+    },
+    {
+      "fid": "D-110",
+      "severity": "MAJOR",
+      "title": "Неясно, по дате какого события попадает запись в реестр",
+      "line": 155,
+      "good_anchor": "and cancelled on the previous calendar day (00:00–23:59 Almaty time)"
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-025",
+      "severity": "MAJOR",
+      "title": "Не указан часовой пояс начала и окончания покрытия",
+      "line": 36,
+      "good_anchor": "and cancelled on the previous calendar day (00:00–23:59 Almaty time)",
+      "confirms": [
+        "E1-05"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-004",
+      "severity": "MAJOR",
+      "title": "Схема процесса показывает только успешный путь",
+      "line": 20
+    },
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Неясно, какой счёт и сумма списываются",
+      "line": 22
+    },
+    {
+      "fid": "D-008",
+      "severity": "MINOR",
+      "title": "Результат описан через действие клиента",
+      "line": 24
+    },
+    {
+      "fid": "D-009",
+      "severity": "MINOR",
+      "title": "Скобки задают неполный перечень статусов",
+      "line": 25
+    },
+    {
+      "fid": "D-010",
+      "severity": "MAJOR",
+      "title": "Границы даты начала неоднозначны",
+      "line": 30
+    },
+    {
+      "fid": "D-011",
+      "severity": "MAJOR",
+      "title": "«Завтра» без часового пояса и правила подсчёта",
+      "line": 30
+    },
+    {
+      "fid": "D-032",
+      "severity": "MINOR",
+      "title": "Не определён объём понятия «stored»",
+      "line": 42
+    },
+    {
+      "fid": "D-033",
+      "severity": "MINOR",
+      "title": "Нет способа подтвердить место хранения",
+      "line": 42
+    },
+    {
+      "fid": "D-034",
+      "severity": "MINOR",
+      "title": "Нет требований к журналу операций",
+      "line": 42
+    },
+    {
+      "fid": "D-035",
+      "severity": "MINOR",
+      "title": "Нет основания обработки и срока хранения ПДн",
+      "line": 42
+    },
+    {
+      "fid": "D-037",
+      "severity": "MINOR",
+      "title": "Не описана реакция на нарушение правил в запросе котировки",
+      "line": 56
+    },
+    {
+      "fid": "D-041",
+      "severity": "MAJOR",
+      "title": "Не задан ответ при повторном использовании котировки",
+      "line": 67
+    },
+    {
+      "fid": "D-045",
+      "severity": "MINOR",
+      "title": "Требования в разделах 1, 2, 5, 7 не пронумерованы",
+      "line": 70
+    },
+    {
+      "fid": "D-047",
+      "severity": "MINOR",
+      "title": "Не определена повторная передача paymentRef",
+      "line": 78
+    },
+    {
+      "fid": "D-051",
+      "severity": "MINOR",
+      "title": "Нет ограничений на длину и формат имени и паспорта",
+      "line": 86
+    },
+    {
+      "fid": "D-052",
+      "severity": "MINOR",
+      "title": "Неясно, что такое «Foreign passport number»",
+      "line": 88
+    },
+    {
+      "fid": "D-054",
+      "severity": "MINOR",
+      "title": "Не описано поведение после 90 дней",
+      "line": 98
+    },
+    {
+      "fid": "D-055",
+      "severity": "MAJOR",
+      "title": "Ссылка на PDF полиса: доступ не определён",
+      "line": 98
+    },
+    {
+      "fid": "D-057",
+      "severity": "MINOR",
+      "title": "«may take up to 40 seconds» не задаёт предельное время",
+      "line": 100
+    },
+    {
+      "fid": "D-058",
+      "severity": "MINOR",
+      "title": "Срок 40 секунд без условий измерения",
+      "line": 100
+    },
+    {
+      "fid": "D-059",
+      "severity": "MINOR",
+      "title": "Не описан отказ единой базы при выпуске",
+      "line": 100
+    },
+    {
+      "fid": "D-060",
+      "severity": "MAJOR",
+      "title": "Выпуск полиса не идемпотентен, результат при таймауте не проверить",
+      "line": 101
+    },
+    {
+      "fid": "D-062",
+      "severity": "MINOR",
+      "title": "Не перечислены поля ответа",
+      "line": 106
+    },
+    {
+      "fid": "D-065",
+      "severity": "MAJOR",
+      "title": "Не описан отказ в отмене и результат повторной отмены",
+      "line": 113
+    },
+    {
+      "fid": "D-067",
+      "severity": "MAJOR",
+      "title": "Отмена: нет полного описания запроса, ошибок, граничных случаев и вебхука",
+      "line": 113
+    },
+    {
+      "fid": "D-068",
+      "severity": "MAJOR",
+      "title": "Граница отмены: «после startDate» против «поездка не началась»",
+      "line": 113
+    },
+    {
+      "fid": "D-069",
+      "severity": "MINOR",
+      "title": "Не описано поведение при отмене полиса в нерабочем статусе",
+      "line": 113
+    },
+    {
+      "fid": "D-071",
+      "severity": "MINOR",
+      "title": "Не заданы типы и значения полей тела вебхука",
+      "line": 118
+    },
+    {
+      "fid": "D-079",
+      "severity": "MINOR",
+      "title": "Не описана регистрация вебхука и SFTP",
+      "line": 120
+    },
+    {
+      "fid": "D-080",
+      "severity": "MINOR",
+      "title": "Не описаны подписываемые данные и порядок ротации",
+      "line": 121
+    },
+    {
+      "fid": "D-082",
+      "severity": "MINOR",
+      "title": "Не указано, в каком запросе возвращается NOT_INSURABLE",
+      "line": 132
+    },
+    {
+      "fid": "D-083",
+      "severity": "MINOR",
+      "title": "Не задано окно подсчёта и заголовок Retry-After",
+      "line": 133
+    },
+    {
+      "fid": "D-093",
+      "severity": "MAJOR",
+      "title": "PDF полиса нужно показать до оплаты, но он создаётся после оплаты",
+      "line": 142
+    },
+    {
+      "fid": "D-097",
+      "severity": "MINOR",
+      "title": "Требования к оформлению экрана партнёра смешаны с API",
+      "line": 143
+    },
+    {
+      "fid": "D-099",
+      "severity": "MINOR",
+      "title": "Не указано положение текста и шрифт",
+      "line": 144
+    },
+    {
+      "fid": "D-109",
+      "severity": "MINOR",
+      "title": "Формат реестра и сбои выгрузки не определены",
+      "line": 155
+    },
+    {
+      "fid": "D-112",
+      "severity": "MINOR",
+      "title": "Граница суток в реестре не совпадает с UTC",
+      "line": 156
+    },
+    {
+      "fid": "D-114",
+      "severity": "MAJOR",
+      "title": "Не определено начало отсчёта сроков сверки",
+      "line": 158
+    },
+    {
+      "fid": "D-115",
+      "severity": "MAJOR",
+      "title": "База расчёта комиссии не определена",
+      "line": 159
+    },
+    {
+      "fid": "D-117",
+      "severity": "MINOR",
+      "title": "Отмена в закрытом периоде и реестр",
+      "line": 159
+    },
+    {
+      "fid": "D-118",
+      "severity": "CRITICAL",
+      "title": "Нет критериев приёмки",
+      "line": 162
+    },
+    {
+      "fid": "D-119",
+      "severity": "MINOR",
+      "title": "Адрес поддержки скрыт, срок реакции не задан",
+      "line": 164
+    },
+    {
+      "fid": "D-120",
+      "severity": "MINOR",
+      "title": "Контакт поддержки в документе замаскирован",
+      "line": 164
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_blind3_sonnet/e1.json",
+  "key_file": "eval/blind3/e1_travel_insurance_api.md.key.json"
+}

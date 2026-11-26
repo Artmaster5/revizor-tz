@@ -1,0 +1,1255 @@
+{
+  "document": "../../docs/requirements.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "full",
+    "cost_usd": 1.274087,
+    "cost_note": "по тарифу claude-sonnet-5-5: $2 / $10 за 1 млн токенов (вход / выход)",
+    "duration_s": 167.23,
+    "doc_name": "requirements.md"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 49,
+    "findings_open": 87,
+    "advisory": 2
+  },
+  "recall": {
+    "overall": {
+      "total": 52,
+      "strict": 44,
+      "loose": 50,
+      "strict_share": 0.8461538461538461,
+      "loose_share": 0.9615384615384616
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 4,
+        "strict": 4,
+        "loose": 4,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 31,
+        "strict": 27,
+        "loose": 30,
+        "strict_share": 0.8709677419354839,
+        "loose_share": 0.967741935483871
+      },
+      "MINOR": {
+        "total": 17,
+        "strict": 13,
+        "loose": 16,
+        "strict_share": 0.7647058823529411,
+        "loose_share": 0.9411764705882353
+      }
+    },
+    "by_origin": {
+      "organisers": {
+        "total": 10,
+        "strict": 10,
+        "loose": 10,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "own": {
+        "total": 42,
+        "strict": 34,
+        "loose": 40,
+        "strict_share": 0.8095238095238095,
+        "loose_share": 0.9523809523809523
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 30,
+    "tool_higher": 7,
+    "tool_lower": 7
+  },
+  "defects": [
+    {
+      "id": "D-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Месяц покупки: по Ф-2 январь, по критерию приёмки февраль",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-059"
+      ],
+      "loose_fids": [
+        "D-019",
+        "D-023",
+        "D-024",
+        "D-059"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "D-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Ф-3 «один push в месяц» против Ф-4 «следующее достижение вызывает push независимо от истории»",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-029"
+      ],
+      "loose_fids": [
+        "D-005",
+        "D-021",
+        "D-020",
+        "D-029",
+        "D-031",
+        "D-032",
+        "D-055"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "D-03",
+      "severity": "CRITICAL",
+      "origin": "organisers",
+      "title": "Метод сохранения объявлен как GET",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-082",
+        "D-073"
+      ],
+      "loose_fids": [
+        "D-082",
+        "D-073",
+        "D-074"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-04",
+      "severity": "CRITICAL",
+      "origin": "organisers",
+      "title": "Ошибка суммы возвращается с кодом успеха 200, при этом описан и ответ 400",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-104",
+        "D-116",
+        "D-122"
+      ],
+      "loose_fids": [
+        "D-020",
+        "D-104",
+        "D-107",
+        "D-110",
+        "D-112",
+        "D-116",
+        "D-122"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-05",
+      "severity": "MAJOR",
+      "origin": "organisers",
+      "title": "Расходы в тиынах, порог в тенге: правила пересчёта нет",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-049"
+      ],
+      "loose_fids": [
+        "D-049",
+        "D-046",
+        "D-050"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Цель «в момент покупки» не сходится с «проведёнными» покупками",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-006",
+        "D-018"
+      ],
+      "loose_fids": [
+        "D-005",
+        "D-006",
+        "D-018",
+        "D-022",
+        "D-024"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Код 403 объявлен, но не возвращается; 404 возвращается, но не объявлен",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-116",
+        "D-122"
+      ],
+      "loose_fids": [
+        "D-116",
+        "D-119",
+        "D-122"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«Вернуть прежнее состояние» при ошибке: отдать в ответе или откатить запись",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-085",
+        "D-092"
+      ],
+      "loose_fids": [
+        "D-085",
+        "D-092",
+        "D-104"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-09",
+      "severity": "MAJOR",
+      "origin": "organisers",
+      "title": "Типы полей amount и enabled: в запросе числа, в ответе строки",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-049",
+        "D-099",
+        "D-100"
+      ],
+      "loose_fids": [
+        "D-049",
+        "D-099",
+        "D-100"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-10",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Content-Type указан для запроса без тела",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-101",
+        "D-103"
+      ],
+      "loose_fids": [
+        "D-101",
+        "D-103"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Код 201 упомянут, но не описан; «Created» — название кода 201, а не 200",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-107",
+        "D-116",
+        "D-113",
+        "D-122"
+      ],
+      "loose_fids": [
+        "D-104",
+        "D-107",
+        "D-116",
+        "D-113",
+        "D-122"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Два разных формата ошибки; нет машинного кода ошибки",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-116"
+      ],
+      "loose_fids": [
+        "D-020",
+        "D-104",
+        "D-116"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D-13",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Описание метода говорит и про сохранение, и про чтение, а метод только сохраняет",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-070",
+        "D-122"
+      ],
+      "loose_fids": [
+        "D-070",
+        "D-082",
+        "D-122"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-14",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Нет метода чтения настроек и суммы за месяц — экран не построить",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-010",
+        "D-070",
+        "D-073"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-010",
+        "D-011",
+        "D-070",
+        "D-073"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-15",
+      "severity": "MAJOR",
+      "origin": "organisers",
+      "title": "Шаг порога не задан (1 ₸? 1 000 ₸?)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-017",
+        "D-049"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-015",
+        "D-016",
+        "D-017",
+        "D-049"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-16",
+      "severity": "MAJOR",
+      "origin": "organisers",
+      "title": "Несколько карт, понятие «активная», перевыпуск и блокировка карты",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-014",
+        "D-015",
+        "D-016"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-015",
+        "D-016",
+        "D-017",
+        "D-049"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-17",
+      "severity": "MAJOR",
+      "origin": "organisers",
+      "title": "Возврат за прошлый месяц и частичный возврат не описаны",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-018",
+        "D-021"
+      ],
+      "loose_fids": [
+        "D-018",
+        "D-021",
+        "D-020"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-18",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Остальные виды операций не описаны (комиссии, оплата услуг, кошельки, валюта)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-022"
+      ],
+      "loose_fids": [
+        "D-022",
+        "D-020"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-19",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Считаются ли расходы при выключенном уведомлении; что при включении в середине месяца",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-018",
+        "D-022",
+        "D-024"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "D-20",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Ф-4: случай «накопленная сумма уже выше или равна новому порогу» не описан",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-031"
+      ],
+      "loose_fids": [
+        "D-031"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-21",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Сбрасывается ли признак отправки при повторном сохранении того же порога или выключении-включении",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-029",
+        "D-032"
+      ],
+      "loose_fids": [
+        "D-029",
+        "D-031",
+        "D-032",
+        "D-055",
+        "D-094",
+        "D-095"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-22",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Содержание и язык push; что делать при выключенных уведомлениях на телефоне и недоступности сервиса",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-027",
+        "D-028"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "D-23",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Единственное нефункциональное требование: нет нагрузки, доступности, безопасности, журналирования, хранения",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-043"
+      ],
+      "loose_fids": [
+        "D-006",
+        "D-007",
+        "D-042",
+        "D-041",
+        "D-043",
+        "D-049"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "D-24",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Модель данных неполна: нет признака «включено», типа и времени операции, связи возврата с покупкой, типов и длин",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-045",
+        "D-049",
+        "D-046",
+        "D-050"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-045",
+        "D-049",
+        "D-046",
+        "D-050"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-25",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Повторная доставка события: ключ повтора, «исходный итог», события не по порядку",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-051",
+        "D-052",
+        "D-055"
+      ],
+      "loose_fids": [
+        "D-020",
+        "D-051",
+        "D-052",
+        "D-055"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-26",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описаны интеграции процессинг → сервис расходов и сервис расходов → push",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-007"
+      ],
+      "loose_fids": [
+        "D-004",
+        "D-007",
+        "D-038"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "D-27",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "В логике метода нет проверок «карта активна» и «карта в KZT»; не описан неверный enabled и сумма при enabled=0",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-085",
+        "D-087"
+      ],
+      "loose_fids": [
+        "D-020",
+        "D-084",
+        "D-085",
+        "D-087"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-28",
+      "severity": "MAJOR",
+      "origin": "organisers",
+      "title": "Раздел «Тестирование требований» пуст",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-056",
+        "D-057"
+      ],
+      "loose_fids": [
+        "D-056",
+        "D-057"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D-29",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Критерии приёмки: 3 строки не покрывают требования, нет ссылок на номера требований",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "D-30",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Нет схемы отката и выключателя функции",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-038",
+        "D-066"
+      ],
+      "loose_fids": [
+        "D-038",
+        "D-066"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "D-31",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Безопасность: данные карты и суммы на заблокированном экране; cardId в адресной строке GET; требований ИБ нет",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-037",
+        "D-038",
+        "D-039",
+        "D-040"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-035",
+        "D-033",
+        "D-037",
+        "D-036",
+        "D-038",
+        "D-039",
+        "D-040"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-32",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Боевой адрес и описание API (Swagger) не заданы; нет версии API",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-010",
+        "D-081",
+        "D-080"
+      ],
+      "loose_fids": [
+        "D-010",
+        "D-082",
+        "D-081",
+        "D-080"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D-33",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Нет кода 429, тайм-аутов и поведения при одновременном сохранении",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "D-34",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Дизайн UI: нет текстов ошибок, состояния поля при выключенном переключателе, подтверждения, сбоя сети, макетов",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-007",
+        "D-009",
+        "D-012"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-009",
+        "D-012"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "D-35",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "BPMN и Sequence — одна строка, только успешный путь",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-013",
+        "D-055"
+      ],
+      "loose_fids": [
+        "D-013",
+        "D-055"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-36",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«По дате совершения покупки в Алматы»: время Алматы или покупка, совершённая в Алматы",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-019",
+        "D-023"
+      ],
+      "loose_fids": [
+        "D-019",
+        "D-023"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-37",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«Клиент получает push» непроверяемо: проверяема только отправка системой",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-027"
+      ],
+      "loose_fids": [
+        "D-027",
+        "D-028"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "D-38",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«В течение минуты»: какой сервис, какое событие, в каком проценте случаев, при какой нагрузке",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-041",
+        "D-043",
+        "D-049"
+      ],
+      "loose_fids": [
+        "D-006",
+        "D-007",
+        "D-042",
+        "D-041",
+        "D-043",
+        "D-049"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-39",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«Передать… и сумму»: порог, расходы за месяц или сумма покупки",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-035"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-035",
+        "D-033",
+        "D-037",
+        "D-036",
+        "D-038",
+        "D-039",
+        "D-040"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-40",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«Календарный месяц» в Ф-3: месяц покупки или месяц отправки",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-005",
+        "D-021",
+        "D-020",
+        "D-029",
+        "D-031"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "D-41",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Одно и то же названо разными словами, глоссария нет",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-007"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "D-42",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "«401 и далее» — не перечень; «обе границы включены» без указания, какие",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-105",
+        "D-106"
+      ],
+      "loose_fids": [
+        "D-093",
+        "D-104",
+        "D-105",
+        "D-106"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-43",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В критерии приёмки 2 не указан часовой пояс времени покупки",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-023"
+      ],
+      "loose_fids": [
+        "D-023"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D-44",
+      "severity": "MINOR",
+      "origin": "organisers",
+      "title": "Нет версии и даты документа; чек-лист ревью не отмечен",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-007",
+        "D-064"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-064"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-45",
+      "severity": "MINOR",
+      "origin": "organisers",
+      "title": "Блок согласующих пуст: нет согласующих и подписей",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-064"
+      ],
+      "loose_fids": [
+        "D-064"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-46",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Номера есть только у Ф-1…Ф-4; на остальные разделы сослаться нельзя",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-007"
+      ],
+      "loose_fids": [
+        "D-007"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-47",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В одном пункте по 2–4 независимых утверждения (Ф-1, Ф-2, абзац «Требования к интеграции»)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-020"
+      ],
+      "loose_fids": [
+        "D-010",
+        "D-018",
+        "D-021",
+        "D-022",
+        "D-024",
+        "D-020",
+        "D-070"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-48",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Раздел «Статусы»: описания кодов оторваны от своих блоков, 404 спрятан внутри 403",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-122"
+      ],
+      "loose_fids": [
+        "D-020",
+        "D-122"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D-49",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Список затронутых систем («Влияние на ИС») неполон относительно архитектуры",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-004"
+      ],
+      "loose_fids": [
+        "D-004"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-50",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Два названия одной задачи",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-003"
+      ],
+      "loose_fids": [
+        "D-001",
+        "D-003"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D-51",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Одно требование записано дважды: Ф-4 и правило «Изменение порога сохраняет накопленные расходы»",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-096"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "D-52",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Проектные решения (имена классов и полей БД) внутри требований",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-077"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-028",
+      "severity": "MAJOR",
+      "title": "Не описано включение, когда расходы уже достигли порога",
+      "line": 39,
+      "good_anchor": "Когда расходы переходят от суммы ниже порога к сумме, равной порогу или выше"
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-015",
+      "severity": "MAJOR",
+      "title": "Не описано поведение при выключенном переключателе и неактивной карте",
+      "line": 37,
+      "good_anchor": "целый порог от 1 000 до 1 000 000 ₸ включительно. По умолчанию уведомление выключено",
+      "confirms": [
+        "D-16"
+      ]
+    },
+    {
+      "fid": "D-023",
+      "severity": "MAJOR",
+      "title": "Критерий приёмки по границе месяца расходится с правилом Ф-2",
+      "line": 38,
+      "good_anchor": "| Расходы 19 900 ₸, порог 20 000 ₸ | Перевести 500 ₸ | Счётчик показывает 19 900 ₸ |",
+      "confirms": [
+        "D-36",
+        "D-43"
+      ]
+    },
+    {
+      "fid": "D-049",
+      "severity": "MAJOR",
+      "title": "Суммы хранятся в тиынах и тенге без правила пересчёта",
+      "line": 49,
+      "good_anchor": "целый порог от 1 000 до 1 000 000 ₸ включительно. По умолчанию уведомление выключено",
+      "confirms": [
+        "D-05",
+        "D-09",
+        "D-15",
+        "D-24",
+        "D-38"
+      ]
+    },
+    {
+      "fid": "D-056",
+      "severity": "CRITICAL",
+      "title": "Раздел «Тестирование требований» — заглушка, способа приёмки нет",
+      "line": 56,
+      "good_anchor": "| Расходы 19 900 ₸, порог 20 000 ₸ | Перевести 500 ₸ | Счётчик показывает 19 900 ₸ |",
+      "confirms": [
+        "D-28"
+      ]
+    },
+    {
+      "fid": "D-057",
+      "severity": "MAJOR",
+      "title": "Критерии приёмки не покрывают границы и отказы",
+      "line": 57,
+      "good_anchor": "| Расходы 19 900 ₸, порог 20 000 ₸ | Перевести 500 ₸ | Счётчик показывает 19 900 ₸ |",
+      "confirms": [
+        "D-28"
+      ]
+    },
+    {
+      "fid": "D-116",
+      "severity": "CRITICAL",
+      "title": "Ошибка сохранения возвращается под кодом 200",
+      "line": 165,
+      "good_anchor": "Для чужой карты возвращается 404, как и для отсутствующей карты.",
+      "confirms": [
+        "D-04",
+        "D-07",
+        "D-11",
+        "D-12"
+      ]
+    },
+    {
+      "fid": "D-122",
+      "severity": "MAJOR",
+      "title": "Для 403 описан ответ 404, и 404 нет в списке статусов",
+      "line": 188,
+      "good_anchor": "Для чужой карты возвращается 404, как и для отсутствующей карты.",
+      "confirms": [
+        "D-04",
+        "D-07",
+        "D-11",
+        "D-13",
+        "D-48"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-058",
+      "severity": "MINOR",
+      "title": "«Итог» в ожидаемом результате не определён",
+      "line": 63
+    },
+    {
+      "fid": "D-062",
+      "severity": "MINOR",
+      "title": "«Счётчик» не определён",
+      "line": 65
+    },
+    {
+      "fid": "D-075",
+      "severity": "MINOR",
+      "title": "Схема авторизации описана неясно",
+      "line": 105
+    },
+    {
+      "fid": "D-076",
+      "severity": "MINOR",
+      "title": "Неясно соотношение Bearer-токена и сессии",
+      "line": 105
+    },
+    {
+      "fid": "D-083",
+      "severity": "MINOR",
+      "title": "cardId в адресе запроса не определён как не-PAN",
+      "line": 109
+    },
+    {
+      "fid": "D-088",
+      "severity": "MINOR",
+      "title": "Неясно, что такое «настройка» и «результат»",
+      "line": 120
+    },
+    {
+      "fid": "D-089",
+      "severity": "MINOR",
+      "title": "Результат сохранения не привязан к полям ответа",
+      "line": 120
+    },
+    {
+      "fid": "D-098",
+      "severity": "MINOR",
+      "title": "Идентификатор карты передаётся в адресной строке",
+      "line": 142
+    },
+    {
+      "fid": "D-109",
+      "severity": "MINOR",
+      "title": "«Успешное выполнение» не определено",
+      "line": 162
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_sonnet/req.json",
+  "key_file": "eval/keys_v1/requirements.md.key.json"
+}

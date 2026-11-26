@@ -1,0 +1,499 @@
+{
+  "document": "b2_deposit_withdrawal.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "full",
+    "cost_usd": 1.306081,
+    "cost_note": "по тарифу claude-sonnet-5-5: $2 / $10 за 1 млн токенов (вход / выход)",
+    "duration_s": 207.95,
+    "doc_name": "b2_deposit_withdrawal.md"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 61,
+    "findings_open": 66,
+    "advisory": 6
+  },
+  "recall": {
+    "overall": {
+      "total": 5,
+      "strict": 5,
+      "loose": 5,
+      "strict_share": 1.0,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 1,
+        "strict": 1,
+        "loose": 1,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 2,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 2,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 5,
+        "strict": 5,
+        "loose": 5,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 4,
+    "tool_higher": 1,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "B2-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Критерий приёмки AC-02 ожидает успешное изъятие с остатком 45 000 ₸, хотя REQ-03 запрещает остаток ниже 50 000 ₸.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-009",
+        "D-079"
+      ],
+      "loose_fids": [
+        "D-009",
+        "D-079"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B2-02",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "В REQ-16 не определено, как распределяется уже начисленное и капитализированное вознаграждение на изымаемую сумму и откуда удерживается разница при пересчёте по ставке 1 %.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-022",
+        "D-041"
+      ],
+      "loose_fids": [
+        "D-022",
+        "D-041",
+        "D-043"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B2-03",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Код ошибки при превышении лимита изъятий различается: в REQ-05 и таблице ошибок WITHDRAWAL_COUNT_EXCEEDED, в AC-05 — MONTHLY_LIMIT.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-080"
+      ],
+      "loose_fids": [
+        "D-080"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B2-04",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Время ответа «не более 2 секунд» без перцентиля и нагрузки, при которой оно должно выполняться.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-068",
+        "D-069",
+        "D-072"
+      ],
+      "loose_fids": [
+        "D-068",
+        "D-069",
+        "D-072"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "B2-05",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Вместо определённого в глоссарии термина «неснижаемый остаток» в разделе 10 используется «минимальный баланс».",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-090"
+      ],
+      "loose_fids": [
+        "D-088",
+        "D-089",
+        "D-090"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-002",
+      "severity": "MAJOR",
+      "title": "«Сумма под арестом» и статус «Арестован» описывают арест по-разному",
+      "line": 22,
+      "good_anchor": "| Доступная сумма | Остаток депозита минус неснижаемый остаток минус сумма под арестом |"
+    },
+    {
+      "fid": "D-016",
+      "severity": "MAJOR",
+      "title": "Нет сценария неизвестного результата проводки (тайм-аут АБС)",
+      "line": 40,
+      "good_anchor": "Если проводка не прошла, ни депозит, ни счёт не изменяются"
+    },
+    {
+      "fid": "D-023",
+      "severity": "MAJOR",
+      "title": "Не описан повтор requestId с другими параметрами",
+      "line": 46,
+      "good_anchor": "Повтор запроса с тем же `requestId` в течение 72 часов возвращает результат первого запроса"
+    }
+  ],
+  "false_alarms_exempt": [],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Не описаны вызовы АБС и сервиса уведомлений",
+      "line": 8
+    },
+    {
+      "fid": "D-003",
+      "severity": "MINOR",
+      "title": "Не описана смена статуса/ареста во время обработки запроса",
+      "line": 22
+    },
+    {
+      "fid": "D-004",
+      "severity": "MINOR",
+      "title": "Неясная ссылка «в этом банке»",
+      "line": 23
+    },
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "В 3 пунктах записано по нескольку утверждений",
+      "line": 28
+    },
+    {
+      "fid": "D-008",
+      "severity": "MINOR",
+      "title": "Код AMOUNT_TOO_SMALL не отражён в функциональных требованиях; VALIDATION_ERROR неясен",
+      "line": 30
+    },
+    {
+      "fid": "D-010",
+      "severity": "MINOR",
+      "title": "Ошибка суммы: два кода для одной проверки и неверный код в REQ-03",
+      "line": 32
+    },
+    {
+      "fid": "D-011",
+      "severity": "MINOR",
+      "title": "REQ-04 и REQ-05 дублируют правило, «третий запрос» двусмысленен",
+      "line": 34
+    },
+    {
+      "fid": "D-012",
+      "severity": "MINOR",
+      "title": "Лимит по депозиту — ясно, но не сказано про несколько депозитов клиента",
+      "line": 34
+    },
+    {
+      "fid": "D-013",
+      "severity": "MINOR",
+      "title": "Нет модели данных",
+      "line": 34
+    },
+    {
+      "fid": "D-014",
+      "severity": "MINOR",
+      "title": "Не указана реакция системы на чужой счёт",
+      "line": 38
+    },
+    {
+      "fid": "D-015",
+      "severity": "MINOR",
+      "title": "«Исполняется сразу» не измеряется",
+      "line": 40
+    },
+    {
+      "fid": "D-017",
+      "severity": "MINOR",
+      "title": "Не определено, какое время повтора показывать",
+      "line": 42
+    },
+    {
+      "fid": "D-019",
+      "severity": "MINOR",
+      "title": "Граница 90 дней и окна 23:50–00:10 не указана включением",
+      "line": 42
+    },
+    {
+      "fid": "D-021",
+      "severity": "MINOR",
+      "title": "Не описана корректировка исполненного изъятия задним числом",
+      "line": 44
+    },
+    {
+      "fid": "D-025",
+      "severity": "MINOR",
+      "title": "Не задан момент начала отсчёта 72 часов",
+      "line": 46
+    },
+    {
+      "fid": "D-026",
+      "severity": "MINOR",
+      "title": "Нет ограничения частоты, тайм-аутов и конфликта requestId",
+      "line": 46
+    },
+    {
+      "fid": "D-027",
+      "severity": "MINOR",
+      "title": "«Последние 4 цифры» для IBAN",
+      "line": 50
+    },
+    {
+      "fid": "D-028",
+      "severity": "MINOR",
+      "title": "Результат описан через получение клиентом",
+      "line": 50
+    },
+    {
+      "fid": "D-029",
+      "severity": "MINOR",
+      "title": "Не заданы текст и язык push, поведение при выключенных уведомлениях",
+      "line": 50
+    },
+    {
+      "fid": "D-030",
+      "severity": "MINOR",
+      "title": "Не описана недоступность АБС и повтор push",
+      "line": 50
+    },
+    {
+      "fid": "D-031",
+      "severity": "MINOR",
+      "title": "Остаток виден в push на заблокированном экране",
+      "line": 50
+    },
+    {
+      "fid": "D-032",
+      "severity": "MINOR",
+      "title": "Не описан сбой записи в журнал аудита",
+      "line": 52
+    },
+    {
+      "fid": "D-033",
+      "severity": "MINOR",
+      "title": "Неясно, что записывается как «депозит»",
+      "line": 52
+    },
+    {
+      "fid": "D-035",
+      "severity": "MINOR",
+      "title": "Не описано, что делать с данными журнала после 5 лет",
+      "line": 52
+    },
+    {
+      "fid": "D-036",
+      "severity": "MINOR",
+      "title": "Не указаны место хранения журнала и передача данных",
+      "line": 52
+    },
+    {
+      "fid": "D-037",
+      "severity": "MINOR",
+      "title": "Не определён «остаток на конец календарного дня»",
+      "line": 56
+    },
+    {
+      "fid": "D-038",
+      "severity": "MINOR",
+      "title": "Выбор числа дней в году не определён",
+      "line": 56
+    },
+    {
+      "fid": "D-046",
+      "severity": "MINOR",
+      "title": "Не указан момент капитализации и учёт в день капитализации",
+      "line": 62
+    },
+    {
+      "fid": "D-049",
+      "severity": "MINOR",
+      "title": "Коды 5xx для бизнес-окна и ошибки проводки; нет заголовка Retry-After",
+      "line": 72
+    },
+    {
+      "fid": "D-050",
+      "severity": "MINOR",
+      "title": "Ошибка различает чужой счёт и несуществующий",
+      "line": 74
+    },
+    {
+      "fid": "D-052",
+      "severity": "MINOR",
+      "title": "Нет номеров у разделов 2, 5 и 6",
+      "line": 74
+    },
+    {
+      "fid": "D-053",
+      "severity": "MINOR",
+      "title": "Не перечислены проверки формата полей",
+      "line": 75
+    },
+    {
+      "fid": "D-054",
+      "severity": "MINOR",
+      "title": "Неясно, какие нарушения считаются форматом",
+      "line": 75
+    },
+    {
+      "fid": "D-055",
+      "severity": "MINOR",
+      "title": "Ответ 404 не вписывается в общий формат ошибок",
+      "line": 79
+    },
+    {
+      "fid": "D-056",
+      "severity": "MINOR",
+      "title": "Нет ссылки на определение «доступной суммы»",
+      "line": 84
+    },
+    {
+      "fid": "D-057",
+      "severity": "MINOR",
+      "title": "Единицы суммы: integer в запросе и строка с копейками в ответе",
+      "line": 84
+    },
+    {
+      "fid": "D-058",
+      "severity": "MINOR",
+      "title": "Не задана реакция на неверный формат IBAN",
+      "line": 85
+    },
+    {
+      "fid": "D-061",
+      "severity": "MAJOR",
+      "title": "Выбор счёта зачисления: несколько счетов, нет списка и правил",
+      "line": 98
+    },
+    {
+      "fid": "D-062",
+      "severity": "MINOR",
+      "title": "Не заданы значения по умолчанию на экране",
+      "line": 98
+    },
+    {
+      "fid": "D-063",
+      "severity": "MINOR",
+      "title": "Не описан отказ на экране подтверждения",
+      "line": 100
+    },
+    {
+      "fid": "D-064",
+      "severity": "MINOR",
+      "title": "Не описаны сбой сети и макеты",
+      "line": 100
+    },
+    {
+      "fid": "D-065",
+      "severity": "MINOR",
+      "title": "Не задан формат предупреждения о ставке",
+      "line": 101
+    },
+    {
+      "fid": "D-066",
+      "severity": "MINOR",
+      "title": "Неясно, что значит «уменьшит ставку»",
+      "line": 101
+    },
+    {
+      "fid": "D-067",
+      "severity": "MINOR",
+      "title": "Нет метода для доступной суммы и новой ставки на экране",
+      "line": 101
+    },
+    {
+      "fid": "D-074",
+      "severity": "MINOR",
+      "title": "Не определено, что считается недоступностью метода",
+      "line": 106
+    },
+    {
+      "fid": "D-075",
+      "severity": "MINOR",
+      "title": "Не определён состав журналов для маскирования",
+      "line": 107
+    },
+    {
+      "fid": "D-082",
+      "severity": "MINOR",
+      "title": "Неясная ссылка «Запрос 1»",
+      "line": 119
+    },
+    {
+      "fid": "D-083",
+      "severity": "MINOR",
+      "title": "«Одновременно» не задано измеримо",
+      "line": 120
+    },
+    {
+      "fid": "D-085",
+      "severity": "MINOR",
+      "title": "Пример начисления не сходится с формулой",
+      "line": 124
+    },
+    {
+      "fid": "D-086",
+      "severity": "MINOR",
+      "title": "Критерий начисления не показывает формулу и ставку",
+      "line": 124
+    },
+    {
+      "fid": "D-087",
+      "severity": "MINOR",
+      "title": "AC-12 неверно считает вознаграждение",
+      "line": 124
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_blind_sonnet/b2.json",
+  "key_file": "eval/blind/b2_deposit_withdrawal.md.key.json"
+}

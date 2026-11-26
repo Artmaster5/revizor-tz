@@ -1,0 +1,665 @@
+{
+  "document": "b3_phone_transfers.txt",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "full",
+    "cost_usd": 1.402322,
+    "cost_note": "по тарифу claude-sonnet-5-5: $2 / $10 за 1 млн токенов (вход / выход)",
+    "duration_s": 177.1,
+    "doc_name": "b3_phone_transfers.txt"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 65,
+    "findings_open": 80,
+    "advisory": 15
+  },
+  "recall": {
+    "overall": {
+      "total": 14,
+      "strict": 13,
+      "loose": 14,
+      "strict_share": 0.9285714285714286,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 2,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 9,
+        "strict": 8,
+        "loose": 9,
+        "strict_share": 0.8888888888888888,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 3,
+        "strict": 3,
+        "loose": 3,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 14,
+        "strict": 13,
+        "loose": 14,
+        "strict_share": 0.9285714285714286,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 11,
+    "tool_higher": 2,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "B3-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Суточный лимит переводов в другие банки задан дважды с разными значениями: 1 000 000 тенге в п. 4.2 и 500 000 тенге в п. 7.3.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-018",
+        "D-074"
+      ],
+      "loose_fids": [
+        "D-018",
+        "D-074"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "При отказе банка получателя деньги остаются на транзитном счёте до обращения клиента: нет автоматического возврата, срока и правила для комиссии.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-053"
+      ],
+      "loose_fids": [
+        "D-053"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-03",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Правило комиссии (0,95 % от суммы перевода) противоречит примеру 9.2, где комиссия считается только с части сверх бесплатного лимита.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-009",
+        "D-010"
+      ],
+      "loose_fids": [
+        "D-009",
+        "D-010"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "B3-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не определено, какие данные получателя показываются отправителю и в каком виде (маскирование имени).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-031",
+        "D-034"
+      ],
+      "loose_fids": [
+        "D-031",
+        "D-034",
+        "D-035",
+        "D-036"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Тайм-аут ответа СМП задан как «в разумный срок», без числа, количества повторных запросов статуса и конечного исхода.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-061",
+        "D-064"
+      ],
+      "loose_fids": [
+        "D-061",
+        "D-064"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Требование «высокая доступность и устойчивость к сбоям» без чисел.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-079",
+        "D-081",
+        "D-085"
+      ],
+      "loose_fids": [
+        "D-011",
+        "D-079",
+        "D-081",
+        "D-085",
+        "D-089"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Формат номера телефона не определён: «в любом удобном формате» без правил нормализации и проверки (+7, 8, пробелы, длина).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-022",
+        "D-025",
+        "D-026",
+        "D-093"
+      ],
+      "loose_fids": [
+        "D-022",
+        "D-025",
+        "D-026",
+        "D-093"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Кнопка «Отправить ещё раз» при отсутствии подтверждения создаёт риск двойного перевода: нет защиты от дубликатов и проверки статуса первого перевода.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-049"
+      ],
+      "loose_fids": [
+        "D-049",
+        "D-051"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "B3-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не определено, что такое «сутки» для лимита: календарный день или скользящие 24 часа.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-018"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "B3-10",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Порядок шагов в п. 5.5 (создание и списание до проверки лимита) противоречит п. 4.4, где при превышении лимита перевод не создаётся; п. 5.6 повторно описывает списание.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-011",
+        "D-037",
+        "D-040"
+      ],
+      "loose_fids": [
+        "D-011",
+        "D-037",
+        "D-040",
+        "D-041"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-11",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Термин «новый получатель», от которого зависит запрос SMS-кода, не определён.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-076"
+      ],
+      "loose_fids": [
+        "D-076"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В требования вынесено проектное решение: таблица PostgreSQL, индекс и партиционирование.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-036",
+        "D-094"
+      ],
+      "loose_fids": [
+        "D-036",
+        "D-094",
+        "D-097"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-13",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Номер пункта 5.3 повторяется дважды, пункт 5.4 пропущен.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-034",
+        "D-035",
+        "D-036"
+      ],
+      "loose_fids": [
+        "D-031",
+        "D-034",
+        "D-035",
+        "D-036"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "B3-14",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Перечень причин отклонения открыт («и т. д.»): неизвестен полный список причин и тексты для клиента.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-056",
+        "D-057",
+        "D-059"
+      ],
+      "loose_fids": [
+        "D-056",
+        "D-057",
+        "D-059"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-089",
+      "severity": "MAJOR",
+      "title": "Нет критериев приёмки и тестирования",
+      "line": 76,
+      "good_anchor": "8.2. Время от подтверждения перевода клиентом до передачи сообщения в СМП — не более 3 секунд для 95 % переводов"
+    },
+    {
+      "fid": "D-096",
+      "severity": "MAJOR",
+      "title": "Ограничение «не передаётся третьим лицам» и маскирование противоречат требованиям",
+      "line": 86,
+      "good_anchor": "номер телефона в журнале хранится в маскированном виде: видны первые 4 и последние 2 цифры"
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-053",
+      "severity": "CRITICAL",
+      "title": "Деньги клиента остаются на транзитном счёте до обращения",
+      "line": 56,
+      "good_anchor": "сумма и комиссия возвращаются с транзитного счёта на счёт отправителя в течение 1 минуты",
+      "confirms": [
+        "B3-02"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "«Возможно» не задаёт обязательность списания с обоих типов счетов",
+      "line": 14
+    },
+    {
+      "fid": "D-002",
+      "severity": "MAJOR",
+      "title": "Не ясно, общий ли месячный лимит на все счета",
+      "line": 14
+    },
+    {
+      "fid": "D-003",
+      "severity": "MINOR",
+      "title": "Нет статуса для периода до передачи в СМП",
+      "line": 24
+    },
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Неясно, что именно не превышает 200 000 тенге",
+      "line": 28
+    },
+    {
+      "fid": "D-006",
+      "severity": "MAJOR",
+      "title": "Не определено, какие переводы входят в месячный бесплатный лимит",
+      "line": 28
+    },
+    {
+      "fid": "D-007",
+      "severity": "MINOR",
+      "title": "Не определена дата отнесения перевода к периоду",
+      "line": 28
+    },
+    {
+      "fid": "D-012",
+      "severity": "MINOR",
+      "title": "«Отдельной строкой» не определено",
+      "line": 30
+    },
+    {
+      "fid": "D-013",
+      "severity": "MINOR",
+      "title": "Не описана реакция на сумму выше максимума",
+      "line": 35
+    },
+    {
+      "fid": "D-015",
+      "severity": "MINOR",
+      "title": "Не задан шаг суммы перевода",
+      "line": 35
+    },
+    {
+      "fid": "D-016",
+      "severity": "MAJOR",
+      "title": "Не определены границы суток",
+      "line": 36
+    },
+    {
+      "fid": "D-020",
+      "severity": "MINOR",
+      "title": "Не указано, какой лимит и какой остаток",
+      "line": 38
+    },
+    {
+      "fid": "D-028",
+      "severity": "MINOR",
+      "title": "Тайм-аут 5 секунд без точки отсчёта",
+      "line": 44
+    },
+    {
+      "fid": "D-042",
+      "severity": "MAJOR",
+      "title": "Не описано, что делать, если передача в СМП не удалась",
+      "line": 48
+    },
+    {
+      "fid": "D-050",
+      "severity": "MAJOR",
+      "title": "Не определено условие «не получил подтверждение»",
+      "line": 50
+    },
+    {
+      "fid": "D-052",
+      "severity": "MINOR",
+      "title": "Срок возврата без условий измерения",
+      "line": 55
+    },
+    {
+      "fid": "D-065",
+      "severity": "MINOR",
+      "title": "Термин «СМП» и разные имена для одной сущности",
+      "line": 58
+    },
+    {
+      "fid": "D-066",
+      "severity": "MINOR",
+      "title": "Результат описан как получение push клиентом",
+      "line": 60
+    },
+    {
+      "fid": "D-067",
+      "severity": "MINOR",
+      "title": "Не определено, что видно в push",
+      "line": 60
+    },
+    {
+      "fid": "D-068",
+      "severity": "MAJOR",
+      "title": "Не описано поведение при сбое антифрод-проверки",
+      "line": 64
+    },
+    {
+      "fid": "D-069",
+      "severity": "MAJOR",
+      "title": "Не задано поведение при недоступности антифрод-системы",
+      "line": 64
+    },
+    {
+      "fid": "D-071",
+      "severity": "MINOR",
+      "title": "Не описаны интеграции с SMS и контакт-центром",
+      "line": 64
+    },
+    {
+      "fid": "D-072",
+      "severity": "MINOR",
+      "title": "Не описана неудачная биометрия или неверный ПИН",
+      "line": 65
+    },
+    {
+      "fid": "D-073",
+      "severity": "MINOR",
+      "title": "Неясно, кто выбирает способ подтверждения",
+      "line": 65
+    },
+    {
+      "fid": "D-077",
+      "severity": "MINOR",
+      "title": "Не определены «третьи лица»",
+      "line": 68
+    },
+    {
+      "fid": "D-078",
+      "severity": "MINOR",
+      "title": "Не определён перечень систем третьих лиц",
+      "line": 68
+    },
+    {
+      "fid": "D-087",
+      "severity": "MINOR",
+      "title": "Не указано начало срока хранения",
+      "line": 74
+    },
+    {
+      "fid": "D-091",
+      "severity": "MINOR",
+      "title": "Неясная ссылка «Он» в примере",
+      "line": 79
+    },
+    {
+      "fid": "D-092",
+      "severity": "MINOR",
+      "title": "Пример возврата не охватывает комиссию и статус",
+      "line": 82
+    },
+    {
+      "fid": "D-098",
+      "severity": "MINOR",
+      "title": "Не заданы форматы полей перевода",
+      "line": 87
+    },
+    {
+      "fid": "D-099",
+      "severity": "MINOR",
+      "title": "Не описано поведение экрана ввода номера",
+      "line": 91
+    },
+    {
+      "fid": "D-100",
+      "severity": "MINOR",
+      "title": "Не определено значение «остаток месячного бесплатного лимита»",
+      "line": 93
+    },
+    {
+      "fid": "D-101",
+      "severity": "MINOR",
+      "title": "Не задан счёт списания по умолчанию",
+      "line": 93
+    },
+    {
+      "fid": "D-102",
+      "severity": "MINOR",
+      "title": "Экраны не покрывают шаги порядка перевода",
+      "line": 93
+    },
+    {
+      "fid": "D-103",
+      "severity": "MAJOR",
+      "title": "Не заданы условия показа «Отправить ещё раз»",
+      "line": 94
+    },
+    {
+      "fid": "D-105",
+      "severity": "MINOR",
+      "title": "Не описаны состояния элементов и сбой сети на экранах",
+      "line": 94
+    },
+    {
+      "fid": "D-107",
+      "severity": "MINOR",
+      "title": "Не определено, что считается расхождением",
+      "line": 98
+    },
+    {
+      "fid": "D-106",
+      "severity": "MINOR",
+      "title": "Неясно, по дате чего берётся «предыдущий день»",
+      "line": 98
+    },
+    {
+      "fid": "D-109",
+      "severity": "MINOR",
+      "title": "Неясно, что такое «разбор» расхождения и кто за него отвечает",
+      "line": 99
+    },
+    {
+      "fid": "D-110",
+      "severity": "MINOR",
+      "title": "Нет точки отсчёта и признака «разобрано»",
+      "line": 99
+    },
+    {
+      "fid": "D-111",
+      "severity": "MINOR",
+      "title": "Не определена точка отсчёта «старше 24 часов»",
+      "line": 100
+    },
+    {
+      "fid": "D-112",
+      "severity": "MINOR",
+      "title": "Не заданы условия перехода от пилота ко всем клиентам",
+      "line": 105
+    },
+    {
+      "fid": "D-114",
+      "severity": "MINOR",
+      "title": "Не описан перевод в процессе оформления при выключении",
+      "line": 106
+    },
+    {
+      "fid": "D-116",
+      "severity": "MINOR",
+      "title": "Не задано содержимое чека",
+      "line": 111
+    },
+    {
+      "fid": "D-117",
+      "severity": "MINOR",
+      "title": "«Может скачать» не задаёт обязательное поведение",
+      "line": 111
+    },
+    {
+      "fid": "D-119",
+      "severity": "MINOR",
+      "title": "Неявная ссылка «те же данные»",
+      "line": 112
+    },
+    {
+      "fid": "D-120",
+      "severity": "MINOR",
+      "title": "Нет аудита действий оператора и переключателя",
+      "line": 112
+    },
+    {
+      "fid": "D-122",
+      "severity": "MINOR",
+      "title": "Открытый вопрос без ответственного и последствий срыва",
+      "line": 117
+    },
+    {
+      "fid": "D-125",
+      "severity": "MINOR",
+      "title": "Раздел «Начальник управления развития платёжных продуктов» пуст",
+      "line": 125
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_blind_sonnet/b3.json",
+  "key_file": "eval/blind/b3_phone_transfers.txt.key.json"
+}

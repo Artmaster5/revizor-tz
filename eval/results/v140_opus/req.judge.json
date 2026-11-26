@@ -1,0 +1,996 @@
+{
+ "defects": [
+  {
+   "id": "D-01",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-029"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Ф-2 относит покупку к месяцу по дате её совершения... Критерий ждёт роста февральского счётчика",
+   "reason": "Прямо названо противоречие Ф-2 и критерия приёмки (январь против февраля)."
+  },
+  {
+   "id": "D-02",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-032"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Ф-3 разрешает не больше одного push... Ф-4 требует push «независимо от истории»",
+   "reason": "То же противоречие Ф-3 и Ф-4 с примером."
+  },
+  {
+   "id": "D-03",
+   "key_severity": "CRITICAL",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-083"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "метод GET должен быть безопасным... Метод saveLimit меняет настройку",
+   "reason": "GET для изменяющего метода, ссылка на RFC 9110."
+  },
+  {
+   "id": "D-04",
+   "key_severity": "CRITICAL",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-097"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Под заголовком кода 200 приведены два примера ответа: успешный и ERROR... код 400 назначен для неверно заполненных параметров",
+   "reason": "Ровно тот дефект: ошибка суммы под 200 при описанном 400."
+  },
+  {
+   "id": "D-05",
+   "key_severity": "MAJOR",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-050"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "сумма покупки в тиынах, порог — в тенге. Правило пересчёта не указано... в 100 раз",
+   "reason": "Названо точно."
+  },
+  {
+   "id": "D-06",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-025",
+    "D-003"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Цель обещает уведомление в момент покупки; не определено проведённая покупка: авторизация или клиринг",
+   "reason": "Разрыв между целью и проведением и неопределённость понятия названы."
+  },
+  {
+   "id": "D-07",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-131"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "код 403 назначен для запрета доступа... для чужой карты возвращается 404. Код 404 в списке статусов не объявлен",
+   "reason": "Обе половины дефекта названы."
+  },
+  {
+   "id": "D-08",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-096"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "можно понять так: не менять настройку... А можно так: вернуть в ответе прежние amount и enabled",
+   "reason": "Двойное прочтение названо."
+  },
+  {
+   "id": "D-09",
+   "key_severity": "MAJOR",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-109"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "В запросе amount — integer, в ответе тот же порог — string; enabled так же (в карточке)",
+   "reason": "Типы amount и enabled названы."
+  },
+  {
+   "id": "D-10",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-112"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Заголовок Content-Type описывает тело запроса, а соседняя строка говорит, что тела нет",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-11",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-119"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "В заголовке указан код 200, а подпись Created относится к коду 201; 201 упомянут, но не описан (в карточке)",
+   "reason": "Обе части названы."
+  },
+  {
+   "id": "D-12",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-100"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Ошибка приходит то в виде result=ERROR с message, то только с message. Машинного кода ошибки нет",
+   "reason": "Совпадает полностью; программа пометила только «место», потому что не привязала D-100."
+  },
+  {
+   "id": "D-13",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-080"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "В одном поле метод назван и сохранением, и чтением порога",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-14",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-061"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Часть A говорит, что приложение читает настройки... в части B описан только метод saveLimit",
+   "reason": "Совпадает, включая сумму за месяц."
+  },
+  {
+   "id": "D-15",
+   "key_severity": "MAJOR",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-020"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Не сказано, принимаются ли значения вроде 12 345 или только кратные 100 или 1 000",
+   "reason": "Шаг порога назван; уровень занижен."
+  },
+  {
+   "id": "D-16",
+   "key_severity": "MAJOR",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-013",
+    "D-019"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не определено понятие «активной карты»... блокировка, перевыпуск (в карточке)",
+   "reason": "Активность, блокировка и перевыпуск названы; не названы несколько карт и дополнительный держатель, но основная масса вопросов покрыта."
+  },
+  {
+   "id": "D-17",
+   "key_severity": "MAJOR",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-021"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Не сказано, как учитывается возврат в прошлый, уже закрытый месяц",
+   "reason": "Возврат в прошлый месяц назван, частичный возврат и связь с исходной покупкой в данных не названы; программа считала найденным."
+  },
+  {
+   "id": "D-18",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-028",
+    "D-014"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, что делать с оплатой услуг, комиссиями, квазикэшем... покупка в иностранной валюте",
+   "reason": "Виды операций и валюта названы."
+  },
+  {
+   "id": "D-19",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-015"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, копит ли сервис расходы месяца, пока переключатель выключен",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-20",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-036"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Описан только случай, когда накопленная сумма ниже нового порога",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-21",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-103"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, сбрасывается ли признак отправки... при повторном сохранении того же порога",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-22",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-048",
+    "D-010",
+    "D-040"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не сказано, что происходит, если клиент запретил push в настройках телефона; нет текста push, языка",
+   "reason": "Выключенные push, недоступность сервиса, текст и язык названы тремя замечаниями; программа дала только «место»."
+  },
+  {
+   "id": "D-23",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-047"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Нет пиковой нагрузки, доступности сервиса, времени ответа метода, срока хранения данных",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-24",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-051",
+    "D-055"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Признак enabled используется в Ф-1 и API, но в требованиях к данным не указан; типы, длины не названы",
+   "reason": "Основные пропуски названы; типа и времени операции нет."
+  },
+  {
+   "id": "D-25",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-057"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не задан ключ распознавания повторной доставки; неясно, что входит в «исходный итог»",
+   "reason": "Ключ и «итог» названы; порядок событий не назван."
+  },
+  {
+   "id": "D-26",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-041",
+    "D-010"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не описан контракт события от карточного процессинга... синхронный вызов или очередь",
+   "reason": "Формат события и сбои соседей названы."
+  },
+  {
+   "id": "D-27",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-013",
+    "D-088"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "В логике метода проверяется лишь принадлежность карты; что вернуть при enabled=2",
+   "reason": "Обе половины названы."
+  },
+  {
+   "id": "D-28",
+   "key_severity": "CRITICAL",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-064"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Вместо содержания раздела стоит заглушка «заполняются тестировщиками»",
+   "reason": "Совпадает, CRITICAL."
+  },
+  {
+   "id": "D-29",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-026"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Три критерия проверяют только достижение порога, границу месяца и исключение перевода. Нет проверок границ... повторной доставки",
+   "reason": "Названо; ссылки на номера требований — в D-049. Программа дала «место»."
+  },
+  {
+   "id": "D-30",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-075"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Чек-лист требует схему отката или скрытия функционала, но в требованиях её нет; нет выключателя",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-31",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-044",
+    "D-086"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Push с суммой и цифрами карты показывается на экране блокировки; cardId в query попадает в журналы",
+   "reason": "Обе части названы; общий пробел требований ИБ не назван отдельно."
+  },
+  {
+   "id": "D-32",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-085"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Для Prod вместо URL стоит прочерк; в пути нет версии API",
+   "reason": "Prod и версия названы, Swagger нет."
+  },
+  {
+   "id": "D-33",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "НЕТ",
+   "verdict": "found",
+   "finding_ids": [
+    "D-104",
+    "D-084"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Нет: ограничения частоты запросов и кода 429; тайм-аута; правила для одновременного сохранения",
+   "reason": "Совпадает; программа ошибочно дала НЕТ."
+  },
+  {
+   "id": "D-34",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-005",
+    "D-009"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Нет состояний экрана, текстов ошибок, подтверждения и поведения при сбое",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-35",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-011"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "показан только успешный путь. На них нет веток «порог не достигнут», «уведомление выключено»",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-36",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-022"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Фразу можно понять так: покупки, совершённые в городе Алматы, или дата по часовому поясу Алматы",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-37",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-031"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Система не может гарантировать, что push дойдёт до устройства клиента",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-38",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-045",
+    "D-046"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Не указано, для какой доли событий и при какой нагрузке; не названо, после какого события отсчитывается минута",
+   "reason": "Все части названы."
+  },
+  {
+   "id": "D-39",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-040"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не ясно, что передаётся в push: сумма покупки, накопленные расходы или порог",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-40",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-030"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "считается календарный месяц по месяцу покупки из Ф-2 или по дате отправки push",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-41",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-038"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Расходы месяца названы пятью разными словами; нужен словарь",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-42",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-116",
+    "D-101"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "«И далее» можно понять как все коды от 400...; в пункте нет подлежащего и чисел границ",
+   "reason": "Обе половины названы."
+  },
+  {
+   "id": "D-43",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-070"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "«По Алматы» стоит только у времени проведения, а у времени покупки часового пояса нет",
+   "reason": "Совпадает; уровень выше ключа."
+  },
+  {
+   "id": "D-44",
+   "key_severity": "MINOR",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-074"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Версия и дата документа не заполнены; отметки в чек-листе не проставлены",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-45",
+   "key_severity": "MINOR",
+   "origin": "organisers",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-077"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Таблица есть, но ни одна её строка не заполнена",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-46",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "НЕТ",
+   "verdict": "found",
+   "finding_ids": [
+    "D-049"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "У НФТ, данных, интеграции, UI и критериев приёмки нет номеров",
+   "reason": "Совпадает; программа дала НЕТ."
+  },
+  {
+   "id": "D-47",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-012"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "В каждом из этих пунктов под одним номером записано несколько отдельных правил",
+   "reason": "Названы Ф-1, Ф-2, интеграция."
+  },
+  {
+   "id": "D-48",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-129",
+    "D-132"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Под заголовком 403 описан не ответ 403, а возврат 404; вынести правило про 404 в отдельный раздел",
+   "reason": "Назван только спрятанный 404; оторванные от блоков описания 401/403/500 не названы. Программа считала найденным."
+  },
+  {
+   "id": "D-49",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-002"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "В «Влиянии на ИС» нет сервиса настроек и сервиса учёта расходов",
+   "reason": "Совпадает."
+  },
+  {
+   "id": "D-50",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-001"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Заголовок и дочерний документ используют одно название, а поле «Наименование задачи» — другое",
+   "reason": "Совпадает; программа дала «место»."
+  },
+  {
+   "id": "D-51",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-106"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Особые правила API пересказывают Ф-1 и Ф-4 другими словами... Повтор требования Ф-4",
+   "reason": "Совпадает; программа дала «место»."
+  },
+  {
+   "id": "D-52",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-107"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Имя класса AlertsController и столбцы БД (card_id, limit_kzt) — решения реализации",
+   "reason": "Совпадает."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-003",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-025",
+   "reason": "Та же мысль «в момент покупки» против проведения, слабее и с низким уровнем."
+  },
+  {
+   "fid": "D-004",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В архитектуре действительно нет стрелки «учёт расходов → сервис настроек», есть в Sequence."
+  },
+  {
+   "fid": "D-006",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-005",
+   "reason": "Состояние поля при выключенном переключателе уже названо в D-005."
+  },
+  {
+   "fid": "D-008",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-061",
+   "reason": "Откуда экран берёт сумму за месяц, названо в D-061."
+  },
+  {
+   "fid": "D-018",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Значение поля порога при первом открытии не задано; реальная мелочь."
+  },
+  {
+   "fid": "D-033",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-036",
+   "reason": "Тот же случай «расходы уже не ниже порога при включении», что в D-036 и D-015. Программа назвала это ложной тревогой на «хорошей» строке 39; по сути строка не раскритикована, дефект настоящий."
+  },
+  {
+   "fid": "D-043",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Что уходит внешним провайдерам push, не сказано; уместное замечание."
+  },
+  {
+   "fid": "D-052",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«Признак отправки» и «месяц» в данных не определены; мелкая реальная неточность."
+  },
+  {
+   "fid": "D-055",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-047",
+   "reason": "Срок хранения уже назван в D-047 и D-051."
+  },
+  {
+   "fid": "D-066",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В условии критерия 1 нет состояния переключателя (по умолчанию выключен); точное замечание, хотя строка в ключе отмечена как хорошая."
+  },
+  {
+   "fid": "D-072",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Критерий 3 не проверяет отсутствие push; реальный пробел на «хорошей» строке."
+  },
+  {
+   "fid": "D-073",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-074",
+   "reason": "Незаполненный чек-лист уже назван в D-074."
+  },
+  {
+   "fid": "D-076",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-075",
+   "reason": "Откат и выключатель повторены; журнал изменений — небольшая добавка."
+  },
+  {
+   "fid": "D-081",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Вместо номеров Ф стоит «чтение порога»; небольшая реальная неточность."
+  },
+  {
+   "fid": "D-084",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-104",
+   "reason": "Тот же список 429, тайм-ауты, параллельность, версия; привязан к строке GET."
+  },
+  {
+   "fid": "D-087",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-086",
+   "reason": "Та же мысль: cardId в строке запроса и не PAN."
+  },
+  {
+   "fid": "D-093",
+   "severity": "MINOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Сама карточка признаёт, что команда поймёт шаг одинаково; шум."
+  },
+  {
+   "fid": "D-102",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Особое правило 2 повторяет шаг 4 логики; реально, но мелко."
+  },
+  {
+   "fid": "D-114",
+   "severity": "CRITICAL",
+   "verdict": "duplicate",
+   "duplicate_of": "D-097",
+   "reason": "Тот же дефект «ERROR под кодом 200»; вторая CRITICAL-карточка на то же место."
+  },
+  {
+   "fid": "D-115",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-116",
+   "reason": "Тот же «и далее»."
+  },
+  {
+   "fid": "D-117",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-097",
+   "reason": "Два ответа на неверную сумму (400 и 200 с ERROR) — тот же дефект."
+  },
+  {
+   "fid": "D-123",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-097",
+   "reason": "Два тела под 200 без условия — тот же дефект."
+  },
+  {
+   "fid": "D-124",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-131",
+   "reason": "403 нигде не возвращается — уже в D-131."
+  },
+  {
+   "fid": "D-125",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-131",
+   "reason": "То же про 403."
+  },
+  {
+   "fid": "D-126",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-097",
+   "reason": "Какие случаи дают 400 и какой код на сумму 999 — тот же конфликт 200/400."
+  },
+  {
+   "fid": "D-128",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-131",
+   "reason": "У раздела 403 нет тела; та же история с 403/404."
+  },
+  {
+   "fid": "D-132",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-131",
+   "reason": "404 не объявлен — уже в D-131."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-066",
+   "line": 63,
+   "note": "Критерий приёмки 1 (хорошее место): замечание про состояние переключателя справедливо, не ложная тревога."
+  },
+  {
+   "fid": "D-072",
+   "line": 65,
+   "note": "Критерий приёмки 3 (хорошее место): замечание об отсутствии проверки push справедливо."
+  },
+  {
+   "fid": "D-033",
+   "line": 39,
+   "note": "Ф-3 (хорошее место): программа назвала ложной тревогой; на деле это дубль D-036, строку Ф-3 карточка не критикует."
+  },
+  {
+   "fid": "D-131",
+   "line": 189,
+   "note": "Строка «чужая карта → 404»: карточка называет решение хорошим и критикует только список статусов, не ложная тревога."
+  }
+ ],
+ "praised_defects": [
+  {
+   "defect": "D-49",
+   "note": "Сильная сторона отчёта хвалит формальное заполнение «Общих сведений» и архитектуры, где в «Влиянии на ИС» не хватает систем; сам отчёт критикует это в D-002."
+  }
+ ],
+ "critical": {
+  "key_critical": {
+   "D-01": {
+    "tool_severity": "CRITICAL",
+    "ok": true
+   },
+   "D-02": {
+    "tool_severity": "CRITICAL",
+    "ok": true
+   },
+   "D-03": {
+    "tool_severity": "CRITICAL",
+    "ok": true
+   },
+   "D-04": {
+    "tool_severity": "CRITICAL",
+    "ok": true
+   },
+   "D-28": {
+    "tool_severity": "CRITICAL",
+    "ok": true
+   }
+  },
+  "tool_critical": {
+   "D-029": "оправдан: прямое противоречие",
+   "D-032": "оправдан: прямое противоречие",
+   "D-064": "оправдан: пропущенная обязательная часть",
+   "D-083": "оправдан: нарушение протокола HTTP",
+   "D-097": "оправдан: нарушение протокола, ошибка под кодом успеха",
+   "D-114": "уровень оправдан, но это дубль D-097"
+  }
+ },
+ "totals": {
+  "all": {
+   "found": 50,
+   "partial": 2,
+   "not_found": 0
+  },
+  "CRITICAL": {
+   "found": 5,
+   "partial": 0,
+   "not_found": 0
+  },
+  "MAJOR": {
+   "found": 29,
+   "partial": 1,
+   "not_found": 0
+  },
+  "MINOR": {
+   "found": 16,
+   "partial": 1,
+   "not_found": 0
+  },
+  "organisers": {
+   "found": 9,
+   "partial": 1,
+   "not_found": 0
+  },
+  "own": {
+   "found": 41,
+   "partial": 1,
+   "not_found": 0
+  },
+  "open_findings": 86,
+  "extra_findings": 27,
+  "extra_by_verdict": {
+   "real_not_in_key": 8,
+   "duplicate": 18,
+   "false_alarm": 0,
+   "overrated": 1
+  },
+  "program_disagreements": [
+   "D-12",
+   "D-17",
+   "D-22",
+   "D-29",
+   "D-33",
+   "D-46",
+   "D-48",
+   "D-50",
+   "D-51"
+  ]
+ }
+}

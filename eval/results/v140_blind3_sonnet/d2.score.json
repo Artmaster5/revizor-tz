@@ -1,0 +1,693 @@
+{
+  "document": "d2_fx_exchange.txt",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "full",
+    "cost_usd": 1.413409,
+    "cost_note": "по тарифу claude-sonnet-5-5: $2 / $10 за 1 млн токенов (вход / выход)",
+    "duration_s": 197.84,
+    "doc_name": "d2_fx_exchange.txt"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 49,
+    "findings_open": 90,
+    "advisory": 7
+  },
+  "recall": {
+    "overall": {
+      "total": 13,
+      "strict": 11,
+      "loose": 12,
+      "strict_share": 0.8461538461538461,
+      "loose_share": 0.9230769230769231
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 2,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 7,
+        "strict": 7,
+        "loose": 7,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 2,
+        "loose": 3,
+        "strict_share": 0.5,
+        "loose_share": 0.75
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 13,
+        "strict": 11,
+        "loose": 12,
+        "strict_share": 0.8461538461538461,
+        "loose_share": 0.9230769230769231
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 9,
+    "tool_higher": 1,
+    "tool_lower": 1
+  },
+  "defects": [
+    {
+      "id": "D2-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "US-2 обещает исполнение строго по показанному курсу (rateId), а по п. 4.2 FxService не передаёт курс в АБС, и АБС применяет текущий курс на момент проводки.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-015",
+        "D-094"
+      ],
+      "loose_fids": [
+        "D-015",
+        "D-017",
+        "D-094"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "При тайм-ауте АБС операция остаётся «в обработке» без конечного результата: нет перехода в DONE/REJECTED, запроса статуса, уведомления клиента, правил для лимита и остатка.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-100",
+        "D-102",
+        "D-104",
+        "D-129"
+      ],
+      "loose_fids": [
+        "D-100",
+        "D-102",
+        "D-104",
+        "D-129"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "D2-03",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Лимит US-3 ограничивает только покупку USD, а п. 5.1 на его основании считает, что операции свыше 50 000 USD невозможны и отчётность не нужна: продажа USD, покупка EUR/RUB лимитом не ограничены.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-025",
+        "D-027",
+        "D-028",
+        "D-031",
+        "D-032",
+        "D-033",
+        "D-062",
+        "D-106"
+      ],
+      "loose_fids": [
+        "D-025",
+        "D-027",
+        "D-028",
+        "D-029",
+        "D-030",
+        "D-031",
+        "D-032",
+        "D-033",
+        "D-062",
+        "D-106"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«Выходные дни» не определены (праздники, с какого часа пятницы до какого часа понедельника); спред задан только к курсу продажи.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-032",
+        "D-052"
+      ],
+      "loose_fids": [
+        "D-032",
+        "D-050",
+        "D-052"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не задано правило округления суммы в валюте зачисления (вниз, вверх, математически) — только точность.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-106",
+        "D-115"
+      ],
+      "loose_fids": [
+        "D-106",
+        "D-115"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Поле amount задано «в тиынах», хотя amountSide позволяет ввести сумму в валюте зачисления (USD/EUR/RUB).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-106",
+        "D-115"
+      ],
+      "loose_fids": [
+        "D-106",
+        "D-108",
+        "D-115"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Термин «премиальный клиент» («пакет обслуживания») не определён, а от него зависит курс.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-039",
+        "D-040",
+        "D-052"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-039",
+        "D-040",
+        "D-052"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Отмена обмена в течение 5 минут: не сказано, по какому курсу возврат, что если деньги со счёта зачисления уже потрачены, возможна ли частичная отмена.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-057",
+        "D-056",
+        "D-059",
+        "D-062"
+      ],
+      "loose_fids": [
+        "D-057",
+        "D-056",
+        "D-059",
+        "D-062"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описано, что происходит, если клиент подтвердил обмен позже 30 секунд (таймер истёк): новый курс, повторный показ или отказ.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-015",
+        "D-016"
+      ],
+      "loose_fids": [
+        "D-015",
+        "D-016"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-10",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Критерий «экран понятен даже клиентам старше 60 лет, ничего лишнего» непроверяем.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-014",
+        "D-073",
+        "D-074",
+        "D-077",
+        "D-076"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-073",
+        "D-074",
+        "D-077",
+        "D-076"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "D2-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В критерий приёмки вынесено проектное решение: библиотека Chart.js 4 и вид диаграммы.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-081",
+        "D-078",
+        "D-082",
+        "D-083"
+      ],
+      "loose_fids": [
+        "D-081",
+        "D-078",
+        "D-082",
+        "D-083"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "D2-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "US-9 дублирует US-7 (список обменов за год).",
+      "strict": false,
+      "loose": false,
+      "status": "missed",
+      "strict_fids": [],
+      "loose_fids": [],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "D2-13",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "У записки нет даты, номера/версии и подписанта; строка «Согласовано» пуста.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-132"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-092",
+      "severity": "MAJOR",
+      "title": "Нет интеграций для отмены, истории, курсов и реестра",
+      "line": 97,
+      "good_anchor": "5.2. Операционный департамент ежедневно до 11:00 получает реестр всех обменов за предыдущий день (с 00:00 до 23:59:59)"
+    },
+    {
+      "fid": "D-105",
+      "severity": "MAJOR",
+      "title": "Безопасность API не описана: авторизация, принадлежность счетов, Idempotency-Key",
+      "line": 105,
+      "good_anchor": "1.3. Обмен доступен только резидентам Республики Казахстан, прошедшим полную идентификацию"
+    },
+    {
+      "fid": "D-124",
+      "severity": "MAJOR",
+      "title": "Нет нефункциональных требований, безопасности и аудита",
+      "line": 120,
+      "good_anchor": "4.7. Повторный запрос с тем же заголовком Idempotency-Key в течение 10 минут возвращает результат первого запроса и не"
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-104",
+      "severity": "MAJOR",
+      "title": "Статус «Операция в обработке» без финального исхода и без повтора",
+      "line": 102,
+      "good_anchor": "4.7. Повторный запрос с тем же заголовком Idempotency-Key в течение 10 минут возвращает результат первого запроса и не",
+      "confirms": [
+        "D2-02"
+      ]
+    },
+    {
+      "fid": "D-129",
+      "severity": "MAJOR",
+      "title": "Не описано поведение при выключенном флаге и в статусе PROCESSING",
+      "line": 121,
+      "good_anchor": "5.3. Флаг fx.exchange.enabled в конфигурации приложения позволяет скрыть пункт «Обмен» без выпуска новой версии.",
+      "confirms": [
+        "D2-02"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Нет подписи, версии и ответственных; поле согласования пусто",
+      "line": 9
+    },
+    {
+      "fid": "D-002",
+      "severity": "MINOR",
+      "title": "Незакрытый перечень: «и др.»",
+      "line": 17
+    },
+    {
+      "fid": "D-003",
+      "severity": "MINOR",
+      "title": "Не описано поведение при потере права на обмен во время сессии",
+      "line": 19
+    },
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Курс покупки и продажи: чья точка зрения",
+      "line": 26
+    },
+    {
+      "fid": "D-006",
+      "severity": "MINOR",
+      "title": "Слово «актуальные» без критерия",
+      "line": 33
+    },
+    {
+      "fid": "D-007",
+      "severity": "MINOR",
+      "title": "Критерии приёмки и термины без номеров",
+      "line": 34
+    },
+    {
+      "fid": "D-010",
+      "severity": "MINOR",
+      "title": "Не задан формат времени обновления курса",
+      "line": 35
+    },
+    {
+      "fid": "D-011",
+      "severity": "MINOR",
+      "title": "Не описано снятие блокировки и уже начатый обмен",
+      "line": 37
+    },
+    {
+      "fid": "D-012",
+      "severity": "MINOR",
+      "title": "Не задана точка отсчёта 5 минут",
+      "line": 37
+    },
+    {
+      "fid": "D-013",
+      "severity": "MINOR",
+      "title": "Не определены допустимые счета, формат суммы и ошибки ввода",
+      "line": 43
+    },
+    {
+      "fid": "D-022",
+      "severity": "MINOR",
+      "title": "«Суммы» не уточнены",
+      "line": 48
+    },
+    {
+      "fid": "D-035",
+      "severity": "MINOR",
+      "title": "Не ясно, в чём показан остаток лимита",
+      "line": 55
+    },
+    {
+      "fid": "D-036",
+      "severity": "MINOR",
+      "title": "Критерии через восприятие клиента",
+      "line": 55
+    },
+    {
+      "fid": "D-043",
+      "severity": "MINOR",
+      "title": "Не сказано, кому показывается метка",
+      "line": 62
+    },
+    {
+      "fid": "D-044",
+      "severity": "MINOR",
+      "title": "Круглосуточность без учёта внешних систем",
+      "line": 67
+    },
+    {
+      "fid": "D-045",
+      "severity": "MINOR",
+      "title": "Круглосуточно без оговорок",
+      "line": 67
+    },
+    {
+      "fid": "D-046",
+      "severity": "MINOR",
+      "title": "Круглосуточность без показателя доступности",
+      "line": 67
+    },
+    {
+      "fid": "D-048",
+      "severity": "MINOR",
+      "title": "Окно времени реестра и «круглосуточно» противоречат обслуживанию АБС",
+      "line": 67
+    },
+    {
+      "fid": "D-053",
+      "severity": "MINOR",
+      "title": "Не указан экран и условие показа подсказки",
+      "line": 69
+    },
+    {
+      "fid": "D-060",
+      "severity": "MAJOR",
+      "title": "Не ясно, какая сумма возвращается при отмене",
+      "line": 75
+    },
+    {
+      "fid": "D-061",
+      "severity": "MAJOR",
+      "title": "Отмена обмена не описана технически и конфликтует со схемой обмена",
+      "line": 75
+    },
+    {
+      "fid": "D-065",
+      "severity": "MINOR",
+      "title": "Не заданы сортировка, формат полей и перечень статусов истории",
+      "line": 80
+    },
+    {
+      "fid": "D-064",
+      "severity": "MINOR",
+      "title": "Неясно, какие «суммы» и какой период",
+      "line": 80
+    },
+    {
+      "fid": "D-066",
+      "severity": "MINOR",
+      "title": "Дубли и разный срок: история 12 месяцев и «последний год»",
+      "line": 80
+    },
+    {
+      "fid": "D-067",
+      "severity": "MINOR",
+      "title": "US-9 дублирует US-7; график и отмена без методов",
+      "line": 80
+    },
+    {
+      "fid": "D-069",
+      "severity": "MINOR",
+      "title": "Не определены содержимое квитанции и операции без неё",
+      "line": 81
+    },
+    {
+      "fid": "D-071",
+      "severity": "MINOR",
+      "title": "Неясно, для каких статусов доступна квитанция",
+      "line": 81
+    },
+    {
+      "fid": "D-072",
+      "severity": "MINOR",
+      "title": "Размытое слово «понятный» в цели",
+      "line": 83
+    },
+    {
+      "fid": "D-084",
+      "severity": "MAJOR",
+      "title": "US-9 дублирует US-7 и расходится по периоду",
+      "line": 90
+    },
+    {
+      "fid": "D-086",
+      "severity": "MINOR",
+      "title": "Дублирование US-7 и US-9, истории без номеров критериев",
+      "line": 91
+    },
+    {
+      "fid": "D-087",
+      "severity": "MINOR",
+      "title": "Не описана недоступность источника курсов",
+      "line": 95
+    },
+    {
+      "fid": "D-089",
+      "severity": "MINOR",
+      "title": "«Каждые 60 секунд» без допуска",
+      "line": 95
+    },
+    {
+      "fid": "D-090",
+      "severity": "MINOR",
+      "title": "Периодичность курсов без допуска и срока жизни rateId",
+      "line": 95
+    },
+    {
+      "fid": "D-093",
+      "severity": "MINOR",
+      "title": "Нет перечня затронутых систем",
+      "line": 97
+    },
+    {
+      "fid": "D-097",
+      "severity": "MINOR",
+      "title": "Два способа сообщить об ошибке: ошибка INSUFFICIENT_FUNDS и статус REJECTED",
+      "line": 100
+    },
+    {
+      "fid": "D-098",
+      "severity": "MINOR",
+      "title": "Нет единого формата и перечня ошибок FxService",
+      "line": 100
+    },
+    {
+      "fid": "D-099",
+      "severity": "MINOR",
+      "title": "Не заданы все тексты сообщений и языки",
+      "line": 101
+    },
+    {
+      "fid": "D-109",
+      "severity": "MINOR",
+      "title": "Ответ не описан: типы, единицы и смысл статусов",
+      "line": 110
+    },
+    {
+      "fid": "D-112",
+      "severity": "MINOR",
+      "title": "Нет поведения при другом теле запроса и после 10 минут",
+      "line": 111
+    },
+    {
+      "fid": "D-113",
+      "severity": "MINOR",
+      "title": "Не задан момент начала 10 минут",
+      "line": 111
+    },
+    {
+      "fid": "D-111",
+      "severity": "MINOR",
+      "title": "Ограничение по времени без условий измерения",
+      "line": 111
+    },
+    {
+      "fid": "D-114",
+      "severity": "MINOR",
+      "title": "Не описаны 429, параллельные запросы и поведение ключа",
+      "line": 111
+    },
+    {
+      "fid": "D-121",
+      "severity": "MINOR",
+      "title": "Не указан канал передачи реестра и место хранения",
+      "line": 119
+    },
+    {
+      "fid": "D-123",
+      "severity": "MINOR",
+      "title": "Поле «суммы» не уточнено",
+      "line": 120
+    },
+    {
+      "fid": "D-125",
+      "severity": "MAJOR",
+      "title": "Реестр обменов раскрывает ИИН; требования защиты данных не заданы",
+      "line": 120
+    },
+    {
+      "fid": "D-126",
+      "severity": "MINOR",
+      "title": "Не указаны основание и срок хранения персональных данных",
+      "line": 120
+    },
+    {
+      "fid": "D-127",
+      "severity": "MINOR",
+      "title": "Не задано значение флага",
+      "line": 121
+    },
+    {
+      "fid": "D-128",
+      "severity": "MINOR",
+      "title": "Выключатель: что с обменом в процессе и с прямым API",
+      "line": 121
+    },
+    {
+      "fid": "D-130",
+      "severity": "MINOR",
+      "title": "Нет журнала аудита и порядка отката",
+      "line": 121
+    },
+    {
+      "fid": "D-131",
+      "severity": "MINOR",
+      "title": "Нет описания состояний экрана и сбоя сети",
+      "line": 126
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_blind3_sonnet/d2.json",
+  "key_file": "eval/blind3/d2_fx_exchange.txt.key.json"
+}

@@ -1,0 +1,586 @@
+{
+  "document": "k1_statement.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "mode": "full",
+    "cost_usd": 1.261065,
+    "cost_note": "по тарифу claude-sonnet-5-5: $2 / $10 за 1 млн токенов (вход / выход)",
+    "duration_s": 168.41,
+    "doc_name": "k1_statement.md"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 55,
+    "findings_open": 72,
+    "advisory": 1
+  },
+  "recall": {
+    "overall": {
+      "total": 12,
+      "strict": 11,
+      "loose": 12,
+      "strict_share": 0.9166666666666666,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 2,
+        "strict": 2,
+        "loose": 2,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 6,
+        "strict": 6,
+        "loose": 6,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 3,
+        "loose": 4,
+        "strict_share": 0.75,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 12,
+        "strict": 11,
+        "loose": 12,
+        "strict_share": 0.9166666666666666,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 9,
+    "tool_higher": 2,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "K1-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Ф-6 разрешает отправку выписки только на подтверждённый в профиле e-mail, а API принимает произвольный параметр email и отправляет файл на него.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-015",
+        "D-037",
+        "D-083",
+        "D-036"
+      ],
+      "loose_fids": [
+        "D-015",
+        "D-037",
+        "D-083",
+        "D-085",
+        "D-086",
+        "D-036",
+        "D-102"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Метод, который создаёт выписку и отправляет письмо (изменяет состояние, побочный эффект), объявлен как GET.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-073",
+        "D-077"
+      ],
+      "loose_fids": [
+        "D-073",
+        "D-074",
+        "D-077"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-03",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Границы периода по Ф-3 определяются по времени устройства клиента, а весь документ — по времени Алматы (UTC+5).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-007",
+        "D-027"
+      ],
+      "loose_fids": [
+        "D-007",
+        "D-023",
+        "D-027"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Максимальный период: в Ф-2 — 12 месяцев, в API — 6 месяцев.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-018",
+        "D-021",
+        "D-090",
+        "D-091"
+      ],
+      "loose_fids": [
+        "D-018",
+        "D-019",
+        "D-021",
+        "D-090",
+        "D-091"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K1-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Для мультивалютного счёта не определено, в какой валюте (или по каким валютам раздельно) формируется выписка; в ответе одно поле currency.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-005"
+      ],
+      "loose_fids": [
+        "D-005",
+        "D-015"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "«Все операции» не определены: входят ли заблокированные (холды, не проведённые) суммы, отменённые операции; какой датой (авторизации или проводки) операция относится к периоду.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-005",
+        "D-028",
+        "D-030"
+      ],
+      "loose_fids": [
+        "D-005",
+        "D-028",
+        "D-030"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описан сбой отправки письма (недоставка, отказ MailService) и большой размер вложения: API отвечает 200 синхронно, статус FAILED в модели данных нигде не объяснён.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-071",
+        "D-070",
+        "D-102"
+      ],
+      "loose_fids": [
+        "D-015",
+        "D-071",
+        "D-070",
+        "D-102"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Требование «PDF должен быть качественным и удобным для чтения» непроверяемо.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-038",
+        "D-040"
+      ],
+      "loose_fids": [
+        "D-038",
+        "D-040"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-09",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "В функциональное требование Ф-9 вынесены детали макета (логотип 40×40 px, шрифт Roboto 10 pt).",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-041"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "K1-10",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Ф-12 дублирует Ф-5 (выписка в PDF).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-040",
+        "D-051",
+        "D-052",
+        "D-053"
+      ],
+      "loose_fids": [
+        "D-040",
+        "D-051",
+        "D-052",
+        "D-053"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "K1-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Тип accountId: в path — string, в ответе — integer.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-089"
+      ],
+      "loose_fids": [
+        "D-089"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "K1-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Блок согласующих пуст.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-107",
+        "D-108"
+      ],
+      "loose_fids": [
+        "D-107",
+        "D-108"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-031",
+      "severity": "MAJOR",
+      "title": "Способ подписания ЭЦП не определён",
+      "line": 44,
+      "good_anchor": "Қол қою тәсілін жобалау кезеңінде ақпараттық қауіпсіздік департаменті айқындайды."
+    },
+    {
+      "fid": "D-044",
+      "severity": "MAJOR",
+      "title": "Не определено, что учитывается в лимите 10",
+      "line": 49,
+      "good_anchor": "Бір клиент тәулігіне 10 үзінді көшірмеден артық сұрай алмайды. Лимит Алматы уақытымен 00:00-де жаңарады."
+    },
+    {
+      "fid": "D-046",
+      "severity": "MAJOR",
+      "title": "Суточный лимит: что считается выпиской и неясные случаи",
+      "line": 49,
+      "good_anchor": "Бір клиент тәулігіне 10 үзінді көшірмеден артық сұрай алмайды. Лимит Алматы уақытымен 00:00-де жаңарады."
+    },
+    {
+      "fid": "D-049",
+      "severity": "MAJOR",
+      "title": "Безопасность ссылки на файл и срок хранения",
+      "line": 50,
+      "good_anchor": "Дайын файлға сілтеме 30 күн бойы жарамды, одан кейін файл StatementService қоймасынан жойылады."
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-005",
+      "severity": "MAJOR",
+      "title": "Остаток по мультивалютному счёту не определён",
+      "line": 27,
+      "good_anchor": "| Кезең соңындағы қалдық | Кезең басындағы қалдыққа кезеңдегі түсімдерді қосып, есептен шығаруларды алғандағы сома |",
+      "confirms": [
+        "K1-05",
+        "K1-06"
+      ]
+    },
+    {
+      "fid": "D-021",
+      "severity": "CRITICAL",
+      "title": "Максимальный период выписки: 12 месяцев в Ф-2 и 6 месяцев в параметрах API",
+      "line": 41,
+      "good_anchor": "12 айлық кезеңге арналған PDF файлы сұраныстардың 95 %-ында 5 секундтан аспай қалыптастырылады",
+      "confirms": [
+        "K1-04"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "В перечне затронутых систем нет хранилища, профиля и ЭЦП",
+      "line": 14
+    },
+    {
+      "fid": "D-002",
+      "severity": "MINOR",
+      "title": "Цель не подкреплена требованием о фиксации обращений",
+      "line": 20
+    },
+    {
+      "fid": "D-004",
+      "severity": "MINOR",
+      "title": "Не указан часовой пояс момента 00:00:00",
+      "line": 26
+    },
+    {
+      "fid": "D-006",
+      "severity": "MINOR",
+      "title": "Состав поступлений и списаний не уточнён",
+      "line": 27
+    },
+    {
+      "fid": "D-008",
+      "severity": "MINOR",
+      "title": "Нет поведения при недоступности зависимых сервисов",
+      "line": 33
+    },
+    {
+      "fid": "D-009",
+      "severity": "MINOR",
+      "title": "Не описано поведение экрана: email, значения по умолчанию, ошибки",
+      "line": 36
+    },
+    {
+      "fid": "D-010",
+      "severity": "MAJOR",
+      "title": "Не ясно, что делают две кнопки",
+      "line": 37
+    },
+    {
+      "fid": "D-014",
+      "severity": "MAJOR",
+      "title": "Не определена граница «3 года» для закрытых счетов",
+      "line": 40
+    },
+    {
+      "fid": "D-047",
+      "severity": "MINOR",
+      "title": "Не указан момент отсчёта 30 дней и ответ после истечения",
+      "line": 50
+    },
+    {
+      "fid": "D-050",
+      "severity": "MINOR",
+      "title": "Корректировки задним числом не учтены",
+      "line": 50
+    },
+    {
+      "fid": "D-054",
+      "severity": "MINOR",
+      "title": "Границы измерения времени не заданы",
+      "line": 54
+    },
+    {
+      "fid": "D-057",
+      "severity": "MINOR",
+      "title": "Нет номеров у нефункциональных, данных, интеграции и API",
+      "line": 55
+    },
+    {
+      "fid": "D-058",
+      "severity": "MINOR",
+      "title": "Не заданы условия смены статусов и срок хранения",
+      "line": 58
+    },
+    {
+      "fid": "D-059",
+      "severity": "MINOR",
+      "title": "Статусы не покрывают состояние после удаления файла",
+      "line": 58
+    },
+    {
+      "fid": "D-060",
+      "severity": "MINOR",
+      "title": "Структура таблицы БД вместо данных",
+      "line": 58
+    },
+    {
+      "fid": "D-061",
+      "severity": "MINOR",
+      "title": "Нет аудита скачиваний и выключателя функции",
+      "line": 58
+    },
+    {
+      "fid": "D-062",
+      "severity": "MINOR",
+      "title": "Проектные детали в требованиях; нет выключателя и отката",
+      "line": 58
+    },
+    {
+      "fid": "D-063",
+      "severity": "MINOR",
+      "title": "Срок хранения записей не привязан к дате",
+      "line": 59
+    },
+    {
+      "fid": "D-065",
+      "severity": "MINOR",
+      "title": "Нет требований к журналированию, доступности и удалению данных",
+      "line": 59
+    },
+    {
+      "fid": "D-066",
+      "severity": "MINOR",
+      "title": "Не указано основание обработки и удаление email",
+      "line": 59
+    },
+    {
+      "fid": "D-067",
+      "severity": "MINOR",
+      "title": "Не описан обмен с АБС, профилем и подписью",
+      "line": 62
+    },
+    {
+      "fid": "D-072",
+      "severity": "MINOR",
+      "title": "Неясное условие «қажет болса»",
+      "line": 71
+    },
+    {
+      "fid": "D-075",
+      "severity": "MINOR",
+      "title": "Неясная формулировка «шот иесінің сессиясы»",
+      "line": 73
+    },
+    {
+      "fid": "D-076",
+      "severity": "MINOR",
+      "title": "Имя класса контроллера в требовании",
+      "line": 74
+    },
+    {
+      "fid": "D-079",
+      "severity": "MINOR",
+      "title": "Не названы правила проверки периода",
+      "line": 79
+    },
+    {
+      "fid": "D-087",
+      "severity": "MINOR",
+      "title": "Не названы поля ответа",
+      "line": 82
+    },
+    {
+      "fid": "D-092",
+      "severity": "MINOR",
+      "title": "Не задан язык по умолчанию в API и начальные значения экрана",
+      "line": 96
+    },
+    {
+      "fid": "D-094",
+      "severity": "MAJOR",
+      "title": "Не описана защита ссылки на выписку и содержимое письма",
+      "line": 105
+    },
+    {
+      "fid": "D-095",
+      "severity": "MAJOR",
+      "title": "Не описан результат 200 при сбое отправки письма",
+      "line": 109
+    },
+    {
+      "fid": "D-097",
+      "severity": "MINOR",
+      "title": "Не названы все причины ответа 400",
+      "line": 110
+    },
+    {
+      "fid": "D-098",
+      "severity": "MINOR",
+      "title": "Не перечислены причины ошибки периода",
+      "line": 110
+    },
+    {
+      "fid": "D-099",
+      "severity": "MINOR",
+      "title": "Нет единого формата ошибок и кодов для 401, 404, 500, email",
+      "line": 112
+    },
+    {
+      "fid": "D-100",
+      "severity": "MINOR",
+      "title": "Нет идемпотентности, повторов и защиты от гонки лимита",
+      "line": 113
+    },
+    {
+      "fid": "D-101",
+      "severity": "MINOR",
+      "title": "Не задано тело ответа и состояние при 500",
+      "line": 114
+    },
+    {
+      "fid": "D-105",
+      "severity": "MINOR",
+      "title": "Ожидаемые остатки не заданы числами",
+      "line": 124
+    },
+    {
+      "fid": "D-106",
+      "severity": "MAJOR",
+      "title": "Критерии приёмки не покрывают большую часть требований и границ",
+      "line": 126
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v140_blind3_sonnet/k1.json",
+  "key_file": "eval/blind3/k1_statement.md.key.json"
+}
