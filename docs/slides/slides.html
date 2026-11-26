@@ -114,7 +114,7 @@ tr.grp td{background:var(--accent-soft)}
     <div class="left">
       <div class="kicker">Проверка требований</div>
       <h1>Ревизор ТЗ</h1>
-      <p class="lead">Проверяет документ с требованиями до начала разработки: находит дефекты, задаёт вопросы автору, пишет отчёт.</p>
+      <p class="lead">Проверяет документ с требованиями до начала разработки: задаёт автору конкретные вопросы, перепроверяет по ответам и пишет отчёт.</p>
       <div class="cmd"><b>$</b> python main.py --input docs/requirements.md<br>&nbsp;&nbsp;&nbsp;&nbsp;--output reports/report.md</div>
       <div class="author">{{author}}</div>
     </div>
@@ -124,6 +124,41 @@ tr.grp td{background:var(--accent-soft)}
         <div class="row"><span class="sev c">CRITICAL</span><span class="bar"></span></div>
         <div class="row"><span class="sev m">MAJOR</span><span class="bar"></span></div>
         <div class="row"><span class="sev n">MINOR</span><span class="bar"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide s4">
+  <div class="kicker">Уточнение</div>
+  <h2>Агент спрашивает, автор отвечает, агент перепроверяет</h2>
+  <div class="body">
+    <svg viewBox="0 0 640 440" role="img" aria-label="Цикл уточнения: вопросы автору, ответы, перепроверка, было и стало">
+      <defs><marker id="ah4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0f6b4f"/></marker></defs>
+      <g font-family="-apple-system,'Segoe UI',Roboto,Arial,sans-serif" font-size="22" font-weight="650" text-anchor="middle">
+        <rect x="20" y="30" width="250" height="110" rx="14" fill="#f4f6f9" stroke="#d9dee5" stroke-width="2"/>
+        <text x="145" y="92" fill="#1f2933">Вопросы автору</text>
+        <rect x="370" y="30" width="250" height="110" rx="14" fill="#f4f6f9" stroke="#d9dee5" stroke-width="2"/>
+        <text x="495" y="92" fill="#1f2933">Ответы автора</text>
+        <rect x="370" y="300" width="250" height="110" rx="14" fill="#e8f3ee" stroke="#0f6b4f" stroke-width="2"/>
+        <text x="495" y="362" fill="#1f2933">Перепроверка</text>
+        <rect x="20" y="300" width="250" height="110" rx="14" fill="#e8f3ee" stroke="#0f6b4f" stroke-width="2"/>
+        <text x="145" y="362" fill="#1f2933">Было / стало</text>
+      </g>
+      <g stroke="#0f6b4f" stroke-width="3" fill="none" marker-end="url(#ah4)">
+        <path d="M274 85H362"/>
+        <path d="M495 144V292"/>
+        <path d="M366 355H278"/>
+        <path d="M145 296V148"/>
+      </g>
+    </svg>
+    <div class="ba">
+      <div class="q">Вопросов автору: <b>{{loop_questions}}</b></div>
+      <div class="q muted">У каждого вопроса: цитата, причина, варианты ответа и допущение «если автор не ответит».</div>
+      <div class="pair">
+        <div class="box"><div class="v">{{loop_before}}</div><div class="l">было</div></div>
+        <div class="arrow">→</div>
+        <div class="box after"><div class="v">{{loop_after}}</div><div class="l">стало</div></div>
       </div>
     </div>
   </div>
@@ -152,40 +187,6 @@ tr.grp td{background:var(--accent-soft)}
       <li><b>Вопросы автору:</b> что изменит каждый ответ.</li>
       <li><b>Черновики приёмочных тестов</b> по требованиям.</li>
     </ul>
-  </div>
-</section>
-
-<section class="slide s4">
-  <div class="kicker">Уточнение</div>
-  <h2>Автор отвечает, агент перепроверяет</h2>
-  <div class="body">
-    <svg viewBox="0 0 640 440" role="img" aria-label="Цикл уточнения: вопросы автору, ответы, перепроверка, было и стало">
-      <defs><marker id="ah4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0f6b4f"/></marker></defs>
-      <g font-family="-apple-system,'Segoe UI',Roboto,Arial,sans-serif" font-size="22" font-weight="650" text-anchor="middle">
-        <rect x="20" y="30" width="250" height="110" rx="14" fill="#f4f6f9" stroke="#d9dee5" stroke-width="2"/>
-        <text x="145" y="92" fill="#1f2933">Вопросы автору</text>
-        <rect x="370" y="30" width="250" height="110" rx="14" fill="#f4f6f9" stroke="#d9dee5" stroke-width="2"/>
-        <text x="495" y="92" fill="#1f2933">Ответы автора</text>
-        <rect x="370" y="300" width="250" height="110" rx="14" fill="#e8f3ee" stroke="#0f6b4f" stroke-width="2"/>
-        <text x="495" y="362" fill="#1f2933">Перепроверка</text>
-        <rect x="20" y="300" width="250" height="110" rx="14" fill="#e8f3ee" stroke="#0f6b4f" stroke-width="2"/>
-        <text x="145" y="362" fill="#1f2933">Было / стало</text>
-      </g>
-      <g stroke="#0f6b4f" stroke-width="3" fill="none" marker-end="url(#ah4)">
-        <path d="M274 85H362"/>
-        <path d="M495 144V292"/>
-        <path d="M366 355H278"/>
-        <path d="M145 296V148"/>
-      </g>
-    </svg>
-    <div class="ba">
-      <div class="q">Вопросов автору: <b>{{loop_questions}}</b></div>
-      <div class="pair">
-        <div class="box"><div class="v">{{loop_before}}</div><div class="l">было</div></div>
-        <div class="arrow">→</div>
-        <div class="box after"><div class="v">{{loop_after}}</div><div class="l">стало</div></div>
-      </div>
-    </div>
   </div>
 </section>
 
