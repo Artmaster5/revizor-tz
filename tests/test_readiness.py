@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from revizor import consistency, gate, pipeline, readiness, report_html, report_json, report_md, standard
+from revizor import clarify, consistency, gate, pipeline, readiness, report_html, report_json, report_md, standard, webui
 from revizor.model import (REQ_CRITERIA, SET_CRITERIA, Finding, Question, Quote, Requirement, Result, RunInfo)
 from revizor.rules import RULES
 
@@ -162,6 +162,143 @@ class Readiness(unittest.TestCase):
         self.assertTrue(report_json.render(old))
         consistency.settle(old)
         self.assertTrue(old.readiness)
+
+
+def _many_doc(unnumbered: int, numbered_uncovered: int = 0) -> str:
+    """Four numbered requirements covered by criteria, then ``unnumbered`` requirements without an id of their own."""
+    rows = [f"- **Ф-{i}.** Сервис выполняет операцию номер {i} за 5 секунд после запроса клиента." for i in range(1, 5)]
+    rows += [f"- Клиент видит в приложении раздел номер {i} с историей операций за 30 дней." for i in range(1, unnumbered + 1)]
+    return ("# Сервис\n\n## Функциональные требования\n\n" + "\n".join(rows) +
+            "\n\n## Критерии приёмки\n\n- **КП-1.** Запрос выполнен (Ф-1, Ф-2, Ф-3): клиент получает ответ.\n"
+            "- **КП-2.** Запрос выполнен (Ф-4): ответ.\n")
+
+
+def _group(r: Result) -> list[Question]:
+    return [q for q in r.questions if readiness.is_group_question(q)]
+
+
+class GroupedQuestion(unittest.TestCase):
+    def test_one_question_for_many_requirements(self):
+        r = run_doc(_many_doc(13))
+        self.assertEqual(len(r.readiness["test"]["uncovered"]), 13)
+        qs = _group(r)
+        self.assertEqual(len(qs), 1)
+        self.assertEqual(len([q for q in r.questions if "Как проверим" in q.text]), 1)
+        q = qs[0]
+        self.assertTrue(q.text.startswith("Для 13 требований не назван критерий приёмки. Как проверим каждое из них? "))
+        self.assertEqual(q.text.count("строка "), 10)  # ten named, the rest in the tail
+        self.assertIn("строка 9: «Клиент видит в приложении раздел номер 1", q.text)
+        self.assertTrue(q.text.endswith(" и ещё 3 — полный список в подробностях."))
+        self.assertNotIn("REQ-", q.text)
+        self.assertEqual((q.priority, q.addressee, q.letter_group), ("nice", "qa", "testing"))
+        self.assertEqual(len(q.req_ids), 13)
+        self.assertTrue(q.assumption.startswith("Требования без критерия приёмки"))
+        self.assertEqual(len(q.fingerprint), 12)
+        self.assertTrue(q.why)
+
+    def test_own_ids_are_used(self):
+        rows = [Requirement(rid=f"REQ-{i:03d}", doc_id=f"Ф-{i}.", section="Требования", kind="functional", quote=f"Ф-{i}. Текст.",
+                            summary="", block_ids=[f"b{i}"], line_start=i, line_end=i) for i in (7, 8, 9)]
+        self.assertEqual([readiness.requirement_label(x) for x in rows], ["Ф-7", "Ф-8", "Ф-9"])
+        self.assertEqual(readiness.group_text(["Ф-7", "Ф-8", "Ф-9"]),
+                         "Для 3 требований не назван критерий приёмки. Как проверим каждое из них? Ф-7; Ф-8; Ф-9.")
+
+    def test_line_label_and_plural(self):
+        r = Requirement(rid="REQ-031", doc_id="", section="s", kind="functional",
+                        quote="**Клиент** видит историю уведомлений за последние тридцать дней в приложении", summary="",
+                        block_ids=["b"], line_start=14, line_end=14)
+        label = readiness.requirement_label(r)
+        self.assertEqual(label, "строка 14: «Клиент видит историю уведомлений за последние тридцать…»")
+        self.assertNotIn("REQ", label)
+        self.assertTrue(readiness.group_headline(1).endswith("Как проверим его?"))
+        self.assertTrue(readiness.group_headline(21).startswith("Для 21 требования "))
+        self.assertTrue(readiness.group_headline(12).startswith("Для 12 требований "))
+
+    def test_tail_only_over_ten(self):
+        labels = [f"Ф-{i}" for i in range(1, 11)]
+        self.assertNotIn("и ещё", readiness.group_text(labels))
+        self.assertIn("и ещё 1 — полный список в подробностях.", readiness.group_text(labels + ["Ф-11"]))
+
+    def test_idempotent(self):
+        r = run_doc(_many_doc(13))
+        n = len(r.questions)
+        first = _group(r)[0].text
+        consistency.settle(r)
+        consistency.settle(r)
+        self.assertEqual(len(r.questions), n)
+        self.assertEqual(_group(r)[0].text, first)
+        self.assertEqual(readiness.add_check_questions(r), 0)
+
+    def test_existing_criteria_question_blocks_the_group(self):
+        r = run_doc(_many_doc(13))
+        r.questions = [q for q in r.questions if not readiness.is_group_question(q)]
+        r.questions.append(Question(qid="В-90", text="Чем подтвердим, что история хранится 30 дней?", why="", addressee="qa",
+                                    req_ids=list(r.readiness["test"]["uncovered"])))
+        self.assertEqual(readiness.add_check_questions(r), 0)
+        self.assertFalse(_group(r))
+
+    def test_group_covers_only_what_is_left(self):
+        r = run_doc(_many_doc(13))
+        r.questions = [q for q in r.questions if not readiness.is_group_question(q)]
+        r.questions.append(Question(qid="В-90", text="Какой критерий приёмки у раздела 1?", why="", addressee="qa",
+                                    req_ids=r.readiness["test"]["uncovered"][:3]))
+        self.assertEqual(readiness.add_check_questions(r), 1)
+        self.assertTrue(_group(r)[0].text.startswith("Для 10 требований "))
+
+    def test_links_to_the_rule_finding(self):
+        r = run_doc(_many_doc(13))
+        q = _group(r)[0]
+        rule = [f.fid for f in r.findings if "requirement-without-criterion" in f.rule_ids and f.status == "open"]
+        self.assertEqual(q.finding_ids, rule)
+
+    def test_shown_in_every_place(self):
+        r = run_doc(_many_doc(13))
+        q = _group(r)[0]
+        main = report_md.render(r, "doc.md")
+        self.assertIn("Как проверим каждое из них?", main)
+        letter = clarify.letter_md(r)
+        part = letter.split("## Тестированию")[1]
+        self.assertIn(q.qid, part)
+        self.assertIn("Для 13 требований не назван критерий приёмки", part)
+        self.assertIn("Почему спрашиваем:", part)
+        self.assertIn("Если автор не ответит, считаем так: требования без критерия", part)
+        from revizor import sidefiles
+        qmd = sidefiles.questions_md(r, input_path="d.md", output_path="r.md", questions_path="r.questions.md")
+        self.assertIn(f"Отпечаток вопроса: {q.fingerprint}", qmd)
+        data = json.loads(report_json.render(r))
+        jq = [x for x in data["questions"] if x["qid"] == q.qid][0]
+        self.assertEqual((jq["letter_group"], jq["fingerprint"]), ("testing", q.fingerprint))
+        self.assertEqual(len(data["readiness"]["test"]["uncovered"]), 13)
+        win = webui.details_from(r, offline=True)
+        wq = [x for x in win["questions"] if x["id"] == q.qid][0]
+        self.assertEqual(wq["letter_group"], "testing")
+        self.assertTrue(wq["assumption"])
+        self.assertEqual(len(wq["requirements"]), 13)
+        self.assertNotIn("REQ-", " ".join(wq["requirements"]))
+
+    def test_report_table_and_details(self):
+        r = run_doc(_many_doc(13))
+        q = _group(r)[0]
+        det = report_md._questions_details(r)
+        self.assertIn("Все требования без критерия приёмки (13):", det)
+        self.assertEqual(det.count("- строка "), 13)
+        table = report_md._questions(r, "doc.md")
+        row = [x for x in table.splitlines() if x.startswith(f'| <a id="') and q.qid in x.split("|")[1]][0]
+        self.assertIn("Как проверим каждое из них?", row)
+        self.assertNotIn("строка 9", row)  # the list does not break off in the middle of a table cell
+
+    def test_old_json_still_renders(self):
+        r = run_doc(_many_doc(13))
+        old = Question(qid="В-91", text="Как проверим требование Ф-5: каким критерием приёмки подтвердить, что оно выполнено?",
+                       why="", addressee="qa", req_ids=["REQ-001"])
+        self.assertFalse(readiness.is_group_question(old))
+        self.assertEqual(readiness.short_text(old), old.text)
+        r.questions.append(old)
+        report_md._questions(r, "doc.md")
+        report_md._questions_details(r)
+
+    def test_no_uncovered_no_question(self):
+        self.assertFalse(_group(run_doc(DOC_COVERED)))
 
 
 class Ceiling(unittest.TestCase):

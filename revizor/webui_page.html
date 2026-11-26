@@ -262,6 +262,8 @@ padding:16px 20px;font-size:1.42rem;line-height:1.3;font-weight:680;letter-spaci
 .qassume{margin:4px 0 0;font-size:.86rem;color:var(--ink);overflow-wrap:anywhere}
 .qassume.blocks{color:var(--crit);font-weight:600}
 .qassume.stale{color:var(--crit)}
+.qreqs{margin:4px 0 0;font-size:.86rem;overflow-wrap:anywhere}
+.qreqs ul{margin:4px 0 0 18px;padding:0}
 .fcheck{flex:none;font-size:.74rem;white-space:nowrap}.fcheck.c-ok{color:var(--accent)}.fcheck.c-bad{color:var(--crit)}
 .fxcheck{margin:6px 0;font-size:.9rem;font-weight:600}.fxcheck.c-ok{color:var(--accent)}.fxcheck.c-bad{color:var(--crit)}.fxcheck.c-un{color:var(--muted);font-weight:400}
 .ub{border-left:5px solid var(--crit)}
@@ -1046,6 +1048,9 @@ function buildQuestion(q,n,draft,done){
       var b=mk("button","linkish",fid);b.type="button";b.addEventListener("click",function(){goToFinding(fid);});why.appendChild(b);});
     why.appendChild(document.createTextNode("."));}
   if(why.firstChild)li.appendChild(why);
+  if((q.requirements||[]).length){
+    var dt=mk("details","qreqs");dt.appendChild(mk("summary",null,"Подробности: все "+q.requirements.length+" требований без критерия"));
+    var ul=mk("ul");q.requirements.forEach(function(r){ul.appendChild(mk("li",null,r));});dt.appendChild(ul);li.appendChild(dt);}
   var ta=mk("textarea");ta.id="answer-"+n;ta.rows=2;ta.maxLength=2000;ta.placeholder="Ваш ответ";
   var lab=mk("label","vh","Ответ на вопрос "+q.id);lab.htmlFor=ta.id;
   ta.value=draft[q.id]!=null?draft[q.id]:(q.answer||"");

@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any, Callable, Mapping
 from urllib.parse import parse_qs, quote, unquote, urlsplit
 
-from . import __version__, answers as ans_mod, clarify, cli, config, rewrite_gate, score as score_mod, verdict as verdict_mod
+from . import __version__, answers as ans_mod, clarify, cli, config, readiness, rewrite_gate, score as score_mod, verdict as verdict_mod
 from .llm import choose_provider, is_placeholder, normalize_provider, review_batch_size_for
 from .llm.pricing import PRICES
 from .merge import FOLD_STAGE, SEV_RANK, sort_key
@@ -554,6 +554,9 @@ def details_from(result: Result, *, offline: bool = False) -> dict:
                           "letter_group": str(getattr(q, "letter_group", "") or ""),
                           "fingerprint": str(getattr(q, "fingerprint", "") or ""),
                           "no_safe_assumption": str(getattr(q, "assumption", "") or "").strip() == clarify.NO_ASSUMPTION,
+                          # the grouped «как проверим?»: every requirement it is about, as the author can find it
+                          "requirements": ([x[:120] for x in readiness.group_labels(q, result)][:200]
+                                           if readiness.is_group_question(q) else []),
                           "closes": closable, "option_closes": option_closes,
                           "closed": [fid for fid, qids in closes_map.items() if q.qid in qids],
                           "effect": {"critical": crit, "major": major, "minor": minor,

@@ -22,7 +22,6 @@ from .textfmt import count
 COVERABLE = ("functional", "nonfunctional", "data", "integration", "api", "ui", "process")
 _CRIT_SECTION = re.compile(r"при[её]мк|acceptance", re.I)
 RULE_NO_CRITERION = "requirement-without-criterion"
-QUESTION_CAP = 20  # «как проверим?» questions added in one run
 _ASKED = re.compile(r"как проверим|критери\w* при[её]мк|чем подтвердим", re.I)
 _RANGE_MAX = 60
 
@@ -150,7 +149,7 @@ def _compute(result: Result) -> dict[str, Any]:
     return {"dev": dev, "test": test}
 
 
-# --- «как проверим?» ---------------------------------------------------------------------------------------
+# --- «как проверим?»: one grouped question ---------------------------------------------------------------------------------------
 
 
 def _next_qid(questions: list[Question]) -> int:
@@ -174,32 +173,89 @@ def _has_question(rid: str, result: Result) -> bool:
     return False
 
 
+GROUP_CAP = 10  # requirements named in the text of the grouped question; the rest is in the details file
+_GROUP_TAIL = "Как проверим каждое из них?"
+_GROUP_TAIL_ONE = "Как проверим его?"
+_GROUP_HEAD = re.compile(r"^Для \d+ требовани\w+ не назван критерий приёмки\. Как проверим (?:каждое из них|его)\?")
+_LEAD_JUNK = re.compile(r"^[\s*_`#>|•\-–—\d.):]+")
+
+
+def _genitive(n: int) -> str:
+    return "требования" if n % 10 == 1 and n % 100 != 11 else "требований"
+
+
+def requirement_label(r: Requirement) -> str:
+    """The requirement as its author can find it: its own number from the document («Ф-1»), else «строка 14: первые
+    слова…». The tool's own numbers (REQ-031) are never shown: the author has not seen them."""
+    if (r.doc_id or "").strip():
+        return r.doc_id.strip().rstrip(".")
+    src = (r.quote or r.summary or "")
+    src = _LEAD_JUNK.sub("", src.replace("**", "").replace("__", ""))
+    words = src.split()
+    shown = " ".join(words[:7])
+    if len(shown) > 60:
+        shown = shown[:60].rsplit(" ", 1)[0]
+    more = len(shown.split()) < len(words)
+    return f"строка {r.line_start}: «{shown}{'…' if more else ''}»" if shown else f"строка {r.line_start}"
+
+
+def group_headline(n: int) -> str:
+    return f"Для {n} {_genitive(n)} не назван критерий приёмки. " + (_GROUP_TAIL if n > 1 else _GROUP_TAIL_ONE)
+
+
+def group_text(labels: list[str]) -> str:
+    """«Для N требований не назван критерий приёмки. Как проверим каждое из них? Ф-1; Ф-2 … и ещё K — полный список в
+    подробностях.»"""
+    shown = labels[:GROUP_CAP]
+    text = group_headline(len(labels)) + " " + "; ".join(shown)
+    if len(labels) > GROUP_CAP:
+        text += f" и ещё {len(labels) - GROUP_CAP} — полный список в подробностях"
+    return text + "."
+
+
+def is_group_question(q: Question) -> bool:
+    return bool(_GROUP_HEAD.match(q.text or ""))
+
+
+def short_text(q: Question) -> str:
+    """The text for a narrow place (a table cell, a one-line summary): the grouped question without its list."""
+    m = _GROUP_HEAD.match(q.text or "")
+    return m.group(0) if m else (q.text or "")
+
+
+def group_labels(q: Question, result: Result) -> list[str]:
+    """Every requirement the grouped question is about, as the author can find it (for the details file)."""
+    by_rid = {r.rid: r for r in result.requirements}
+    return [requirement_label(by_rid[x]) for x in q.req_ids if x in by_rid]
+
+
 def add_check_questions(result: Result) -> int:
-    """For every requirement without an acceptance criterion, a question «как проверим?» unless one exists. Returns how
-    many were added (at most ``QUESTION_CAP``). Idempotent: a second call finds the questions it added."""
+    """One grouped question «как проверим?» for the requirements that no acceptance criterion names and that no question
+    about a criterion covers yet. Returns how many were added (0 or 1). Idempotent: a second call finds the question."""
     if result.diagnostic is not None:
         return 0
     cov = coverage(result)
     if cov["state"] != "ok":
         return 0
+    from . import clarify  # local: clarify does not import this module, but keep the import graph flat
     by_rid = {r.rid: r for r in result.requirements}
-    added = 0
-    for rid in cov["uncovered"]:
-        if added >= QUESTION_CAP:
-            break
-        if _has_question(rid, result):
-            continue
-        r = by_rid[rid]
-        name = r.doc_id.rstrip(".") if r.doc_id else rid
-        result.questions.append(Question(
-            qid=f"В-{_next_qid(result.questions):02d}",
-            text=f"Как проверим требование {name}: каким критерием приёмки подтвердить, что оно выполнено?",
-            why="Ни один критерий приёмки в документе не называет это требование: нечем подтвердить, что оно выполнено.",
-            addressee="qa",
-            options=["Добавить критерий приёмки в документ", "Отдельный критерий не нужен — пояснить почему"],
-            priority="nice", req_ids=[rid]))
-        added += 1
-    return added
+    todo = [rid for rid in cov["uncovered"] if rid in by_rid and not _has_question(rid, result)]
+    if not todo:
+        return 0
+    fids = [f.fid for f in result.findings if RULE_NO_CRITERION in f.rule_ids and f.status == "open"]
+    q = Question(
+        qid=f"В-{_next_qid(result.questions):02d}",
+        text=group_text([requirement_label(by_rid[rid]) for rid in todo]),
+        why="Ни один критерий приёмки в документе не называет эти требования: нечем подтвердить, что они выполнены.",
+        addressee="qa",
+        options=["Добавить критерии приёмки в документ", "Отдельные критерии не нужны — пояснить почему"],
+        priority="nice", finding_ids=fids, req_ids=list(todo), letter_group="testing")
+    default = clarify.RULE_ASSUMPTIONS[RULE_NO_CRITERION]
+    q.assumption = default[:1].upper() + default[1:] + ("" if default.endswith(".") else ".")
+    q.fingerprint = clarify.fingerprint(q)
+    result.questions.append(q)
+    return 1
 
 
-__all__ = ["COVERABLE", "coverage", "compute", "add_check_questions", "QUESTION_CAP"]
+__all__ = ["COVERABLE", "coverage", "compute", "add_check_questions", "GROUP_CAP", "requirement_label",
+           "is_group_question", "short_text", "group_labels"]

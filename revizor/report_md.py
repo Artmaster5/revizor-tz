@@ -363,7 +363,7 @@ def first_screen(result: Result) -> list[str]:
     if qs:
         lines += ["", "**Сначала спросить автора:**", ""]
         for k, q in enumerate(qs, 1):
-            lines.append(f"{k}. {link(q.qid)} {md(shorten(q.text, 75))}{_q_gain(q, result)}")
+            lines.append(f"{k}. {link(q.qid)} {md(shorten(readiness_mod.short_text(q), 75))}{_q_gain(q, result)}")
     fix = _merged_actions(result.fix_first)[:FIRST_FIX]
     if fix:
         lines += ["", "**Что исправить в первую очередь:**", ""]
@@ -1523,7 +1523,7 @@ def _questions(result: Result, name: str = "") -> str:
             to = links(q.finding_ids) if q.finding_ids else (quote_location(q.quote) if q.quote is not None else "—")
             pr = PRIORITY_ONE.get(q.priority, q.priority) + ("; есть ответ" if q.answer else "")
             ass = md_cell(clarify.assumption_tail(q), Q_ASSUMPTION) if q.assumption else "—"
-            out.append(f'| <a id="{anchor(q.qid)}"></a>{q.qid} | {md_cell(q.text, Q_TABLE)} | {md_cell(who)} | {pr} | {to} | {ass} |')
+            out.append(f'| <a id="{anchor(q.qid)}"></a>{q.qid} | {md_cell(readiness_mod.short_text(q), Q_TABLE)} | {md_cell(who)} | {pr} | {to} | {ass} |')
     stem = name[:-3] if name.endswith(".md") else name
     qfile = f"`{md_code(stem)}.questions.md`" if stem else "`*.questions.md`"
     where = f"; вопросы полностью — в файле `{md_code(details_name(name))}`, раздел Г" if name else ""
@@ -1547,6 +1547,11 @@ def _questions_details(result: Result) -> str:
         out += ["", f"### {PRIORITY_RU[prio]} ({len(qs)})"]
         for q in qs:
             out += ["", question_block(q, by_fid, impact_text(q, result))]
+            if readiness_mod.is_group_question(q):  # the question names ten; the whole list stands here
+                names = readiness_mod.group_labels(q, result)
+                if names:
+                    out += ["", f"Все требования без критерия приёмки ({len(names)}):", ""]
+                    out += [f"- {md(x)}" for x in names]
     return "\n".join(out)
 
 
