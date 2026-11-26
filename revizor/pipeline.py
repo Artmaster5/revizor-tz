@@ -19,14 +19,16 @@ from . import answers as ans_mod, baseline as baseline_mod, consistency, checkli
 from .config import agent_commit, agent_dirty, agent_tag, agent_version
 from .llm import Backend, LLMError, LLMTransient, LLMUnavailable
 from .llm.pricing import cost_note, cost_usd
-from .merge import (QuoteStats, SEV_RANK, apply_skeptic, dedupe_model, fold_formal, fold_rules, merge_duplicates, model_finding,
+from .gate import apply_dedup, apply_gate
+from .merge import (QuoteStats, SEV_RANK, dedupe_model, fold_formal, fold_rules, merge_duplicates, model_finding,
                     number, sort_key)
 from .model import (GAP_TYPES, REQ_CRITERIA, CoverageRow, CriterionVerdict, Diagnostic, DroppedQuote, Finding,
                     FixAction, Question, QuestionDraft, Requirement, RequirementReview, Result, RunInfo, Skipped,
                     SourceDoc, Strength)
 from .prompts import (BATCH_SIZE, COMBINED_NAME, COMBINED_STAGE, GAPS_STAGE, LENS_BY_STAGE, MAX_TOKENS, REVIEW_LENSES, SCHEMAS,
-                      SET_FIRST_ATTEMPT_TOKENS, SET_NAME, SET_STAGES, SKEPTIC_CHUNK, ContextDoc, Lens, build_system, injection_note,
-                      answers_tag, answers_user, checklist_user, gaps_user, questions_user, review_user, set_user, skeptic_user, slice_rest_user,
+                      SET_FIRST_ATTEMPT_TOKENS, SET_NAME, SET_STAGES, DEDUP_CHUNK, GATE_CHUNK, GATE_CHUNK_ECONOMY, ContextDoc, Lens, build_system, injection_note,
+                      answers_tag, answers_user, checklist_user, dedup_line, dedup_user, gaps_user, gate_user, questions_user, review_user,
+                      set_user, slice_rest_user,
                       slice_user, tests_user)
 from .quotes import QuoteIndex
 from .textfmt import count, lines_text, shorten, W_BLOCK, W_DEFECT, W_FINDING, W_LINE, W_REQ
@@ -60,7 +62,7 @@ STAGE_GROUP = {"slice": "нарезка", "slice_rest": "нарезка", "revie
                "review_clarity": "проверка требований", "review_completeness": "проверка требований",
                "review_correctness": "проверка требований", "set_consistency": "проверка набора",
                "set_completeness": "проверка набора", "set_standards": "проверка набора", "set_gaps": "проверка набора",
-               "skeptic": "перепроверка", "questions": "вопросы", "answers": "ответы автора", "tests": "тесты",
+               "skeptic": "перепроверка", "dedup": "перепроверка", "questions": "вопросы", "answers": "ответы автора", "tests": "тесты",
                "checklist": "чек-лист документа"}
 HEARTBEAT_S = 15.0  # a «still waiting» line after this many silent seconds
 
@@ -518,7 +520,7 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
 
     # 7. skeptic ---------------------------------------------------------------------------------
     if model_on and depth == "full" and not gate.dead:
-        _skeptic(gate, findings, info, inj, audit, unchecked, say)
+        _skeptic(gate, findings, info, inj, audit, unchecked, say, qi=qi, economy=economy)
     else:
         why = "быстрый режим" if model_on else "модель не используется"
         say(f"[7/{STEPS}] Перепроверка замечаний… пропущено: {why}")
@@ -1066,23 +1068,68 @@ def _skeptic_line(f: Finding) -> str:
     return " | ".join([f.fid, f.scope, f.criterion, sev, f.title, shorten(f.problem, 600), qs])
 
 
-def _skeptic(gate, findings, info, inj, audit, unchecked, say):
+def gate_order(findings: list[Finding]) -> list[Finding]:
+    """The findings stage 7 looks at, in document order: open counted ones by their first quote's line, then id."""
     targets = [f for f in findings if f.status == "open" and not f.advisory]
+    return sorted(targets, key=lambda f: (f.quotes[0].line_start if f.quotes else 10**9, f.fid))
+
+
+def gate_chunks(findings: list[Finding], economy: bool = False) -> list[list[Finding]]:
+    size = GATE_CHUNK_ECONOMY if economy else GATE_CHUNK
+    targets = gate_order(findings)
+    return [targets[i:i + size] for i in range(0, len(targets), size)]
+
+
+def _skeptic(gate, findings, info, inj, audit, unchecked, say, *, qi=None, economy: bool = False):
+    """Stage 7: the re-check in small chunks in document order (``apply_gate``), then one dedup call over what is
+    left (``apply_dedup``; not in economy mode). A failed call leaves its findings as they were."""
+    chunks = gate_chunks(findings, economy)
+    targets = [f for ch in chunks for f in ch]
     decisions: list[dict] = []
-    chunks = [targets[i:i + SKEPTIC_CHUNK] for i in range(0, len(targets), SKEPTIC_CHUNK)]
     failed = 0
     gate.plan("skeptic", len(chunks))
-    for ch in chunks:
+
+    def one(ch):
         try:
-            ans = gate.call("skeptic", skeptic_user([_skeptic_line(f) for f in ch], inj))
-            decisions += [d for d in ans.get("decisions") or [] if isinstance(d, dict)]
+            return gate.call("skeptic", gate_user([_skeptic_line(f) for f in ch], inj)), ""
         except (LLMError, StageSkipped) as e:
+            return None, _err(e)
+
+    workers = max(1, min(len(chunks), int(getattr(gate.backend, "concurrency", 1) or 1)))
+    if workers > 1:  # the chunks are independent: they run side by side, the answers are read in document order
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            answers = list(pool.map(one, chunks))
+    else:
+        answers = [one(ch) for ch in chunks]
+    for ch, (ans, err) in zip(chunks, answers):
+        if err:
             failed += 1
             unchecked.append(f"Перепроверка не выполнена для {count(len(ch), W_FINDING)} "
-                             f"({ch[0].fid}…{ch[-1].fid}): {_err(e)}")
-    out = apply_skeptic(findings, decisions, injection=info.injection_suspected, audit=audit)
-    info.skeptic_kept, info.skeptic_rejected, info.skeptic_merged = out.kept, out.rejected, out.merged
-    say(f"[7/{STEPS}] Перепроверяю замечания… оставлено {out.kept}, отклонено {out.rejected}, объединено {out.merged}"
+                             f"({ch[0].fid}…{ch[-1].fid}): {err}")
+            continue
+        decisions += [d for d in ans.get("decisions") or [] if isinstance(d, dict)]
+    out = apply_gate(findings, decisions, qi=qi, injection=info.injection_suspected, audit=audit)
+    deduped = 0
+    rest = gate_order(findings)
+    if not economy and len(rest) >= 2 and not gate.dead and not gate.budget_hit:
+        dchunks = [rest[i:i + DEDUP_CHUNK] for i in range(0, len(rest), DEDUP_CHUNK)]
+        gate.plan("dedup", len(dchunks))
+        groups: list[dict] = []
+        for ch in dchunks:
+            try:
+                ans = gate.call("dedup", dedup_user([dedup_line(f) for f in ch], inj))
+                groups += [g for g in ans.get("groups") or [] if isinstance(g, dict)]
+            except (LLMError, StageSkipped) as e:
+                failed += 1
+                unchecked.append(f"Поиск повторов при перепроверке не выполнен для {count(len(ch), W_FINDING)} "
+                                 f"({ch[0].fid}…{ch[-1].fid}): {_err(e)}")
+        deduped = apply_dedup(findings, groups, injection=info.injection_suspected, audit=audit)
+    kept = sum(1 for f in targets if f.status == "open" and not f.advisory)
+    info.skeptic_kept, info.skeptic_rejected = kept, out.rejected
+    info.skeptic_merged, info.skeptic_advisory, info.skeptic_dedup = out.merged + deduped, out.advisory, deduped
+    say(f"[7/{STEPS}] Перепроверяю замечания… оставлено {kept}, в наблюдения {out.advisory}, отклонено {out.rejected}, "
+        f"объединено {out.merged + deduped}"
+        + (f" (из них повторов: {deduped})" if deduped else "")
         + (f", защищено замечаний правил: {out.protected}" if out.protected else "")
         + (f", понижено блокеров без основания: {out.critical_demoted}" if out.critical_demoted else "")
         + (f", не выполнено частей: {failed}" if failed else ""))

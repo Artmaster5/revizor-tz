@@ -31,13 +31,18 @@ MAX_TOKENS = {
     "set_standards": 16000,
     "set_gaps": 16000,
     "skeptic": 12000,
+    "dedup": 8000,
     "questions": 16000,
     "answers": 16000,
     "tests": 16000,
     "checklist": 8000,
 }
 BATCH_SIZE = 12
-SKEPTIC_CHUNK = 40
+# Stage 7: findings per re-check call, in document order. Economy mode (free providers that count requests per day)
+# keeps the old 40 per call and skips the dedup call, so the number of requests does not grow there.
+GATE_CHUNK = 12
+GATE_CHUNK_ECONOMY = 40
+DEDUP_CHUNK = 150  # lines per dedup call; a longer list is split into consecutive chunks
 
 FORMAT_RU = {
     "md": "Markdown",
@@ -381,26 +386,105 @@ def gaps_user(item_lines: list[str], reqs: list[dict], inj: str = "") -> str:
             + "\n\nСПИСОК ТРЕБОВАНИЙ:\n" + req_list(reqs))
 
 
-# --- P-SKEPTIC ----------------------------------------------------------------------------------
+# --- P-GATE (stage 7: the re-check) -------------------------------------------------------------------
+# The texts are data the lead tunes: copied verbatim from шум/gate/variants_w7.py (G1_HEAD, GATE_SCHEMA, D1_HEAD,
+# DEDUP_SCHEMA). The policy that turns the decisions into statuses lives in gate.py.
 
-SKEPTIC_HEAD = """ЗАДАЧА: независимая перепроверка замечаний другого проверяющего.
-Ниже замечания с цитатами. По каждому реши, глядя в документ:
-- keep — дефект действительно есть в тексте; уровень критичности верный или исправь его по разделу «Уровни критичности»;
-- reject — дефекта нет: текст документа его опровергает (ответ уже есть в документе, проверяющий ошибся в чтении или приписал тексту то, чего в нём нет);
-- merge — это тот же самый дефект в том же месте, что и другое замечание (укажи какое, оставив более точное). Два разных пробела или две разные неясности в одной фразе — это два замечания: каждому верни keep.
-Новых замечаний не добавляй: ты проверяешь только то, что есть в списке. Причина и уровень относятся к тому замечанию, чей fid ты указал. Повышай уровень, только если это следует из сути именно этого замечания; если видишь в документе другой дефект, не приписывай его чужому замечанию.
-Будь строг к выдуманному и бережен к настоящему: отклоняй только то, что можешь опровергнуть текстом документа.
-Опровержение — это место документа, где ответ на вопрос замечания написан прямо. Если ответа в тексте нет и его приходится выводить самому («число целое, значит шаг — единица», «формат обычный, значит как везде», «так делают все»), это не опровержение: два исполнителя выведут разное. В таком случае верни keep и поставь MINOR.
-Если замечание лишь требует больше подробностей, чем нужно грамотной команде (ещё одна ветка сбоя, когда основное поведение и поведение при ошибке описаны; пересказ общеизвестного алгоритма или формата; определение обычного слова; способ измерения бизнес-цели; мнение о значении параметра; редкая гонка или крайний случай при описанном основном сценарии), не отклоняй его: верни keep и severity MINOR.
-CRITICAL оставляй, только если выполняется одно из пяти оснований, и назови его в поле blocker: contradiction, main_flow, protocol, loss или missing_part. Если ни одно не выполняется, верни keep с severity MAJOR или ниже: keep для CRITICAL без основания программа понизит до MAJOR. Для MAJOR и MINOR пиши blocker = none.
+_G_INTRO = """ЗАДАЧА: строгий отбор замечаний перед выдачей отчёта автору документа.
+Ниже замечания другого проверяющего с цитатами. Он шёл по контрольным спискам и перестраховывался: часть замечаний — придирки, часть повторяет друг друга, часть спрашивает то, на что документ уже отвечает. Оставь в отчёте только то, что автор документа, прочитав, признает дефектом и станет исправлять. Лишнее замечание отнимает у автора время и подрывает доверие ко всему отчёту; выброшенное настоящее замечание — пропущенный дефект. Суди по тексту документа, а не по уверенности, с которой написано замечание.
 
-ФОРМА ОТВЕТА:
-{"decisions":[{"fid":"D-012","decision":"keep|reject|merge","merge_into":"D-004 или пустая строка","severity":"CRITICAL|MAJOR|MINOR","blocker":"contradiction|main_flow|protocol|loss|missing_part|none","reason":"одно предложение"}]}
+По каждому замечанию заполни поля по порядку.
+
+1. answer, answer_line — ответ в документе. Если замечание говорит «не задано», «не описано», «не определено», «неясно», поищи ответ во ВСЁМ документе: в соседних пунктах, таблицах, примерах, глоссарии, критериях приёмки, описании полей и статусов. Нашёл место, где это написано прямо, — скопируй его ДОСЛОВНО (от 3 до 30 слов, символ в символ, из одной строки) в answer и поставь номер строки в answer_line. Не нашёл — answer = "", answer_line = 0. То, что приходится выводить самому («число целое, значит шаг — единица», «так делают все»), ответом не считается.
+
+2. differ — что будет сделано по-разному. Представь разработчика и тестировщика банка, которые получили документ как есть и не могут спросить автора. Назови одной фразой, какое видимое поведение, сумму, данные, права доступа или результат приёмки они из-за этого места сделают или проверят по-разному, либо что сломается у клиента. Если оба сделают одинаково или разница не видна снаружи — differ = "".
+
+3. decision и why:
+- keep — дефект настоящий: этого в документе действительно нет или написано неверно, и differ не пуст; либо это пустая или недописанная часть самого документа (заглушка, «TBD», пустая таблица или раздел, нет версии, даты, согласующих); либо нарушение общеизвестного стандарта.
+- drop — замечание в отчёт не идёт. Причину назови в why:
+  - stated — документ отвечает прямо (answer заполнен);
+  - misread — проверяющий неверно прочитал число, пример или структуру документа либо приписал тексту то, чего в нём нет: цитата не подтверждает сказанное;
+  - scope — замечание требует того, что не относится к предмету и виду ЭТОГО документа: пункт общего контрольного списка (откат и выключатель функции, место хранения данных, тексты сообщений, макеты экранов, версия интерфейса, ограничение частоты запросов, перечень систем, раздел, которого документу такого вида не положено), и при этом в документе нет ни раздела для этого, ни требования, которое без этого нельзя выполнить. Если раздел, заголовок или заглушка для этого в документе есть, а содержания нет — это keep;
+  - design — замечание требует подробностей проектирования, реализации, интерфейса или плана тестирования, которые документ с требованиями оставляет команде: где и как хранить, внутренние имена и форматы, точные тексты и расположение элементов, тестовые данные;
+  - clear — придирка к формулировке: смысл слова или фразы однозначно задан окружающим текстом, это обычное слово, очевидная точка отсчёта времени или вопрос стиля; differ пуст;
+  - guess — предположение или личное мнение без опоры на текст: «может быть небезопасно», «возможно, приведёт к…», оценка конкретного значения параметра;
+  - formal — оформление, которое работе не мешает: нумерация, порядок разделов, заголовок против названия задачи. Пустые версия, дата, блок согласующих, пустой раздел — это не formal, это keep.
+- same — тот же самый дефект, что и другое замечание ИЗ ЭТОГО СПИСКА: то же отсутствующее сведение или то же противоречие, пусть и описанное другими словами, по другому критерию или с цитатой из другого места. В same_as укажи fid замечания, которое остаётся: более точное, при равенстве — с более высоким уровнем. Два разных пробела в одной фразе — это два замечания.
 """
 
+_G_DOUBT_KEEP = """Если сомневаешься между keep и drop — keep: отбрасывай только то, для чего можешь назвать причину из списка и показать её на тексте.
+"""
 
-def skeptic_user(lines: list[str], inj: str = "") -> str:
-    return SKEPTIC_HEAD + inj + "\n\nЗАМЕЧАНИЯ:\n" + "\n".join(lines)
+_G_TAIL = """
+4. severity, blocker — уровень по разделу «Уровни критичности» для того замечания, чей fid указан. CRITICAL — только по одному из пяти оснований. missing_part — только когда нет целой обязательной части документа (например, пуст раздел тестирования или приёмки), а не отдельного сведения, приложения, ссылки или значения. contradiction — только когда оба утверждения есть в тексте и не могут быть верны одновременно. MAJOR — только если differ называет разное видимое поведение, суммы, данные или доступ. Остальное — MINOR. Не повышай уровень из-за дефекта, о котором в этом замечании не сказано. Для MAJOR и MINOR blocker = none.
+
+5. reason — одно предложение: почему решено так.
+
+Новых замечаний не добавляй. Верни решение по КАЖДОМУ fid из списка.
+
+ФОРМА ОТВЕТА:
+{"decisions":[{"fid":"D-012","answer":"","answer_line":0,"differ":"…","decision":"keep|drop|same","why":"stated|misread|scope|design|clear|guess|formal или пустая строка","same_as":"D-004 или пустая строка","severity":"CRITICAL|MAJOR|MINOR","blocker":"contradiction|main_flow|protocol|loss|missing_part|none","reason":"одно предложение"}]}
+"""
+
+GATE_HEAD = _G_INTRO + _G_DOUBT_KEEP + _G_TAIL
+
+_GS = {"type": "string", "default": ""}
+GATE_SCHEMA = {"type": "object", "required": ["decisions"], "properties": {
+    "decisions": {"type": "array", "x-drop-invalid-items": True, "items": {"type": "object", "required": ["fid", "decision"], "properties": {
+        "fid": {"type": "string"},
+        "answer": {"type": "string", "default": "", "maxLength": 400},
+        "answer_line": {"type": "integer", "default": 0},
+        "differ": {"type": "string", "default": "", "maxLength": 400},
+        "decision": {"type": "string", "enum": ["keep", "drop", "same"], "default": "keep"},
+        "why": {"type": "string", "enum": ["stated", "misread", "scope", "design", "clear", "guess", "formal", ""], "default": ""},
+        "same_as": _GS,
+        "severity": {"type": "string", "enum": ["CRITICAL", "MAJOR", "MINOR", ""], "default": ""},
+        "blocker": {"type": "string", "enum": ["contradiction", "main_flow", "protocol", "loss", "missing_part", "none", ""], "default": ""},
+        "reason": {"type": "string", "default": "", "maxLength": 400}}}}}}
+
+DEDUP_HEAD = """ЗАДАЧА: найти повторы в списке замечаний.
+Ниже все замечания к документу. Их писали несколько проверяющих независимо друг от друга, поэтому один и тот же дефект часто записан два-три раза: разными словами, по разным критериям, с цитатами из разных мест. Автору документа повтор не нужен: дефект он исправит один раз.
+Собери в группу замечания об ОДНОМ дефекте: одна и та же правка одного и того же места документа закрывает их все. Признаки одного дефекта: то же отсутствующее сведение, названное по-разному; то же противоречие между теми же двумя местами; та же неясность того же слова или числа; общее замечание и его частный случай, если частный случай ничего не добавляет.
+НЕ объединяй: два разных пробела в одной фразе или одном пункте; дефект одного типа в разных требованиях, если править надо каждое; причину и следствие, если править надо оба места; замечания, у которых совпадает только тема или раздел.
+В каждой группе выбери замечание, которое остаётся (keep): самое точное и полное, при равенстве — с более высоким уровнем. Остальные перечисли в same. Замечания без повторов в ответ не включай. Если повторов нет, верни пустой список.
+
+ФОРМА ОТВЕТА:
+{"groups":[{"keep":"D-004","same":["D-017","D-090"],"why":"одно предложение: какой это общий дефект"}]}
+"""
+
+DEDUP_SCHEMA = {"type": "object", "required": ["groups"], "properties": {
+    "groups": {"type": "array", "x-drop-invalid-items": True, "items": {"type": "object", "required": ["keep", "same"], "properties": {
+        "keep": {"type": "string"},
+        "same": {"type": "array", "items": {"type": "string"}},
+        "why": {"type": "string", "default": "", "maxLength": 300}}}}}}
+
+
+
+def gate_user(lines: list[str], inj: str = "") -> str:
+    return GATE_HEAD + inj + "\n\nЗАМЕЧАНИЯ:\n" + "\n".join(lines)
+
+
+def dedup_user(lines: list[str], inj: str = "") -> str:
+    return DEDUP_HEAD + inj + "\n\nЗАМЕЧАНИЯ:\n" + "\n".join(lines)
+
+
+def _dedup_short(s, n):
+    s = " ".join(str(s or "").split())
+    return s if len(s) <= n else s[: n - 1].rstrip() + "…"
+
+
+def _dedup_place(q) -> str:
+    a, b = q.line_start, q.line_end
+    if not a:
+        return "стр. ?"
+    return f"стр. {a}" if not b or b == a else f"стр. {a}–{b}"
+
+
+def dedup_line(f) -> str:
+    """fid | место | уровень | критерий | заголовок | суть (до 300 знаков) — коротко, чтобы весь список вошёл в один вызов.
+    (``dedup_line`` of шум/gate/variants_w7.py, on a ``Finding``.)"""
+    place = _dedup_place(f.quotes[0]) if f.quotes else "стр. ?"
+    return " | ".join([f.fid, place, f.severity, f.criterion, _dedup_short(f.title, 160), _dedup_short(f.problem, 300)])
 
 
 # --- P-QUESTIONS ---------------------------------------------------------------------------------
@@ -549,14 +633,19 @@ SET_SCHEMA = {"type": "object", "required": ["findings"], "properties": {
         "acceptance_rid": _S, "covers": {"type": "array", "default": [], "items": _S}}}},
 }}
 
-SKEPTIC_SCHEMA = {"type": "object", "required": ["decisions"], "properties": {
-    "decisions": {"type": "array", "x-drop-invalid-items": True, "items": {"type": "object", "required": ["fid", "decision"], "properties": {
-        "fid": _S,
-        "decision": {"type": "string", "enum": ["keep", "reject", "merge"], "default": "keep"},
-        "merge_into": {"type": "string", "default": ""},
-        "severity": {"type": "string", "enum": list(SEVERITIES) + [""], "default": ""},
-        "blocker": {"type": "string", "enum": BLOCKER_ENUM + [""], "default": ""},
-        "reason": {"type": "string", "default": "", "maxLength": 400}}}}}}
+def _gate_schema_compat(schema: dict) -> dict:
+    """The schema the answer of stage 7 is checked against: ``GATE_SCHEMA`` plus the words of the old re-check
+    (``reject``; ``merge`` + ``merge_into``), so that old scripted answers are not silently turned into «keep» by the
+    validator. gate.apply_gate maps them: reject ≡ drop/misread, merge ≡ same."""
+    import copy
+    out = copy.deepcopy(schema)
+    item = out["properties"]["decisions"]["items"]["properties"]
+    item["decision"]["enum"] = list(item["decision"]["enum"]) + ["reject", "merge"]
+    item.setdefault("merge_into", {"type": "string", "default": ""})
+    return out
+
+
+GATE_SCHEMA_IN = _gate_schema_compat(GATE_SCHEMA)
 
 QUESTIONS_SCHEMA = {"type": "object", "required": ["questions"], "properties": {
     "questions": {"type": "array", "x-drop-invalid-items": True, "maxItems": 20, "items": {"type": "object", "required": ["text"], "properties": {
@@ -623,7 +712,7 @@ GAPS_SCHEMA = {"type": "object", "required": ["items"], "properties": {
 
 SCHEMAS = {"slice": SLICE_SCHEMA, "slice_rest": SLICE_SCHEMA, "review": REVIEW_SCHEMA,
            **{l.stage: REVIEW_SCHEMA for l in REVIEW_LENSES},
-           **{s: SET_SCHEMA for s in SET_STAGES}, "skeptic": SKEPTIC_SCHEMA, "questions": QUESTIONS_SCHEMA,
+           **{s: SET_SCHEMA for s in SET_STAGES}, "skeptic": GATE_SCHEMA_IN, "dedup": DEDUP_SCHEMA, "questions": QUESTIONS_SCHEMA,
            "answers": ANSWERS_SCHEMA, "tests": TESTS_SCHEMA, "checklist": CHECKLIST_SCHEMA,
            GAPS_STAGE: GAPS_SCHEMA}
 

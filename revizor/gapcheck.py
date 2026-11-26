@@ -178,6 +178,7 @@ UNVERIFIED_QUOTE_NOTE = "цитата модели не найдена в док
 UNVERIFIED_GAP_NOTE = "цитаты пробела не найдены в документе"
 REJECTED_NOTE = "пробел не подтвердился при перепроверке"
 RULE_NOTE = "ответ дало автоматическое правило"
+OBSERVATION_NOTE = "перепроверка вынесла замечание в наблюдения"
 MAX_CHECKED = 8
 MAX_FINDINGS = 2
 
@@ -314,8 +315,11 @@ def resolve(cells: list[GapCell], findings: list[Finding]) -> None:
             continue
         if cell.status == "gap":
             linked = [f.fid for f in open_c if cell.id in f.gap_ids]
+            observed = [f.fid for f in findings if f.status == "open" and f.advisory and cell.id in f.gap_ids]
             if linked:
                 cell.finding_ids = linked
+            elif observed:  # the re-check moved the gap's finding to the observations: the link follows it there
+                cell.finding_ids, cell.note = observed, OBSERVATION_NOTE
             elif any(cell.id in f.gap_ids for f in findings):
                 cell.status, cell.note, cell.finding_ids = "rejected", REJECTED_NOTE, []
             else:

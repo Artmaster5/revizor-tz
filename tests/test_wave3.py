@@ -6,7 +6,9 @@ import unittest
 
 from pathlib import Path
 
-from revizor import cli, config, merge, pipeline, prompts, report_json, report_md, score, structure, textfmt, verdict
+from unittest import mock
+
+from revizor import cli, config, gate, merge, pipeline, prompts, report_json, report_md, score, structure, textfmt, verdict
 from revizor.model import CriterionVerdict, Finding, Requirement, RequirementReview, Quote, RunInfo
 from revizor.report_md import card
 from tests import test_cli, test_pipeline, test_wave2
@@ -72,7 +74,8 @@ class RequirementLinksAfterMerge(unittest.TestCase):
     def test_skeptic_merge_keeps_links_clean(self):
         a, b = placeholder_finding(), terminology_finding()
         a.fid, b.fid = "D-001", "D-002"
-        merge.apply_skeptic([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
+        with mock.patch.object(gate, "MERGE_GUARD", "place_or_topic"):  # the old guard: one place is enough
+            gate.apply_gate([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
                             injection=False, audit=[])
         self.assertEqual(b.status, "merged")
         self.assertEqual(a.req_ids, ["REQ-020"])
@@ -192,7 +195,8 @@ class MergeByTopic(unittest.TestCase):
         a, b = placeholder_finding(), terminology_finding()
         a.fid, b.fid = "D-001", "D-002"
         self.assertFalse(merge.same_topic(a, b))
-        merge.apply_skeptic([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
+        with mock.patch.object(gate, "MERGE_GUARD", "place_or_topic"):  # the old guard: one place is enough
+            gate.apply_gate([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
                             injection=False, audit=[])
         self.assertEqual([x.line_start for x in a.quotes][0], 50)
         self.assertNotIn(5, [x.line_start for x in a.quotes])

@@ -8,8 +8,43 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from revizor import pipeline, report_json, report_md
+from unittest import mock
+
+from revizor import gate, pipeline, report_json, report_md
 from revizor.llm import FakeBackend, LLMBadOutput, LLMUnavailable
+
+# The re-check policy as shipped (read at import, before any test pins another one).
+SHIPPED_EFFECT = dict(gate.EFFECT)
+SHIPPED_ON_HIGHER = gate.SOFT_ON_HIGHER
+# The policy the mechanics tests are written for: every reason acts, so each branch of the code is exercised.
+MECHANICS_EFFECT = {"stated": "reject", "misread": "reject", "scope": "advisory", "design": "advisory",
+                    "clear": "advisory", "guess": "advisory", "formal": "advisory"}
+
+
+def pin_policy() -> list:
+    """Start the mechanics policy; returns the patchers for ``unpin_policy``. The shipped values are tested in
+    ``test_gate.ShippedPolicy``, so tuning the shipped table does not break the mechanics tests."""
+    ps = [mock.patch.dict(gate.EFFECT, MECHANICS_EFFECT), mock.patch.object(gate, "SOFT_ON_HIGHER", "lower")]
+    for x in ps:
+        x.start()
+    return ps
+
+
+def unpin_policy(ps: list) -> None:
+    for x in ps:
+        x.stop()
+    ps.clear()
+
+
+_PINNED: list = []
+
+
+def setUpModule() -> None:
+    _PINNED.extend(pin_policy())
+
+
+def tearDownModule() -> None:
+    unpin_policy(_PINNED)
 
 DOC = """# Уведомление о порогах
 
@@ -136,6 +171,8 @@ def make_script(**over):
             return set_answer(stage)
         if stage == "skeptic":
             return skeptic_answer(user)
+        if stage == "dedup":
+            return {"groups": []}
         if stage == "questions":
             return questions_answer(user)
         raise LLMBadOutput("нет сценария " + stage)

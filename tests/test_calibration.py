@@ -11,9 +11,10 @@ import unittest
 from revizor import report_json, report_md
 from revizor.llm import FakeBackend, LLMBadOutput, Usage
 from revizor.llm.schema import validate
-from revizor.merge import RULE_BLOCKER, apply_skeptic, rule_blocker
+from revizor.gate import apply_gate
+from revizor.merge import RULE_BLOCKER, rule_blocker
 from revizor.model import BLOCKER_REASONS, BLOCKER_RU, Finding, Quote
-from revizor.prompts import (REVIEW_LENSES, REVIEW_SCHEMA, SET_SCHEMA, SET_STAGES, SKEPTIC_HEAD, SKEPTIC_SCHEMA,
+from revizor.prompts import (REVIEW_LENSES, REVIEW_SCHEMA, SET_SCHEMA, SET_STAGES, GATE_HEAD, GATE_SCHEMA,
                              SYSTEM_RULES, review_user, set_user)
 
 from tests import test_pipeline as tp
@@ -42,15 +43,19 @@ class ScaleInPrompts(unittest.TestCase):
             u = set_user(st, [{"rid": "REQ-001"}], [])
             self.assertIn('"blocker":"contradiction|main_flow|protocol|loss|missing_part|none', u)
 
-    def test_skeptic_lowers_instead_of_rejecting(self):
-        self.assertIn("не отклоняй его: верни keep и severity MINOR", SKEPTIC_HEAD)
-        self.assertIn('"blocker"', SKEPTIC_HEAD)
-        self.assertIn("опровергнуть текстом документа", SKEPTIC_HEAD)
+    def test_gate_prompt_names_every_answer_word(self):
+        # a contract between the prompt (tuned by hand) and the schema, independent of the wording
+        props = GATE_SCHEMA["properties"]["decisions"]["items"]["properties"]
+        for field in ("decision", "why", "blocker", "severity"):
+            for word in props[field]["enum"]:
+                if word:
+                    self.assertIn(word, GATE_HEAD, (field, word))
+        self.assertIn('"blocker"', GATE_HEAD)
 
     def test_schemas_have_blocker_with_default(self):
         rev = REVIEW_SCHEMA["properties"]["reviews"]["items"]["properties"]["findings"]["items"]["properties"]
         st = SET_SCHEMA["properties"]["findings"]["items"]["properties"]
-        sk = SKEPTIC_SCHEMA["properties"]["decisions"]["items"]["properties"]
+        sk = GATE_SCHEMA["properties"]["decisions"]["items"]["properties"]
         for props in (rev, st):
             self.assertEqual(props["blocker"]["default"], "none")
             self.assertEqual(set(props["blocker"]["enum"]), set(BLOCKER_REASONS) | {"none"})
@@ -74,7 +79,7 @@ class SkepticBlockers(unittest.TestCase):
     def test_keep_critical_without_reason_lowers_to_major(self):
         f = _f("D-001", "CRITICAL", reason="main_flow")
         audit: list[dict] = []
-        out = apply_skeptic([f], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL", "blocker": "none"}],
+        out = apply_gate([f], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL", "blocker": "none"}],
                             injection=False, audit=audit)
         self.assertEqual(f.severity, "MAJOR")
         self.assertEqual(f.blocker_reason, "")
@@ -84,14 +89,14 @@ class SkepticBlockers(unittest.TestCase):
 
     def test_keep_critical_with_reason_stays(self):
         f = _f("D-001", "CRITICAL", reason="main_flow")
-        out = apply_skeptic([f], [{"fid": "D-001", "decision": "keep", "blocker": "contradiction"}],
+        out = apply_gate([f], [{"fid": "D-001", "decision": "keep", "blocker": "contradiction"}],
                             injection=False, audit=[])
         self.assertEqual((f.severity, f.blocker_reason), ("CRITICAL", "contradiction"))
         self.assertEqual(out.critical_demoted, 0)
 
     def test_over_detail_is_lowered_to_minor_not_rejected(self):
         f = _f("D-001", "CRITICAL", reason="main_flow")
-        out = apply_skeptic([f], [{"fid": "D-001", "decision": "keep", "severity": "MINOR", "blocker": "none"}],
+        out = apply_gate([f], [{"fid": "D-001", "decision": "keep", "severity": "MINOR", "blocker": "none"}],
                             injection=False, audit=[])
         self.assertEqual((f.status, f.severity, f.blocker_reason), ("open", "MINOR", ""))
         self.assertEqual(out.rejected, 0)
@@ -100,7 +105,7 @@ class SkepticBlockers(unittest.TestCase):
     def test_raise_to_critical_needs_reason(self):
         a, b = _f("D-001", "MAJOR"), _f("D-002", "MAJOR")
         why = "Суть та же: " + a.title  # a higher level must be argued with this very finding (see test_merge_topic)
-        apply_skeptic([a, b], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL", "blocker": "loss",
+        apply_gate([a, b], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL", "blocker": "loss",
                                 "reason": why},
                                {"fid": "D-002", "decision": "keep", "severity": "CRITICAL", "blocker": "",
                                 "reason": why}],
@@ -111,15 +116,15 @@ class SkepticBlockers(unittest.TestCase):
     def test_rule_critical_keeps_its_reason_and_protections_hold(self):
         r = _f("D-001", "CRITICAL", source="rule:get-mutation", rules=["get-mutation"], reason="protocol",
                crit="set_feasibility")
-        apply_skeptic([r], [{"fid": "D-001", "decision": "keep"}], injection=False, audit=[])
+        apply_gate([r], [{"fid": "D-001", "decision": "keep"}], injection=False, audit=[])
         self.assertEqual((r.severity, r.blocker_reason), ("CRITICAL", "protocol"))
         audit: list[dict] = []
-        out = apply_skeptic([r], [{"fid": "D-001", "decision": "reject", "reason": "x"}], injection=False, audit=audit)
+        out = apply_gate([r], [{"fid": "D-001", "decision": "reject", "reason": "x"}], injection=False, audit=audit)
         self.assertEqual((r.status, r.severity), ("open", "CRITICAL"))
         self.assertEqual(out.protected, 1)
         # under a suspected injection a rule finding can be neither merged nor lowered
         m = _f("D-002", "MAJOR")
-        out = apply_skeptic([r, m], [{"fid": "D-001", "decision": "merge", "merge_into": "D-002", "severity": "MINOR"}],
+        out = apply_gate([r, m], [{"fid": "D-001", "decision": "merge", "merge_into": "D-002", "severity": "MINOR"}],
                             injection=True, audit=[])
         self.assertEqual((r.status, r.severity, r.blocker_reason), ("open", "CRITICAL", "protocol"))
         self.assertEqual(out.protected, 2)

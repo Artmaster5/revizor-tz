@@ -177,7 +177,7 @@ STAGE_EFFORT: dict[str, str] = {
     "review_correctness": "low",
     "set_consistency": "high", "set_completeness": "medium", "set_standards": "medium",
     "set_gaps": "medium",
-    "skeptic": "medium", "questions": "low", "answers": "medium", "tests": "low",
+    "skeptic": "medium", "dedup": "medium", "questions": "low", "answers": "medium", "tests": "low",
     "checklist": "low",
 }
 STAGE_EFFORT_NOTE = ("Усилие модели задано по этапам: поиск противоречий между разделами — high, остальные проверки "
@@ -205,11 +205,18 @@ def parse_stage_overrides(text: str) -> tuple[dict[str, str], list[str]]:
     return out, bad
 
 
+# A stage without an entry of its own takes the effort of another one: the dedup call of stage 7 works like the re-check,
+# so ``ANTHROPIC_EFFORT_STAGES=skeptic=high`` raises both (``dedup=…`` still sets it alone).
+STAGE_EFFORT_ALIAS = {"dedup": "skeptic"}
+
+
 def _stage_lookup(table: dict[str, str], stage: str) -> str:
     if not stage:
         return ""
     if stage in table:
         return table[stage]
+    if stage in STAGE_EFFORT_ALIAS and STAGE_EFFORT_ALIAS[stage] in table:
+        return table[STAGE_EFFORT_ALIAS[stage]]
     return table.get(stage.split("_", 1)[0], "")
 
 

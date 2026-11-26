@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import unittest
 
-from revizor import merge
+from unittest import mock
+
+from revizor import gate, merge
 from revizor.model import Finding, Quote
 
 RULE = "Возврат уменьшает итог месяца исходной операции, отмена не учитывается"
@@ -104,16 +106,23 @@ class SkepticGuards(unittest.TestCase):
         a = f("Нет версии и даты документа", fid="D-001", quotes=[q("Версия:", 3, "")], reqs=[])
         b = f("Блок согласующих пуст", fid="D-002", quotes=[q("| Подразделение | ФИО | Подпись |", 90, "")], reqs=[])
         audit: list[dict] = []
-        out = merge.apply_skeptic([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001",
+        out = gate.apply_gate([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001",
                                             "reason": "тоже про оформление"}], injection=False, audit=audit)
         self.assertEqual((b.status, b.severity), ("open", "MAJOR"))
         self.assertEqual(out.merged, 0)
-        self.assertTrue(any(x["what"] == "skeptic_merge_refused" for x in audit))
+        self.assertTrue(any(x["what"] == "gate_merge_refused" for x in audit))
 
-    def test_merge_at_one_place_is_accepted(self):
+    def test_merge_at_one_place_about_another_thing_is_refused(self):
+        # wave 7: one place is not one defect; the old guard («place or topic») still merges them when chosen
         a = f("Для чужого объекта указан код 403", fid="D-001")
         b = f("Расхождение заголовка и текста ответа", fid="D-002")
-        out = merge.apply_skeptic([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
+        out = gate.apply_gate([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
+                              injection=False, audit=[])
+        self.assertEqual((b.status, out.merged), ("open", 0))
+        a = f("Для чужого объекта указан код 403", fid="D-001")
+        b = f("Расхождение заголовка и текста ответа", fid="D-002")
+        with mock.patch.object(gate, "MERGE_GUARD", "place_or_topic"):
+            out = gate.apply_gate([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
                                   injection=False, audit=[])
         self.assertEqual((b.status, b.merged_into, out.merged), ("merged", "D-001", 1))
 
@@ -121,27 +130,27 @@ class SkepticGuards(unittest.TestCase):
         a = f("Адрес боевого контура не задан", fid="D-001", quotes=[q("Prod: —", 40, "REQ-004")], reqs=["REQ-004"])
         b = f("Не задан адрес боевого контура, стоит прочерк", fid="D-002", quotes=[q("URL", 70, "REQ-009")],
               reqs=["REQ-009"])
-        merge.apply_skeptic([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
+        gate.apply_gate([a, b], [{"fid": "D-002", "decision": "merge", "merge_into": "D-001"}],
                             injection=False, audit=[])
         self.assertEqual(b.status, "merged")
 
     def test_raise_argued_with_another_defect_is_refused(self):
         a = f("Не описана ветка, когда лимит уже превышен", fid="D-001")
         audit: list[dict] = []
-        merge.apply_skeptic([a], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL", "blocker": "protocol",
+        gate.apply_gate([a], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL", "blocker": "protocol",
                                    "reason": "Новое замечание, которого не было в списке: метод сохранения описан "
                                              "как GET, хотя он меняет настройку."}], injection=False, audit=audit)
         self.assertEqual((a.severity, a.blocker_reason), ("MAJOR", ""))
         self.assertTrue(any(x["what"] == "skeptic_raise_refused" for x in audit))
         b = f("Идентификатор передаётся в адресе запроса и попадает в журналы", fid="D-002")
-        merge.apply_skeptic([b], [{"fid": "D-002", "decision": "keep", "severity": "CRITICAL", "blocker": "protocol",
+        gate.apply_gate([b], [{"fid": "D-002", "decision": "keep", "severity": "CRITICAL", "blocker": "protocol",
                                    "reason": "Метод сохранения настроек описан как GET, изменение данных таким "
                                              "методом нарушает правила протокола."}], injection=False, audit=[])
         self.assertEqual(b.severity, "MAJOR")
 
     def test_raise_argued_with_the_finding_itself_is_accepted(self):
         a = f("Непонятно, по какой дате определяется месяц операции", fid="D-001")
-        merge.apply_skeptic([a], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL",
+        gate.apply_gate([a], [{"fid": "D-001", "decision": "keep", "severity": "CRITICAL",
                                    "blocker": "contradiction",
                                    "reason": "Одно правило относит операцию к месяцу по дате совершения, пример — "
                                              "к следующему месяцу; от выбора меняется сумма."}],
@@ -150,7 +159,7 @@ class SkepticGuards(unittest.TestCase):
 
     def test_lowering_needs_no_fit(self):
         a = f("Не описан редкий сбой", fid="D-001")
-        merge.apply_skeptic([a], [{"fid": "D-001", "decision": "keep", "severity": "MINOR", "reason": ""}],
+        gate.apply_gate([a], [{"fid": "D-001", "decision": "keep", "severity": "MINOR", "reason": ""}],
                             injection=False, audit=[])
         self.assertEqual(a.severity, "MINOR")
 

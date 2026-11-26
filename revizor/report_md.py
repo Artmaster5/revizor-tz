@@ -462,7 +462,7 @@ STAGE_RU = {"slice": "нарезка", "slice_rest": "нарезка (остат
             "review_correctness": "линза «корректность»", "set_consistency": "набор: непротиворечивость",
             "set_completeness": "набор: полнота", "set_standards": "набор: стандарты и безопасность",
             "set_gaps": "набор: проход-критик «чего не хватает»",
-            "skeptic": "перепроверка", "questions": "вопросы автору", "answers": "ответы автора",
+            "skeptic": "перепроверка", "dedup": "перепроверка: повторы", "questions": "вопросы автору", "answers": "ответы автора",
             "tests": "черновики тестов", "checklist": "чек-лист из документа"}
 
 
@@ -509,12 +509,17 @@ def recheck_line(result: Result) -> str:
     r = result.run
     if r.mode != "full":
         return "не выполнялась (" + ("быстрый режим" if r.mode == "fast" else "без модели") + ")"
-    line = f"оставлено {r.skeptic_kept}, отклонено {r.skeptic_rejected}, объединено {r.skeptic_merged}"
-    refused_m = _audit_count(result, "skeptic_merge_refused")
+    line = (f"оставлено {r.skeptic_kept}, в наблюдения {r.skeptic_advisory}, отклонено {r.skeptic_rejected}, "
+            f"объединено {r.skeptic_merged}" + (f" (из них повторов: {r.skeptic_dedup})" if r.skeptic_dedup else ""))
+    refused_m = (_audit_count(result, "skeptic_merge_refused") + _audit_count(result, "gate_merge_refused")
+                 + _audit_count(result, "dedup_merge_refused"))
+    refused_d = _audit_count(result, "gate_drop_refused")
     refused_r = _audit_count(result, "skeptic_raise_refused")
     if refused_m:
-        line += (f"; не дано объединить разные дефекты в разных местах: {refused_m} "
+        line += (f"; не дано объединить замечания о разных дефектах: {refused_m} "
                  "(оба замечания остались)")
+    if refused_d:
+        line += f"; не дано отбросить без достаточного основания: {refused_d} (замечание осталось)"
     if refused_r:
         line += f"; не дано поднять уровень по доводу о другом дефекте: {refused_r}"
     if r.critical_demoted:
@@ -1103,19 +1108,37 @@ def _set_level(result: Result, dname: str = "") -> str:
     adv = advisory(result)
     out += ["", '<a id="s4-obs"></a>', "### Наблюдения (проверьте сами, на итог не влияют)", ""]
     if adv:
-        out.append("Эти признаки находятся словарными правилами низкой точности: часто это нормальная формулировка. "
-                   "Они не входят в число дефектов, индексы и вердикт.")
+        by_rules = any(not f.advisory_reason for f in adv)
+        by_gate = any(f.advisory_reason for f in adv)
+        if not by_gate:
+            out.append("Эти признаки находятся словарными правилами низкой точности: часто это нормальная формулировка. "
+                       "Они не входят в число дефектов, индексы и вердикт.")
+        elif not by_rules:
+            out.append("Эти мелкие замечания перепроверка отнесла ко второму плану: причина указана под каждым. "
+                       "Они не входят в число дефектов, индексы и вердикт.")
+        else:
+            out.append("Часть признаков находят словарные правила низкой точности: часто это нормальная формулировка. "
+                       "Остальное — мелкие замечания, которые перепроверка отнесла ко второму плану: причина указана под каждым. "
+                       "Всё это не входит в число дефектов, индексы и вердикт.")
         out.append("")
-        for f in adv:
+        for f in sorted(adv, key=_obs_key):
             q = f.quotes[0]
             rid = f" · {link(q.rid)}" if q.rid else ""
             out.append(f'- <a id="{anchor(f.fid)}"></a>**{f.fid}** · {quote_location(q)}{rid} · {md(f.title)}: '
                        f"«{_quote_text(q.text, 120)}»")
+            if f.advisory_reason:
+                out.append(f"  - Почему не в основном списке: {md(f.advisory_reason)}")
     else:
         out.append("Нет.")
     if result.checklist:
         out += ["", _checklist_block(result)]
     return "\n".join(out)
+
+
+def _obs_key(f: Finding) -> tuple:
+    """Observations by id: rule observations are numbered in document order, the re-check's continue the numbering."""
+    tail = f.fid[2:] if f.fid.startswith("Н-") else ""
+    return (int(tail), "") if tail.isdigit() else (10**6, f.fid)
 
 
 GAP_CHECKED_MAX = 140

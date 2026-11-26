@@ -15,6 +15,17 @@ from revizor.model import CriterionVerdict, Finding, Quote, Strength
 
 from tests import test_pipeline as tp
 
+
+_PINNED: list = []
+
+
+def setUpModule() -> None:
+    _PINNED.extend(tp.pin_policy())
+
+
+def tearDownModule() -> None:
+    tp.unpin_policy(_PINNED)
+
 AGENT = Path(__file__).resolve().parent.parent
 FIXTURES = AGENT / "tests" / "fixtures"
 

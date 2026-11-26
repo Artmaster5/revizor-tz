@@ -6,13 +6,14 @@ from typing import Mapping
 
 from . import checklist as checklist_mod, gapcheck, loader, rules, slicer
 from .llm import Usage
-from .llm.base import STAGE_EFFORT, parse_stage_overrides
+from .llm.base import STAGE_EFFORT, STAGE_EFFORT_ALIAS, parse_stage_overrides
 from .llm.pricing import cost_note, cost_usd
 from .model import Diagnostic
 from .pipeline import (batch_payload, batches, injection_lines, load_contexts, req_list_payload, review_hints,
                        review_stages, set_hints, _question_lines, _skeptic_line)
-from .prompts import (COMBINED_STAGE, GAPS_STAGE, SET_STAGES, gaps_user, SKEPTIC_CHUNK, approx_tokens, build_system, checklist_user,
-                      injection_note, questions_user, review_user, set_user, skeptic_user, slice_user)
+from .prompts import DEDUP_CHUNK, GATE_CHUNK, GATE_CHUNK_ECONOMY, dedup_line, dedup_user, gate_user
+from .prompts import (COMBINED_STAGE, GAPS_STAGE, SET_STAGES, gaps_user, approx_tokens, build_system, checklist_user,
+                      injection_note, questions_user, review_user, set_user, slice_user)
 from .textfmt import dec, num, usd
 
 # Output tokens (thinking included) per call = expected JSON size of the answer × a multiplier.
@@ -26,13 +27,17 @@ from .textfmt import dec, num, usd
 #   call) · set_completeness 25 215 / 2 900 = 8,7 (medium) · set_standards 23 095 / 2 600 = 8,9 (medium) ·
 #   skeptic 22 747 / 4 410 = 5,2 (medium) · questions 7 400 / 4 500 = 1,6 (low) · tests 10 521 / 1 800 = 5,8 (low).
 # The combined pass of --depth fast («review», low) was not measured: it takes the mean of the three lenses.
+# Stage 7 changed on 26.11.2026 (typed decisions in chunks of 12 + one dedup call) and is NOT measured yet: the old
+# skeptic spent ≈ 5,2 × 45 ≈ 235 output tokens per finding; the new decision's JSON is ≈ 110 tokens (answer, differ, why,
+# reason), so «skeptic» assumes the same ≈ 125 tokens of thinking per finding on top of it (factor 2,1). «dedup» (medium)
+# answers only the groups; its factor 6,0 is a guess (it reads the whole list and thinks about it, writes little).
 # «set_gaps» (the critic pass, medium) was not measured: its factor 5,0 is a guess below set_completeness, because its
 # JSON is larger (one entry per checklist item) and the thinking per JSON token should be lower.
 # «answers» and «checklist» (the document's own unfilled review checklist, low) were not measured either. Each factor is valid for the stage's DEFAULT effort (STAGE_EFFORT); for another
 # effort it is scaled by the ratio of THINKING_MULT (the ratios are provisional: only the default efforts were measured).
 STAGE_MULT = {"slice": 1.3, "slice_rest": 1.3, "review_clarity": 2.8, "review_completeness": 3.2,
               "review_correctness": 2.5, "review": 2.8, "set_consistency": 20.4, "set_completeness": 8.7,
-              "set_standards": 8.9, "skeptic": 5.2, "questions": 1.6, "answers": 3.0, "tests": 5.8,
+              "set_standards": 8.9, "skeptic": 2.1, "dedup": 6.0, "questions": 1.6, "answers": 3.0, "tests": 5.8,
               "checklist": 1.6, "set_gaps": 5.0}
 THINKING_MULT = {"low": 1.5, "medium": 3.0, "high": 6.0, "xhigh": 8.0, "max": 10.0}
 THINKING_SPREAD = (0.7, 1.4)  # low / high edge of the range around the expected value
@@ -54,7 +59,10 @@ FINDINGS_PER_REQ_LENS = 0.35
 FINDINGS_PER_REQ_COMBINED = 0.9
 OUT_SET = 2600
 FINDINGS_PER_SET_STAGE = 6
-OUT_SKEPTIC_DECISION = 45
+OUT_SKEPTIC_DECISION = 110  # one typed decision of the re-check (stage 7)
+OUT_DEDUP_GROUP = 45  # one group of the dedup call
+DEDUP_GROUPS_PER_FINDING = 0.12  # groups per finding the dedup call sees (a guess: ≈ 14 % duplicates, 1–2 per group)
+LINE_CHARS_DEDUP = 420  # «fid | место | уровень | критерий | заголовок | суть» of a model finding
 OUT_QUESTION = 190
 OUT_CHECKLIST_ITEM = 70
 OUT_GAP_ITEM = 75  # id, status, up to 8 short names in «checked», a note, a quote for «covered»
@@ -81,6 +89,8 @@ def effort_of(stage: str, locked: str, over: Mapping[str, str]) -> str:
     for table in (over, STAGE_EFFORT):
         if stage in table:
             return table[stage]
+        if STAGE_EFFORT_ALIAS.get(stage) in table:
+            return table[STAGE_EFFORT_ALIAS[stage]]
         head = stage.split("_", 1)[0]
         if head in table:
             return table[head]
@@ -106,7 +116,8 @@ class Estimate:
     error: str = ""
 
 
-def build(input_path: str, *, depth: str, contexts: list[str] | None = None, batch_size: int | None = None) -> Estimate:
+def build(input_path: str, *, depth: str, contexts: list[str] | None = None, batch_size: int | None = None,
+          economy: bool = False) -> Estimate:
     doc = loader.load(input_path)
     if isinstance(doc, Diagnostic):
         return Estimate(error=doc.title)
@@ -149,11 +160,21 @@ def build(input_path: str, *, depth: str, contexts: list[str] | None = None, bat
     total_findings = len(counted_rules) + int(model_findings)
     extra_chars = int(model_findings) * LINE_CHARS_MODEL_FINDING
     if depth == "full" and total_findings:
-        rule_lines = [_skeptic_line(f) for f in counted_rules]
-        n_chunks = max(1, -(-total_findings // SKEPTIC_CHUNK))
-        base = approx_tokens(skeptic_user(rule_lines, inj)) + approx_tokens("x" * extra_chars)
+        # stage 7: the re-check in chunks of GATE_CHUNK (each repeats the task text), then one dedup call per
+        # DEDUP_CHUNK lines over what is left (not in economy mode, not for fewer than 2 findings)
+        n_chunks = max(1, -(-total_findings // (GATE_CHUNK_ECONOMY if economy else GATE_CHUNK)))
+        head = approx_tokens(gate_user([], inj))
+        body = approx_tokens("\n".join(_skeptic_line(f) for f in counted_rules)) + approx_tokens("x" * extra_chars)
         for _ in range(n_chunks):
-            calls.append(Call("skeptic", base // n_chunks + 300, total_findings * OUT_SKEPTIC_DECISION // n_chunks))
+            calls.append(Call("skeptic", head + body // n_chunks + 300, total_findings * OUT_SKEPTIC_DECISION // n_chunks))
+        if not economy and total_findings >= 2:
+            n_dedup = max(1, -(-total_findings // DEDUP_CHUNK))
+            d_head = approx_tokens(dedup_user([], inj))
+            d_body = (approx_tokens("\n".join(dedup_line(f) for f in counted_rules))
+                      + approx_tokens("x" * (int(model_findings) * LINE_CHARS_DEDUP)))
+            for _ in range(n_dedup):
+                calls.append(Call("dedup", d_head + d_body // n_dedup,
+                                  max(50, int(total_findings * DEDUP_GROUPS_PER_FINDING * OUT_DEDUP_GROUP) // n_dedup)))
     if total_findings:
         user = questions_user(_question_lines(counted_rules), inj)
         calls.append(Call("questions", approx_tokens(user) + approx_tokens("x" * extra_chars),
@@ -207,7 +228,7 @@ def expected_seconds(est: Estimate, provider: str, env: Mapping[str, str] | None
         sec = lambda c: c.out_tokens * (LOW_OUT_FACTOR + HIGH_OUT_DEFAULT) / 2 * k
     pool = [sec(c) for c in est.calls if c.stage.startswith(("review", "set_"))]
     skeptic = [sec(c) for c in est.calls if c.stage == "skeptic"]
-    serial = sum(sec(c) for c in est.calls if c.stage in ("slice", "slice_rest", "questions", "tests", "checklist"))
+    serial = sum(sec(c) for c in est.calls if c.stage in ("slice", "slice_rest", "dedup", "questions", "tests", "checklist"))
     t = serial
     if pool:
         t += max(sum(pool) / min(workers, len(pool)), max(pool))
@@ -253,7 +274,8 @@ def report(est: Estimate, *, provider: str, model: str, depth: str, provider_not
              f"требования {n_review} ({est.batches} пак. × {est.lenses} {'линзы' if est.lenses > 1 else 'проход'})",
              f"набор {sum(len(by_stage.get(s, [])) for s in SET_STAGES + (GAPS_STAGE,))}"]
     if "skeptic" in by_stage:
-        parts.append(f"перепроверка {len(by_stage['skeptic'])}")
+        parts.append(f"перепроверка {len(by_stage['skeptic'])}"
+                     + (f" + повторы {len(by_stage['dedup'])}" if "dedup" in by_stage else ""))
     if "questions" in by_stage:
         parts.append(f"вопросы {len(by_stage['questions'])}")
     if "tests" in by_stage:

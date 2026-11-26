@@ -280,6 +280,8 @@ class Finding(_Dictable):
     closed_by_answer: bool = False  # the author's answer settles it (dialog mode); the document still has to be edited
     fixed_wording: str = ""  # corrected requirement text (from the reviewer's rewrite or from the author's answer)
     advisory: bool = False  # low-precision observation: shown separately, never counted in indices or the verdict
+    # why the re-check (stage 7) made a finding an observation: «деталь проектирования — <reason>»; "" for rule observations
+    advisory_reason: str = ""
     blocker_reason: str = ""  # CRITICAL only: one of BLOCKER_REASONS; "" for MAJOR and MINOR
     # places of merged-away findings that lie elsewhere: shown as «см. также», never a basis for a requirement's mark
     see_also: list[Quote] = field(default_factory=list)
@@ -410,6 +412,8 @@ class RunInfo(_Dictable):
     skeptic_kept: int = 0
     skeptic_rejected: int = 0
     skeptic_merged: int = 0
+    skeptic_advisory: int = 0  # findings the re-check moved to the observations
+    skeptic_dedup: int = 0  # of skeptic_merged: merged by the dedup call of stage 7
     manual_minutes_estimate: int | None = None  # kept for JSON compatibility; never filled (no sourced figure)
     warnings: list[str] = field(default_factory=list)
     injection_suspected: bool = False  # the document contains text addressed to the reviewing AI

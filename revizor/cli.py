@@ -369,10 +369,12 @@ def _estimate(inp: str, provider: str, args, env, say) -> int:
         chosen = "anthropic"
         note = "провайдер не настроен — оценка для модели по умолчанию"
     model = config.resolve_model(chosen, env, args.model)
-    from .llm import review_batch_size_for
+    from .llm import economy_setting, review_batch_size_for
 
+    eco = economy_setting(env)
     est = estimate.build(inp, depth=args.depth, contexts=args.context,
-                         batch_size=review_batch_size_for(chosen, env))
+                         batch_size=review_batch_size_for(chosen, env),
+                         economy=eco if eco is not None else chosen == "gemini")
     for line in estimate.report(est, provider=chosen, model=model, depth=args.depth, provider_note=note, env=env):
         say(line)
     return 0

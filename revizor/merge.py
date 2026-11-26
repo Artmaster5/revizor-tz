@@ -1,4 +1,4 @@
-"""Model answers → verified findings; duplicates merged; rule findings folded in; ids; skeptic decisions.
+"""Model answers → verified findings; duplicates merged; rule findings folded in; ids; helpers of the re-check.
 
 Everything here is code-controlled: a model finding survives only with at least one quote that the
 QuoteIndex found in the source text, and the printed quote is always the original source span.
@@ -398,8 +398,15 @@ def topic_score(a: Finding, b: Finding) -> float:
     return max(_share(a.title, b.title), _share(a.problem, b.problem))
 
 
+# Optional, OFF by default: stricter word-based dedup before numbering. When True, ``model_twins`` needs alike titles
+# (``titles_alike``) instead of ``same_topic``, and the last test of ``_same_defect`` also needs alike titles.
+DEDUPE_STRICT = False
+
+
 def model_twins(a: Finding, b: Finding) -> bool:
     """One defect reported twice: the same criterion family, an overlapping quote and the same topic."""
+    if DEDUPE_STRICT:
+        return same_family(a, b) and findings_overlap(a, b) and titles_alike(a.title, b.title)
     return same_family(a, b) and findings_overlap(a, b) and same_topic(a, b)
 
 
@@ -464,17 +471,7 @@ def number(findings: list[Finding]) -> list[Finding]:
     return findings
 
 
-# --- skeptic -------------------------------------------------------------------------------------
-
-
-class SkepticOutcome:
-    def __init__(self) -> None:
-        self.kept = 0
-        self.rejected = 0
-        self.merged = 0
-        self.protected = 0
-        self.severity_changed = 0
-        self.critical_demoted = 0
+# --- helpers of the re-check (stage 7, see gate.py) ---------------------------------------------
 
 
 RAISE_FIT_MIN = 0.34
@@ -496,136 +493,6 @@ def more_severe_first(a: Finding, b: Finding) -> tuple[Finding, Finding]:
     """(survivor, absorbed) of a merge of two findings: the more severe one survives, so that the title, the problem,
     the level and the reason of a blocker on the card always come from one finding. A tie keeps the order given."""
     return (b, a) if SEV_RANK.get(b.severity, 9) < SEV_RANK.get(a.severity, 9) else (a, b)
-
-
-def apply_skeptic(findings: list[Finding], decisions: list[dict], *, injection: bool,
-                  audit: list[dict]) -> SkepticOutcome:
-    """Apply keep / reject / merge decisions in place. Findings absent from the answer stay unchanged.
-
-    Two passes: first every reject and every change of level, then the merges, so that a merged card takes the level
-    of its members AS THEY STAND AFTER THE RE-CHECK. In a merge the more severe finding survives (the roles are swapped
-    when the re-check names the milder one as the target), see ``more_severe_first``.
-
-    A rule-sourced finding is never removed (reject and, under a suspected injection, merge are ignored);
-    under a suspected injection its severity cannot be lowered either.
-    CRITICAL survives «keep» only with a valid ``blocker`` from the skeptic (a rule-sourced finding keeps its rule's
-    reason); otherwise it is lowered to MAJOR and audited as «critical_without_reason»."""
-    out = SkepticOutcome()
-    by_id = {f.fid: f for f in findings if f.status == "open" and not f.advisory}
-    reviewed: set[str] = set()
-    merges: list[tuple[Finding, dict, str]] = []
-
-    def resolve(fid: str) -> Finding | None:
-        seen = set()
-        f = by_id.get(fid)
-        while f is not None and f.status == "merged" and f.merged_into and f.merged_into not in seen:
-            seen.add(f.merged_into)
-            f = by_id.get(f.merged_into)
-        return f if f is not None and f.status == "open" else None
-
-    def keep(f: Finding, d: dict, reason: str) -> None:
-        protected = is_rule_sourced(f)
-        new_sev = d.get("severity") if d.get("severity") in SEVERITIES else f.severity
-        if SEV_RANK[new_sev] < SEV_RANK[f.severity] and not _reason_fits(f, reason):
-            # the re-check judges the findings it was given; a higher level argued with another defect («новое
-            # замечание…», a neighbouring problem at the same place) would put a blocker's label on the wrong card
-            audit.append({"type": "decision", "what": "skeptic_raise_refused", "fid": f.fid, "from": f.severity,
-                          "to": new_sev, "reason": reason})
-            new_sev = f.severity
-        blocker = blocker_code(d.get("blocker"))
-        no_reason = False
-        if new_sev == "CRITICAL" and not blocker:
-            if protected and f.severity == "CRITICAL" and f.blocker_reason:
-                blocker = f.blocker_reason  # a rule's reason stands on its own
-            else:
-                new_sev = "MAJOR" if f.severity == "CRITICAL" else f.severity
-                no_reason = f.severity == "CRITICAL"
-        if new_sev != f.severity:
-            lowering = SEV_RANK[new_sev] > SEV_RANK[f.severity]
-            if protected and injection and lowering:
-                out.protected += 1
-                audit.append({"type": "decision", "what": "rule_finding_protected", "fid": f.fid,
-                              "attempt": f"severity {f.severity}→{new_sev}", "reason": reason})
-            else:
-                why = "не названо основание блокера" if no_reason else reason
-                f.status_reason = f"уровень изменён перепроверкой: {f.severity} → {new_sev}" + (f". {why}" if why else "")
-                audit.append({"type": "decision", "what": "skeptic_severity", "fid": f.fid, "from": f.severity,
-                              "to": new_sev, "reason": reason})
-                if no_reason:
-                    audit.append({"type": "decision", "what": "critical_without_reason", "stage": "skeptic",
-                                  "fid": f.fid, "title": f.title, "to": new_sev})
-                    out.critical_demoted += 1
-                note_level(f, "skeptic", new_sev, why)
-                f.severity = new_sev
-                out.severity_changed += 1
-        if f.severity == "CRITICAL":
-            f.blocker_reason = blocker or f.blocker_reason
-        else:
-            f.blocker_reason = ""
-        out.kept += 1
-
-    # pass 1: rejects and levels
-    for d in decisions:
-        if not isinstance(d, dict):
-            continue
-        fid = str(d.get("fid") or "").strip()
-        f = by_id.get(fid)
-        if f is None or f.status != "open" or fid in reviewed:
-            continue
-        reviewed.add(fid)
-        decision = d.get("decision") or "keep"
-        reason = _str(d.get("reason"), 400)
-        if decision == "reject":
-            if is_rule_sourced(f):
-                out.protected += 1
-                audit.append({"type": "decision", "what": "rule_finding_protected", "fid": fid, "attempt": "reject",
-                              "reason": reason})
-            else:
-                f.status = "rejected"
-                f.status_reason = reason or "перепроверка не подтвердила дефект"
-                out.rejected += 1
-                audit.append({"type": "decision", "what": "skeptic_rejected", "fid": fid, "reason": f.status_reason})
-                continue
-        if decision == "merge":
-            merges.append((f, d, reason))
-            continue
-        keep(f, d, reason)
-
-    # pass 2: merges, on the levels the re-check has just set
-    for f, d, reason in merges:
-        target = resolve(str(d.get("merge_into") or "").strip())
-        if f.status != "open" or target is None or target is f:
-            if f.status == "open":
-                keep(f, d, reason)
-            continue
-        if is_rule_sourced(f) and injection:
-            out.protected += 1
-            audit.append({"type": "decision", "what": "rule_finding_protected", "fid": f.fid, "attempt": "merge",
-                          "reason": reason})
-            keep(f, d, reason)
-            continue
-        if not (findings_overlap(target, f) or set(target.req_ids) & set(f.req_ids) or same_topic(target, f)):
-            # the re-check may fold together only what stands at one place or says one thing; two findings about
-            # different places in different words both stay, otherwise a real defect disappears from the report
-            audit.append({"type": "decision", "what": "skeptic_merge_refused", "fid": f.fid, "into": target.fid,
-                          "reason": reason})
-            out.kept += 1
-            continue
-        survivor, gone = more_severe_first(target, f)
-        if gone is target and injection and is_rule_sourced(target):
-            survivor, gone = target, f  # under a suspected injection a rule's finding is never the one that goes
-        if gone is target:
-            audit.append({"type": "decision", "what": "skeptic_merge_swapped", "fid": f.fid, "into": target.fid,
-                          "survivor": f.fid})
-        absorb(survivor, gone)
-        gone.status = "merged"
-        gone.merged_into = survivor.fid
-        gone.status_reason = reason or f"то же, что {survivor.fid}"
-        out.merged += 1
-        audit.append({"type": "decision", "what": "skeptic_merged", "fid": gone.fid, "into": survivor.fid,
-                      "reason": gone.status_reason})
-    out.kept += sum(1 for fid, f in by_id.items() if fid not in reviewed and f.status == "open")
-    return out
 
 
 # --- near-duplicates, by code (after the questions are linked) ---------------------------------------------
@@ -691,7 +558,8 @@ def _same_defect(a: Finding, b: Finding) -> bool:
         return False
     if a.question_id and a.question_id == b.question_id:
         return True
-    return jaccard(a.title, b.title) >= JACCARD_MIN or jaccard(a.problem, b.problem) >= JACCARD_MIN
+    alike = jaccard(a.title, b.title) >= JACCARD_MIN or jaccard(a.problem, b.problem) >= JACCARD_MIN
+    return alike and titles_alike(a.title, b.title) if DEDUPE_STRICT else alike
 
 
 def merge_duplicates(findings: list[Finding], questions: list, fix_first: list, audit: list[dict]) -> int:
