@@ -481,12 +481,16 @@ class FakeModelRunTests(_Server):
         st, cfg = self.jget("/api/config")
         self.assertEqual(cfg["provider"], "anthropic")
         ids = [m["id"] for m in cfg["models"]]
-        self.assertEqual(ids[0], "claude-haiku-5-5")
+        self.assertEqual(ids[0], "claude-sonnet-5-5")
+        labels = {m["id"]: m["label"] for m in cfg["models"]}
+        self.assertEqual(labels["claude-sonnet-5-5"], "claude-sonnet-5-5 — по умолчанию")
+        self.assertEqual(labels["claude-haiku-5-5"], "claude-haiku-5-5 — дешевле")
+        self.assertEqual(labels["claude-opus-5-5"], "claude-opus-5-5 — максимум")
         self.assertIn("claude-opus-5-5", ids)
         self.assertNotIn("claude-fable-5-2", ids)
         self.assertNotIn("gpt-4o-mini", ids)
         self.assertEqual(ids[-1], "offline")
-        self.assertEqual(cfg["default_model"], "claude-haiku-5-5")
+        self.assertEqual(cfg["default_model"], "claude-sonnet-5-5")
         st, up = self.upload("doc.md", DOC.encode("utf-8"))
         body = {"doc": up["upload_id"], "answers": None, "model": "claude-haiku-5-5", "depth": "full",
                 "max_cost": "5"}

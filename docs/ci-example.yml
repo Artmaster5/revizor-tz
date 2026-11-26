@@ -74,7 +74,7 @@ jobs:
 #        if: steps.changed.outputs.count != '0'
 #        env:
 #          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-#          ANTHROPIC_MODEL: claude-haiku-5-5
+#          ANTHROPIC_MODEL: claude-sonnet-5-5
 #        run: |
 #          mkdir -p review-reports
 #          status=0
@@ -84,7 +84,7 @@ jobs:
 #              --input "$doc" \
 #              --output "review-reports/${name}.report.md" \
 #              --provider anthropic \
-#              --max-cost 1.00 \
+#              --max-cost 3.00 \
 #              --fail-on critical || status=$?
 #          done < changed.txt
 #          exit $status

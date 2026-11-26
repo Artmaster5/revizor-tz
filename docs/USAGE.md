@@ -238,10 +238,10 @@ python main.py --input docs/requirements.md --output reports/my_report.md
 
 ## Оценка цены до запуска
 
-`--estimate` модель не вызывает и ничего не пишет на диск. Пример на документе организаторов, без ключа в окружении (поэтому оценка для модели по умолчанию):
+`--estimate` модель не вызывает и ничего не пишет на диск. Пример на документе организаторов, без ключа в окружении и с моделью `--model claude-haiku-5-5` (без этого оценка считается для модели по умолчанию, `claude-sonnet-5-5`):
 
 ```text
-$ python main.py --input docs/requirements.md --output reports/report.md --estimate
+$ python main.py --input docs/requirements.md --output reports/report.md --estimate --model claude-haiku-5-5
 Оценка прогона (модель не вызывалась)
   Документ: requirements.md — 199 строк, ≈ 58 требований (эвристическая нарезка как приближение к нарезке моделью)
   Модель: anthropic / claude-haiku-5-5 · глубина: full · провайдер не настроен — оценка для модели по умолчанию
@@ -263,7 +263,7 @@ $ python main.py --input docs/requirements.md --output reports/report.md --estim
 | Режим | Время | Цена | Запросы | Замечания (блокеры / существенные / мелкие) | Вопросы | Индекс |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `--model claude-opus-5-5` | 7 мин 54 с | $3,23 | 27 | 66 (5 / 20 / 41) | 20 | 23 |
-| модель по умолчанию `claude-haiku-5-5` | 10 мин 13 с | $0,18 | 27 | 90 (7 / 33 / 50) | 20 | 19 |
+| модель `claude-haiku-5-5` | 10 мин 13 с | $0,18 | 27 | 90 (7 / 33 / 50) | 20 | 19 |
 | бесплатный Gemini, режим экономии | 7 мин 17 с | $0 | 47 на 15 шагов, ответ на 14 | 30 (3 / 14 / 13) | 15 | 49 |
 | `--provider offline` | 0,1 с | $0 | 0 | 22 (3 / 10 / 9) | 21 | 54 |
 
@@ -279,7 +279,7 @@ $ python main.py --input docs/requirements.md --output reports/report.md --estim
 | `GEMINI_API_KEY` (или `GOOGLE_API_KEY`), `GEMINI_MODEL` | Gemini; модель по умолчанию `gemini-flash-latest`. Устаревшее имя (например `gemini-1.5-flash` из образца организаторов) агент сам заменит на действующее |
 | `GEMINI_FALLBACK_MODEL` | запасная модель Gemini на случай перегрузки основной; по умолчанию `gemini-flash-lite-latest`; пусто или `off` — выключить |
 | `GEMINI_OVERLOAD_WAIT_S` | сколько секунд за прогон можно ждать перегруженный Gemini; по умолчанию 600; `0` — не ждать. В первом круге один шаг тратит не больше шестой части остатка, повтор неотвеченных шагов может взять остальное |
-| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Anthropic; модель по умолчанию `claude-haiku-5-5` |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Anthropic; модель по умолчанию `claude-sonnet-5-5` (дешевле — `claude-haiku-5-5`, полнее — `claude-opus-5-5`) |
 | `ANTHROPIC_EFFORT`, `ANTHROPIC_EFFORT_STAGES` | глубина рассуждений: одна для всех этапов или по этапам; см. ниже |
 | `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_BASE_URL` | OpenAI или совместимый сервер |
 | `OLLAMA_BASE_URL`, `OLLAMA_MODEL` | локальная модель, ключ не нужен |

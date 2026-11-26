@@ -275,7 +275,7 @@ class AnthropicBackendTests(unittest.TestCase):
         self.assertEqual((b.provider, b.model, b.effort, b.concurrency), ("anthropic", "claude-haiku-5-5", "max", 6))
         b2 = make_backend("anthropic", {"ANTHROPIC_API_KEY": KEY, "ANTHROPIC_EFFORT": "turbo"},
                           cache_dir="/nonexistent-never-written")
-        self.assertEqual((b2.model, b2.effort), ("claude-haiku-5-5", "high"))
+        self.assertEqual((b2.model, b2.effort), ("claude-sonnet-5-5", "high"))
         self.assertTrue(b2.notes)
         with self.assertRaises(LLMUnavailable):
             make_backend("anthropic", {"ANTHROPIC_API_KEY": "your_anthropic_api_key_here"})

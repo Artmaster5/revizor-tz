@@ -46,7 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
                    help="auto | anthropic | gemini | openai | ollama | offline. По умолчанию auto: берётся первый найденный ключ в "
                         "порядке ANTHROPIC_API_KEY, GEMINI_API_KEY (или GOOGLE_API_KEY), OPENAI_API_KEY, OLLAMA_BASE_URL; "
                         "если ключей нет — режим без модели. LLM_PROVIDER в .env задаёт провайдера явно")
-    p.add_argument("--model", help="имя модели (по умолчанию из .env или встроенное)")
+    p.add_argument("--model", help="имя модели (по умолчанию из .env или встроенное; для Anthropic — claude-sonnet-5-5)")
     p.add_argument("--depth", choices=("full", "fast"), default="full",
                    help="full — три линзы и перепроверка (по умолчанию); fast — один проход без перепроверки")
     p.add_argument("--context", action="append", default=[], metavar="FILE",

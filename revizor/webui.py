@@ -160,6 +160,10 @@ def active_provider(provider_arg: str, env: Mapping[str, str]) -> tuple[str, str
     return chosen, ""
 
 
+# Short hints next to the well-known Claude models in the model list (the default gets «по умолчанию» instead).
+_MODEL_NOTES = {"claude-haiku-5-5": " — дешевле", "claude-opus-5-5": " — максимум"}
+
+
 def model_choices(provider: str, env: Mapping[str, str], cli_model: str | None) -> tuple[list[dict], str]:
     """(models for the page, default id). The provider's default, its other priced models, --model, and offline."""
     if provider == "offline":
@@ -172,7 +176,7 @@ def model_choices(provider: str, env: Mapping[str, str], cli_model: str | None) 
         if m in PRICES and m not in (default, cli_model) and not m.startswith(MODEL_PREFIX.get(provider, "\0")):
             continue
         ids.append(m)
-    models = [{"id": m, "label": m + (" — по умолчанию" if m == default else "")} for m in ids]
+    models = [{"id": m, "label": m + (" — по умолчанию" if m == default else _MODEL_NOTES.get(m, ""))} for m in ids]
     models.append({"id": OFFLINE_ID, "label": OFFLINE_LABEL})
     return models, (cli_model or default or OFFLINE_ID)
 

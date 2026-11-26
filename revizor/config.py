@@ -14,7 +14,7 @@ AGENT_DIR = Path(__file__).resolve().parents[1]
 
 # Same defaults as the model layer (kept here so that --estimate needs no provider module).
 DEFAULT_MODELS = {
-    "anthropic": "claude-haiku-5-5",
+    "anthropic": "claude-sonnet-5-5",
     "gemini": "gemini-flash-latest",
     "openai": "gpt-4o-mini",
     "ollama": "",

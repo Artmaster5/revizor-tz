@@ -58,5 +58,5 @@ check-requirements:
 # Задайте потолок цены, чтобы прогон не вышел за бюджет. В строке запуска выше замените
 #   --provider offline
 # на
-#   --provider anthropic --max-cost 1.00
+#   --provider anthropic --max-cost 3.00
 # и добавьте в variables задания ANTHROPIC_MODEL (ANTHROPIC_API_KEY придёт из переменной CI/CD).

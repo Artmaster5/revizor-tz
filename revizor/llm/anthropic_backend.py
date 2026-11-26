@@ -17,7 +17,7 @@ from typing import Any
 from .base import (EFFORT_VALUES, STAGE_EFFORT_NOTE, Backend, LLMBadOutput, LLMRefused, LLMTransient, LLMUnavailable,
                    Usage, parse_retry_after, parse_stage_overrides, register_secret)
 
-DEFAULT_MODEL = "claude-haiku-5-5"
+DEFAULT_MODEL = "claude-sonnet-5-5"
 DEFAULT_EFFORT = "high"
 DEFAULT_BASE_URL = "https://api.anthropic.com"
 EFFORTS = EFFORT_VALUES

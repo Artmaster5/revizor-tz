@@ -138,11 +138,11 @@ python main.py --input docs/requirements.md --output reports/my_answered.md --pr
 
 | Режим | Как включить | Что делает |
 | :--- | :--- | :--- |
-| Обычный | по умолчанию; модель `claude-haiku-5-5` или бесплатная `gemini-flash-latest` | все этапы с моделью |
+| Обычный | по умолчанию; модель `claude-sonnet-5-5` (дешевле — `--model claude-haiku-5-5`) или бесплатная `gemini-flash-latest` | все этапы с моделью |
 | Глубокий | `--model claude-opus-5-5` | то же на самой сильной модели; сначала посмотрите цену через `--estimate` |
 | Без модели | `--provider offline` | только правила: 0,1 с, $0, текст никуда не уходит; вердикт помечен предварительным |
 
-Сданный отчёт `reports/report.md` сделан в глубоком режиме: `--model claude-opus-5-5 --no-cache`, тег `v1.1.1`. Тот же документ на модели по умолчанию — [`reports/report_haiku.md`](reports/report_haiku.md). История тегов и перерисованных отчётов — в [`docs/HISTORY.md`](docs/HISTORY.md).
+Сданный отчёт `reports/report.md` сделан в глубоком режиме: `--model claude-opus-5-5 --no-cache`, тег `v1.1.1`. Тот же документ на модели `claude-haiku-5-5` — [`reports/report_haiku.md`](reports/report_haiku.md). История тегов и перерисованных отчётов — в [`docs/HISTORY.md`](docs/HISTORY.md).
 
 **Тесты.** Более тысячи тестов, без ключей и без сети:
 
