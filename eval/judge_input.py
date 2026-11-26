@@ -24,6 +24,7 @@ def slim(result: dict) -> dict:
             "fid": f.get("fid"), "severity": f.get("severity"), "criterion": f.get("criterion"), "scope": f.get("scope"),
             "title": f.get("title"), "problem": f.get("problem"), "recommendation": f.get("recommendation"),
             "blocker_reason": f.get("blocker_reason") or None,
+            "also": f.get("also") or None,  # строки «Сюда же» карточки: заголовки слитых в неё повторов
             "quotes": [{"line": q.get("line_start"), "text": q.get("text")} for q in f.get("quotes", [])],
         })
     questions = [{"qid": q.get("qid"), "priority": q.get("priority"), "text": q.get("text"),

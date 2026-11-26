@@ -24,7 +24,8 @@ MECHANICS_EFFECT = {"stated": "reject", "misread": "reject", "scope": "advisory"
 def pin_policy() -> list:
     """Start the mechanics policy; returns the patchers for ``unpin_policy``. The shipped values are tested in
     ``test_gate.ShippedPolicy``, so tuning the shipped table does not break the mechanics tests."""
-    ps = [mock.patch.dict(gate.EFFECT, MECHANICS_EFFECT), mock.patch.object(gate, "SOFT_ON_HIGHER", "lower")]
+    ps = [mock.patch.dict(gate.EFFECT, MECHANICS_EFFECT), mock.patch.object(gate, "SOFT_ON_HIGHER", "lower"),
+          mock.patch.dict(os.environ, {gate.FOCUS_ENV: "1"})]
     for x in ps:
         x.start()
     return ps

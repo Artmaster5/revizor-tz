@@ -9,7 +9,7 @@ Base folder: the repository root.
 ## Inputs (read only these)
 - the document: `{DOC}`
 - the answer key: `{KEY}` — `defects` (id, severity, title, anchors = verbatim places in the document, why) and `good` (places that are written well);
-- the report in machine form: `{REPORT_JSON}` — made by `python eval/judge_input.py <report>.json -o <short>.json`: every open finding of the report (fid, severity, title, problem, recommendation, quotes with line numbers), the questions to the author and the list of strengths the report names;
+- the report in machine form: `{REPORT_JSON}` — made by `python eval/judge_input.py <report>.json -o <short>.json`: every open finding of the report (fid, severity, title, problem, recommendation, quotes with line numbers, and `also`: titles of the same-defect findings the tool merged into this card — the report prints them on the card under «Сюда же», so they are part of what the reader sees), the questions to the author and the list of strengths the report names;
 - the mechanical comparison: `{SCORE_TXT}` — for each key defect: «найден» (strict), «место» (same lines, keywords did not match) or «НЕТ».
 
 Do not read any other file. Never read `.env`.

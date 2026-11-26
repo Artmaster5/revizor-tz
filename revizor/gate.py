@@ -6,6 +6,7 @@ re-check are accepted too: ``reject`` ≡ ``drop`` with why «misread», ``merge
 """
 from __future__ import annotations
 
+import os
 from typing import Any
 
 from .merge import (SEV_RANK, _reason_fits, _str, absorb, blocker_code, findings_overlap, is_rule_sourced,
@@ -33,6 +34,16 @@ REASON_NOT_FOR = {"clear": ("completeness", "feasibility", "consistency", "neces
                   "scope": ("set_feasibility",)}
 MERGE_GUARD = "topic"         # "topic" → merge only if merge.same_topic(target, f); "place_or_topic" → the old condition; "none"
 DEDUP_GUARD = "topic"         # the same choice for the dedup pass
+
+# «Только главное» — an opt-in mode (``--focus`` or REVIZOR_FOCUS=1). Only in this mode a soft reason moves a finding to
+# observations. Off by default: on a document full of defects most of what the re-check calls a nitpick is a defect the
+# customer counts (measured on stored runs, 26.11), so by default every finding stays in the main list.
+FOCUS_ENV = "REVIZOR_FOCUS"
+
+
+def focus_on() -> bool:
+    return os.environ.get(FOCUS_ENV, "").strip().lower() in ("1", "true", "yes", "on")
+
 
 # Short Russian label of a reason, printed in the observation's line «Почему не в основном списке: …».
 WHY_RU = {"stated": "документ отвечает прямо", "misread": "проверяющий неверно прочитал текст",
@@ -177,6 +188,9 @@ def apply_gate(findings: list[Finding], decisions: list[dict], *, qi: Any = None
         effect = EFFECT.get(why, "keep")
         if effect not in ("reject", "advisory"):
             refuse(f, d, why, "policy_keep", reason)
+            return
+        if effect == "advisory" and not focus_on():
+            refuse(f, d, why, "focus_off", reason)
             return
         if f.criterion in REASON_NOT_FOR.get(why, ()):
             refuse(f, d, why, "reason_does_not_fit", reason)
@@ -333,6 +347,6 @@ def apply_dedup(findings: list[Finding], groups: list[dict], *, injection: bool,
     return n
 
 
-__all__ = ["HARD_WHY", "SOFT_WHY", "EFFECT", "REASON_NOT_FOR", "STATED_NEEDS_QUOTE", "SOFT_ONLY_MINOR", "SOFT_ON_HIGHER",
+__all__ = ["HARD_WHY", "SOFT_WHY", "EFFECT", "REASON_NOT_FOR", "FOCUS_ENV", "focus_on", "STATED_NEEDS_QUOTE", "SOFT_ONLY_MINOR", "SOFT_ON_HIGHER",
            "DROP_NEEDS_EMPTY_DIFFER", "MERGE_GUARD", "DEDUP_GUARD", "WHY_RU", "GateOutcome", "apply_gate",
            "apply_dedup", "merge_allowed", "decision_of", "verified_answer"]

@@ -6,6 +6,7 @@ answer shapes."""
 from __future__ import annotations
 
 import json
+import os
 import re
 import unittest
 from unittest import mock
@@ -71,9 +72,10 @@ class ShippedPolicy(_Doc):
     def setUp(self) -> None:
         super().setUp()
         self._ps = [mock.patch.dict(gate.EFFECT, tp.SHIPPED_EFFECT),
-                    mock.patch.object(gate, "SOFT_ON_HIGHER", tp.SHIPPED_ON_HIGHER)]
+                    mock.patch.object(gate, "SOFT_ON_HIGHER", tp.SHIPPED_ON_HIGHER), mock.patch.dict(os.environ)]
         for x in self._ps:
             x.start()
+        os.environ.pop(gate.FOCUS_ENV, None)   # the default: every finding stays in the main list
 
     def tearDown(self) -> None:
         for x in self._ps:
@@ -103,33 +105,47 @@ class ShippedPolicy(_Doc):
                         injection=False, audit=[])
         self.assertEqual((a.status, a.advisory), ("open", False))
 
-    def test_minor_nitpick_becomes_an_observation(self):
+    def test_by_default_a_nitpick_stays_in_the_main_list(self):
         for why in ("scope", "design", "clear", "guess"):
             a = f("D-002", "Мелочь", crit="unambiguity")
-            out = gate.apply_gate([a], [drop("D-002", why, reason="Это решает команда.")], qi=self.qi,
-                                  injection=False, audit=[])
-            self.assertEqual((a.status, a.advisory, out.advisory), ("open", True, 1), why)
-            self.assertTrue(a.advisory_reason.endswith("Это решает команда."))
-
-    def test_a_reason_that_does_not_fit_the_criterion_is_refused(self):
-        for why, crit in (("clear", "completeness"), ("clear", "consistency"), ("design", "necessity"),
-                          ("scope", "set_feasibility")):
-            a = f("D-002", "Не описан случай", crit=crit)
             audit: list[dict] = []
             out = gate.apply_gate([a], [drop("D-002", why)], qi=self.qi, injection=False, audit=audit)
-            self.assertEqual((a.status, a.advisory, out.advisory, out.refused), ("open", False, 0, 1), (why, crit))
-            self.assertEqual(next(x for x in audit if x["what"] == "gate_drop_refused")["cause"], "reason_does_not_fit")
-        a = f("D-002", "Слово «быстро» без числа", crit="unambiguity")
-        gate.apply_gate([a], [drop("D-002", "clear")], qi=self.qi, injection=False, audit=[])
-        self.assertTrue(a.advisory)
+            self.assertEqual((a.status, a.advisory, out.advisory, out.kept), ("open", False, 0, 1), why)
+            self.assertEqual(next(x for x in audit if x["what"] == "gate_drop_refused")["cause"], "focus_off")
 
-    def test_major_is_neither_moved_nor_lowered(self):
-        a = f("D-001", "Нет ветки отказа", sev="MAJOR")
-        audit: list[dict] = []
-        out = gate.apply_gate([a], [drop("D-001", "design", severity="MAJOR")], qi=self.qi, injection=False,
-                              audit=audit)
+    def test_focus_mode_moves_a_minor_nitpick_to_observations(self):
+        with mock.patch.dict(os.environ, {gate.FOCUS_ENV: "1"}):
+            for why in ("scope", "design", "clear", "guess"):
+                a = f("D-002", "Мелочь", crit="unambiguity")
+                out = gate.apply_gate([a], [drop("D-002", why, reason="Это решает команда.")], qi=self.qi,
+                                      injection=False, audit=[])
+                self.assertEqual((a.status, a.advisory, out.advisory), ("open", True, 1), why)
+                self.assertTrue(a.advisory_reason.endswith("Это решает команда."))
+
+    def test_focus_mode_refuses_a_reason_that_does_not_fit_the_criterion(self):
+        with mock.patch.dict(os.environ, {gate.FOCUS_ENV: "1"}):
+            for why, crit in (("clear", "completeness"), ("clear", "consistency"), ("design", "necessity"),
+                              ("scope", "set_feasibility")):
+                a = f("D-002", "Не описан случай", crit=crit)
+                audit: list[dict] = []
+                out = gate.apply_gate([a], [drop("D-002", why)], qi=self.qi, injection=False, audit=audit)
+                self.assertEqual((a.status, a.advisory, out.advisory, out.refused), ("open", False, 0, 1), (why, crit))
+                self.assertEqual(next(x for x in audit if x["what"] == "gate_drop_refused")["cause"],
+                                 "reason_does_not_fit")
+
+    def test_focus_mode_neither_moves_nor_lowers_a_major(self):
+        with mock.patch.dict(os.environ, {gate.FOCUS_ENV: "1"}):
+            a = f("D-001", "Нет ветки отказа", sev="MAJOR")
+            audit: list[dict] = []
+            out = gate.apply_gate([a], [drop("D-001", "design", severity="MAJOR")], qi=self.qi, injection=False,
+                                  audit=audit)
         self.assertEqual((a.status, a.advisory, a.severity, out.refused), ("open", False, "MAJOR", 1))
         self.assertEqual(next(x for x in audit if x["what"] == "gate_drop_refused")["cause"], "level")
+
+    def test_the_switch(self):
+        for v, on in (("1", True), ("true", True), ("on", True), ("0", False), ("", False)):
+            with mock.patch.dict(os.environ, {gate.FOCUS_ENV: v}):
+                self.assertEqual(gate.focus_on(), on, v)
 
 
 # --- apply_gate ---------------------------------------------------------------------------------------------------

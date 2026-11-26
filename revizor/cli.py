@@ -61,6 +61,9 @@ def build_parser() -> argparse.ArgumentParser:
                    help="для CI: вернуть код 3, если есть дефекты этого уровня; код 4, если документ не удалось прочитать "
                         "(скан без текста, битый или пустой файл), чтобы такой документ не прошёл проверку незамеченным. "
                         "При never (по умолчанию) нечитаемый документ даёт код 0 и диагностический отчёт")
+    p.add_argument("--focus", action="store_true",
+                   help="режим «только главное»: мелкие замечания, которые перепроверка отнесла ко второму плану, "
+                        "уходят в раздел «Наблюдения» (или REVIZOR_FOCUS=1)")
     p.add_argument("--max-cost", metavar="USD", help="потолок стоимости прогона в долларах (или REVIZOR_MAX_COST_USD)")
     p.add_argument("--estimate", action="store_true", help="только оценить число вызовов, токены и стоимость; модель не вызывается")
     p.add_argument("--quiet", "-q", action="store_true", help="печатать только итог")
@@ -178,6 +181,8 @@ def main(argv: list[str] | None = None, env: Mapping[str, str] | None = None,
 
 def _main(argv, env_in, say, injected_backend, input_fn=None) -> int:
     args = build_parser().parse_args(argv)
+    if args.focus:
+        os.environ["REVIZOR_FOCUS"] = "1"   # read by the re-check (gate.focus_on); also applies to the window
     if args.ui:
         from . import webui
 

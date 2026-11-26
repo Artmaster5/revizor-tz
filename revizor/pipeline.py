@@ -1127,8 +1127,10 @@ def _skeptic(gate, findings, info, inj, audit, unchecked, say, *, qi=None, econo
     kept = sum(1 for f in targets if f.status == "open" and not f.advisory)
     info.skeptic_kept, info.skeptic_rejected = kept, out.rejected
     info.skeptic_merged, info.skeptic_advisory, info.skeptic_dedup = out.merged + deduped, out.advisory, deduped
-    say(f"[7/{STEPS}] Перепроверяю замечания… оставлено {kept}, в наблюдения {out.advisory}, отклонено {out.rejected}, "
-        f"объединено {out.merged + deduped}"
+    say(f"[7/{STEPS}] Перепроверяю замечания… оставлено {kept}"
+        + (f", в наблюдения {out.advisory}" if out.advisory else "")
+        + (f", отклонено {out.rejected}" if out.rejected else "")
+        + f", объединено {out.merged + deduped}"
         + (f" (из них повторов: {deduped})" if deduped else "")
         + (f", защищено замечаний правил: {out.protected}" if out.protected else "")
         + (f", понижено блокеров без основания: {out.critical_demoted}" if out.critical_demoted else "")

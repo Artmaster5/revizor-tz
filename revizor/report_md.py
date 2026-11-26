@@ -509,8 +509,10 @@ def recheck_line(result: Result) -> str:
     r = result.run
     if r.mode != "full":
         return "не выполнялась (" + ("быстрый режим" if r.mode == "fast" else "без модели") + ")"
-    line = (f"оставлено {r.skeptic_kept}, в наблюдения {r.skeptic_advisory}, отклонено {r.skeptic_rejected}, "
-            f"объединено {r.skeptic_merged}" + (f" (из них повторов: {r.skeptic_dedup})" if r.skeptic_dedup else ""))
+    line = (f"оставлено {r.skeptic_kept}"
+            + (f", в наблюдения {r.skeptic_advisory}" if r.skeptic_advisory else "")
+            + (f", отклонено {r.skeptic_rejected}" if r.skeptic_rejected else "")
+            + f", объединено {r.skeptic_merged}" + (f" (из них повторов: {r.skeptic_dedup})" if r.skeptic_dedup else ""))
     refused_m = (_audit_count(result, "skeptic_merge_refused") + _audit_count(result, "gate_merge_refused")
                  + _audit_count(result, "dedup_merge_refused"))
     refused_d = _audit_count(result, "gate_drop_refused")
