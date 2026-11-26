@@ -1,6 +1,7 @@
 """revizor.report_html: Markdown report -> one self-contained, inert HTML page."""
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import sys
@@ -10,6 +11,9 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 from revizor.report_html import render_html
+
+# the child prints Russian: read it as UTF-8 on every system (Windows would decode with cp1252 otherwise)
+UTF8 = {"encoding": "utf-8", "errors": "replace", "env": {**os.environ, "PYTHONIOENCODING": "utf-8"}}
 
 ROOT = Path(__file__).resolve().parent.parent
 VOID = {"meta", "br", "hr", "img", "link", "input"}
@@ -164,14 +168,14 @@ class Output(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             src = Path(d) / "r.md"
             src.write_text("# Привет\n", encoding="utf-8")
-            r = subprocess.run([sys.executable, "-m", "revizor.report_html", str(src)], cwd=ROOT, capture_output=True, text=True)
+            r = subprocess.run([sys.executable, "-m", "revizor.report_html", str(src)], cwd=ROOT, capture_output=True, text=True, **UTF8)
             self.assertEqual(r.returncode, 0, r.stderr)
             self.assertIn("Привет", (Path(d) / "r.html").read_text(encoding="utf-8"))
-            r = subprocess.run([sys.executable, "-m", "revizor.report_html", str(Path(d) / "нет.md")], cwd=ROOT, capture_output=True, text=True)
+            r = subprocess.run([sys.executable, "-m", "revizor.report_html", str(Path(d) / "нет.md")], cwd=ROOT, capture_output=True, text=True, **UTF8)
             self.assertEqual(r.returncode, 2)
             self.assertIn("Не удалось", r.stderr)
             (Path(d) / "b.md").write_bytes(b"\x00\x01\xff\xfe")
-            r = subprocess.run([sys.executable, "-m", "revizor.report_html", str(Path(d) / "b.md")], cwd=ROOT, capture_output=True, text=True)
+            r = subprocess.run([sys.executable, "-m", "revizor.report_html", str(Path(d) / "b.md")], cwd=ROOT, capture_output=True, text=True, **UTF8)
             self.assertEqual(r.returncode, 2)
 
 

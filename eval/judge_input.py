@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Короткий вход для независимого судьи: только открытые замечания и вопросы из JSON-отчёта.
 
-    python eval/judge_input.py reports/report.json -o /tmp/report.slim.json
+    python eval/judge_input.py reports/report.json -o reports/report.slim.json
 
 Полный JSON-отчёт весит сотни килобайт (нарезка, карта полноты, журнал решений). Судье нужны только замечания:
 номер, уровень, заголовок, суть, рекомендация, цитаты со строками, и вопросы автору. Ничего не добавляется и не
@@ -40,10 +40,16 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     data = json.loads(Path(args.result).read_text(encoding="utf-8"))
     out = slim(data)
-    Path(args.output).write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    Path(args.output).write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8",
+                                 newline="\n")
     print(f"Замечаний: {len(out['findings'])}, вопросов: {len(out['questions'])} → {args.output}")
     return 0
 
 
 if __name__ == "__main__":
+    if str(Path(__file__).resolve().parent.parent) not in sys.path:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from revizor.console import prepare_console  # noqa: E402
+
+    prepare_console()
     sys.exit(main())

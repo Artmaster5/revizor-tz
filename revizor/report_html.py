@@ -572,7 +572,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     out = Path(a.output) if a.output else src.with_suffix(".html")
     try:
-        out.write_text(render_html(text), encoding="utf-8")
+        out.write_text(render_html(text), encoding="utf-8", newline="\n")
     except OSError as e:
         print(f"Не удалось записать «{out}»: {e.strerror or e}.", file=sys.stderr)
         return 2
@@ -581,4 +581,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    from .console import prepare_console
+
+    prepare_console()
     sys.exit(main())

@@ -1,0 +1,4 @@
+# Every file is checked out byte for byte as committed, on every system. Git for Windows would otherwise turn LF into
+# CRLF on checkout (core.autocrlf=true): stored reports would stop matching their checksums (eval/check_same_findings.py)
+# and the example files would differ from the ones the reports were made from. The agent itself reads LF, CRLF and BOM.
+* -text

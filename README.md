@@ -199,7 +199,7 @@ flowchart TD
 
 Почему так и от чего отказались — таблица в [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md#почему-так-и-от-чего-отказались). Режим экономии и замер на бесплатном Gemini — в [`docs/USAGE.md`](docs/USAGE.md#режим-экономии).
 
-**Тесты.** 743 теста, без ключей и без сети:
+**Тесты.** 763 теста, без ключей и без сети:
 
 ```bash
 python -m unittest discover -s tests -t .

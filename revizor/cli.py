@@ -16,7 +16,7 @@ import time
 from pathlib import Path
 from typing import Callable, Mapping
 
-from . import (__version__, answers as ans_mod, config, exports, pipeline, report_json, report_md, sidefiles,
+from . import (__version__, answers as ans_mod, config, exports, loader, pipeline, report_json, report_md, sidefiles,
                verdict)
 from .llm import LLMUnavailable, make_backend, normalize_provider
 from .llm import choose_provider
@@ -81,15 +81,30 @@ def _write_atomic(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(prefix="." + path.name + ".", suffix=".tmp", dir=str(path.parent))
     try:
-        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+        # surrogateescape: under LC_ALL=C with PYTHONUTF8=0 (Linux) a Cyrillic file name from the command line arrives
+        # as escaped bytes; written back they are its original UTF-8 bytes. Ordinary text is not affected.
+        with os.fdopen(fd, "w", encoding="utf-8", errors="surrogateescape", newline="\n") as f:
             f.write(text)
-        os.replace(tmp, path)
+        _replace(tmp, path)
     except BaseException:
         try:
             os.unlink(tmp)
         except OSError:
             pass
         raise
+
+
+def _replace(src: str, dst: Path, tries: int = 6) -> None:
+    """``os.replace`` that survives a short lock on Windows (an antivirus or a search indexer holding the new file
+    or the old report for a moment gives PermissionError); a lasting lock (the report is open in Excel) still raises."""
+    for k in range(tries):
+        try:
+            os.replace(src, dst)
+            return
+        except PermissionError:
+            if k == tries - 1:
+                raise
+            time.sleep(0.05 * (k + 1))
 
 
 def _paths(args) -> tuple[str, str]:
@@ -255,7 +270,11 @@ def _answer_provider(args, input_fn, say, quiet):
             try:
                 if path.stat().st_size > 2_000_000:
                     raise OSError("файл больше 2 МБ")
-                text = path.read_text(encoding="utf-8", errors="replace")
+                data = path.read_bytes()
+                # the document's own decoder: UTF-8 with or without BOM, UTF-16 (PowerShell 5 «>» writes it), Windows-1251
+                text = loader._decode(data)[0]
+                if text is None:
+                    text = data.decode("utf-8", errors="replace")
             except OSError as e:
                 parsed = ans_mod.Parsed()
                 parsed.warnings.append(f"Файл ответов «{path.name}» не прочитан ({getattr(e, 'strerror', None) or e}): "

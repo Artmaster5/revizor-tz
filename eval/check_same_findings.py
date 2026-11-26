@@ -7,7 +7,7 @@
 1. Результаты в `reports/` — те же файлы, по которым считалась точность: sha256 совпадает с файлами замера в `eval/results/`.
 2. Пересчёт `eval/score.py` по этим результатам даёт числа, записанные при замере (`req.score.json`, `req.score_key_v1.json`).
 3. В каждом перерисованном отчёте `reports/*.md` есть каждое замечание из его JSON, ровно один раз.
-4. С тега v1.1.1 в коде агента изменились только модули печати (нужен git; без него шаг пропускается).
+4. С тега v1.1.1 в коде агента изменились только модули печати и переносимости (нужен git; без него шаг пропускается).
 
 Код выхода 0 — всё совпало, 1 — есть расхождение.
 """
@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -26,6 +27,9 @@ PRINT_MODULES = {"revizor/report_md.py", "revizor/exports.py", "revizor/report_h
                  "tools/rerender.py", "tools/shots.py",
                  "revizor/webui.py", "revizor/webui_page.html",  # the browser window: it only starts the CLI check
                  "revizor/__init__.py"}  # only the version string: it is printed in the report passport and nowhere else
+# Windows / Linux / other Python versions (wave 8): console encoding, file encodings, paths in printed commands, the
+# Python version check. They take no part in what the agent finds; tests/test_portability.py covers them.
+PORTABILITY_MODULES = {"main.py", "revizor/console.py", "revizor/config.py", "revizor/sidefiles.py", "tools/roi.py"}
 REPORTS = ["reports/report", "reports/report_haiku", "reports/report_answered"]  # <имя>.json и <имя>.md
 PAIRS = [  # (отчёт в репозитории, файл замера)
     ("reports/report.json", "eval/results/final_opus/req.json"),
@@ -55,7 +59,8 @@ def main() -> int:
     print("2. Пересчёт точности по этим результатам")
     for res, key, stored in SCORES:
         out = subprocess.run([sys.executable, str(ROOT / "eval" / "score.py"), str(ROOT / res), "--key", str(ROOT / key), "--json"],
-                             capture_output=True, text=True, cwd=ROOT)
+                             capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=ROOT,
+                             env={**os.environ, "PYTHONIOENCODING": "utf-8"})
         try:
             now = json.loads(out.stdout)
         except json.JSONDecodeError:
@@ -85,18 +90,28 @@ def main() -> int:
     print(f"4. Что изменилось в коде агента после тега {BASE_TAG}")
     try:
         names = subprocess.run(["git", "diff", "--name-only", BASE_TAG, "HEAD", "--", "revizor", "main.py", "tools"],
-                               capture_output=True, text=True, cwd=ROOT, check=True).stdout.split()
+                               capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=ROOT,
+                               check=True).stdout.split()
     except (OSError, subprocess.CalledProcessError):
         print("   пропущено: нет git или тега (например, архив без истории)")
     else:
-        other = [n for n in names if n not in PRINT_MODULES]
+        port = [n for n in names if n in PORTABILITY_MODULES]
+        other = [n for n in names if n not in PRINT_MODULES and n not in PORTABILITY_MODULES]
         bad += bool(other)
         print("   изменены: " + (", ".join(names) if names else "ничего"))
-        print("   " + ("вне модулей печати: " + ", ".join(other) if other else "все изменённые файлы — модули печати"))
+        if port:
+            print("   из них только переносимость (кодировки, консоль, пути в командах): " + ", ".join(port))
+        print("   " + ("вне модулей печати: " + ", ".join(other) if other else "все изменённые файлы — модули печати"
+                     + (" и переносимости" if port else "")))
 
     print("ИТОГ: " + ("найденное то же, менялась только печать" if not bad else f"расхождений: {bad}"))
     return 1 if bad else 0
 
 
 if __name__ == "__main__":
+    if str(Path(__file__).resolve().parent.parent) not in sys.path:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from revizor.console import prepare_console  # noqa: E402
+
+    prepare_console()
     sys.exit(main())

@@ -246,7 +246,7 @@ def main(argv: list[str] | None = None, runner: Runner | None = None, out=None) 
                 continue
             try:
                 rep = score.score_files(s["twin"], s["key_path"])
-                s["twin"].with_suffix(".score.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2), encoding="utf-8")
+                s["twin"].with_suffix(".score.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n")
                 ov = rep["recall"]["overall"]
                 print(f"Строго {ov['strict']}/{ov['total']}, мягко {ov['loose']}/{ov['total']}, ложных тревог {len(rep['false_alarms'])}", file=out)
             except score.ScoreError as exc:
@@ -255,10 +255,15 @@ def main(argv: list[str] | None = None, runner: Runner | None = None, out=None) 
 
     groups, problems = collect_scored(discover_keys())
     problems += [f"прогон не удался: {name}" for name in failed]
-    RESULTS_MD.write_text(render_results(discover_keys(), groups, problems, datetime.now().strftime("%Y-%m-%d %H:%M")), encoding="utf-8")
+    RESULTS_MD.write_text(render_results(discover_keys(), groups, problems, datetime.now().strftime("%Y-%m-%d %H:%M")), encoding="utf-8", newline="\n")
     print(f"\nСводка записана: {RESULTS_MD}", file=out)
     return 1 if failed else 0
 
 
 if __name__ == "__main__":
+    if str(Path(__file__).resolve().parent.parent) not in sys.path:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from revizor.console import prepare_console  # noqa: E402
+
+    prepare_console()
     sys.exit(main())

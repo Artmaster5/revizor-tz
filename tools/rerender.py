@@ -1,6 +1,6 @@
 """Re-render a saved JSON report with the current layout code. No model, no network.
 
-    python tools/rerender.py reports/report.json -o /tmp/out/report.md [--as-is] [--no-side-files]
+    python tools/rerender.py reports/report.json -o reports/rerender/report.md [--as-is] [--no-side-files]
 
 Loads the JSON back into the dataclasses (``report_json.load_result``), brings an older result in line with the
 current rules (``remerge``: duplicate merges and the fold of formal remarks; ``consistency.settle``: marks,
@@ -90,10 +90,13 @@ def main(argv: list[str] | None = None) -> int:
     prepare(result, as_is=args.as_is)
     out.parent.mkdir(parents=True, exist_ok=True)
     for path, text in files_for(result, out, side_files=not args.no_side_files):
-        path.write_text(text, encoding="utf-8", newline="" if path.suffix == ".csv" else None)
+        path.write_text(text, encoding="utf-8", newline="")  # the same bytes on every system: LF, CSV keeps its CRLF
         print(path)
     return 0
 
 
 if __name__ == "__main__":
+    from revizor.console import prepare_console
+
+    prepare_console()
     raise SystemExit(main())

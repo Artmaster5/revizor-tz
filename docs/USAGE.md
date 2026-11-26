@@ -149,6 +149,43 @@ python main.py --ui
 
 Код: `revizor/webui.py` (сервер, только стандартная библиотека Python) и `revizor/webui_page.html` (страница).
 
+## Windows и Linux
+
+Нужен Python 3.10 или новее. Агент разрабатывался и проверялся на macOS. Работу в консоли Windows проверяют тесты переносимости (`tests/test_portability.py`): настоящий запуск под кодировками cp866, cp1251 и ASCII, документ с BOM и переводами строк CRLF, пути с пробелами и кириллицей, имена файлов, допустимые в Windows. Исходный код собирается на Python 3.9–3.15. Для прогона всех тестов на Ubuntu, Windows и macOS с Python 3.10, 3.12 и 3.13 приложен сценарий GitHub Actions `.github/workflows/tests.yml` (запускается вручную: Actions → tests → Run workflow).
+
+**Windows, командная строка (cmd):**
+
+```bat
+py -m venv .venv
+.venv\Scripts\activate.bat
+pip install -r requirements.txt
+python main.py --input docs\requirements.md --output reports\my_report.md
+python main.py --ui
+```
+
+**Windows, PowerShell:**
+
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1      # если запрещено: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+pip install -r requirements.txt
+python main.py --input docs/requirements.md --output reports/my_report.md
+python main.py --ui
+```
+
+Пути можно писать и через `\`, и через `/`; путь с пробелами берите в кавычки: `--output "C:\Отчёты ТЗ\отчёт.md"`. Кодовую страницу консоли менять не нужно: символ, которого в ней нет (например, ⛔ в cp866), печатается как `?`, а в файлы отчёта всё пишется в UTF-8. Окно `--ui` открывается в браузере по умолчанию и закрывается `Ctrl+C` в консоли.
+
+**Linux / macOS:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python main.py --input docs/requirements.md --output reports/my_report.md
+```
+
+На сервере без графики (`DISPLAY` не задан) `--ui` не пытается открыть браузер сам, а печатает адрес. Окно слушает только `127.0.0.1`; с другой машины его можно открыть через SSH-туннель: `ssh -L 8765:127.0.0.1:8765 сервер`.
+
 ## Все параметры запуска
 
 | Параметр | Значение |
@@ -339,7 +376,7 @@ $ python main.py --input docs/requirements.md --output reports/report.md --estim
 - **Внутренних стандартов банка агент не знает,** пока их не передать через `--context`.
 - **Без модели** ищутся только формальные дефекты, вердикт помечен предварительным.
 - **Слабые места, измеренные на контрольных документах:** агент ставит лишние блокеры (на четырёх новых документах 18 у Haiku и 21 у Opus при 9 в ключах), заметная доля замечаний — ложные тревоги, отчёт длинный (основной файл — около 8,7 тысячи слов на документ организаторов, ещё 12,6 тысячи в файле подробностей). Числа точности и метод — в [`eval/ACCURACY.md`](../eval/ACCURACY.md).
-- **Версия в паспорте.** Паспорт печатает строку версии пакета (сейчас «v1.2.0»; в отчётах, собранных раньше, — «v1.0.0») рядом с тегом git. Точная версия — тег и коммит.
+- **Версия в паспорте.** Паспорт печатает строку версии пакета (сейчас «v1.2.1»; в отчётах, собранных раньше, — «v1.0.0») рядом с тегом git. Точная версия — тег и коммит.
 
 ## Структура проекта
 
@@ -378,6 +415,6 @@ docs/              документ организаторов, справочн
 eval/              ключи дефектов, оценка, результаты замеров
 examples/          PDF-версия документа и испорченные файлы
 reports/           сданный отчёт и примеры
-tests/             743 теста, без сети и без ключей
+tests/             763 теста, без сети и без ключей
 tools/             калькулятор окупаемости, пересборка отчёта, скриншоты, слайды
 ```

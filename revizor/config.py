@@ -124,7 +124,7 @@ def agent_version() -> str:
         import subprocess
 
         out = subprocess.run(["git", "-C", str(AGENT_DIR), "describe", "--tags", "--always", "--dirty"],
-                             capture_output=True, text=True, timeout=3)
+                             capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=3)
         tag = out.stdout.strip()
         return f"{__version__} ({tag})" if out.returncode == 0 and tag else __version__
     except Exception:
@@ -155,8 +155,8 @@ def _git(args: list[str], base: Path, runner) -> str | None:
             if not _inside_git(base):
                 return None
             runner = subprocess.run
-        out = runner(["git", "-C", str(base), *args], capture_output=True, text=True, timeout=2,
-                     stdin=subprocess.DEVNULL)
+        out = runner(["git", "-C", str(base), *args], capture_output=True, text=True, encoding="utf-8", errors="replace",
+                     timeout=2, stdin=subprocess.DEVNULL)
         if getattr(out, "returncode", 1) != 0:
             return None
         return str(getattr(out, "stdout", "") or "")
