@@ -220,7 +220,7 @@ flowchart LR
 
 ## Тесты
 
-743 теста, без сети и без ключей:
+763 теста, без сети и без ключей:
 
 ```bash
 python -m unittest discover -s tests -t .

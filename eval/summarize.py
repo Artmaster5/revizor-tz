@@ -126,4 +126,9 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    if str(Path(__file__).resolve().parent.parent) not in sys.path:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from revizor.console import prepare_console  # noqa: E402
+
+    prepare_console()
     sys.exit(main())

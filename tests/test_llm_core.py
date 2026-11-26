@@ -293,7 +293,7 @@ class CacheTests(unittest.TestCase):
         b = FakeBackend({"x": {"v": 1}}, cache_dir=self.tmp.name)
         self.assertFalse(b.complete_json("S", "U", stage="x")[1].from_cache)
         blocker = Path(self.tmp.name, "file")
-        blocker.write_text("x")
+        blocker.write_text("x", encoding="utf-8")
         b2 = FakeBackend({"x": {"v": 1}}, cache_dir=str(blocker / "sub"))
         self.assertEqual(b2.complete_json("S", "U", stage="x")[0], {"v": 1})
         self.assertTrue(any("Кэш" in n for n in b2.notes))

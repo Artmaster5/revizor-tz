@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import io
+import os
 
 from . import answers as ans_mod, rewrite_gate
 from .report_md import impact_text
@@ -14,10 +15,19 @@ LETTERS = "абвг"
 ANSWERS_SUPPORTED = True
 
 
+def command_path(path: str, sep: str = os.sep) -> str:
+    """A path as it goes into a command printed in a file: forward slashes on Windows too (Python accepts them, and the
+    file reads the same on every system), in double quotes when it has a space (cmd, PowerShell and sh all take that)."""
+    s = str(path)
+    if sep == "\\":
+        s = s.replace("\\", "/")
+    return f'"{s}"' if any(ch.isspace() for ch in s) else s
+
+
 def rerun_line(input_path: str, output_path: str, questions_path: str) -> str:
     if ANSWERS_SUPPORTED:
-        return (f"Когда ответите, запустите: `python main.py --input {input_path} --output {output_path} "
-                f"--answers {questions_path}`")
+        return (f"Когда ответите, запустите: `python main.py --input {command_path(input_path)} "
+                f"--output {command_path(output_path)} --answers {command_path(questions_path)}`")
     return ("Повторный прогон с ответами (`--answers`) появится в следующей версии агента; пока передайте файл "
             "автору документа и внесите ответы в документ.")
 

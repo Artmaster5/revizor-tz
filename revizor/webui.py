@@ -13,12 +13,15 @@ import re
 import secrets
 import shutil
 import signal
+import socket
+import sys
 import tempfile
 import threading
 import time
 import unicodedata
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from socketserver import TCPServer
 from pathlib import Path
 from typing import Any, Callable, Mapping
 from urllib.parse import parse_qs, quote, unquote, urlsplit
@@ -85,12 +88,18 @@ class ApiError(Exception):
 
 
 # -- file names -------------------------------------------------------------------------------------------------
+WINDOWS_RESERVED = frozenset({"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$",
+                              *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))})
+
+
 def safe_name(raw: str, allowed: tuple[str, ...]) -> str:
     """A safe base name for a client file name, or raises ApiError(400) when the extension is not allowed.
 
     The last component after splitting on «/» and «\\»; control characters and leading dots dropped; only letters
     (any script), digits, space, «.», «_», «-», «(», «)» kept; at most MAX_NAME characters; «document<ext>» when
-    nothing is left. An ordinary name («requirements.md») comes back unchanged."""
+    nothing is left; a name Windows reserves for a device («CON», «nul.txt», «COM1») gets a «_» in front, and no
+    dot or space is left at the end of the name before the extension. An ordinary name («requirements.md») comes back
+    unchanged."""
     s = (raw or "").replace("\\", "/").rsplit("/", 1)[-1]
     s = "".join(ch for ch in s if unicodedata.category(ch)[0] != "C")
     s = "".join(ch for ch in s if unicodedata.category(ch)[0] == "L" or unicodedata.category(ch) == "Nd"
@@ -102,7 +111,10 @@ def safe_name(raw: str, allowed: tuple[str, ...]) -> str:
     ext = "." + ext
     if not base:
         base = "document"
-    return base[:MAX_NAME - len(ext)] + ext
+    base = base[:MAX_NAME - len(ext)].rstrip(". ")
+    if base.split(".", 1)[0].upper() in WINDOWS_RESERVED:  # «CON.md» on Windows is the console, not a file
+        base = "_" + base
+    return base + ext
 
 
 def file_kind(name: str, report_stem: str) -> tuple[str, str]:
@@ -376,9 +388,20 @@ def _mb(n: int) -> int | float:
 # -- the server -------------------------------------------------------------------------------------------------
 class _HTTPServer(ThreadingHTTPServer):
     daemon_threads = True
-    allow_reuse_address = True  # TIME_WAIT only; a second listener on the same port still fails
+    # POSIX: TIME_WAIT only; a second listener on the same port still fails. On Windows SO_REUSEADDR would let a
+    # second window bind the same port silently, so there the port is taken exclusively instead.
+    allow_reuse_address = os.name != "nt"
     allow_reuse_port = False
     ui: "UIServer"
+
+    def server_bind(self) -> None:
+        if os.name == "nt" and hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        # HTTPServer.server_bind also asks socket.getfqdn(), a reverse DNS lookup that can hang for seconds on some
+        # Windows networks; the window only ever listens on 127.0.0.1
+        TCPServer.server_bind(self)
+        host, port = self.server_address[:2]
+        self.server_name, self.server_port = str(host), port
 
     def handle_error(self, request, client_address) -> None:  # no traceback in the terminal
         self.ui._say("Ошибка при обработке запроса окна.")
@@ -447,7 +470,7 @@ class UIServer:
                 self.httpd.shutdown()
             self.httpd.server_close()
             self.httpd = None
-        shutil.rmtree(self.temp_root, ignore_errors=True)
+        _remove_tree(self.temp_root)
 
     @property
     def url(self) -> str:
@@ -606,8 +629,11 @@ class UIServer:
             args = cli.build_parser().parse_args(argv)
             args.rerun_note = RERUN_NOTE
             # uploads lie under temp_root; a document given on the command line keeps its real path, as in the terminal
-            args.hide_prefixes = [str(d) + os.sep for d in {Path(x).parent for x in (args.input, args.answers) if x}
-                                  if self.temp_root in d.parents or d == self.temp_root]
+            dirs = [d for d in {Path(x).parent for x in (args.input, args.answers) if x}
+                    if self.temp_root in d.parents or d == self.temp_root]
+            # both spellings: «C:\\…\\» as Windows prints it and «C:/…/» as a command in the questionnaire writes it
+            args.hide_prefixes = sorted({form for d in dirs for form in (str(d) + os.sep, d.as_posix() + "/")},
+                                        key=len, reverse=True)
             code, result, written = cli.execute(args, self.env, job.feed, injected_backend=backend)
             if result is None or not written:
                 last = next((x for x in reversed(job.log) if x.startswith("Не удалось")), "")
@@ -840,32 +866,65 @@ def serve(args, env: Mapping[str, str], say: Callable[[str], None], backend=None
             say(ui.provider_note)
         say("Остановить: Ctrl+C")
         if not args.no_browser:
-            try:
-                webbrowser.open(ui.url)
-            except Exception:
+            opened = False
+            if _has_display():
+                try:
+                    opened = bool(webbrowser.open(ui.url))
+                except Exception:
+                    opened = False
+            if not opened:
                 say("Браузер не открылся сам: откройте адрес выше вручную.")
-        old_term = _stop_on_sigterm()
+        old_handlers = _stop_on_sigterm()
         try:
             ui.serve_forever()
         except KeyboardInterrupt:
             say("Окно закрыто.")
         finally:
-            if old_term is not None:
-                signal.signal(signal.SIGTERM, old_term)
+            for sig, old in old_handlers:
+                try:
+                    signal.signal(sig, old)
+                except (ValueError, OSError, TypeError):
+                    pass
         return 0
     finally:
         ui.close()
 
 
-def _stop_on_sigterm():
-    """SIGTERM (kill, closing a terminal tab) stops the window like Ctrl+C, so the temporary folder is removed.
-    Returns the previous handler, or None when it could not be set (not the main thread)."""
+def _stop_on_sigterm() -> list[tuple[int, Any]]:
+    """SIGTERM (kill, closing a terminal tab) and, on Windows, Ctrl+Break stop the window like Ctrl+C, so the
+    temporary folder is removed. Returns [(signal, previous handler)] for the ones set; [] outside the main thread."""
     def stop(_sig, _frame):
         raise KeyboardInterrupt
 
     if threading.current_thread() is not threading.main_thread():
-        return None
-    try:
-        return signal.signal(signal.SIGTERM, stop)
-    except (ValueError, OSError):
-        return None
+        return []
+    out = []
+    for name in ("SIGTERM", "SIGBREAK"):
+        sig = getattr(signal, name, None)
+        if sig is None:
+            continue
+        try:
+            out.append((sig, signal.signal(sig, stop)))
+        except (ValueError, OSError):
+            pass
+    return out
+
+
+def _has_display(environ: Mapping[str, str] | None = None, platform: str | None = None) -> bool:
+    """False on a Linux/BSD machine without a graphical session (a server, SSH, Docker): there ``webbrowser`` would
+    start a text browser such as lynx inside this very terminal. Windows and macOS always have a display."""
+    env = os.environ if environ is None else environ
+    plat = sys.platform if platform is None else platform
+    if plat.startswith(("win", "cygwin", "darwin")):
+        return True
+    return bool(env.get("DISPLAY") or env.get("WAYLAND_DISPLAY") or env.get("BROWSER"))
+
+
+def _remove_tree(folder: Path, tries: int = 5) -> None:
+    """``shutil.rmtree`` that waits a little for files still open on Windows (a check that is just finishing, an
+    antivirus scan of an upload) instead of leaving the temporary folder behind at once."""
+    for k in range(tries):
+        shutil.rmtree(folder, ignore_errors=True)
+        if not folder.exists():
+            return
+        time.sleep(0.1 * (k + 1))
