@@ -377,7 +377,8 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
 
  <section id="result" aria-live="polite" aria-label="Результат проверки">
   <div id="res-done">
-   <div id="verdict" class="verdict lvl-unknown"><span class="vk">Вердикт</span><span id="verdict-text"></span></div>
+   <div id="verdict" class="verdict lvl-unknown"><span class="vk" id="verdict-key">Вердикт</span><span id="verdict-text"></span></div>
+   <p class="quiet vnote" id="verdict-written" hidden></p>
    <p class="quiet vnote" id="verdict-note" hidden></p>
    <div class="ready-lines" id="readiness" hidden><p id="ready-dev"></p><p id="ready-test"></p></div>
    <div class="nums" id="res-numbers">
@@ -782,7 +783,9 @@ var SHORT_STAGE=["чтение","нарезка","правила","требов�
 function renderStageTimes(secs){
   var el=$("res-stage-times");
   if(!secs||!secs.length){el.hidden=true;return;}
-  var parts=[];secs.forEach(function(v,i){if(v!=null&&i<SHORT_STAGE.length)parts.push(SHORT_STAGE[i]+" "+fmtSec(v));});
+  /* a run of seconds in total is not worth a line: shown only when some stage took 1 s or more, and then only stages of 0,1 s or more */
+  var slow=secs.some(function(v){return v!=null&&v>=1;});
+  var parts=[];secs.forEach(function(v,i){if(slow&&v!=null&&v>=0.1&&i<SHORT_STAGE.length)parts.push(SHORT_STAGE[i]+" "+fmtSec(v));});
   if(!parts.length){el.hidden=true;return;}
   el.textContent="Время по этапам: "+parts.join(" · ");el.hidden=false;
 }
@@ -1223,19 +1226,32 @@ function setLink(id,file,download){
 }
 function renderReadiness(rd){
   var box=$("readiness");
-  function line(id,label,x,extra){
+  function detail(t){t=String(t||"").replace(" (предварительно)","");var i=t.indexOf(": ");return i<0?t:t.slice(i+2);}
+  /* x: the state as written; y: the state with the author's answers (or null) */
+  function line(id,label,x,y,extra){
     var p=$(id);clear(p);if(!x||!x.text){p.hidden=true;return false;}
-    p.appendChild(mk("span","rl-k",label+": "));p.appendChild(mk("span",x.ok?"rl-ok":"rl-no",x.text+(extra||"")));p.hidden=false;return true;}
+    var shown=y&&y.text?y:x;var was="";
+    if(shown!==x&&shown.text!==x.text)was=" (было: "+detail(x.text)+")";
+    p.appendChild(mk("span","rl-k",label+(shown!==x?" — с учётом ответов":"")+": "));
+    p.appendChild(mk("span",shown.ok?"rl-ok":"rl-no",shown.text+(extra||"")+was));p.hidden=false;return true;}
   if(!rd||typeof rd!=="object"){box.hidden=true;return;}
-  var cov=rd.test&&rd.test.coverage_pct!=null&&isFinite(Number(rd.test.coverage_pct))?" (покрытие критериями приёмки "+Math.round(Number(rd.test.coverage_pct))+" %)":"";
-  var a=line("ready-dev","В разработку",rd.dev,"");var b=line("ready-test","В тестирование",rd.test,cov);
+  var aa=rd.after_answers&&typeof rd.after_answers==="object"?rd.after_answers:{};
+  var tt=aa.test||rd.test;
+  var cov=tt&&tt.coverage_pct!=null&&isFinite(Number(tt.coverage_pct))?" (покрытие критериями приёмки "+Math.round(Number(tt.coverage_pct))+" %)":"";
+  var a=line("ready-dev","В разработку",rd.dev,aa.dev,"");var b=line("ready-test","В тестирование",rd.test,aa.test,cov);
   box.hidden=!(a||b);
 }
 function showResult(st){
   var r=st.result||{};var lvl=["stop","warn","ok","unknown"].indexOf(r.verdict_level)>=0?r.verdict_level:"unknown";
   show("res-done",true);show("res-fail",false);
-  var v=$("verdict");v.className="verdict lvl-"+lvl;txt("verdict-text",r.verdict_text||r.verdict||"Проверка завершена");
-  txt("verdict-note",r.verdict_note||"");show("verdict-note",!!r.verdict_note);
+  var a0=r.answers&&r.answers.after;var withAns=!!(a0&&a0.verdict_text&&!r.diagnostic);
+  if(withAns){lvl=["stop","warn","ok","unknown"].indexOf(a0.verdict_level)>=0?a0.verdict_level:lvl;}
+  var v=$("verdict");v.className="verdict lvl-"+lvl;
+  txt("verdict-key",withAns?"Вердикт с учётом ответов":"Вердикт");
+  txt("verdict-text",withAns?a0.verdict_text:(r.verdict_text||r.verdict||"Проверка завершена"));
+  var wr=withAns&&a0.written_verdict&&a0.written_verdict!==a0.verdict&&a0.written_verdict_text;
+  txt("verdict-written",wr?"В документе как он написан: "+a0.written_verdict_text+" — ответы ещё не внесены в текст":"");show("verdict-written",!!wr);
+  txt("verdict-note",(withAns?a0.verdict_note:r.verdict_note)||"");show("verdict-note",!!(withAns?a0.verdict_note:r.verdict_note));
   renderReadiness(r.readiness);renderStageTimes(r.stage_seconds);
   var diag=r.diagnostic;
   if(diag){

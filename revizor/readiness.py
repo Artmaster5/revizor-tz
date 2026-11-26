@@ -12,6 +12,7 @@ the model's coverage table, and the open findings of the rule «requirement-with
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from typing import Any
 
 from .model import Question, Requirement, Result
@@ -93,14 +94,32 @@ def coverage(result: Result) -> dict[str, Any]:
     return out
 
 
+def written_detail(text: str) -> str:
+    """What stands after the first colon of a readiness text, without the «(предварительно)» tail: «3 блокера»."""
+    t = (text or "").replace(" (предварительно)", "")
+    return t.split(": ", 1)[1] if ": " in t else t
+
+
 def _ids(fids: list[str], cap: int = 3) -> str:
     return ", ".join(fids[:cap]) + (f" и ещё {len(fids) - cap}" if len(fids) > cap else "")
 
 
 def compute(result: Result) -> dict[str, Any]:
-    """Both kinds of readiness for a checked document; {} for a result with a diagnostic (nothing was checked)."""
+    """Both kinds of readiness for a checked document; {} for a result with a diagnostic (nothing was checked).
+
+    When the author's answers were applied (``verdict_after_answers`` is set) the same two verdicts are also computed
+    on the findings that stay open after the answers and put under ``"after_answers"``: a finding the answers closed
+    does not count; one whose fix check says «remains» was reopened by the check and counts."""
     if result.diagnostic is not None:
         return {}
+    out = _compute(result)
+    if result.verdict_after_answers and out:
+        live = [f for f in result.findings if not f.closed_by_answer]
+        out["after_answers"] = _compute(replace(result, findings=live))
+    return out
+
+
+def _compute(result: Result) -> dict[str, Any]:
     from . import consistency  # local: consistency imports this module's neighbours
     blockers = [f.fid for f in consistency.blockers(result.findings)]
     t = consistency.tally(result.findings)

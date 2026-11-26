@@ -61,7 +61,10 @@ def shape(res) -> dict:
     data["run"] = {k: v for k, v in data["run"].items()
                    if k not in ("duration_s", "stage_seconds", "stage_usage", "started_at")}
     if isinstance(data.get("passport"), dict):
-        data["passport"].pop("duration_s", None)
+        # the passport carries the wall-clock start (whole seconds): two runs one after another differ when the
+        # clock ticks between them. That is the time of the run, not a part of the report's content.
+        for k in ("duration_s", "started_at"):
+            data["passport"].pop(k, None)
     data["audit"] = [a for a in data.get("audit", []) if a.get("type") not in ("model_call", "stage_usage")]
     return data
 

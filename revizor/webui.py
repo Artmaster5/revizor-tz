@@ -339,6 +339,11 @@ def clean_readiness(raw: Any) -> dict | None:
         out["test"] = {"ok": bool(test.get("ok")), "text": " ".join(test["text"].split())[:300],
                        "coverage_pct": round(float(cov)) if isinstance(cov, (int, float)) and not isinstance(cov, bool) else None,
                        "uncovered": [str(x)[:40] for x in (test.get("uncovered") or []) if isinstance(x, (str, int))][:50]}
+    aft = raw.get("after_answers")
+    if out and isinstance(aft, dict):  # the same two parts on the findings that stay open after the answers
+        sub = clean_readiness({k: aft.get(k) for k in ("dev", "test")})
+        if sub:
+            out["after_answers"] = sub
     return out or None
 
 
@@ -668,10 +673,14 @@ def _answers_block(result: Result, previous: dict | None) -> dict:
     code = result.verdict_after_answers or result.verdict
     atext = result.verdict_after_answers_text or result.verdict_text
     atext, anote = split_verdict(atext)
+    wtext = verdict_mod.short_text(result.verdict) or split_verdict(result.verdict_text)[0]
+    if code == "BLOCKED" and left:  # the card stays red and says how many blockers the answers leave
+        atext += f" — с учётом ответов остаётся {len(left)} " + plural(len(left), ("блокер", "блокера", "блокеров"))
     after = {"open": {"total": len(kept), "critical": sev["CRITICAL"], "major": sev["MAJOR"], "minor": sev["MINOR"]},
              "closed_count": len(closed_f), "closed_critical": sum(1 for f in closed_f if f.severity == "CRITICAL"),
              "left_blockers": left, "score": after_score, "verdict": code, "verdict_text": atext,
-             "verdict_note": anote, "verdict_level": VERDICT_LEVEL.get(code, "unknown")}
+             "verdict_note": anote, "verdict_level": VERDICT_LEVEL.get(code, "unknown"),
+             "written_verdict": result.verdict, "written_verdict_text": wtext}
     return {"taken": int(sm.get("answered") or 0), "total": int(sm.get("total") or len(result.questions)),
             "closed": closed, "closed_count": len(closed), "follow_ups": int(sm.get("follow_ups") or 0),
             "by_model": bool(sm.get("by_model")), "stale": [str(x) for x in (sm.get("stale") or [])],

@@ -281,8 +281,20 @@ def readiness_lines(result: Result) -> list[str]:
     out = []
     for key in ("dev", "test"):
         part = rd.get(key) if isinstance(rd, dict) else None
-        if isinstance(part, dict) and part.get("text"):
-            out.append(f"> {'✅' if part.get('ok') else '⛔'} {md(str(part['text']))}.")
+        if not (isinstance(part, dict) and part.get("text")):
+            continue
+        aft = (rd.get("after_answers") or {}).get(key) if isinstance(rd.get("after_answers"), dict) else None
+        if isinstance(aft, dict) and aft.get("text"):  # the author's answers were applied: the with-answers state leads
+            tail = " (предварительно)" if str(aft["text"]).endswith(" (предварительно)") else ""
+            body = str(aft["text"]).replace(" (предварительно)", "")
+            if aft["text"] == part["text"]:
+                note = " — с учётом ответов то же"
+            else:
+                note = (" — с учётом ответов; в тексте документа пока: "
+                        + readiness_mod.written_detail(str(part["text"])))
+            out.append(f"> {'✅' if aft.get('ok') else '⛔'} {md(body + note + tail)}.")
+            continue
+        out.append(f"> {'✅' if part.get('ok') else '⛔'} {md(str(part['text']))}.")
     return out
 
 

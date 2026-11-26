@@ -515,5 +515,7 @@ class Result(_Dictable):
     checklist: list[ChecklistItem] = field(default_factory=list)  # unfilled review checklist of the document, answered
     gap_map: list[GapCell] = field(default_factory=list)  # completeness map; empty when the stage did not run at all
     # two kinds of readiness (readiness.py): {"dev": {"ok", "text", "blockers": [fids]},
-    # "test": {"ok", "text", "coverage_pct": int | None, "uncovered": [requirement ids]}}; {} when not computed
+    # "test": {"ok", "text", "coverage_pct": int | None, "uncovered": [requirement ids]}}; {} when not computed.
+    # After the author's answers it also holds "after_answers": {"dev": {...}, "test": {...}} on the findings that stay
+    # open once the answers are put into the document (absent when no answers were applied, and in older reports)
     readiness: dict[str, Any] = field(default_factory=dict)
