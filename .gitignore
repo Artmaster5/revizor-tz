@@ -11,3 +11,5 @@ reports/live_haiku*
 reports/gemini*/
 reports/blind*/
 reports/demo*
+# отчёты, которые получаются при запуске команд из README и docs/USAGE.md
+reports/my_*

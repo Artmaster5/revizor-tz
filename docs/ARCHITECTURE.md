@@ -206,7 +206,7 @@ flowchart LR
 
 ## Тесты
 
-700 тестов, без сети и без ключей:
+718 тестов, без сети и без ключей:
 
 ```bash
 python -m unittest discover -s tests -t .
