@@ -8,6 +8,7 @@ is read from the same console lines the terminal prints. The window takes no par
 from __future__ import annotations
 
 import json
+import os
 import re
 import secrets
 import shutil
@@ -604,6 +605,9 @@ class UIServer:
         try:
             args = cli.build_parser().parse_args(argv)
             args.rerun_note = RERUN_NOTE
+            # uploads lie under temp_root; a document given on the command line keeps its real path, as in the terminal
+            args.hide_prefixes = [str(d) + os.sep for d in {Path(x).parent for x in (args.input, args.answers) if x}
+                                  if self.temp_root in d.parents or d == self.temp_root]
             code, result, written = cli.execute(args, self.env, job.feed, injected_backend=backend)
             if result is None or not written:
                 last = next((x for x in reversed(job.log) if x.startswith("Не удалось")), "")

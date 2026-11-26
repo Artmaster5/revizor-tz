@@ -315,9 +315,9 @@ class OfflineRunTests(_Server):
             self.assertEqual(h["x-content-type-options"], "nosniff")
             self.assertNotIn("content-disposition", h)
         # no written file names the temporary folder of the upload; the questionnaire explains the next step for the window
-        root = str(self.ui.temp_root)
+        root = self.ui.temp_root.name.encode("utf-8")
         for f in res["files"]:
-            self.assertNotIn(root.encode("utf-8"), (self.out / f["name"]).read_bytes(), f["name"])
+            self.assertNotIn(root, (self.out / f["name"]).read_bytes(), f["name"])
         q = (self.out / next(f["name"] for f in res["files"] if f["kind"] == "questions")).read_text(encoding="utf-8")
         last = q.rstrip("\n").rsplit("\n", 1)[-1]
         self.assertTrue(last.startswith("Когда ответите: в окне Ревизора"), last)
@@ -368,6 +368,11 @@ class OfflineRunTests(_Server):
         self.assertEqual(s["result"]["findings"]["total"], 0)
         self.assertEqual(s["stages"][0]["state"], "done")
         self.assertEqual({x["state"] for x in s["stages"][1:]}, {"skipped"})
+        root = self.ui.temp_root.name.encode("utf-8")  # the JSON of a document that was not checked keeps its path
+        for f in s["result"]["files"]:
+            self.assertNotIn(root, (self.out / f["name"]).read_bytes(), f["name"])
+        data = json.loads((self.out / "empty.json").read_text(encoding="utf-8"))
+        self.assertIn("empty.txt", json.dumps(data, ensure_ascii=False))
 
 
 class StageLabelTests(unittest.TestCase):

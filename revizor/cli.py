@@ -8,6 +8,7 @@ a gate must not pass what was not reviewed (the diagnostic report is still writt
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 import tempfile
@@ -231,7 +232,8 @@ def execute(args, env: Mapping[str, str], say: Callable[[str], None], injected_b
         result.run.warnings.append(interactive_note)
 
     # the gate for proposed rewrites now runs at the end of pipeline.run, so every path that renders cards gets it
-    written = _write_all(result, inp, outp, say, rerun_note=getattr(args, "rerun_note", ""))
+    written = _write_all(result, inp, outp, say, rerun_note=getattr(args, "rerun_note", ""),
+                         hide=tuple(getattr(args, "hide_prefixes", ())))
     if written is None:
         return 1, None, []
     _final_lines(result, written, time.monotonic() - t0, say)
@@ -276,7 +278,8 @@ def _answer_provider(args, input_fn, say, quiet):
     return None, ""
 
 
-def _write_all(result: Result, inp: str, outp: str, say, rerun_note: str = "") -> list[Path] | None:
+def _write_all(result: Result, inp: str, outp: str, say, rerun_note: str = "",
+               hide: tuple[str, ...] = ()) -> list[Path] | None:
     out = Path(outp)
     ext = out.suffix.lower()
     files: list[tuple[Path, str]] = []
@@ -321,6 +324,11 @@ def _write_all(result: Result, inp: str, outp: str, say, rerun_note: str = "") -
     except Exception as e:  # rendering bug: say so plainly
         say(f"Не удалось собрать отчёт: внутренняя ошибка ({type(e).__name__}: {str(e)[:200]}).")
         return None
+    # a check from the window: the chosen file lies in a temporary folder, and no written file should name that folder
+    for prefix in hide:
+        for form in {prefix, json.dumps(prefix, ensure_ascii=False)[1:-1], json.dumps(prefix)[1:-1]}:
+            if form:
+                files = [(path, text.replace(form, "")) for path, text in files]
     written: list[Path] = []
     for path, text in files:
         try:
