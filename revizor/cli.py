@@ -63,6 +63,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--max-cost", metavar="USD", help="потолок стоимости прогона в долларах (или REVIZOR_MAX_COST_USD)")
     p.add_argument("--estimate", action="store_true", help="только оценить число вызовов, токены и стоимость; модель не вызывается")
     p.add_argument("--quiet", "-q", action="store_true", help="печатать только итог")
+    p.add_argument("--ui", action="store_true",
+                   help="открыть окно в браузере на этом компьютере: выбрать документ, модель и глубину, увидеть оценку, "
+                        "ход проверки и готовый отчёт. --input и --output тогда необязательны: --input — документ, который "
+                        "сразу выбран в окне, --output — папка для отчётов (по умолчанию reports/ui); --model, --depth и "
+                        "--max-cost — то, что выбрано в окне сразу; --provider и --no-cache действуют на каждую проверку из окна")
+    p.add_argument("--port", type=int, default=8765, metavar="N",
+                   help="для --ui: номер порта окна (по умолчанию 8765); если он занят, укажите другой")
+    p.add_argument("--no-browser", action="store_true",
+                   help="для --ui: не открывать браузер самому, только напечатать адрес окна")
     p.add_argument("--version", action="version", version=f"Ревизор ТЗ {__version__}")
     return p
 
@@ -153,21 +162,47 @@ def main(argv: list[str] | None = None, env: Mapping[str, str] | None = None,
 
 def _main(argv, env_in, say, injected_backend, input_fn=None) -> int:
     args = build_parser().parse_args(argv)
-    inp, outp = _paths(args)
-    env = config.build_env(env_in)
-    t0 = time.monotonic()
-    quiet = args.quiet
-    progress = (lambda _s: None) if quiet else say
+    if args.ui:
+        from . import webui
 
-    provider = normalize_provider(args.provider or "auto")
-    if provider not in PROVIDER_CHOICES:
-        raise UsageError(f"неизвестный провайдер «{args.provider}»; допустимо: {', '.join(PROVIDER_CHOICES)}")
-    cap, cap_err = config.max_cost_from(args.max_cost, env)
-    if cap_err:
-        raise UsageError(cap_err)
+        return webui.serve(args, config.build_env(env_in), say, backend=injected_backend)
+    inp, _outp = _paths(args)
+    env = config.build_env(env_in)
+    provider = _provider_of(args)
+    _cap_of(args, env)
 
     if args.estimate:
         return _estimate(inp, provider, args, env, say)
+    return execute(args, env, say, injected_backend, input_fn)[0]
+
+
+def _provider_of(args) -> str:
+    provider = normalize_provider(args.provider or "auto")
+    if provider not in PROVIDER_CHOICES:
+        raise UsageError(f"неизвестный провайдер «{args.provider}»; допустимо: {', '.join(PROVIDER_CHOICES)}")
+    return provider
+
+
+def _cap_of(args, env) -> float | None:
+    cap, cap_err = config.max_cost_from(args.max_cost, env)
+    if cap_err:
+        raise UsageError(cap_err)
+    return cap
+
+
+def execute(args, env: Mapping[str, str], say: Callable[[str], None], injected_backend=None,
+            input_fn: Callable[[str], str] | None = None) -> tuple[int, Result | None, list[Path]]:
+    """One check of one document, shared by the terminal and the browser window (``--ui``).
+
+    ``args`` come from ``build_parser()``; ``env`` is the settings mapping (``config.build_env`` already applied).
+    Returns (exit code, the result or None when no report was written, the files written). Raises UsageError
+    for bad arguments, exactly like the terminal path."""
+    inp, outp = _paths(args)
+    t0 = time.monotonic()
+    quiet = args.quiet
+    progress = (lambda _s: None) if quiet else say
+    provider = _provider_of(args)
+    cap = _cap_of(args, env)
 
     backend = injected_backend
     reason = ""
@@ -196,17 +231,17 @@ def _main(argv, env_in, say, injected_backend, input_fn=None) -> int:
         result.run.warnings.append(interactive_note)
 
     # the gate for proposed rewrites now runs at the end of pipeline.run, so every path that renders cards gets it
-    written = _write_all(result, inp, outp, say)
+    written = _write_all(result, inp, outp, say, rerun_note=getattr(args, "rerun_note", ""))
     if written is None:
-        return 1
+        return 1, None, []
     _final_lines(result, written, time.monotonic() - t0, say)
     if result.diagnostic is not None and args.fail_on != "never":
         say(f"Документ не прочитан и не проверен, а задан --fail-on {args.fail_on}: код возврата 4, чтобы проверка не прошла.")
-        return 4
+        return 4, result, written
     if result.diagnostic is None and verdict.fail_threshold_reached(result.findings, args.fail_on):
         say(f"Порог --fail-on {args.fail_on} достигнут: код возврата 3.")
-        return 3
-    return 0
+        return 3, result, written
+    return 0, result, written
 
 
 def _answer_provider(args, input_fn, say, quiet):
@@ -241,7 +276,7 @@ def _answer_provider(args, input_fn, say, quiet):
     return None, ""
 
 
-def _write_all(result: Result, inp: str, outp: str, say) -> list[Path] | None:
+def _write_all(result: Result, inp: str, outp: str, say, rerun_note: str = "") -> list[Path] | None:
     out = Path(outp)
     ext = out.suffix.lower()
     files: list[tuple[Path, str]] = []
@@ -268,8 +303,11 @@ def _write_all(result: Result, inp: str, outp: str, say) -> list[Path] | None:
         if result.questions:
             qpath = base.with_name(base.stem + ".questions.md")
             answered = base.with_name(base.stem + "_answered" + base.suffix)  # the rerun must not overwrite this report
-            files.append((qpath, sidefiles.questions_md(result, input_path=inp, output_path=str(answered),
-                                                         questions_path=str(qpath))))
+            qtext = sidefiles.questions_md(result, input_path=inp, output_path=str(answered), questions_path=str(qpath))
+            if rerun_note:  # a check from the window: the document lies in a temporary folder, a command with that path misleads
+                qtext = qtext.replace(sidefiles.rerun_line(inp, str(answered), str(qpath)),
+                                      rerun_note.format(output=answered, answers=qpath))
+            files.append((qpath, qtext))
         fixed = sidefiles.fixed_md(result)
         if fixed:
             files.append((base.with_name(base.stem + ".fixed.md"), fixed))

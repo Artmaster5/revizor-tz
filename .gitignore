@@ -13,3 +13,5 @@ reports/blind*/
 reports/demo*
 # отчёты, которые получаются при запуске команд из README и docs/USAGE.md
 reports/my_*
+# отчёты проверок, запущенных из окна в браузере (python main.py --ui)
+reports/ui/

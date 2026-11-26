@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BASE_TAG = "v1.1.1"
 PRINT_MODULES = {"revizor/report_md.py", "revizor/exports.py", "revizor/report_html.py", "revizor/cli.py",
                  "tools/rerender.py", "tools/shots.py",
+                 "revizor/webui.py", "revizor/webui_page.html",  # the browser window: it only starts the CLI check
                  "revizor/__init__.py"}  # only the version string: it is printed in the report passport and nowhere else
 REPORTS = ["reports/report", "reports/report_haiku", "reports/report_answered"]  # <имя>.json и <имя>.md
 PAIRS = [  # (отчёт в репозитории, файл замера)
