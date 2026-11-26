@@ -1,6 +1,6 @@
 # Отчёт о статической проверке требований
 
-**Документ:** `kyc_upload_api_en.md` · проверен 26.11.2026 03:00 (UTC+05:00) · без модели — только автоматические правила
+**Документ:** `kyc_upload_api_en.md` · проверен 26.11.2026 07:23 (UTC+05:00) · без модели — только автоматические правила
 
 > **Итог:** ⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (итог предварительный)
 > Замечаний 7: блокеров 1 · существенных 6 · мелких 0 · вопросов автору 7 · требований 44
@@ -31,16 +31,19 @@
 
 **Разделы:** [1. Паспорт прогона](#s1) · [2. Как агент нарезал требования](#s2) · [3. Проверка каждого требования](#s3) · [4. Проверка всего набора требований](#s4) · [5. Сводка](#s5) · [6. Итог](#s6) · [7. Уточняющие вопросы к автору ТЗ](#s7) · [8. Черновики приёмочных тестов](#s8) · [Приложение. Как получен отчёт](#app)
 
+Полные карточки с цитатами, разбор по каждому требованию, карта полноты и вопросы с вариантами ответов — в файле `kyc_upload_api_en.offline.details.md`.
+
 <a id="s1"></a>
 ## 1. Паспорт прогона
 
 | Поле | Значение |
 | :--- | :--- |
 | Документ | `kyc_upload_api_en.md` · Markdown · 5,4 КБ · 121 строка · 817 слов · SHA-256 `4cf9a9852dac` · «Remote Onboarding — Identity Document Upload API» |
-| Дата и время прогона | 26.11.2026 03:00 (UTC+05:00) |
+| Дата и время прогона | 26.11.2026 07:23 (UTC+05:00) |
 | Модель | без модели |
-| Версия агента | v1.0.0 (тег `v1.1.1`) · коммит `0d071fd` · набор правил 1.1 |
+| Версия агента | v1.0.0 (тег `v1.1.2`) · коммит `9744508` · набор правил 1.1 |
 | Режим | без модели: только автоматические правила |
+| Вёрстка отчёта | 2: короткий отчёт и файл подробностей |
 | Время анализа | 0,1 с |
 | Стоимость прогона | $0 (модель не вызывалась) |
 | Проверка цитат | подтверждено 17, отброшено 0 |
@@ -50,54 +53,54 @@
 <a id="s2"></a>
 ## 2. Как агент нарезал требования
 
-Требования выделены эвристикой (без модели); номера REQ-… присвоены программой по порядку документа. Найдено 44 требования. Формулировка — точная цитата; длинная обрезана, только если полный текст есть в карточке раздела 3. Ясность каждого требования — в матрице раздела 3.
+Требования выделены эвристикой (без модели); номера REQ-… присвоены программой по порядку документа. Найдено 44 требования. Формулировка — точная цитата; длинная обрезана, полный текст — в файле подробностей. Ясность каждого требования — в матрице раздела 3.
 
 | ID (в документе) | Тип | Формулировка (цитата) | Где |
 | :--- | :--- | :--- | :--- |
-| [REQ-001](#req-001) | интерфейс (API) | The API lets the mobile app upload images of the applicant's identity document (ID card of the Republic of Kazakhstan or passport) and a selfie during remote onboarding, submit them for verification and query the verification status. | строка 13 |
-| [REQ-002](#req-002) 2.1 | интерфейс (API) | 2.1. All endpoints are served over HTTPS only, TLS 1.2 or higher; plain HTTP requests are rejected without redirect. | строка 17 |
-| [REQ-003](#req-003) 2.2 | интерфейс (API) | 2.2. Every request carries Authorization: Bearer \<access\_token\> issued to the onboarding session. The access token lifetime is 15 minutes. | строка 18 |
-| [REQ-004](#req-004) 2.3 | интерфейс (API) | 2.3. All timestamps are ISO 8601 strings in UTC, e.g. 2026-11-12T09:30:00Z. | строка 19 |
-| [REQ-005](#req-005) 2.4 | интерфейс (API) | 2.4. Every POST request must carry an Idempotency-Key header (UUID v4). A repeated request with the same key within 24 hours returns the original response and does not create a new upload. | строка 20 |
-| [REQ-006](#req-006) 2.5 | интерфейс (API) | 2.5. The applicant is identified by IIN (12 digits). Test IIN for examples: 000000000000. | строка 21 |
-| [REQ-007](#req-007) 2.6 | интерфейс (API) | 2.6. The client app compresses images, strips EXIF location data, shows a progress bar and retries failed uploads up to 3 times. | строка 22 |
-| [REQ-008](#req-008) | интерфейс (API) | Uploads one document image. Request body: multipart/form-data. | строка 28 |
-| [REQ-009](#req-009) | интерфейс (API) | Parameter: sessionId \| In: path \| Type: string (UUID) \| Required: yes \| Rules: Onboarding session id | строка 32 |
-| [REQ-010](#req-010) | интерфейс (API) | Parameter: iin \| In: query \| Type: string \| Required: yes \| Rules: Applicant IIN, 12 digits | строка 33 |
-| [REQ-011](#req-011) | интерфейс (API) | Parameter: docType \| In: form \| Type: string \| Required: yes \| Rules: ID\_CARD, PASSPORT, SELFIE | строка 34 |
-| [REQ-012](#req-012) | интерфейс (API) | Parameter: side \| In: form \| Type: string \| Required: for ID\_CARD only \| Rules: FRONT or BACK | строка 35 |
-| [REQ-013](#req-013) | интерфейс (API) | Parameter: file \| In: form \| Type: binary \| Required: yes \| Rules: JPEG or PNG, max 10 MB | строка 36 |
-| [REQ-014](#req-014) | интерфейс (API) | Example: curl -X POST "\$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000" \\ -H "Authorization: Bearer \$TOKEN" -H "Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002" \\ -F docType=PHOTO -F file=\@selfie.jpg | строки 38–44 |
-| [REQ-015](#req-015) | интерфейс (API) | Responses: | строка 46 |
-| [REQ-016](#req-016) | интерфейс (API) | 201 Created — upload accepted: \{"documentId": "d-001", "status": "RECEIVED"\} | строка 48 |
-| [REQ-017](#req-017) | интерфейс (API) | 400 Bad Request — a parameter is missing or invalid | строка 49 |
-| [REQ-018](#req-018) | интерфейс (API) | 413 Payload Too Large — the file exceeds the size limit | строка 50 |
-| [REQ-019](#req-019) | интерфейс (API) | 415 Unsupported Media Type — the file is not JPEG or PNG | строка 51 |
-| [REQ-020](#req-020) | интерфейс (API) | 422 Unprocessable Entity — image quality is insufficient, see 4.3 | строка 52 |
-| [REQ-021](#req-021) | интерфейс (API) | If a document of the same docType and side has already been uploaded in the session, the server returns 409. | строка 54 |
-| [REQ-022](#req-022) | интерфейс (API) | The upload endpoint responds within 3 seconds. | строка 56 |
-| [REQ-023](#req-023) | интерфейс (API) | Returns the verification status of the session. Authorization is not required for this endpoint so that the web landing page can poll it. | строка 60 |
-| [REQ-024](#req-024) | интерфейс (API) | Response 200 OK: \{"sessionId": "3f1c9a52-0000-4000-8000-000000000001", "status": "PROCESSING", "fullName": "TEST APPLICANT", "iin": "000000000000", "birthDate": "1990-01-01", "documentNumber": "000000000"\} | строки 62–68 |
-| [REQ-025](#req-025) | интерфейс (API) | Session status values: DRAFT, SUBMITTED, PROCESSING, VERIFIED, REJECTED. | строка 70 |
-| [REQ-026](#req-026) | интерфейс (API) | Removes a previously uploaded document. A document can be removed only while the session status is DRAFT; otherwise the server returns 400. | строка 74 |
-| [REQ-027](#req-027) | интерфейс (API) | Submits all uploaded documents for verification. The session must contain an ID card (both sides) or a passport, and one selfie; otherwise 400 with \{"error": "INCOMPLETE\_SET"\}. On success the status becomes SUBMITTED and the server returns 202 Accepted. | строка 78 |
-| [REQ-028](#req-028) | интерфейс (API) | The verification provider is called asynchronously. When it responds, the status changes to PROCESSING and then to APPROVED or REJECTED. If the verification provider fails, the session is handled accordingly. | строка 80 |
-| [REQ-029](#req-029) 4.1 | интерфейс (API) | 4.1. Minimum resolution of a document image is 1280×720 pixels; a selfie is at least 640×480 pixels. | строка 88 |
-| [REQ-030](#req-030) 4.2 | интерфейс (API) | 4.2. Glare and blur on the document image must be within acceptable limits. | строка 89 |
-| [REQ-031](#req-031) | интерфейс (API) | Liveness of the selfie is checked by the FaceCheck SDK 4.2 library on the server in a dedicated thread pool of 8 workers. | строка 91 |
-| [REQ-032](#req-032) | интерфейс (API) | Limit: Maximum file size \| Value: 8 000 KB | строка 97 |
-| [REQ-033](#req-033) | интерфейс (API) | Limit: Supported formats \| Value: JPEG, PNG, HEIC | строка 98 |
-| [REQ-034](#req-034) | интерфейс (API) | Limit: Uploads per session \| Value: at most 20 | строка 99 |
-| [REQ-035](#req-035) | интерфейс (API) | Limit: Rate limit \| Value: 30 requests per applicant | строка 100 |
-| [REQ-036](#req-036) 6.1 | данные | 6.1. Document images and selfies are stored for 90 days after the onboarding session ends and are then permanently deleted. | строка 104 |
-| [REQ-037](#req-037) 6.2 | данные | 6.2. Images are stored encrypted with AES-256; keys are managed by the bank's HSM. | строка 105 |
-| [REQ-038](#req-038) 7.1 | интерфейс (API) | 7.1. Every upload, deletion and status change is written to the audit log with sessionId, documentId, operation and timestamp. | строка 109 |
-| [REQ-039](#req-039) 7.2 | интерфейс (API) | 7.2. Original document images are retained for the whole term of the business relationship and for 5 years after it ends, as required by AML regulations. | строка 110 |
-| [REQ-040](#req-040) AC-1 | критерий приёмки | \#: AC-1 \| Given: Session in DRAFT \| When: Upload a 2 MB JPEG ID\_CARD FRONT \| Then: 201, status RECEIVED | строка 116 |
-| [REQ-041](#req-041) AC-2 | критерий приёмки | \#: AC-2 \| Given: Session in DRAFT \| When: Upload a GIF file \| Then: 415 | строка 117 |
-| [REQ-042](#req-042) AC-3 | критерий приёмки | \#: AC-3 \| Given: Any session \| When: Repeat POST with the same Idempotency-Key within 24 hours \| Then: Original response, no new document | строка 118 |
-| [REQ-043](#req-043) AC-4 | критерий приёмки | \#: AC-4 \| Given: Session in SUBMITTED \| When: Delete a document \| Then: 400 | строка 119 |
-| [REQ-044](#req-044) AC-5 | критерий приёмки | \#: AC-5 \| Given: Session with 3 rejected selfies \| When: Upload a 4th selfie \| Then: 423 Locked for 24 hours | строка 120 |
+| <a id="req-001"></a>REQ-001 | интерфейс (API) | The API lets the mobile app upload images of the applicant's identity document (ID card of the Republic of Kazakhstan… | строка 13 |
+| <a id="req-002"></a>REQ-002 2.1 | интерфейс (API) | 2.1. All endpoints are served over HTTPS only, TLS 1.2 or higher; plain HTTP requests are rejected without redirect. | строка 17 |
+| <a id="req-003"></a>REQ-003 2.2 | интерфейс (API) | 2.2. Every request carries Authorization: Bearer \<access\_token\> issued to the onboarding session. The access token… | строка 18 |
+| <a id="req-004"></a>REQ-004 2.3 | интерфейс (API) | 2.3. All timestamps are ISO 8601 strings in UTC, e.g. 2026-11-12T09:30:00Z. | строка 19 |
+| <a id="req-005"></a>REQ-005 2.4 | интерфейс (API) | 2.4. Every POST request must carry an Idempotency-Key header (UUID v4). A repeated request with the same key within 24… | строка 20 |
+| <a id="req-006"></a>REQ-006 2.5 | интерфейс (API) | 2.5. The applicant is identified by IIN (12 digits). Test IIN for examples: 000000000000. | строка 21 |
+| <a id="req-007"></a>REQ-007 2.6 | интерфейс (API) | 2.6. The client app compresses images, strips EXIF location data, shows a progress bar and retries failed uploads up… | строка 22 |
+| <a id="req-008"></a>REQ-008 | интерфейс (API) | Uploads one document image. Request body: multipart/form-data. | строка 28 |
+| <a id="req-009"></a>REQ-009 | интерфейс (API) | Parameter: sessionId \| In: path \| Type: string (UUID) \| Required: yes \| Rules: Onboarding session id | строка 32 |
+| <a id="req-010"></a>REQ-010 | интерфейс (API) | Parameter: iin \| In: query \| Type: string \| Required: yes \| Rules: Applicant IIN, 12 digits | строка 33 |
+| <a id="req-011"></a>REQ-011 | интерфейс (API) | Parameter: docType \| In: form \| Type: string \| Required: yes \| Rules: ID\_CARD, PASSPORT, SELFIE | строка 34 |
+| <a id="req-012"></a>REQ-012 | интерфейс (API) | Parameter: side \| In: form \| Type: string \| Required: for ID\_CARD only \| Rules: FRONT or BACK | строка 35 |
+| <a id="req-013"></a>REQ-013 | интерфейс (API) | Parameter: file \| In: form \| Type: binary \| Required: yes \| Rules: JPEG or PNG, max 10 MB | строка 36 |
+| <a id="req-014"></a>REQ-014 | интерфейс (API) | Example: curl -X POST "\$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000" \\ -H… | строки 38–44 |
+| <a id="req-015"></a>REQ-015 | интерфейс (API) | Responses: | строка 46 |
+| <a id="req-016"></a>REQ-016 | интерфейс (API) | 201 Created — upload accepted: \{"documentId": "d-001", "status": "RECEIVED"\} | строка 48 |
+| <a id="req-017"></a>REQ-017 | интерфейс (API) | 400 Bad Request — a parameter is missing or invalid | строка 49 |
+| <a id="req-018"></a>REQ-018 | интерфейс (API) | 413 Payload Too Large — the file exceeds the size limit | строка 50 |
+| <a id="req-019"></a>REQ-019 | интерфейс (API) | 415 Unsupported Media Type — the file is not JPEG or PNG | строка 51 |
+| <a id="req-020"></a>REQ-020 | интерфейс (API) | 422 Unprocessable Entity — image quality is insufficient, see 4.3 | строка 52 |
+| <a id="req-021"></a>REQ-021 | интерфейс (API) | If a document of the same docType and side has already been uploaded in the session, the server returns 409. | строка 54 |
+| <a id="req-022"></a>REQ-022 | интерфейс (API) | The upload endpoint responds within 3 seconds. | строка 56 |
+| <a id="req-023"></a>REQ-023 | интерфейс (API) | Returns the verification status of the session. Authorization is not required for this endpoint so that the web… | строка 60 |
+| <a id="req-024"></a>REQ-024 | интерфейс (API) | Response 200 OK: \{"sessionId": "3f1c9a52-0000-4000-8000-000000000001", "status": "PROCESSING", "fullName": "TEST… | строки 62–68 |
+| <a id="req-025"></a>REQ-025 | интерфейс (API) | Session status values: DRAFT, SUBMITTED, PROCESSING, VERIFIED, REJECTED. | строка 70 |
+| <a id="req-026"></a>REQ-026 | интерфейс (API) | Removes a previously uploaded document. A document can be removed only while the session status is DRAFT; otherwise… | строка 74 |
+| <a id="req-027"></a>REQ-027 | интерфейс (API) | Submits all uploaded documents for verification. The session must contain an ID card (both sides) or a passport, and… | строка 78 |
+| <a id="req-028"></a>REQ-028 | интерфейс (API) | The verification provider is called asynchronously. When it responds, the status changes to PROCESSING and then to… | строка 80 |
+| <a id="req-029"></a>REQ-029 4.1 | интерфейс (API) | 4.1. Minimum resolution of a document image is 1280×720 pixels; a selfie is at least 640×480 pixels. | строка 88 |
+| <a id="req-030"></a>REQ-030 4.2 | интерфейс (API) | 4.2. Glare and blur on the document image must be within acceptable limits. | строка 89 |
+| <a id="req-031"></a>REQ-031 | интерфейс (API) | Liveness of the selfie is checked by the FaceCheck SDK 4.2 library on the server in a dedicated thread pool of 8… | строка 91 |
+| <a id="req-032"></a>REQ-032 | интерфейс (API) | Limit: Maximum file size \| Value: 8 000 KB | строка 97 |
+| <a id="req-033"></a>REQ-033 | интерфейс (API) | Limit: Supported formats \| Value: JPEG, PNG, HEIC | строка 98 |
+| <a id="req-034"></a>REQ-034 | интерфейс (API) | Limit: Uploads per session \| Value: at most 20 | строка 99 |
+| <a id="req-035"></a>REQ-035 | интерфейс (API) | Limit: Rate limit \| Value: 30 requests per applicant | строка 100 |
+| <a id="req-036"></a>REQ-036 6.1 | данные | 6.1. Document images and selfies are stored for 90 days after the onboarding session ends and are then permanently… | строка 104 |
+| <a id="req-037"></a>REQ-037 6.2 | данные | 6.2. Images are stored encrypted with AES-256; keys are managed by the bank's HSM. | строка 105 |
+| <a id="req-038"></a>REQ-038 7.1 | интерфейс (API) | 7.1. Every upload, deletion and status change is written to the audit log with sessionId, documentId, operation and… | строка 109 |
+| <a id="req-039"></a>REQ-039 7.2 | интерфейс (API) | 7.2. Original document images are retained for the whole term of the business relationship and for 5 years after it… | строка 110 |
+| <a id="req-040"></a>REQ-040 AC-1 | критерий приёмки | \#: AC-1 \| Given: Session in DRAFT \| When: Upload a 2 MB JPEG ID\_CARD FRONT \| Then: 201, status RECEIVED | строка 116 |
+| <a id="req-041"></a>REQ-041 AC-2 | критерий приёмки | \#: AC-2 \| Given: Session in DRAFT \| When: Upload a GIF file \| Then: 415 | строка 117 |
+| <a id="req-042"></a>REQ-042 AC-3 | критерий приёмки | \#: AC-3 \| Given: Any session \| When: Repeat POST with the same Idempotency-Key within 24 hours \| Then: Original… | строка 118 |
+| <a id="req-043"></a>REQ-043 AC-4 | критерий приёмки | \#: AC-4 \| Given: Session in SUBMITTED \| When: Delete a document \| Then: 400 | строка 119 |
+| <a id="req-044"></a>REQ-044 AC-5 | критерий приёмки | \#: AC-5 \| Given: Session with 3 rejected selfies \| When: Upload a 4th selfie \| Then: 423 Locked for 24 hours | строка 120 |
 
 **Не считал требованиями: 20 блоков.**
 
@@ -109,7 +112,7 @@
 ## 3. Проверка каждого требования
 
 Без модели каждое требование проверено только автоматическими правилами (размытые слова, заглушки, сроки без условий, незакрытые перечни, несколько требований в одном пункте и др.); смысловые критерии не проверялись (❔).
-Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4. Карточки ниже — только у требований, к которым есть замечания.
+Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.
 
 <a id="s3-matrix"></a>
 **Матрица «требование × критерий»**
@@ -126,106 +129,21 @@
 
 Пустых клеток (не проверено): 303.
 
-<a id="req-014"></a>
-### REQ-014 · 3.1. POST /v1/onboarding/\{sessionId\}/documents · строки 38–44
-
-> Example:
-> curl -X POST "\$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000" \\
-> -H "Authorization: Bearer \$TOKEN" -H "Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002" \\
-> -F docType=PHOTO -F file=\@selfie.jpg
-
-Ясность 8,8 — есть замечания · ⚠️ Реализ. [D-001](#d-001) 🟡 · прочие без модели не проверялись
-
-<a id="req-021"></a>
-### REQ-021 · 3.1. POST /v1/onboarding/\{sessionId\}/documents · строка 54
-
-> If a document of the same docType and side has already been uploaded in the session, the server returns 409.
-
-Ясность 8,8 — есть замечания · ⚠️ Непротив. [D-002](#d-002) 🟡 · прочие без модели не проверялись
-
-<a id="req-022"></a>
-### REQ-022 · 3.1. POST /v1/onboarding/\{sessionId\}/documents · строка 56
-
-> The upload endpoint responds within 3 seconds.
-
-Ясность 7,5 — есть замечания · ⚠️ Провер. [D-003](#d-003) 🟡 · прочие без модели не проверялись
+**Замечания к отдельным требованиям (2): блокеров 0 · существенных 2 · мелких 0**
 
 <a id="d-003"></a>
 **D-003 · 🟡 MAJOR · Проверяемость.** Ограничение по времени без условий измерения
 
-Задан срок «within 3 seconds», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.
-
-- Цитата: строка 56 (цитата выше)
-- Как исправить: Допишите условия измерения: «within 3 seconds для 95% событий при нагрузке до N событий в секунду; время считается от \<момента начала\> до \<момента окончания\>», и что делать, если срок не выдержан.
-- Вопрос автору [В-06](#v-06); источник: правило `time-without-conditions`
-
-<a id="req-027"></a>
-### REQ-027 · 3.4. POST /v1/onboarding/\{sessionId\}/submit · строка 78
-
-> Submits all uploaded documents for verification. The session must contain an ID card (both sides) or a passport, and one selfie; otherwise 400 with \{"error": "INCOMPLETE\_SET"\}. On success the status becomes SUBMITTED and the server returns 202 Accepted.
-
-Ясность 8,8 — есть замечания · ⚠️ Непротив. [D-005](#d-005) 🟡 · прочие без модели не проверялись
-
-<a id="req-028"></a>
-### REQ-028 · 3.4. POST /v1/onboarding/\{sessionId\}/submit · строка 80
-
-> The verification provider is called asynchronously. When it responds, the status changes to PROCESSING and then to APPROVED or REJECTED. If the verification provider fails, the session is handled accordingly.
-
-Ясность 7,5 — есть замечания · ⚠️ Однозн. [D-006](#d-006) 🟡 · прочие без модели не проверялись
+- Где: строка 56, [REQ-022](#req-022): «The upload endpoint responds within 3 seconds»
+- Как исправить: Допишите условия измерения: «within 3 seconds для 95% событий при нагрузке до N событий в секунду; время считается от \<момента начала\> до \<момента окончания\>», и что делать, если срок не выдержан. · вопрос автору [В-06](#v-06); [подробно](kyc_upload_api_en.offline.details.md#x-d-003)
 
 <a id="d-006"></a>
 **D-006 · 🟡 MAJOR · Однозначность.** Размытая формулировка: «accordingly»
 
-Слово «accordingly» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.
+- Где: строка 80, [REQ-028](#req-028): «If the verification provider fails, the session is handled accordingly»
+- Как исправить: Замените «accordingly» проверяемым условием: опишите, что именно должно быть сделано: конкретное действие, его результат и как это проверить. · вопрос автору [В-07](#v-07); [подробно](kyc_upload_api_en.offline.details.md#x-d-006)
 
-- Цитата: строка 80 (цитата выше)
-- Как исправить: Замените «accordingly» проверяемым условием: опишите, что именно должно быть сделано: конкретное действие, его результат и как это проверить.
-- Вопрос автору [В-07](#v-07); источник: правило `vague-word`
-
-<a id="s3-clean"></a>
-**Требования без замечаний (39)**
-
-| Требование | Где | Начало текста (полностью — в [разделе 2](#s2)) |
-| :--- | :--- | :--- |
-| <a id="req-001"></a>REQ-001 | строка 13 | The API lets the mobile app upload… |
-| <a id="req-002"></a>REQ-002 2.1 | строка 17 | 2.1. All endpoints are served over… |
-| <a id="req-003"></a>REQ-003 2.2 | строка 18 | 2.2. Every request carries… |
-| <a id="req-004"></a>REQ-004 2.3 | строка 19 | 2.3. All timestamps are ISO 8601… |
-| <a id="req-005"></a>REQ-005 2.4 | строка 20 | 2.4. Every POST request must carry an… |
-| <a id="req-006"></a>REQ-006 2.5 | строка 21 | 2.5. The applicant is identified by… |
-| <a id="req-007"></a>REQ-007 2.6 | строка 22 | 2.6. The client app compresses images… |
-| <a id="req-008"></a>REQ-008 | строка 28 | Uploads one document image. Request… |
-| <a id="req-009"></a>REQ-009 | строка 32 | Parameter: sessionId \| In: path \|… |
-| <a id="req-010"></a>REQ-010 | строка 33 | Parameter: iin \| In: query \| Type… |
-| <a id="req-011"></a>REQ-011 | строка 34 | Parameter: docType \| In: form \| Type… |
-| <a id="req-012"></a>REQ-012 | строка 35 | Parameter: side \| In: form \| Type… |
-| <a id="req-013"></a>REQ-013 | строка 36 | Parameter: file \| In: form \| Type… |
-| <a id="req-015"></a>REQ-015 | строка 46 | Responses: |
-| <a id="req-016"></a>REQ-016 | строка 48 | 201 Created — upload accepted… |
-| <a id="req-017"></a>REQ-017 | строка 49 | 400 Bad Request — a parameter is… |
-| <a id="req-018"></a>REQ-018 | строка 50 | 413 Payload Too Large — the file… |
-| <a id="req-019"></a>REQ-019 | строка 51 | 415 Unsupported Media Type — the file… |
-| <a id="req-020"></a>REQ-020 | строка 52 | 422 Unprocessable Entity — image… |
-| <a id="req-023"></a>REQ-023 | строка 60 | Returns the verification status of the… |
-| <a id="req-024"></a>REQ-024 | строки 62–68 | Response 200 OK: \{"sessionId"… |
-| <a id="req-025"></a>REQ-025 | строка 70 | Session status values: DRAFT… |
-| <a id="req-026"></a>REQ-026 | строка 74 | Removes a previously uploaded… |
-| <a id="req-029"></a>REQ-029 4.1 | строка 88 | 4.1. Minimum resolution of a document… |
-| <a id="req-030"></a>REQ-030 4.2 | строка 89 | 4.2. Glare and blur on the document… |
-| <a id="req-031"></a>REQ-031 | строка 91 | Liveness of the selfie is checked by… |
-| <a id="req-032"></a>REQ-032 | строка 97 | Limit: Maximum file size \| Value: 8… |
-| <a id="req-033"></a>REQ-033 | строка 98 | Limit: Supported formats \| Value… |
-| <a id="req-034"></a>REQ-034 | строка 99 | Limit: Uploads per session \| Value: at… |
-| <a id="req-035"></a>REQ-035 | строка 100 | Limit: Rate limit \| Value: 30 requests… |
-| <a id="req-036"></a>REQ-036 6.1 | строка 104 | 6.1. Document images and selfies are… |
-| <a id="req-037"></a>REQ-037 6.2 | строка 105 | 6.2. Images are stored encrypted with… |
-| <a id="req-038"></a>REQ-038 7.1 | строка 109 | 7.1. Every upload, deletion and status… |
-| <a id="req-039"></a>REQ-039 7.2 | строка 110 | 7.2. Original document images are… |
-| <a id="req-040"></a>REQ-040 AC-1 | строка 116 | \#: AC-1 \| Given: Session in DRAFT \|… |
-| <a id="req-041"></a>REQ-041 AC-2 | строка 117 | \#: AC-2 \| Given: Session in DRAFT \|… |
-| <a id="req-042"></a>REQ-042 AC-3 | строка 118 | \#: AC-3 \| Given: Any session \| When… |
-| <a id="req-043"></a>REQ-043 AC-4 | строка 119 | \#: AC-4 \| Given: Session in SUBMITTED… |
-| <a id="req-044"></a>REQ-044 AC-5 | строка 120 | \#: AC-5 \| Given: Session with 3… |
+Цитаты, ход перепроверки и разбор по каждому требованию — в файле `kyc_upload_api_en.offline.details.md`, раздел А.
 
 <a id="s4"></a>
 ## 4. Проверка всего набора требований
@@ -237,44 +155,24 @@
 <a id="d-007"></a>
 **D-007 · 🟡 MAJOR · Полнота набора.** Раздел «3.5. Callback to the core banking system» не заполнен: вместо содержания заглушка
 
-Вместо содержания раздела стоит заглушка «TBD.». Значит, эта часть требований не готова: по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел формально есть.
-
-- Цитаты:
-  - строка 82: «3.5. Callback to the core banking system»
-  - строка 84: «TBD.»
-- Как исправить: Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.
-- Вопрос автору [В-05](#v-05); источник: правило `empty-section`
+- Где: строки 82, 84: «3.5. Callback to the core banking system»
+- Как исправить: Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок. · вопрос автору [В-05](#v-05); [подробно](kyc_upload_api_en.offline.details.md#x-d-007)
 
 ### 4.2 Взаимная непротиворечивость
 
 <a id="d-002"></a>
 **D-002 · 🟡 MAJOR · Взаимная непротиворечивость.** Код ответа 409 возвращается, но не описан
 
-В тексте код 409 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа. Разработчик не знает, когда его возвращать, а тестировщик — что проверять.
-
-- Цитата: строка 54, [REQ-021](#req-021): «If a document of the same docType and side has already been uploaded in the session, the server returns 409»
-- Как исправить: Добавьте описание кода 409: при каком условии он возвращается и пример тела ответа; или уберите упоминание.
-- Вопрос автору [В-03](#v-03); источник: правило `status-mismatch`
+- Где: строка 54, [REQ-021](#req-021): «If a document of the same docType and side has already been uploaded in the session, the server…»
+- Как исправить: Добавьте описание кода 409: при каком условии он возвращается и пример тела ответа; или уберите упоминание. · вопрос автору [В-03](#v-03); [подробно](kyc_upload_api_en.offline.details.md#x-d-002)
 
 <a id="d-005"></a>
 **D-005 · 🟡 MAJOR · Взаимная непротиворечивость.** Код ответа 202 возвращается, но не описан
 
-В тексте код 202 возвращается, но в описании ответов для него нет ни условия, ни примера тела ответа. Как в [D-002](#d-002).
-
-- Цитата: строка 78, [REQ-027](#req-027): «On success the status becomes SUBMITTED and the server returns 202 Accepted»
-- Как исправить: Добавьте описание кода 202: при каком условии он возвращается и пример тела ответа; или уберите упоминание.
-- Вопрос автору [В-04](#v-04); источник: правило `status-mismatch`
+- Где: строка 78, [REQ-027](#req-027): «On success the status becomes SUBMITTED and the server returns 202 Accepted»
+- Как исправить: Добавьте описание кода 202: при каком условии он возвращается и пример тела ответа; или уберите упоминание. · вопрос автору [В-04](#v-04); [подробно](kyc_upload_api_en.offline.details.md#x-d-005)
 
 ### 4.3 Реализуемость, стандарты и безопасность
-
-<a id="d-001"></a>
-**D-001 · 🟡 MAJOR · Реализуемость, стандарты и безопасность.** Чувствительные данные передаются в адресной строке запроса
-
-Параметры «iin» передаются в строке запроса (query). Адрес запроса целиком попадает в журналы веб-серверов и прокси, историю браузера и системы мониторинга — идентификаторы карт, счетов, телефонов и токены окажутся там в открытом виде. Это противоречит требованиям к защите платёжных и персональных данных (PCI DSS).
-
-- Цитата: строки 41–43, [REQ-014](#req-014): «curl -X POST "\$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000" \\ -H "Authorization: Bearer \$TOKEN" -H "Idempotency-Key: 7d4e0c1a-0000-4000-8000-000000000002" \\ -F docType=PHOTO -F file=\@selfie.jpg»
-- Как исправить: Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы.
-- Вопрос автору [В-02](#v-02); источник: правило `sensitive-in-query`
 
 <a id="d-004"></a>
 **D-004 · 🔴 CRITICAL · Реализуемость, стандарты и безопасность.** Метод GET используется для изменения данных
@@ -284,7 +182,13 @@
 - Цитата: строка 72: «3.3. GET /v1/onboarding/\{sessionId\}/documents/\{documentId\}/delete»
 - Как исправить: Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.
 - Почему блокер: нарушение стандарта протокола
-- Вопрос автору [В-01](#v-01); источник: правило `get-mutation`
+- Вопрос автору [В-01](#v-01); [подробно](kyc_upload_api_en.offline.details.md#x-d-004)
+
+<a id="d-001"></a>
+**D-001 · 🟡 MAJOR · Реализуемость, стандарты и безопасность.** Чувствительные данные передаются в адресной строке запроса
+
+- Где: строки 41–43, [REQ-014](#req-014): «curl -X POST "\$BASE/v1/onboarding/3f1c9a52-0000-4000-8000-000000000001/documents?iin=000000000000"…»
+- Как исправить: Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы. · вопрос автору [В-02](#v-02); [подробно](kyc_upload_api_en.offline.details.md#x-d-001)
 
 ### 4.4 Понятность и термины
 
@@ -299,11 +203,7 @@
 <a id="s4-gaps"></a>
 ### Карта полноты: контрольные вопросы к документу
 
-Агент обязан ответить на каждый из 35 вопросов — так ни один типовой пробел не пропускается молча. Карта сама не меняет индексы и итог: на них влияют только связанные замечания.
-
-Итого: описано 0 · пробелов 0 · не относится 0 · не оценено 35.
-
-Без модели на остальные 35 вопросов никто не отвечал; их список — в JSON-версии отчёта (поле `gap_map`).
+Вопросов 35: описано 0 · пробелов 0 · не относится 0 · не оценено 35. Ответ на каждый вопрос и на чём он основан — в файле `kyc_upload_api_en.offline.details.md`, раздел В.
 
 <a id="s4-obs"></a>
 ### Наблюдения (проверьте сами, на итог не влияют)
@@ -392,38 +292,17 @@
 
 7 вопросов составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (`*.questions.md`): там у каждого вопроса есть варианты ответа.
 
-### Блокирующие (1)
+| № | Вопрос | Кому | Приоритет | К замечаниям |
+| :--- | :--- | :--- | :--- | :--- |
+| <a id="v-01"></a>В-01 | Какой HTTP-метод использовать для этого изменения? | архитектор или разработчик | блокирующий | [D-004](#d-004) |
+| <a id="v-02"></a>В-02 | Как передавать идентификатор карты и другие чувствительные значения? | информационная безопасность | важный | [D-001](#d-001) |
+| <a id="v-03"></a>В-03 | Возвращает ли сервис код 409? | архитектор или разработчик | важный | [D-002](#d-002) |
+| <a id="v-04"></a>В-04 | Возвращает ли сервис код 202? | архитектор или разработчик | важный | [D-005](#d-005) |
+| <a id="v-05"></a>В-05 | Кто и когда заполнит раздел «3.5. Callback to the core banking system»? | аналитик — автор документа | важный | [D-007](#d-007) |
+| <a id="v-06"></a>В-06 | Для какой доли случаев и при какой нагрузке должен выполняться срок «within 3 seconds»? | владелец продукта (бизнес) | важный | [D-003](#d-003) |
+| <a id="v-07"></a>В-07 | Что конкретно означает «accordingly» в этом требовании? | аналитик — автор документа | важный | [D-006](#d-006) |
 
-<a id="v-01"></a>
-**В-01.** Какой HTTP-метод использовать для этого изменения? (кому: архитектор или разработчик; к [D-004](#d-004))
-- Варианты: а) PUT — полная замена настройки; б) PATCH — изменение отдельных полей; в) POST — создание новой записи
-- Что изменит ответ в итоге: закроет 1 из 1 блокера, вердикт станет: «Начинать можно только после ответов на вопросы и исправления существенных замечаний» · индекс готовности 78 → 86
-
-### Важные (6)
-
-<a id="v-02"></a>
-**В-02.** Как передавать идентификатор карты и другие чувствительные значения? (кому: информационная безопасность; к [D-001](#d-001))
-- Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 81
-
-<a id="v-03"></a>
-**В-03.** Возвращает ли сервис код 409? (кому: архитектор или разработчик; к [D-002](#d-002))
-- Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 81
-
-<a id="v-04"></a>
-**В-04.** Возвращает ли сервис код 202? (кому: архитектор или разработчик; к [D-005](#d-005))
-- Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 81
-
-<a id="v-05"></a>
-**В-05.** Кто и когда заполнит раздел «3.5. Callback to the core banking system»? (кому: аналитик — автор документа; к [D-007](#d-007))
-- Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 81
-
-<a id="v-06"></a>
-**В-06.** Для какой доли случаев и при какой нагрузке должен выполняться срок «within 3 seconds»? (кому: владелец продукта (бизнес); к [D-003](#d-003))
-- Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 79
-
-<a id="v-07"></a>
-**В-07.** Что конкретно означает «accordingly» в этом требовании? (кому: аналитик — автор документа; к [D-006](#d-006))
-- Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 78 → 79
+Варианты ответа и что изменит каждый — в файле-анкете `kyc_upload_api_en.offline.questions.md`; вопросы полностью — в файле `kyc_upload_api_en.offline.details.md`, раздел Г.
 
 <a id="s8"></a>
 ## 8. Черновики приёмочных тестов
