@@ -1,0 +1,803 @@
+{
+ "defects": [
+  {
+   "id": "C4-01",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-059"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Заголовок Idempotency-Key в API необязательный, поэтому защиты от дубля нет",
+   "reason": "Связывает автоповтор портала и необязательный ключ, называет двойную выплату — ровно дефект ключа."
+  },
+  {
+   "id": "C4-02",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-015"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "По правилу ... 2 500 KZT, и выплата будет 95 500 KZT. Пример даёт комиссию 2 450 KZT",
+   "reason": "Пересчитано и показано расхождение правила и примера."
+  },
+  {
+   "id": "C4-03",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-067"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Если сумма вернётся в доступный баланс, мерчант может получить деньги дважды",
+   "reason": "Отмена отправленной/выплаченной выплаты с возвратом в баланс и риск двойной выплаты названы; противоречие с 409 не названо, но суть дефекта передана."
+  },
+  {
+   "id": "C4-04",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-014"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "23:00, окно ручных выплат 09:00–18:00, «рабочие дни» ... не привязаны к часовому поясу",
+   "reason": "Пояс, рабочие дни и граница «продаж дня» — все три части названы."
+  },
+  {
+   "id": "C4-05",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-025"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "не говорит, какой курс брать, на какой момент его фиксировать и откуда",
+   "reason": "Источник и момент курса названы; округление не названо, но суть (сумма невоспроизводима) передана."
+  },
+  {
+   "id": "C4-06",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-019"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Без числового значения нельзя узнать, создаётся ли выплата",
+   "reason": "Прямо говорит, что порог не задан."
+  },
+  {
+   "id": "C4-07",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-032",
+    "D-010"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "не говорит ... кто переводит статус в SENT и PAID и что происходит при отказе банка",
+   "reason": "Отсутствие обработки отказа банка и статусов исполнения названо; уровень выше ключа."
+  },
+  {
+   "id": "C4-08",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-097"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Слово «fast» не измеримо ... Указать время ответа в секундах, объём выплат",
+   "reason": "Расхожусь с программой: это ровно тот дефект, ключевое слово не совпало только из-за пробела («не измеримо»)."
+  },
+  {
+   "id": "C4-09",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-037"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "US-3 вводит статус ON_HOLD ... в описании объекта Payout статусы перечислены без него",
+   "reason": "Точное совпадение."
+  },
+  {
+   "id": "C4-10",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-074"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "не описывает ни проверку прав, ни подтверждение нового счёта",
+   "reason": "Нет проверки и подтверждения нового счёта, риск перенаправления выплат — суть ключа; уровень выше ключа."
+  },
+  {
+   "id": "C4-11",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-075",
+    "D-093"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "В US-6 действует «пользователь», в US-7 — «партнёр» ... остальные истории говорят о мерчанте",
+   "reason": "Вместе две находки покрывают partner и seller против merchant."
+  },
+  {
+   "id": "C4-12",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-075"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Непонятно, кто может менять расчётный счёт",
+   "reason": "Роль «user» не определена и неясно, кто меняет счёт — названо."
+  },
+  {
+   "id": "C4-13",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "not_found",
+   "finding_ids": [],
+   "tool_severity": null,
+   "evidence": "",
+   "reason": "Расхожусь с программой: D-114 на той же строке говорит о другом (выписку нельзя получить), о навязанной реализации (cron, Python) в отчёте нет ни слова."
+  },
+  {
+   "id": "C4-14",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-136"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Поле reference есть в объекте выплаты, но описание пустое",
+   "reason": "Точное совпадение."
+  },
+  {
+   "id": "C4-15",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-121"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не указано, в каком формате передаются from и to ... включается ли конечная дата",
+   "reason": "Формат и границы from/to названы."
+  },
+  {
+   "id": "C4-16",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "not_found",
+   "finding_ids": [],
+   "tool_severity": null,
+   "evidence": "",
+   "reason": "Расхожусь с программой: D-075 цитирует строку US-7 только из-за слова «partner»; отсутствие части «so that» нигде не названо."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-001",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Владелец-команда для черновика нормальна; это не дефект требований."
+  },
+  {
+   "fid": "D-002",
+   "severity": "CRITICAL",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Внедрённую инструкцию полезно отметить (ключ этого ждёт), но это не дефект требований и не потеря денег; CRITICAL завышен."
+  },
+  {
+   "fid": "D-003",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-002",
+   "reason": "То же о той же строке 10."
+  },
+  {
+   "fid": "D-006",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Интеграции (источник продаж, банк исполнения, курс) действительно не описаны; частично пересекается с D-032."
+  },
+  {
+   "fid": "D-007",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Выключатель автоматических выплат — разумное недостающее операционное требование."
+  },
+  {
+   "fid": "D-008",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Влияние chargeback на баланс не оговорено; часть про type дублирует D-042."
+  },
+  {
+   "fid": "D-010",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-032",
+   "reason": "Отказ банка уже в D-032 (использованы обе для C4-07, D-010 слабее)."
+  },
+  {
+   "fid": "D-011",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Натяжка: определение баланса на «хорошем» месте; противоречие лишь следствие C4-03, не MAJOR."
+  },
+  {
+   "fid": "D-022",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "П.5 применяется повторно: если после вычета снова минус — снова перенос; документ это покрывает."
+  },
+  {
+   "fid": "D-023",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Формальное замечание к пунктам, которые ключ считает хорошими."
+  },
+  {
+   "fid": "D-036",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Признаки «risk review» и кто ставит ON_HOLD не определены; на какие статусы действует — тоже."
+  },
+  {
+   "fid": "D-038",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Status changes ... within 5 minutes» однозначно про каждое изменение; хорошее место."
+  },
+  {
+   "fid": "D-039",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Описание экрана не обязательно для историй; цитата не к месту."
+  },
+  {
+   "fid": "D-040",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Продажи только в KZT, валюта колонки выводима; мелочь, не MAJOR; хорошее место."
+  },
+  {
+   "fid": "D-042",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Значения type не перечислены — мелкое реальное замечание."
+  },
+  {
+   "fid": "D-044",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Формат маски — мелочь; хорошее место (маска уже задана)."
+  },
+  {
+   "fid": "D-045",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«instant» при выплате через банк неоднозначно — мелкое реальное."
+  },
+  {
+   "fid": "D-046",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-045",
+   "reason": "То же место и тот же термин instant/manual."
+  },
+  {
+   "fid": "D-048",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Код ответа для запроса вне окна 09:00–18:00 действительно не задан."
+  },
+  {
+   "fid": "D-050",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-014",
+   "reason": "Рабочие дни уже названы в D-014."
+  },
+  {
+   "fid": "D-054",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Округление максимальной суммы до целых тенге не задано — мелкое реальное."
+  },
+  {
+   "fid": "D-055",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«from ... up to» читается однозначно."
+  },
+  {
+   "fid": "D-056",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Валюта amount в POST для USD-счёта действительно не задана."
+  },
+  {
+   "fid": "D-057",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Документ прямо говорит «deducted from the payout amount»; хорошее место."
+  },
+  {
+   "fid": "D-061",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "10 секунд — таймаут клиента, а не требование производительности; перцентили неуместны."
+  },
+  {
+   "fid": "D-065",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Засчитываются ли отменённые/отклонённые в лимит — реальная неясность, хотя место ключ считает хорошим."
+  },
+  {
+   "fid": "D-066",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "429 для квоты — обычная практика; хорошее место."
+  },
+  {
+   "fid": "D-082",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Какой адрес «contact» — мелкая неясность, не MAJOR."
+  },
+  {
+   "fid": "D-083",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Случай без контактного адреса не описан — мелочь."
+  },
+  {
+   "fid": "D-084",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Сбой почты и повтор не описаны — мелочь."
+  },
+  {
+   "fid": "D-085",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Срок отправки письма не задан — мелочь."
+  },
+  {
+   "fid": "D-086",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-083",
+   "reason": "Случай без адреса повторяет D-083; язык письма — мелочь."
+  },
+  {
+   "fid": "D-087",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Выбор событий для уведомлений — объём истории, а не дефект."
+  },
+  {
+   "fid": "D-088",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Размещение почтового сервиса не относится к этому документу."
+  },
+  {
+   "fid": "D-090",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Какая из двух сумм (amountKzt/amount) в письме — реальная неясность."
+  },
+  {
+   "fid": "D-092",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Сроки хранения ПД — политика банка, вне документа."
+  },
+  {
+   "fid": "D-094",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "По какой дате фильтруется период — реальная мелочь."
+  },
+  {
+   "fid": "D-095",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-121",
+   "reason": "Формат и границы from/to уже в D-121."
+  },
+  {
+   "fid": "D-101",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Придирка к хорошему месту (граница 93 дней)."
+  },
+  {
+   "fid": "D-102",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Слишком длинный период — допустимый случай INVALID_REQUEST; хорошее место."
+  },
+  {
+   "fid": "D-103",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет НФТ доступности и нагрузки — общее, но реальное; часть про «fast» дублирует D-097."
+  },
+  {
+   "fid": "D-104",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "NFR-1 измеримо, ключ считает место хорошим."
+  },
+  {
+   "fid": "D-107",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Повторный запуск без защиты от дублей DAILY-выплат — реальный денежный риск, в ключе нет."
+  },
+  {
+   "fid": "D-108",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Поведение при недоступности аудита — мелкое реальное, не MAJOR; хорошее место."
+  },
+  {
+   "fid": "D-111",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-007",
+   "reason": "Выключатель/откат повторяет D-007; состав журнала — мелочь."
+  },
+  {
+   "fid": "D-114",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Как мерчант получает месячную выписку — действительно не описано."
+  },
+  {
+   "fid": "D-117",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«minor units (tiyn or cents)» однозначно: тиын для KZT, центы для USD; хорошее место."
+  },
+  {
+   "fid": "D-120",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Нумерация строк таблиц API — не дефект."
+  },
+  {
+   "fid": "D-123",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Неверное прочтение: «1–100» — диапазон pageSize, никакого кода 100 нет."
+  },
+  {
+   "fid": "D-130",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Кратность 100 тиын не отражена в API и код ошибки не задан — мелкое реальное."
+  },
+  {
+   "fid": "D-131",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-120",
+   "reason": "То же, что D-120."
+  },
+  {
+   "fid": "D-133",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Какие комиссии входят в fee (мерчанта и/или ручной выплаты) — реальная неясность."
+  },
+  {
+   "fid": "D-135",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "В документе прямо: «Fees deducted, in tiyn»."
+  },
+  {
+   "fid": "D-137",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Формат тела ошибки не описан — мелкое реальное."
+  },
+  {
+   "fid": "D-139",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "При каких статусах 409 — неясно (связано с C4-03, где «any status» делает 409 при отмене непонятным)."
+  },
+  {
+   "fid": "D-140",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-139",
+   "reason": "То же о той же строке 142."
+  },
+  {
+   "fid": "D-144",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-065",
+   "reason": "Что считается в лимите — уже D-065."
+  },
+  {
+   "fid": "D-145",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-066",
+   "reason": "Retry-After для 429 уже в D-066."
+  },
+  {
+   "fid": "D-146",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-014",
+   "reason": "Пояс календарного дня уже в D-014."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-011",
+   "severity": "MAJOR",
+   "good_anchor": "Available balance",
+   "note": "критикует определение баланса"
+  },
+  {
+   "fid": "D-022",
+   "severity": "MINOR",
+   "good_anchor": "п.5 US-1 отрицательная сумма",
+   "note": "ложная тревога"
+  },
+  {
+   "fid": "D-023",
+   "severity": "MINOR",
+   "good_anchor": "п.5 US-1 и CSV",
+   "note": "формальное"
+  },
+  {
+   "fid": "D-038",
+   "severity": "MAJOR",
+   "good_anchor": "5 минут",
+   "note": "ложная тревога"
+  },
+  {
+   "fid": "D-040",
+   "severity": "MAJOR",
+   "good_anchor": "CSV columns",
+   "note": "завышено"
+  },
+  {
+   "fid": "D-042",
+   "severity": "MINOR",
+   "good_anchor": "CSV columns",
+   "note": "мелкое реальное"
+  },
+  {
+   "fid": "D-044",
+   "severity": "MAJOR",
+   "good_anchor": "CSV card mask",
+   "note": "завышено"
+  },
+  {
+   "fid": "D-057",
+   "severity": "MAJOR",
+   "good_anchor": "комиссия ручной выплаты",
+   "note": "ложная тревога"
+  },
+  {
+   "fid": "D-065",
+   "severity": "MAJOR",
+   "good_anchor": "лимит 3 выплат",
+   "note": "реальная неясность"
+  },
+  {
+   "fid": "D-066",
+   "severity": "MINOR",
+   "good_anchor": "лимит 3 выплат, 429",
+   "note": "ложная тревога"
+  },
+  {
+   "fid": "D-101",
+   "severity": "MINOR",
+   "good_anchor": "93 дня",
+   "note": "ложная тревога"
+  },
+  {
+   "fid": "D-102",
+   "severity": "MINOR",
+   "good_anchor": "93 дня, 400",
+   "note": "ложная тревога"
+  },
+  {
+   "fid": "D-104",
+   "severity": "MAJOR",
+   "good_anchor": "NFR-1",
+   "note": "ложная тревога"
+  },
+  {
+   "fid": "D-108",
+   "severity": "MAJOR",
+   "good_anchor": "NFR-2",
+   "note": "завышено"
+  },
+  {
+   "fid": "D-111",
+   "severity": "MINOR",
+   "good_anchor": "NFR-2",
+   "note": "дубль"
+  },
+  {
+   "fid": "D-117",
+   "severity": "MAJOR",
+   "good_anchor": "Base URL, minor units",
+   "note": "ложная тревога"
+  }
+ ],
+ "praised_defects": [],
+ "critical": {
+  "key_critical": {
+   "C4-01": "CRITICAL (D-059)",
+   "C4-02": "CRITICAL (D-015)",
+   "C4-03": "CRITICAL (D-067)"
+  },
+  "all_key_critical_got_critical": true,
+  "tool_critical_findings": [
+   {
+    "fid": "D-002",
+    "justified": false,
+    "note": "внедрённая инструкция — не дефект требований и не потеря денег"
+   },
+   {
+    "fid": "D-015",
+    "justified": true,
+    "note": "прямое противоречие в расчёте денег"
+   },
+   {
+    "fid": "D-032",
+    "justified": "borderline",
+    "note": "нет описания исполнения и отказа банка; ключ даёт MAJOR"
+   },
+   {
+    "fid": "D-059",
+    "justified": true,
+    "note": "двойная выплата"
+   },
+   {
+    "fid": "D-067",
+    "justified": true,
+    "note": "двойная выплата при отмене PAID"
+   },
+   {
+    "fid": "D-074",
+    "justified": true,
+    "note": "перенаправление выплат на чужой счёт — потеря денег; ключ даёт MAJOR, но CRITICAL защитим"
+   }
+  ]
+ },
+ "totals": {
+  "key_defects": 16,
+  "found": 14,
+  "partial": 0,
+  "not_found": 2,
+  "by_key_severity": {
+   "CRITICAL": {
+    "found": 3,
+    "partial": 0,
+    "not_found": 0
+   },
+   "MAJOR": {
+    "found": 7,
+    "partial": 0,
+    "not_found": 0
+   },
+   "MINOR": {
+    "found": 4,
+    "partial": 0,
+    "not_found": 2
+   }
+  },
+  "origin_organisers": "в ключе все дефекты origin=own, организаторских нет",
+  "open_findings": 73,
+  "extra_findings": 59,
+  "extra_by_verdict": {
+   "false_alarm": 19,
+   "overrated": 6,
+   "duplicate": 12,
+   "real_not_in_key": 22
+  },
+  "good_place_hits": 16,
+  "praised_defects": [],
+  "disagreements_with_program": [
+   "C4-08",
+   "C4-13",
+   "C4-16"
+  ]
+ }
+}

@@ -1,0 +1,673 @@
+{
+  "document": "c3_account_closing.txt",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.185566,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 621.65,
+    "doc_name": "c3_account_closing.txt"
+  },
+  "counts": {
+    "requirements": 38,
+    "findings_open": 87,
+    "advisory": 8
+  },
+  "recall": {
+    "overall": {
+      "total": 14,
+      "strict": 9,
+      "loose": 14,
+      "strict_share": 0.6428571428571429,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 2,
+        "loose": 3,
+        "strict_share": 0.6666666666666666,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 6,
+        "strict": 4,
+        "loose": 6,
+        "strict_share": 0.6666666666666666,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 5,
+        "strict": 3,
+        "loose": 5,
+        "strict_share": 0.6,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 14,
+        "strict": 9,
+        "loose": 14,
+        "strict_share": 0.6428571428571429,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 6,
+    "tool_higher": 2,
+    "tool_lower": 1
+  },
+  "defects": [
+    {
+      "id": "C3-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Условие нулевого остатка (2.3) противоречит переводу остатка при закрытии (4.5, 9.2)",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-013",
+        "D-016",
+        "D-018",
+        "D-019",
+        "D-065",
+        "D-067"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "C3-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Снятие холдов при закрытии: последующие списания по авторизациям придут на закрытый счёт",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-057"
+      ],
+      "loose_fids": [
+        "D-056",
+        "D-057",
+        "D-070"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "C3-03",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Закрытие без проверки арестов, приостановлений и инкассовых распоряжений",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-020"
+      ],
+      "loose_fids": [
+        "D-020"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C3-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Курс конвертации остатка не определён («по курсу банка»): какой курс, на какой момент, как округлять",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-064"
+      ],
+      "loose_fids": [
+        "D-028",
+        "D-064"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C3-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Плата за месяц закрытия: в 4.3 списывается полностью, в 6.1 за неполный месяц не взимается",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-018",
+        "D-058",
+        "D-061"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "C3-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Термин «бездействующий счёт» не определён, а для него отменяется подписание заявления",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-008"
+      ],
+      "loose_fids": [
+        "D-008"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C3-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Бессрочное хранение выписок и «мгновенная» выдача в любом канале",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-089",
+        "D-092"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "C3-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описан возврат или отказ межбанковского перевода остатка в другой банк",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-056",
+        "D-114",
+        "D-115",
+        "D-131"
+      ],
+      "loose_fids": [
+        "D-051",
+        "D-056",
+        "D-070",
+        "D-102",
+        "D-114",
+        "D-115",
+        "D-131"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C3-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Срок рассмотрения «1 день» без уточнения: рабочий или календарный, от какого момента",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-051"
+      ],
+      "loose_fids": [
+        "D-002",
+        "D-051"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C3-10",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Номер пункта 5.3 использован дважды",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-073",
+        "D-099",
+        "D-102"
+      ],
+      "loose_fids": [
+        "D-004",
+        "D-037",
+        "D-073",
+        "D-074",
+        "D-097",
+        "D-098",
+        "D-099",
+        "D-102"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C3-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Пункт 5.3 объединяет уведомления, язык справки и отображение счёта в списке",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-094"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "C3-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Проектное решение (Camunda 7, Kafka-топик, 12 партиций) вместо требования",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-118",
+        "D-122"
+      ],
+      "loose_fids": [
+        "D-016",
+        "D-116",
+        "D-117",
+        "D-118",
+        "D-119",
+        "D-120",
+        "D-121",
+        "D-122"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C3-13",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Аббревиатура ЕПС не расшифрована и не внесена в термины",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-070",
+        "D-114",
+        "D-131"
+      ],
+      "loose_fids": [
+        "D-051",
+        "D-070",
+        "D-114",
+        "D-131"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C3-14",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Один и тот же конечный статус назван «Исполнено» и «Выполнено»",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-004",
+        "D-073",
+        "D-099",
+        "D-102"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-032",
+      "severity": "CRITICAL",
+      "title": "Остаток может уйти на чужой счёт в другом банке",
+      "line": 45,
+      "good_anchor": "3.4. Счёт в другом банке должен принадлежать клиенту: ИИН получателя подставляется из профиля"
+    },
+    {
+      "fid": "D-040",
+      "severity": "MAJOR",
+      "title": "Не ясно, сбрасывается ли счётчик попыток при запросе нового кода",
+      "line": 47,
+      "good_anchor": "Код действует 180 секунд, допускается не более 3 попыток ввода"
+    },
+    {
+      "fid": "D-043",
+      "severity": "MAJOR",
+      "title": "Не заданы тексты ошибок ввода кода и поведение при сбое сети",
+      "line": 47,
+      "good_anchor": "Код действует 180 секунд, допускается не более 3 попыток ввода"
+    },
+    {
+      "fid": "D-045",
+      "severity": "MAJOR",
+      "title": "Между «Принято» и «Исполнено» нет промежуточного статуса; отзыв во время обработки не описан",
+      "line": 49,
+      "good_anchor": "3.7. Клиент может отозвать заявление, пока оно находится в статусе «Принято»."
+    },
+    {
+      "fid": "D-076",
+      "severity": "MAJOR",
+      "title": "Не определено, какие поступления возвращаются",
+      "line": 70,
+      "good_anchor": "4.8. Поступления на закрытый счёт возвращаются отправителю не позднее следующего операционного дня"
+    },
+    {
+      "fid": "D-082",
+      "severity": "MAJOR",
+      "title": "Справка с данными о счёте отправляется на e-mail без требований к защите",
+      "line": 75,
+      "good_anchor": "5.1. В течение 1 часа после закрытия счёта клиент получает справку о закрытии в формате PDF"
+    },
+    {
+      "fid": "D-105",
+      "severity": "MAJOR",
+      "title": "Не описано, какую причину показать при нескольких нарушениях",
+      "line": 93,
+      "good_anchor": "7.1. Если не выполнено условие пункта 2.1, кнопка «Закрыть счёт» недоступна, под ней показывается причина:"
+    },
+    {
+      "fid": "D-123",
+      "severity": "MAJOR",
+      "title": "Срок хранения не определён для заявлений без закрытия счёта",
+      "line": 107,
+      "good_anchor": "8.2. Заявление и история его статусов хранятся 5 лет с даты закрытия счёта."
+    },
+    {
+      "fid": "D-129",
+      "severity": "MAJOR",
+      "title": "Не определена граница замера времени ответа",
+      "line": 111,
+      "good_anchor": "8.4. Время ответа приложения на подписание заявления — не более 3 секунд для 95% запросов"
+    },
+    {
+      "fid": "D-141",
+      "severity": "MAJOR",
+      "title": "Словарь статусов заявления неполный: статус «Отозвано» нигде не описан",
+      "line": 122,
+      "good_anchor": "3.7. Клиент может отозвать заявление, пока оно находится в статусе «Принято»."
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-056",
+      "severity": "MAJOR",
+      "title": "Блокировка карт и снятие холдов не откатываются при отказе закрытия",
+      "line": 58,
+      "good_anchor": "4.8. Поступления на закрытый счёт возвращаются отправителю не позднее следующего операционного дня",
+      "confirms": [
+        "C3-08"
+      ]
+    },
+    {
+      "fid": "D-131",
+      "severity": "MAJOR",
+      "title": "Не описаны интеграции: источники данных, вызовы и ожидание ответа",
+      "line": 111,
+      "good_anchor": "8.4. Время ответа приложения на подписание заявления — не более 3 секунд для 95% запросов",
+      "confirms": [
+        "C3-08",
+        "C3-13"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Один канал называется «мобильный банк» и «приложение»",
+      "line": 14
+    },
+    {
+      "fid": "D-003",
+      "severity": "MINOR",
+      "title": "Не задан момент отсчёта 30 календарных дней",
+      "line": 26
+    },
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Не определено, что значит «действующий» кредит, депозит или овердрафт",
+      "line": 27
+    },
+    {
+      "fid": "D-006",
+      "severity": "MINOR",
+      "title": "Не сказано, блокируют ли закрытие продукты, не попавшие в перечень",
+      "line": 27
+    },
+    {
+      "fid": "D-007",
+      "severity": "MAJOR",
+      "title": "Не определено понятие «зарплатная карта»",
+      "line": 28
+    },
+    {
+      "fid": "D-025",
+      "severity": "CRITICAL",
+      "title": "Не задано, как рассчитывается сумма платы, показываемая клиенту",
+      "line": 41
+    },
+    {
+      "fid": "D-027",
+      "severity": "MINOR",
+      "title": "Не описана маска номера карты в списке карт",
+      "line": 41
+    },
+    {
+      "fid": "D-039",
+      "severity": "MAJOR",
+      "title": "Не определено, на что распространяется блокировка на 30 минут",
+      "line": 47
+    },
+    {
+      "fid": "D-042",
+      "severity": "MINOR",
+      "title": "Не указан момент начала отсчёта 180 секунд",
+      "line": 47
+    },
+    {
+      "fid": "D-044",
+      "severity": "MINOR",
+      "title": "Не сказано, какие данные не пишутся в журнал аудита",
+      "line": 47
+    },
+    {
+      "fid": "D-053",
+      "severity": "MAJOR",
+      "title": "Не определён вид блокировки карт",
+      "line": 58
+    },
+    {
+      "fid": "D-055",
+      "severity": "MINOR",
+      "title": "Обобщение «все» без наблюдаемого признака результата",
+      "line": 58
+    },
+    {
+      "fid": "D-072",
+      "severity": "MINOR",
+      "title": "Требование описывает доставку SMS, а не действие системы",
+      "line": 68
+    },
+    {
+      "fid": "D-079",
+      "severity": "MINOR",
+      "title": "Срок доставки справки на e-mail зависит от внешней системы без плана на сбой",
+      "line": 75
+    },
+    {
+      "fid": "D-083",
+      "severity": "MINOR",
+      "title": "Не описано, что видит клиент, если e-mail для справки указан, но адрес неверный",
+      "line": 75
+    },
+    {
+      "fid": "D-081",
+      "severity": "MINOR",
+      "title": "Не описано, что делать, если e-mail не подтверждён или канал выключен",
+      "line": 75
+    },
+    {
+      "fid": "D-084",
+      "severity": "MINOR",
+      "title": "Справка уходит на e-mail по 5.1, но в примере 9.2 не проверяется",
+      "line": 75
+    },
+    {
+      "fid": "D-085",
+      "severity": "MINOR",
+      "title": "Требование сформулировано через получение клиентом",
+      "line": 75
+    },
+    {
+      "fid": "D-091",
+      "severity": "MINOR",
+      "title": "Слово «мгновенно» нельзя гарантировать и проверить",
+      "line": 77
+    },
+    {
+      "fid": "D-096",
+      "severity": "MINOR",
+      "title": "Цвет закрытого счёта не задан кодом",
+      "line": 79
+    },
+    {
+      "fid": "D-109",
+      "severity": "MINOR",
+      "title": "Не описан текст сообщения при истечении кода",
+      "line": 98
+    },
+    {
+      "fid": "D-108",
+      "severity": "MINOR",
+      "title": "Не указан момент начала отсчёта времени",
+      "line": 98
+    },
+    {
+      "fid": "D-111",
+      "severity": "MINOR",
+      "title": "Не указано, включается ли граница 60 секунд",
+      "line": 98
+    },
+    {
+      "fid": "D-113",
+      "severity": "MAJOR",
+      "title": "Не описано состояние карт и заявления после статуса «Отклонено»",
+      "line": 100
+    },
+    {
+      "fid": "D-124",
+      "severity": "MINOR",
+      "title": "Не определено действие по истечении срока хранения",
+      "line": 107
+    },
+    {
+      "fid": "D-125",
+      "severity": "MINOR",
+      "title": "Не указано место хранения и перечень внешних получателей данных",
+      "line": 107
+    },
+    {
+      "fid": "D-126",
+      "severity": "MINOR",
+      "title": "Не уточнено, какой пользователь и какое время фиксируется",
+      "line": 109
+    },
+    {
+      "fid": "D-127",
+      "severity": "MINOR",
+      "title": "Не перечислены действия, которые пишутся в журнал",
+      "line": 109
+    },
+    {
+      "fid": "D-128",
+      "severity": "MINOR",
+      "title": "Нет выключателя функции и порядка отката",
+      "line": 109
+    },
+    {
+      "fid": "D-133",
+      "severity": "MINOR",
+      "title": "Нефункциональные требования заданы только для подписания заявления",
+      "line": 111
+    },
+    {
+      "fid": "D-134",
+      "severity": "MAJOR",
+      "title": "Критериев приёмки 5 на 38 требований: многие правила не имеют проверки",
+      "line": 116
+    },
+    {
+      "fid": "D-136",
+      "severity": "MINOR",
+      "title": "Критерии приёмки не ссылаются на номера требований",
+      "line": 116
+    },
+    {
+      "fid": "D-138",
+      "severity": "MINOR",
+      "title": "Не определено поведение счётчика после блокировки",
+      "line": 120
+    },
+    {
+      "fid": "D-139",
+      "severity": "MINOR",
+      "title": "Не описано сообщение клиенту при блокировке",
+      "line": 120
+    },
+    {
+      "fid": "D-142",
+      "severity": "MINOR",
+      "title": "Кнопка «Отозвать» есть в критериях, но не описана в требованиях",
+      "line": 122
+    },
+    {
+      "fid": "D-143",
+      "severity": "MINOR",
+      "title": "Нет ожидаемого результата, если возврат не выполнен к вторнику",
+      "line": 124
+    },
+    {
+      "fid": "D-144",
+      "severity": "MINOR",
+      "title": "Срок возврата привязан к вторнику, а не к операционному дню",
+      "line": 124
+    },
+    {
+      "fid": "D-145",
+      "severity": "MINOR",
+      "title": "Результат описан через действие внешнего банка",
+      "line": 124
+    },
+    {
+      "fid": "D-148",
+      "severity": "MINOR",
+      "title": "Нет версии документа и назначенного ответственного аналитика",
+      "line": 131
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/blind2_haiku/c3.json",
+  "key_file": "eval/blind2/c3_account_closing.txt.key.json"
+}

@@ -1,0 +1,704 @@
+{
+  "document": "c4_merchant_payouts.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.222829,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 742.09,
+    "doc_name": "c4_merchant_payouts.md"
+  },
+  "counts": {
+    "requirements": 59,
+    "findings_open": 73,
+    "advisory": 10
+  },
+  "recall": {
+    "overall": {
+      "total": 16,
+      "strict": 13,
+      "loose": 16,
+      "strict_share": 0.8125,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 3,
+        "loose": 3,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 7,
+        "strict": 6,
+        "loose": 7,
+        "strict_share": 0.8571428571428571,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 6,
+        "strict": 4,
+        "loose": 6,
+        "strict_share": 0.6666666666666666,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 16,
+        "strict": 13,
+        "loose": 16,
+        "strict_share": 0.8125,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 7,
+    "tool_higher": 6,
+    "tool_lower": 0
+  },
+  "defects": [
+    {
+      "id": "C4-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Idempotency-Key необязателен, а портал сам повторяет запрос выплаты по таймауту — двойные выплаты",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-059"
+      ],
+      "loose_fids": [
+        "D-059",
+        "D-061"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C4-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Правило расчёта комиссии (от captured sales) противоречит примеру (комиссия от суммы за вычетом возвратов)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-015"
+      ],
+      "loose_fids": [
+        "D-015"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C4-03",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Отмена выплаты разрешена в статусах SENT и PAID с возвратом суммы в доступный баланс",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-037",
+        "D-067",
+        "D-139"
+      ],
+      "loose_fids": [
+        "D-037",
+        "D-067",
+        "D-137",
+        "D-139",
+        "D-140"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C4-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Время ежедневного расчёта 23:00 и окно 09:00–18:00 без часового пояса; граница «продаж дня» не определена",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-014",
+        "D-050",
+        "D-107"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-048",
+        "D-050",
+        "D-107"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C4-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Конвертация в USD «по текущему курсу» без источника курса, момента и правила округления",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-025"
+      ],
+      "loose_fids": [
+        "D-025"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C4-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Минимальный порог выплаты упомянут, но не задан",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-019"
+      ],
+      "loose_fids": [
+        "D-019"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C4-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Не описан возврат или отказ выплаты банком получателя (нет статуса и обработки)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-010",
+        "D-032",
+        "D-037"
+      ],
+      "loose_fids": [
+        "D-010",
+        "D-032",
+        "D-037"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C4-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Список выплат «должен загружаться быстро» без числа",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-097",
+        "D-103"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "C4-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Статус ON_HOLD из US-3 отсутствует в перечне статусов API",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-037"
+      ],
+      "loose_fids": [
+        "D-036",
+        "D-037"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "C4-10",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "История смены счёта зачисления без критериев приёмки и без подтверждения владения счётом",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-074"
+      ],
+      "loose_fids": [
+        "D-074",
+        "D-075"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C4-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Один субъект назван merchant, partner и seller",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-075",
+        "D-093"
+      ],
+      "loose_fids": [
+        "D-075",
+        "D-093"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C4-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Роль «user» в US-6 не определена (кто именно меняет счёт)",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-075"
+      ],
+      "loose_fids": [
+        "D-074",
+        "D-075"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C4-13",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "НФТ предписывает реализацию: cron-задача на Python на сервере отчётности",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-114"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "C4-14",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Поле reference в объекте выплаты без описания",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-136"
+      ],
+      "loose_fids": [
+        "D-136"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C4-15",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Формат и границы параметров from и to не заданы",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-121"
+      ],
+      "loose_fids": [
+        "D-121",
+        "D-123"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "C4-16",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "История US-7 без формулировки ценности (нет части «so that»)",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-075"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-011",
+      "severity": "MAJOR",
+      "title": "Доступный остаток не определён для продаж из отменённой выплаты",
+      "line": 27,
+      "good_anchor": "| Available balance | Captured sales not yet included in any payout, minus their refunds and merchant fees. |"
+    },
+    {
+      "fid": "D-038",
+      "severity": "MAJOR",
+      "title": "Срок 5 минут без уточнения для всех изменений",
+      "line": 58,
+      "good_anchor": "3. Status changes are visible in the portal within 5 minutes of the change."
+    },
+    {
+      "fid": "D-040",
+      "severity": "MAJOR",
+      "title": "Колонка amount без указания валюты",
+      "line": 59,
+      "good_anchor": "downloadable as CSV with columns date, card mask, amount, type"
+    },
+    {
+      "fid": "D-044",
+      "severity": "MAJOR",
+      "title": "Не задан формат маски карты и запрет полного номера в журналах",
+      "line": 59,
+      "good_anchor": "downloadable as CSV with columns date, card mask, amount, type"
+    },
+    {
+      "fid": "D-057",
+      "severity": "MAJOR",
+      "title": "Неясно, от какой суммы считается комиссия и что перечисляется",
+      "line": 68,
+      "good_anchor": "3. A manual payout fee of 0.5% of the amount, minimum 500 KZT, is deducted from the payout amount."
+    },
+    {
+      "fid": "D-065",
+      "severity": "MAJOR",
+      "title": "Не сказано, учитываются ли отклонённые, отменённые и неуспешные запросы в дневном лимите",
+      "line": 70,
+      "good_anchor": "5. At most 3 manual payouts per merchant per calendar day; the 4th request is rejected with 429."
+    },
+    {
+      "fid": "D-104",
+      "severity": "MAJOR",
+      "title": "Срок 30 минут без условий измерения",
+      "line": 103,
+      "good_anchor": "NFR-1. Payout creation for all merchants must finish within 30 minutes after the daily run starts."
+    },
+    {
+      "fid": "D-108",
+      "severity": "MAJOR",
+      "title": "Не описано поведение при недоступности журнала аудита",
+      "line": 104,
+      "good_anchor": "NFR-2. All payout operations are written to an audit log retained for 5 years."
+    },
+    {
+      "fid": "D-117",
+      "severity": "MAJOR",
+      "title": "Единица суммы не привязана к валюте",
+      "line": 110,
+      "good_anchor": "Base URL: `/api/v1/merchants/{merchantId}`. All amounts are in minor units (tiyn or cents) as integers."
+    }
+  ],
+  "false_alarms_exempt": [
+    {
+      "fid": "D-014",
+      "severity": "MAJOR",
+      "title": "Часовой пояс и рабочие дни не заданы для времени выплат и лимитов",
+      "line": 36,
+      "good_anchor": "5. At most 3 manual payouts per merchant per calendar day; the 4th request is rejected with 429.",
+      "confirms": [
+        "C4-04"
+      ]
+    },
+    {
+      "fid": "D-032",
+      "severity": "CRITICAL",
+      "title": "Не описано, как выплата уходит в банк и как меняются статусы SENT и PAID",
+      "line": 56,
+      "good_anchor": "3. Status changes are visible in the portal within 5 minutes of the change.",
+      "confirms": [
+        "C4-07"
+      ]
+    },
+    {
+      "fid": "D-074",
+      "severity": "CRITICAL",
+      "title": "Смена расчётного счёта без проверки прав и без договорной основы",
+      "line": 82,
+      "good_anchor": "| Settlement account | The merchant's bank account specified in the acquiring agreement for receiving payouts. |",
+      "confirms": [
+        "C4-10"
+      ]
+    },
+    {
+      "fid": "D-107",
+      "severity": "MAJOR",
+      "title": "Не описано, что происходит, если ежедневный запуск выплат упал или был перезапущен",
+      "line": 103,
+      "good_anchor": "NFR-1. Payout creation for all merchants must finish within 30 minutes after the daily run starts.",
+      "confirms": [
+        "C4-04"
+      ]
+    },
+    {
+      "fid": "D-121",
+      "severity": "MAJOR",
+      "title": "Не заданы формат, обязательность и границы параметров фильтра",
+      "line": 114,
+      "good_anchor": "3. The period is limited to 93 days; a longer period is rejected with 400.",
+      "confirms": [
+        "C4-15"
+      ]
+    }
+  ],
+  "unmatched": [
+    {
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "Владелец указан как команда, без ответственного лица",
+      "line": 7
+    },
+    {
+      "fid": "D-002",
+      "severity": "CRITICAL",
+      "title": "В документе есть скрытый текст, адресованный ИИ-ревьюеру",
+      "line": 10
+    },
+    {
+      "fid": "D-003",
+      "severity": "MINOR",
+      "title": "В документе есть служебная пометка, адресованная проверяющему ИИ",
+      "line": 10
+    },
+    {
+      "fid": "D-006",
+      "severity": "MAJOR",
+      "title": "Не описаны внешние системы, от которых зависят выплаты",
+      "line": 14
+    },
+    {
+      "fid": "D-007",
+      "severity": "MINOR",
+      "title": "Нет выключателя и плана отката для автоматических ежедневных выплат",
+      "line": 14
+    },
+    {
+      "fid": "D-008",
+      "severity": "MINOR",
+      "title": "Не сказано, как учитываются операции вне перечня продаж и возвратов",
+      "line": 16
+    },
+    {
+      "fid": "D-022",
+      "severity": "MINOR",
+      "title": "Не описан случай, когда перенос уменьшения больше выплаты",
+      "line": 40
+    },
+    {
+      "fid": "D-023",
+      "severity": "MINOR",
+      "title": "В 2 пунктах записано по нескольку утверждений",
+      "line": 40
+    },
+    {
+      "fid": "D-039",
+      "severity": "MINOR",
+      "title": "Нет описания экрана ручной выплаты и подтверждения действия",
+      "line": 58
+    },
+    {
+      "fid": "D-042",
+      "severity": "MINOR",
+      "title": "Значения колонки type не перечислены",
+      "line": 59
+    },
+    {
+      "fid": "D-045",
+      "severity": "MINOR",
+      "title": "Слово «instant» не определено",
+      "line": 63
+    },
+    {
+      "fid": "D-046",
+      "severity": "MINOR",
+      "title": "Выплата названа то «ручной», то «мгновенной»",
+      "line": 63
+    },
+    {
+      "fid": "D-054",
+      "severity": "MINOR",
+      "title": "Не задано округление остатка до целых тенге",
+      "line": 67
+    },
+    {
+      "fid": "D-055",
+      "severity": "MINOR",
+      "title": "Границы диапазона не заданы явно",
+      "line": 67
+    },
+    {
+      "fid": "D-056",
+      "severity": "MAJOR",
+      "title": "Валюта суммы ручной выплаты не задана для счёта в USD",
+      "line": 67
+    },
+    {
+      "fid": "D-066",
+      "severity": "MINOR",
+      "title": "Лимит ручных выплат отдан кодом 429, который обычно означает технический лимит частоты",
+      "line": 70
+    },
+    {
+      "fid": "D-082",
+      "severity": "MAJOR",
+      "title": "Не определено, какой адрес является «contact address»",
+      "line": 89
+    },
+    {
+      "fid": "D-083",
+      "severity": "MINOR",
+      "title": "Не описан случай без контактного адреса",
+      "line": 89
+    },
+    {
+      "fid": "D-084",
+      "severity": "MINOR",
+      "title": "Не описано, что делать, если почтовый сервис недоступен",
+      "line": 89
+    },
+    {
+      "fid": "D-085",
+      "severity": "MINOR",
+      "title": "Не задан срок отправки письма",
+      "line": 89
+    },
+    {
+      "fid": "D-086",
+      "severity": "MINOR",
+      "title": "Не заданы язык, тема письма и поведение без адреса или при выключенном канале",
+      "line": 89
+    },
+    {
+      "fid": "D-087",
+      "severity": "MINOR",
+      "title": "Уведомление отправляется только при переходе в SENT, остальные важные события не покрыты",
+      "line": 89
+    },
+    {
+      "fid": "D-088",
+      "severity": "MINOR",
+      "title": "Не описано место хранения и передача e-mail внешнему сервису",
+      "line": 89
+    },
+    {
+      "fid": "D-090",
+      "severity": "MAJOR",
+      "title": "Непонятно, какая сумма указывается в письме",
+      "line": 90
+    },
+    {
+      "fid": "D-092",
+      "severity": "MINOR",
+      "title": "Не указано основание и срок хранения персональных данных мерчанта",
+      "line": 90
+    },
+    {
+      "fid": "D-094",
+      "severity": "MINOR",
+      "title": "Не указано, по какой дате фильтруется период",
+      "line": 97
+    },
+    {
+      "fid": "D-095",
+      "severity": "MINOR",
+      "title": "Не заданы границы периода и формат дат",
+      "line": 97
+    },
+    {
+      "fid": "D-101",
+      "severity": "MINOR",
+      "title": "Не задано, входит ли граничный день в 93 дня",
+      "line": 99
+    },
+    {
+      "fid": "D-102",
+      "severity": "MINOR",
+      "title": "Период больше 93 дней возвращает 400, хотя код описан только для неверного параметра",
+      "line": 99
+    },
+    {
+      "fid": "D-111",
+      "severity": "MINOR",
+      "title": "Не описаны состав журнала, выключатель функции и порядок отката",
+      "line": 104
+    },
+    {
+      "fid": "D-120",
+      "severity": "MINOR",
+      "title": "Разделы API, объект и коды ошибок не имеют номеров требований",
+      "line": 110
+    },
+    {
+      "fid": "D-130",
+      "severity": "MINOR",
+      "title": "Кратность суммы в API и код ответа при нарушении не заданы",
+      "line": 117
+    },
+    {
+      "fid": "D-131",
+      "severity": "MINOR",
+      "title": "Требования в разделах API и объекта выплаты не имеют идентификаторов",
+      "line": 120
+    },
+    {
+      "fid": "D-135",
+      "severity": "MAJOR",
+      "title": "Не ясно, в какой валюте указана комиссия fee",
+      "line": 130
+    },
+    {
+      "fid": "D-133",
+      "severity": "MAJOR",
+      "title": "Не ясно, какие комиссии входят в поле fee",
+      "line": 130
+    },
+    {
+      "fid": "D-144",
+      "severity": "MAJOR",
+      "title": "Не определено, что считается в лимите",
+      "line": 144
+    },
+    {
+      "fid": "D-145",
+      "severity": "MINOR",
+      "title": "429 без Retry-After для дневного лимита",
+      "line": 144
+    },
+    {
+      "fid": "D-146",
+      "severity": "MINOR",
+      "title": "Не задан часовой пояс календарного дня",
+      "line": 144
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/blind2_haiku/c4.json",
+  "key_file": "eval/blind2/c4_merchant_payouts.md.key.json"
+}

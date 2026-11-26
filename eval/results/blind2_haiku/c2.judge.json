@@ -1,0 +1,683 @@
+{
+ "defects": [
+  {
+   "id": "C2-01",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-013"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "КП-01 при 5 активных целях ожидает, что кнопка уже неактивна... разработчик, следуя КП-01, заблокирует создание 6–10 целей",
+   "reason": "Тот же конфликт ЦН-02 (10) и КП-01 (5) с исправлением; программа поставила «место» лишь потому, что нет слова «противоречие»."
+  },
+  {
+   "id": "C2-02",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-035"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Если покупка возвращена или отменена после того, как округление уже учтено, документ не говорит, отменяется ли округление",
+   "reason": "Прямо названа проблема возврата/отмены покупки после округления; не хватает только деталей про нехватку остатка цели, но суть ключа передана."
+  },
+  {
+   "id": "C2-03",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-073"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "ЦН-22 говорит, что остаток при закрытии уходит на основной счёт клиента. КП-13 ожидает зачисления на счёт списания... Термин «основной счёт» в документе не определён",
+   "reason": "Главная часть дефекта (неопределённый «основной счёт» против счёта списания в КП-13) названа точно; побочный случай закрытого счёта списания отражён лишь вопросом В-03. D-071 — о другой проблеме (сбой перевода)."
+  },
+  {
+   "id": "C2-04",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-086"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Заменить «своевременно» числом и единицей, например: «в течение 1 минуты после перехода»",
+   "reason": "Тот же дефект и та же правка; программа поставила «место», так как нет её ключевых слов; уровень у инструмента завышен (MAJOR вместо MINOR). D-091 — о другой проблеме."
+  },
+  {
+   "id": "C2-05",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-056"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Документ содержит разделы 3.1–3.6, а раздел 3.7 не существует. Ограничения по количеству операций округления нигде не описаны",
+   "reason": "Битая ссылка названа точно; уровень CRITICAL сильно выше MINOR ключа."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-001",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Роли согласующих без ФИО — обычная практика шапки, на требования не влияет."
+  },
+  {
+   "fid": "D-002",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "План выката, флаг и версия API — вне рамок SRS этой функции."
+  },
+  {
+   "fid": "D-003",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "SAV-1187 — номер задачи в JIRA, а не ссылка на требование; находка неверно прочитала шапку."
+  },
+  {
+   "fid": "D-004",
+   "severity": "CRITICAL",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Общая фраза в 1.1 против исключения ЦН-24 — небольшая неточность назначения, а не прямое противоречие основного потока; CRITICAL завышен."
+  },
+  {
+   "fid": "D-005",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-002",
+   "reason": "Тот же выключатель функции, что и в D-002 (и тоже вне рамок)."
+  },
+  {
+   "fid": "D-006",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Перечисленные пункты — связные правила; дробление ради стиля пользы не даёт."
+  },
+  {
+   "fid": "D-008",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Часовой пояс как термин и таблица кодов без номеров — не дефект, на них можно ссылаться."
+  },
+  {
+   "fid": "D-009",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Глоссарий говорит, что счёт списания выбирается при создании, но в ЦН-01–ЦН-06 этого шага нет."
+  },
+  {
+   "fid": "D-012",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Макеты и экраны — не предмет этого SRS."
+  },
+  {
+   "fid": "D-014",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Бьёт по «хорошему» месту ЦН-03; вопрос о казахских буквах уместен как уточнение, но не MAJOR."
+  },
+  {
+   "fid": "D-016",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет КП на границы 40 символов, «завтра» и 99 ₸ — мелкий, но реальный пробел в приёмке."
+  },
+  {
+   "fid": "D-017",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Цель с датой ближе 7 дней: момент push ЦН-26 уже прошёл — реальный неописанный случай (критикует ЦН-26, а не ЦН-05)."
+  },
+  {
+   "fid": "D-018",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Таблица кодов однозначна: сумма < 100 ₸ — SAV-400-AMOUNT, больше остатка — SAV-422-FUNDS; пустого диапазона нет."
+  },
+  {
+   "fid": "D-019",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "«Доступный остаток» — стандартный банковский термин, определяется АБС (7.1); не MAJOR."
+  },
+  {
+   "fid": "D-021",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Для вывода и сумм покупок не сказано про тиыны; для округления это реально важно."
+  },
+  {
+   "fid": "D-022",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "SAV-409-LIMIT — код ошибки из раздела 4, не ссылка на требование."
+  },
+  {
+   "fid": "D-025",
+   "severity": "CRITICAL",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Таймаут АБС не равен подтверждённому отказу, текст «деньги не списаны» может быть ложным — реальный риск, хотя ключ считает ЦН-09 хорошим местом."
+  },
+  {
+   "fid": "D-026",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Отсутствующий/неверный operationId — мелкое уточнение к хорошему месту ЦН-10; не MAJOR."
+  },
+  {
+   "fid": "D-028",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "После окна 24 ч запрос очевидно обрабатывается как новый; хорошее место ключа."
+  },
+  {
+   "fid": "D-030",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Идемпотентность пакетного перевода округлений в 00:30 не задана — реальный риск двойного зачисления."
+  },
+  {
+   "fid": "D-032",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "ЦН-14а уже говорит о «выборе другой цели» для округления, то есть переключение подразумевается; уточнение мелкое."
+  },
+  {
+   "fid": "D-036",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-046",
+   "reason": "То же, что D-046: опоздавшие/непришедшие события процессинга."
+  },
+  {
+   "fid": "D-038",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "ЦН-12 и так ограничивает округление покупками; комиссии и прочее не покупки. Упоминание возвратов перекрывается D-035."
+  },
+  {
+   "fid": "D-039",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Функция не работает с реквизитами карт, получает события покупок; PCI-требования здесь не по адресу."
+  },
+  {
+   "fid": "D-041",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Интервал до 23:59:59 при долях секунды формально оставляет щель; мелкое, уровень MINOR уместен."
+  },
+  {
+   "fid": "D-042",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет допуска по времени 00:30 для проверки — мелкое, но реальное."
+  },
+  {
+   "fid": "D-046",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Покупки, проведённые за день, но пришедшие после 00:30, не описаны — реальный пробел."
+  },
+  {
+   "fid": "D-044",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "ЦН-14 прямо говорит «дата проведения», часовой пояс задан в разделе 2."
+  },
+  {
+   "fid": "D-047",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "При смене цели днём неясно, куда уходит часть дня до смены при «одной операции» в 00:30."
+  },
+  {
+   "fid": "D-048",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Граница «в ту же секунду» — избыточная придирка."
+  },
+  {
+   "fid": "D-051",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-137",
+   "reason": "Та же недоставка push, что в D-137."
+  },
+  {
+   "fid": "D-049",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Дата в push: день покупок или день перевода — реальная мелкая неоднозначность."
+  },
+  {
+   "fid": "D-052",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-136",
+   "reason": "«Получает» против «отправляет» — то же, что D-136 (что считать успешной отправкой)."
+  },
+  {
+   "fid": "D-053",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "ЦН-15а, в отличие от ЦН-15, не говорит о переносе суммы — реальная неполнота; MAJOR немного завышен."
+  },
+  {
+   "fid": "D-062",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Для вывода нет аналога ЦН-09 о поведении при сбое АБС."
+  },
+  {
+   "fid": "D-066",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Критикует хорошее место ЦН-19; «операции по одной цели» читаются как все операции; не MAJOR."
+  },
+  {
+   "fid": "D-067",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ЦН-19; придирка к слову «завершение»."
+  },
+  {
+   "fid": "D-071",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет поведения при сбое перевода остатка при закрытии — реальный денежный пробел."
+  },
+  {
+   "fid": "D-076",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Нельзя открыть повторно» означает отсутствие такого действия; уточнение не нужно."
+  },
+  {
+   "fid": "D-077",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Граница «3 года» в днях — придирка без влияния."
+  },
+  {
+   "fid": "D-082",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Непереведённые округления дня при закрытии цели не описаны — реальный пробел."
+  },
+  {
+   "fid": "D-084",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет требования на ручное выключение округления."
+  },
+  {
+   "fid": "D-091",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Сумма в push — вопрос политики ИБ, не дефект требований уровня MAJOR."
+  },
+  {
+   "fid": "D-093",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "«С остатком до целевой суммы» двусмысленно (остаток цели или недостающая сумма)."
+  },
+  {
+   "fid": "D-095",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "SAV-400-NAME — код ошибки, не ссылка на требование."
+  },
+  {
+   "fid": "D-096",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Дробная сумма не попадает ни в одно условие SAV-400-AMOUNT — мелкое, но реальное."
+  },
+  {
+   "fid": "D-099",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "SAV-422-FUNDS — код ошибки, не ссылка на требование."
+  },
+  {
+   "fid": "D-102",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "5 секунд — порог таймаута, а не целевой показатель; перцентиль ему не нужен."
+  },
+  {
+   "fid": "D-103",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Формат тела ошибки не задан — мелкий реальный пробел интерфейса."
+  },
+  {
+   "fid": "D-104",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Критикует хорошее место ЦН-27; точка замера — уточнение, не MAJOR."
+  },
+  {
+   "fid": "D-107",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Фраза читается однозначно: исключаются плановые работы с предупреждением за 48 ч; хорошее место ключа."
+  },
+  {
+   "fid": "D-108",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Критикует хорошее место ЦН-28; методика замера — уточнение, не MAJOR."
+  },
+  {
+   "fid": "D-109",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "«Каждая операция» охватывает все; реальна лишь мелочь про operationId для округлений; не MAJOR."
+  },
+  {
+   "fid": "D-111",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-109",
+   "reason": "Тот же перечень типов операций журнала, что D-109."
+  },
+  {
+   "fid": "D-113",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Изменения настроек округления не журналируются — мелкий реальный пробел."
+  },
+  {
+   "fid": "D-114",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Состав и сроки хранения персональных данных не описаны — мелкий реальный пробел."
+  },
+  {
+   "fid": "D-115",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В зависимостях нет отчётной системы и журнала аудита — мелкое, реальное."
+  },
+  {
+   "fid": "D-116",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Ответ на запрос без сессии не задан — мелкое, реальное."
+  },
+  {
+   "fid": "D-117",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«404 без раскрытия данных» достаточно ясно."
+  },
+  {
+   "fid": "D-119",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "ЦН-25–ЦН-31 действительно не покрыты КП."
+  },
+  {
+   "fid": "D-121",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "КП не ссылаются на номера ЦН — мелкий реальный пробел трассировки (с C2-01 не связан)."
+  },
+  {
+   "fid": "D-126",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "400 для отказа по состоянию остатка спорен по семантике HTTP; мелкое, реальное."
+  },
+  {
+   "fid": "D-127",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Ветка вывода при заблокированном счёте не проверяется КП."
+  },
+  {
+   "fid": "D-129",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Сбой АБС при открытии счёта-цели не описан."
+  },
+  {
+   "fid": "D-131",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Контракт с АБС — отдельный документ интеграции, не дефект SRS."
+  },
+  {
+   "fid": "D-135",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Способ проверки поставки событий — вопрос тестового стенда."
+  },
+  {
+   "fid": "D-136",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Критерий успешной отправки push не задан — мелкое, реальное."
+  },
+  {
+   "fid": "D-137",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Нет поведения при недоставке push — мелкое, реальное."
+  },
+  {
+   "fid": "D-138",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "7.3 действительно не упоминает push по ЦН-15а."
+  },
+  {
+   "fid": "D-139",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Резидентность сервиса уведомлений — домысел, в тексте нет оснований для дефекта."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-014",
+   "severity": "MAJOR",
+   "good_anchor": "ЦН-03 название цели",
+   "note": "требует перечислить алфавиты"
+  },
+  {
+   "fid": "D-025",
+   "severity": "CRITICAL",
+   "good_anchor": "ЦН-09 при ошибке АБС деньги не списываются",
+   "note": "справедливо указывает на таймаут; признан реальным"
+  },
+  {
+   "fid": "D-026",
+   "severity": "MAJOR",
+   "good_anchor": "ЦН-10 идемпотентность",
+   "note": "мелкое уточнение"
+  },
+  {
+   "fid": "D-028",
+   "severity": "MINOR",
+   "good_anchor": "ЦН-10 идемпотентность",
+   "note": "придирка"
+  },
+  {
+   "fid": "D-066",
+   "severity": "MAJOR",
+   "good_anchor": "ЦН-19 последовательные операции",
+   "note": "мелкое уточнение"
+  },
+  {
+   "fid": "D-067",
+   "severity": "MINOR",
+   "good_anchor": "ЦН-19 последовательные операции",
+   "note": "придирка"
+  },
+  {
+   "fid": "D-104",
+   "severity": "MAJOR",
+   "good_anchor": "ЦН-27 время ответа",
+   "note": "мелкое уточнение"
+  },
+  {
+   "fid": "D-107",
+   "severity": "MAJOR",
+   "good_anchor": "ЦН-28 доступность",
+   "note": "ложная двусмысленность"
+  },
+  {
+   "fid": "D-108",
+   "severity": "MAJOR",
+   "good_anchor": "ЦН-28 доступность",
+   "note": "мелкое уточнение"
+  },
+  {
+   "fid": "D-126",
+   "severity": "MINOR",
+   "good_anchor": "КП-10 конкурентный вывод",
+   "note": "критикует код ошибки, не сам сценарий"
+  }
+ ],
+ "praised_defects": [],
+ "critical": {
+  "key_critical": [],
+  "key_critical_note": "В ключе нет CRITICAL-дефектов.",
+  "tool_critical": [
+   {
+    "fid": "D-004",
+    "justified": false,
+    "note": "неточность в разделе назначения, не прямое противоречие потока"
+   },
+   {
+    "fid": "D-025",
+    "justified": false,
+    "note": "реальный риск при таймауте, но ключ считает место хорошим и есть идемпотентность; хватает MAJOR"
+   },
+   {
+    "fid": "D-056",
+    "justified": false,
+    "note": "битая ссылка, ключ MINOR; максимум MAJOR"
+   }
+  ],
+  "summary": "3 CRITICAL у инструмента, ни один не оправдан как CRITICAL."
+ },
+ "totals": {
+  "defects": 5,
+  "found": 5,
+  "partial": 0,
+  "not_found": 0,
+  "by_severity": {
+   "MAJOR": {
+    "found": 3,
+    "partial": 0,
+    "not_found": 0
+   },
+   "MINOR": {
+    "found": 2,
+    "partial": 0,
+    "not_found": 0
+   }
+  },
+  "origin_organisers": "нет дефектов с origin=organisers",
+  "findings_total": 75,
+  "findings_used": 5,
+  "extra": 70,
+  "real_not_in_key": 31,
+  "duplicate": 5,
+  "false_alarm": 23,
+  "overrated": 11,
+  "good_place_hits": 10,
+  "praised_defects": 0,
+  "disagreements_with_program": [
+   "C2-01",
+   "C2-04"
+  ],
+  "level_match_found": {
+   "same": 3,
+   "tool_higher": 2,
+   "tool_lower": 0
+  }
+ }
+}

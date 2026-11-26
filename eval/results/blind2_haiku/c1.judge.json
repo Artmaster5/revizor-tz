@@ -1,0 +1,913 @@
+{
+ "defects": [
+  {
+   "id": "C1-01",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-127"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "GET по стандарту HTTP не должен менять состояние: кэши, прокси и повторные переходы могут создать заявку или списать комиссию повторно",
+   "reason": "Тот же дефект, то же место, предложен POST; согласен с программой."
+  },
+  {
+   "id": "C1-02",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-040"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Диаграмма последовательности блокирует карту только после активации новой и «независимо от причины»",
+   "reason": "Прямо названо противоречие Ф-3 и диаграммы; программа сослалась на D-074 (про слово «закрывается»), верная опора — D-040."
+  },
+  {
+   "id": "C1-03",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-143",
+    "D-109"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Выполнив шаги как написано, сервис спишет 1 500 ₸ и вернёт отказ. Критерий приёмки при этом требует «комиссия не списана»",
+   "reason": "D-143 даёт порядок шагов, потерю денег и противоречие с критерием, D-109 — отказ от идемпотентности; все три части дефекта покрыты."
+  },
+  {
+   "id": "C1-04",
+   "key_severity": "CRITICAL",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-093"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Полный номер карты хранится для сверки... аудит по PCI DSS не пройдёт",
+   "reason": "Тот же дефект и место, но уровень MAJOR вместо CRITICAL."
+  },
+  {
+   "id": "C1-05",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-067"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "срок доставки задан словами «в кратчайшие сроки», поэтому плановая дата в ответе API для курьера не определена",
+   "reason": "Программа поставила «место», но D-067 называет ровно этот дефект и его следствие для plannedDate."
+  },
+  {
+   "id": "C1-06",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-014"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "В API параметр reason принимает только LOST, DAMAGED и EXPIRED. Украденную карту API не сможет обработать как кражу",
+   "reason": "Тот же дефект; уровень у инструмента выше ключа."
+  },
+  {
+   "id": "C1-07",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-050"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Правило Ф-4 говорит, что при истечении срока перевыпуск бесплатный. Критерий приёмки для того же случая требует списать 1 500 ₸",
+   "reason": "Находка верна, но опора программы D-097 (тиыны и тенге) — другая проблема; настоящая опора D-050."
+  },
+  {
+   "id": "C1-08",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "found",
+   "finding_ids": [
+    "D-015"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Экран 1 показывает пункт... не более 60 дней. API принимает эту причину только при 45 днях и меньше",
+   "reason": "Программа поставила «место», но D-015 прямо называет расхождение 60/45."
+  },
+  {
+   "id": "C1-09",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-046",
+    "D-076",
+    "D-159"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Если на счёте меньше 1 500 ₸, текст не говорит, отказать ли в заявке; ни один код ответа не описывает отказ списания",
+   "reason": "Нехватка средств (D-046), отказ АБС (D-076) и отсутствие кода ответа (D-159) покрывают дефект целиком; D-053 из списка программы к нему не относится."
+  },
+  {
+   "id": "C1-10",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-084"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Нет ни доступности, ни величины пиковой нагрузки, ни допустимой доли ошибок",
+   "reason": "Тот же дефект; согласен."
+  },
+  {
+   "id": "C1-11",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-047"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Без определения неясно, какие карты считаются премиальными. Для одной и той же карты комиссия может быть 1 500 ₸ или 0 ₸",
+   "reason": "Тот же дефект; согласен."
+  },
+  {
+   "id": "C1-12",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-162"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Поле trackNumber в ответе не описано: прочерки вместо логики и описания... в каком статусе заявки он появляется",
+   "reason": "Тот же дефект; согласен."
+  },
+  {
+   "id": "C1-13",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-070"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Время 16:00 может быть местным временем клиента, сервера или банка; рекомендация: правило для праздничных дней",
+   "reason": "Часовой пояс назван в проблеме, календарь — в рекомендации; согласен."
+  },
+  {
+   "id": "C1-14",
+   "key_severity": "MAJOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-054",
+    "D-060"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "не сказано, в какой статус она перейдёт, вернётся ли комиссия; для активации и отмены нет метода",
+   "reason": "Обе части дефекта (возврат комиссии и метод API) названы; согласен."
+  },
+  {
+   "id": "C1-15",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "место",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-003",
+    "D-004"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Не ясно, на сколько сокращать время... Ни одно требование не задаёт срок в числах",
+   "reason": "Покрыта только цель 3; про цель 30% и отсутствие требования к сбору метрики ничего нет."
+  },
+  {
+   "id": "C1-16",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-110"
+   ],
+   "tool_severity": "CRITICAL",
+   "evidence": "Раздел о тестировании содержит только заглушку",
+   "reason": "Тот же дефект; уровень завышен до CRITICAL."
+  },
+  {
+   "id": "C1-17",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-121"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Версия и дата документа пустые, блок согласующих пустой, а отметки в чек-листе не проставлены",
+   "reason": "Все части названы; согласен."
+  },
+  {
+   "id": "C1-18",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-044"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Номер Ф-4 использован для правила выпуска карты и для правила комиссии. Ссылка «по правилу Ф-4» в шаге 4 неоднозначна",
+   "reason": "Тот же дефект; согласен."
+  },
+  {
+   "id": "C1-19",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-011"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "под одним номером записано несколько отдельных правил... (цитата строки 67, Ф-6)",
+   "reason": "Найдено общим замечанием D-011 с цитатой Ф-6; опора программы D-059 (тексты и языки уведомлений) — другая проблема."
+  },
+  {
+   "id": "C1-20",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "найден",
+   "verdict": "found",
+   "finding_ids": [
+    "D-100"
+   ],
+   "tool_severity": "MINOR",
+   "evidence": "Название таблицы, версия СУБД и способ партиционирования — решения команды разработки",
+   "reason": "Тот же дефект; согласен."
+  },
+  {
+   "id": "C1-21",
+   "key_severity": "MINOR",
+   "origin": "own",
+   "program_mark": "НЕТ",
+   "verdict": "partial",
+   "finding_ids": [
+    "D-117"
+   ],
+   "tool_severity": "MAJOR",
+   "evidence": "Не проверяются граница 16:00, граница 60 и 45 дней, ошибка АБС, отмена клиентом, статус FAILED",
+   "reason": "Программа поставила «НЕТ», но D-117 говорит о неполноте критериев; нет доставки, уведомлений и активации (Ф-6, Ф-7, Ф-9), поэтому частично."
+  }
+ ],
+ "extra_findings": [
+  {
+   "fid": "D-001",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Заголовок комплекта и полное имя задачи — нормальная пара; имя дочернего документа, по словам самой находки, совпадает."
+  },
+  {
+   "fid": "D-002",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В «Влияние на ИС» действительно нет CardsService и API-шлюза."
+  },
+  {
+   "fid": "D-005",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Переход TEMP_BLOCKED в безотзывную блокировку не описан; мелочь, но реальна."
+  },
+  {
+   "fid": "D-006",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "НФТ, данные, UI и шаги API без номеров — верно."
+  },
+  {
+   "fid": "D-007",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Три схемы цепочки вызовов действительно расходятся."
+  },
+  {
+   "fid": "D-010",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Тайм-аут процессинга после списания и повтор событий не описаны; это шире C1-09."
+  },
+  {
+   "fid": "D-012",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Состав данных курьеру — разумный вопрос, но риск надуман для MAJOR."
+  },
+  {
+   "fid": "D-017",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Проверка адреса на экране 2 не описана."
+  },
+  {
+   "fid": "D-019",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Выбор по умолчанию — деталь дизайна, сама находка признаёт, что ничего не меняет."
+  },
+  {
+   "fid": "D-020",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Ф-4 и критерии дают сумму в ₸; на экране неоднозначность минимальна, MAJOR завышен."
+  },
+  {
+   "fid": "D-021",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Экран для 409 и других кодов кроме ошибки сервера не описан."
+  },
+  {
+   "fid": "D-024",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Тайм-аут и обрыв сети на UI не описаны; частично пересекается с D-021, но шире."
+  },
+  {
+   "fid": "D-026",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа; «ближайшее» — мелкая неточность, не MAJOR."
+  },
+  {
+   "fid": "D-028",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Клиент получает push» — обычная формулировка, смысл понятен."
+  },
+  {
+   "fid": "D-029",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Содержимое уведомлений и приватность на экране блокировки не заданы."
+  },
+  {
+   "fid": "D-030",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Для утерянной/украденной карты разблокировка при FAILED/CANCELLED была бы ошибкой; блокировка безотзывна намеренно."
+  },
+  {
+   "fid": "D-032",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "В BPMN условие блокировки только «в зависимости от причины» — мелочь, но реальна."
+  },
+  {
+   "fid": "D-033",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "BPMN действительно только успешный путь."
+  },
+  {
+   "fid": "D-036",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«выпущенной на его имя» в Ф-1 уже определяет держателя; хорошее место ключа."
+  },
+  {
+   "fid": "D-039",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Продолжает работать» однозначно при противопоставлении блокировке."
+  },
+  {
+   "fid": "D-041",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«Номер карты» понятен; срок при перевыпуске меняется очевидно."
+  },
+  {
+   "fid": "D-042",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Срок новой карты — стандартное правило продукта, сама находка это признаёт."
+  },
+  {
+   "fid": "D-053",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Слабая, но реальная оговорка: нулевое списание не исключено явно."
+  },
+  {
+   "fid": "D-056",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-028",
+   "reason": "То же замечание про «получает» уведомления, включая ту же строку 53."
+  },
+  {
+   "fid": "D-055",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«О смене статуса» означает любой переход; статусы известны из глоссария."
+  },
+  {
+   "fid": "D-059",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Тексты и языки уведомлений не заданы."
+  },
+  {
+   "fid": "D-065",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Счёт 5-го рабочего дня неоднозначен."
+  },
+  {
+   "fid": "D-073",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Событие «получения» и неактивированная карта не описаны."
+  },
+  {
+   "fid": "D-074",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "«Закрывается» против «заблокирована» — реальная мелкая неточность, не MAJOR."
+  },
+  {
+   "fid": "D-077",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Диаграмма не учитывает Ф-8."
+  },
+  {
+   "fid": "D-078",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Механизм событий процессинга не описан."
+  },
+  {
+   "fid": "D-079",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Слабая, но допустимая оговорка о сбое АБС при возврате; хорошее место ключа."
+  },
+  {
+   "fid": "D-088",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-084",
+   "reason": "Тот же дефект надёжности; добавки (аудит, 503) не меняют сути."
+  },
+  {
+   "fid": "D-091",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-088",
+   "reason": "Поведение выше 50 запросов в секунду уже названо в D-088."
+  },
+  {
+   "fid": "D-089",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Тайм-ауты внешних систем — реальная мелочь; хорошее место ключа."
+  },
+  {
+   "fid": "D-090",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Точка замера времени ответа не задана; мелочь на хорошем месте."
+  },
+  {
+   "fid": "D-095",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "«адрес или код отделения» по способу получения понятно из текста."
+  },
+  {
+   "fid": "D-096",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Формат и пояс времени в истории не заданы."
+  },
+  {
+   "fid": "D-097",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа: тиыны указаны явно, 150000 = 1 500 ₸ согласовано; MAJOR без основания."
+  },
+  {
+   "fid": "D-099",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Срок хранения адреса отдельно не задан."
+  },
+  {
+   "fid": "D-102",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Типы полей данных не заданы."
+  },
+  {
+   "fid": "D-103",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Действие после 5 лет не описано; мелочь на хорошем месте."
+  },
+  {
+   "fid": "D-107",
+   "severity": "CRITICAL",
+   "verdict": "duplicate",
+   "duplicate_of": "D-143",
+   "reason": "Тот же порядок «списание до проверки Ф-2», слабее сформулирован."
+  },
+  {
+   "fid": "D-113",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-046",
+   "reason": "Тот же сценарий нехватки средств, со стороны критериев приёмки."
+  },
+  {
+   "fid": "D-115",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Тестировщик может взять любой корректный адрес; не дефект."
+  },
+  {
+   "fid": "D-116",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Признак «заблокирована» не определён; мелочь."
+  },
+  {
+   "fid": "D-118",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Критерий отказа без кода 409."
+  },
+  {
+   "fid": "D-120",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-121",
+   "reason": "Пустой чек-лист уже назван в D-121."
+  },
+  {
+   "fid": "D-123",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Схема отката не описана."
+  },
+  {
+   "fid": "D-124",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-121",
+   "reason": "Пустой блок согласующих уже назван в D-121."
+  },
+  {
+   "fid": "D-126",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-044",
+   "reason": "Двойной Ф-4."
+  },
+  {
+   "fid": "D-129",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Bearer-токен сессии — обычное сочетание; неточность мелкая, не MAJOR."
+  },
+  {
+   "fid": "D-131",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Разные пути Dev и Prod — реальная несогласованность."
+  },
+  {
+   "fid": "D-132",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "$BASE и $TOKEN — общепринятые плейсхолдеры примера."
+  },
+  {
+   "fid": "D-134",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Код ответа для своей, но неподходящей карты не задан; хорошее место 404 не критикуется."
+  },
+  {
+   "fid": "D-140",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-044",
+   "reason": "Двойной Ф-4 и ссылка шага 4 уже в D-044."
+  },
+  {
+   "fid": "D-141",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-076",
+   "reason": "Отказ/недоступность АБС уже в D-076."
+  },
+  {
+   "fid": "D-148",
+   "severity": "MAJOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-067",
+   "reason": "Плановая дата курьера — следствие того же «в кратчайшие сроки»."
+  },
+  {
+   "fid": "D-151",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Порядок вызовов задан шагами 4 и 6 логики метода."
+  },
+  {
+   "fid": "D-152",
+   "severity": "MINOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Поле Controller — часть шаблона, имя класса там уместно."
+  },
+  {
+   "fid": "D-155",
+   "severity": "MAJOR",
+   "verdict": "overrated",
+   "duplicate_of": null,
+   "reason": "Хорошее место ключа: состав адреса задан; разделитель — мелочь, не MAJOR."
+  },
+  {
+   "fid": "D-156",
+   "severity": "MAJOR",
+   "verdict": "false_alarm",
+   "duplicate_of": null,
+   "reason": "Неверные параметры покрыты ответом 400; хорошее место ключа."
+  },
+  {
+   "fid": "D-157",
+   "severity": "MINOR",
+   "verdict": "duplicate",
+   "duplicate_of": "D-155",
+   "reason": "Тот же формат адреса на той же строке."
+  },
+  {
+   "fid": "D-161",
+   "severity": "MINOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Машинного кода ошибки нет."
+  },
+  {
+   "fid": "D-165",
+   "severity": "MAJOR",
+   "verdict": "real_not_in_key",
+   "duplicate_of": null,
+   "reason": "Возврат комиссии при 500 после списания не описан."
+  }
+ ],
+ "good_place_hits": [
+  {
+   "fid": "D-026",
+   "severity": "MAJOR",
+   "good_anchor": "ближайшее к адресу доставки отделение",
+   "note": "критикует хороший негативный сценарий; overrated"
+  },
+  {
+   "fid": "D-036",
+   "severity": "MINOR",
+   "good_anchor": "Перевыпуск доступен держателю...",
+   "note": "false_alarm"
+  },
+  {
+   "fid": "D-097",
+   "severity": "MAJOR",
+   "good_anchor": "fee ... В тиынах",
+   "note": "false_alarm"
+  },
+  {
+   "fid": "D-155",
+   "severity": "MAJOR",
+   "good_anchor": "10–250 | При COURIER | Город из справочника CITIES",
+   "note": "overrated"
+  },
+  {
+   "fid": "D-156",
+   "severity": "MAJOR",
+   "good_anchor": "10–250 | При COURIER | Город из справочника CITIES",
+   "note": "false_alarm"
+  },
+  {
+   "fid": "D-157",
+   "severity": "MINOR",
+   "good_anchor": "10–250 | При COURIER | Город из справочника CITIES",
+   "note": "duplicate D-155"
+  },
+  {
+   "fid": "D-089",
+   "severity": "MINOR",
+   "good_anchor": "Время ответа ... 2 секунд для 95%",
+   "note": "real мелочь, дополняет"
+  },
+  {
+   "fid": "D-090",
+   "severity": "MINOR",
+   "good_anchor": "Время ответа ... 2 секунд для 95%",
+   "note": "real мелочь"
+  },
+  {
+   "fid": "D-091",
+   "severity": "MINOR",
+   "good_anchor": "Время ответа ... 2 секунд для 95%",
+   "note": "duplicate D-088"
+  },
+  {
+   "fid": "D-103",
+   "severity": "MINOR",
+   "good_anchor": "Срок хранения заявок — 5 лет",
+   "note": "real мелочь"
+  },
+  {
+   "fid": "D-079",
+   "severity": "MINOR",
+   "good_anchor": "ошибку изготовления... комиссия возвращается",
+   "note": "real мелочь"
+  }
+ ],
+ "praised_defects": [],
+ "critical": {
+  "key_critical": [
+   {
+    "id": "C1-01",
+    "finding": "D-127",
+    "tool_severity": "CRITICAL",
+    "ok": true
+   },
+   {
+    "id": "C1-02",
+    "finding": "D-040",
+    "tool_severity": "CRITICAL",
+    "ok": true
+   },
+   {
+    "id": "C1-03",
+    "finding": "D-143",
+    "tool_severity": "CRITICAL",
+    "ok": true
+   },
+   {
+    "id": "C1-04",
+    "finding": "D-093",
+    "tool_severity": "MAJOR",
+    "ok": false
+   }
+  ],
+  "tool_critical": [
+   {
+    "fid": "D-014",
+    "justified": true,
+    "reason": "сломан основной путь для кражи: блокировка не выполнится (ключ MAJOR)"
+   },
+   {
+    "fid": "D-015",
+    "justified": true,
+    "reason": "прямое противоречие UI и API (ключ MAJOR); на грани"
+   },
+   {
+    "fid": "D-040",
+    "justified": true,
+    "reason": "прямое противоречие, риск денег"
+   },
+   {
+    "fid": "D-050",
+    "justified": true,
+    "reason": "прямое противоречие правила и критерия, деньги (ключ MAJOR)"
+   },
+   {
+    "fid": "D-107",
+    "justified": true,
+    "reason": "уровень верный, но это дубль D-143"
+   },
+   {
+    "fid": "D-110",
+    "justified": false,
+    "reason": "незаполненная заглушка тестирования — MINOR, CRITICAL завышен"
+   },
+   {
+    "fid": "D-127",
+    "justified": true,
+    "reason": "нарушение протокола HTTP"
+   },
+   {
+    "fid": "D-143",
+    "justified": true,
+    "reason": "потеря денег"
+   }
+  ],
+  "key_critical_given_critical": "3/4",
+  "tool_critical_count": 8,
+  "tool_critical_inflated": [
+   "D-110"
+  ]
+ },
+ "totals": {
+  "defects": 21,
+  "found": 19,
+  "partial": 2,
+  "not_found": 0,
+  "by_severity": {
+   "CRITICAL": {
+    "found": 4
+   },
+   "MAJOR": {
+    "found": 10
+   },
+   "MINOR": {
+    "partial": 2,
+    "found": 5
+   }
+  },
+  "origin_own": {
+   "found": 19,
+   "partial": 2
+  },
+  "origin_organisers": null,
+  "extra_findings": 65,
+  "real_not_in_key": 31,
+  "duplicate": 12,
+  "false_alarm": 16,
+  "overrated": 6,
+  "good_place_hits": 11,
+  "praised_defects": 0
+ }
+}
