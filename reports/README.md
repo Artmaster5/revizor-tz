@@ -5,9 +5,9 @@
 
 | Файлы | Что это | Как получено |
 | :--- | :--- | :--- |
-| `report.*` | **сдаваемый отчёт**: глубокий режим, модель `claude-opus-5-5` | `--model claude-opus-5-5 --no-cache` |
+| `report.*` | **сдаваемый отчёт**: глубокий режим, Opus (максимум), модель `claude-opus-5-5`; собран на прежней версии (тег `v1.1.1`) | `--model claude-opus-5-5 --no-cache` |
 | [`report.pdf`](report.pdf) | сдаваемый отчёт вместе с подробностями в PDF, 62 страницы | печать страницы [`report.html`](report.html) в браузере; сам агент PDF не пишет |
-| `report_haiku.*` | тот же документ на модели по умолчанию `claude-haiku-5-5` | запуск без `--model` |
+| `report_haiku.*` | тот же документ на модели Haiku (дешевле), `claude-haiku-5-5`; прежняя версия (тег `v1.1.1`) | `--model claude-haiku-5-5` |
 | `report_offline.*` | тот же документ без модели, только правила | `--provider offline` |
 | `report_offline_pdf.*` | то же без модели, но на вход подан PDF [`examples/requirements.pdf`](../examples/requirements.pdf) | `--provider offline` |
 | `report_answered.*` | повторная проверка после ответов автора, модель `claude-opus-5-5` | `--answers docs/demo/answers.md` |

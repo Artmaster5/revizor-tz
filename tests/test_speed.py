@@ -207,9 +207,9 @@ class Concurrency(_Base):
     def test_default_workers_by_provider(self):
         from revizor.llm import DEFAULT_CONCURRENCY
         self.assertEqual(DEFAULT_CONCURRENCY, {"anthropic": 6, "openai": 4, "gemini": 1, "ollama": 1})
-        b = make_backend("anthropic", {"ANTHROPIC_API_KEY": "sk-ant-test-key-1234567890"}, cache_dir=str(self.dir))
+        b = make_backend("anthropic", {"ANTHROPIC_API_KEY": "test-key-not-real"}, cache_dir=str(self.dir))
         self.assertEqual(b.concurrency, 6)
-        b = make_backend("anthropic", {"ANTHROPIC_API_KEY": "sk-ant-test-key-1234567890", "LLM_CONCURRENCY": "3"},
+        b = make_backend("anthropic", {"ANTHROPIC_API_KEY": "test-key-not-real", "LLM_CONCURRENCY": "3"},
                          cache_dir=str(self.dir))
         self.assertEqual(b.concurrency, 3)
         b = make_backend("gemini", {"GEMINI_API_KEY": "AIzaTestKey1234567890"}, cache_dir=str(self.dir))

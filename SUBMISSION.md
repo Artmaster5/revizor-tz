@@ -32,3 +32,7 @@ python main.py --ui                                                             
 | Архитектура | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): девять этапов, что делает код и что модель, гарантии кода, контур уточнения, провайдеры и режим без модели; тесты — `python -m unittest discover -s tests -t .` |
 | Бизнес-ценность | [`docs/VALUE.md`](docs/VALUE.md): кто пользуется, цена прогона, порог окупаемости, источники; [`docs/PILOT.md`](docs/PILOT.md): пилот на две недели; [`docs/INTEGRATION.md`](docs/INTEGRATION.md): CI, Jira, Confluence; точность — [`eval/ACCURACY.md`](eval/ACCURACY.md) |
 | Презентация и защита | [`presentation.pdf`](presentation.pdf), [`docs/slides/`](docs/slides/README.md), видео (ссылка выше), этот файл и [`README.md`](README.md) |
+
+## Главные числа (версия 1.4.0)
+
+Документ организаторов, независимый судья по нашему списку из 52 дефектов: на Opus (максимум) найдено 50 и ещё 2 частично, пропусков нет, замечаний по делу 86 из 86; на Sonnet (по умолчанию) найдено 47 и ещё 2 частично. Все десять пунктов организаторов найдены (программа: 10 из 10 и на Sonnet, и на Opus). Полная проверка на Sonnet — 2 мин 48 с, $1.27 ≈ 582 ₸. На восьми документах, которых агент не видел, Sonnet нашёл 102 дефекта из 109 (94 %), на двенадцати Haiku (дешевле) — 155 из 165 (94 %). Метод и таблицы — [`eval/ACCURACY.md`](eval/ACCURACY.md).
