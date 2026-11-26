@@ -336,6 +336,10 @@ def check_consistency(result: Result, md_text: str | None = None) -> list[str]:
     code, _t = verdict.decide(result.findings, offline=result.run.mode == "offline")
     if code != result.verdict:
         out.append(f"Вердикт {result.verdict}, а по замечаниям {code}")
+    # 5b. readiness for development names exactly the open blockers
+    rd = result.readiness.get("dev") if isinstance(result.readiness, dict) else None
+    if rd is not None and rd.get("blockers") != [f.fid for f in blockers(result.findings)]:
+        out.append("Готовность к разработке называет не те блокеры, что открыты в замечаниях")
     # 6. questions
     for q in result.questions:
         want = question_priority(q, by_fid)

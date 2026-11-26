@@ -174,13 +174,26 @@ def has_assumption(q: Question) -> bool:
     return bool(q.assumption) and q.assumption != NO_ASSUMPTION
 
 
+def _tail(text: str) -> str:
+    """The assumption as the end of «считаем так: …»: no capital letter (an abbreviation keeps it)."""
+    t = text.strip().rstrip(".")
+    if t[:1].isupper() and not t[1:2].isupper():
+        t = t[:1].lower() + t[1:]
+    return t
+
+
+def assumption_tail(q: Question) -> str:
+    """The assumption on its own, for a table cell or a list: «время считаем по Алматы» or the blocking sentence."""
+    return NO_ASSUMPTION if q.assumption == NO_ASSUMPTION else _tail(q.assumption)
+
+
 def assumption_line(q: Question) -> str:
     """One line for a report: «Если автор не ответит, считаем так: …» or the sentence that work cannot start."""
     if not q.assumption:
         return ""
     if q.assumption == NO_ASSUMPTION:
         return f"Если автор не ответит: {NO_ASSUMPTION}."
-    return ASSUMPTION_LEAD + q.assumption.rstrip(".") + "."
+    return ASSUMPTION_LEAD + _tail(q.assumption) + "."
 
 
 # --- checking the fix -----------------------------------------------------------------------------------------------

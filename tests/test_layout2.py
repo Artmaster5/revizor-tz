@@ -182,22 +182,24 @@ class FileList(_CliBase):
         line = next(x for x in self.lines if x.startswith("Записано: "))
         return [Path(p).name for p in line[len("Записано: "):].split(", ")]
 
-    def test_model_run_writes_11_files(self):
+    def test_model_run_writes_12_files(self):
         out = self.dir / "m.md"
         self.assertEqual(self.main("-i", self.doc(), "-o", str(out), backend=FakeBackend(make_script(), concurrency=1)), 0)
         names = self.written()
-        self.assertEqual(len(names), 11, names)
+        self.assertEqual(len(names), 12, names)
         self.assertIn("m.details.md", names)
+        self.assertIn("m.letter.md", names)
         self.assertEqual(names[-1], "m.html")
         md = out.read_text(encoding="utf-8")
         self.assertIn("(m.details.md#x-", md)
         self.assertTrue(all((self.dir / n).exists() for n in names))
 
-    def test_offline_run_writes_10_files(self):
+    def test_offline_run_writes_11_files(self):
         self.assertEqual(self.main("--provider", "offline", "-i", self.doc(), "-o", str(self.dir / "o.md")), 0)
         names = self.written()
-        self.assertEqual(len(names), 10, names)
+        self.assertEqual(len(names), 11, names)
         self.assertIn("o.details.md", names)
+        self.assertIn("o.letter.md", names)
 
     def test_unreadable_document_writes_3_files(self):
         bad = str(AGENT / "examples" / "broken" / "empty.md")

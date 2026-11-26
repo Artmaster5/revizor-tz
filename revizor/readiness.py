@@ -93,7 +93,7 @@ def coverage(result: Result) -> dict[str, Any]:
     return out
 
 
-def _ids(fids: list[str], cap: int = 6) -> str:
+def _ids(fids: list[str], cap: int = 3) -> str:
     return ", ".join(fids[:cap]) + (f" и ещё {len(fids) - cap}" if len(fids) > cap else "")
 
 
@@ -104,38 +104,29 @@ def compute(result: Result) -> dict[str, Any]:
     from . import consistency  # local: consistency imports this module's neighbours
     blockers = [f.fid for f in consistency.blockers(result.findings)]
     t = consistency.tally(result.findings)
-    prelim = " (предварительно: модель не использовалась)" if result.run.mode == "offline" else ""
+    prelim = " (предварительно)" if result.run.mode == "offline" else ""
     if blockers:
-        dev_text = (f"Нельзя отдавать в разработку: {count(len(blockers), ('блокер', 'блокера', 'блокеров'))} — "
-                    f"{_ids(blockers)}")
-    elif t["MAJOR"]:
-        dev_text = (f"Можно отдавать в разработку: блокеров нет; существенных замечаний {t['MAJOR']} — "
-                    "их лучше закрыть до начала работы")
+        dev_text = f"Нельзя отдавать в разработку: {count(len(blockers), ('блокер', 'блокера', 'блокеров'))}"
     else:
         dev_text = "Можно отдавать в разработку: блокеров нет"
     dev = {"ok": not blockers, "text": dev_text + prelim, "blockers": blockers}
 
     cov = coverage(result)
     pct, unc = cov["pct"], cov["uncovered"]
-    blocked_tail = (f"; но в документе {count(len(blockers), ('блокер', 'блокера', 'блокеров'))} — сначала их устранить"
-                    if blockers else "")
     if cov["state"] == "none":
-        ok, text = False, ("Нельзя отдавать в тестирование: в документе нет критериев приёмки, "
-                           "поэтому нечем подтвердить, что требования выполнены")
+        ok, text = False, "Нельзя отдавать в тестирование: в документе нет критериев приёмки"
     elif cov["state"] == "none_to_check":
-        ok, text = False, "Пока нельзя отдавать в тестирование: не найдено требований, для которых нужны критерии приёмки"
+        ok, text = False, "Пока нельзя отдавать в тестирование: нет требований, для которых нужны критерии"
     elif cov["state"] == "unlinked":
-        ok, text = False, ("Пока нельзя отдавать в тестирование: критерии приёмки есть, но в них не названо, какие "
-                           "требования они проверяют, поэтому долю покрытия посчитать нельзя")
+        ok, text = False, "Пока нельзя отдавать в тестирование: критерии не названы по требованиям, долю покрытия не посчитать"
     elif unc:
         ok = False
         text = (f"Нельзя отдавать в тестирование: критериями приёмки покрыто {pct}% требований "
-                f"({len(cov['covered'])} из {cov['eligible']}); без критерия остались {_ids(unc, 8)}")
+                f"({len(cov['covered'])} из {cov['eligible']}), остальные — в списке без критерия")
     else:
         ok = not blockers
-        text = (f"Можно отдавать в тестирование: критерии приёмки есть для всех требований "
-                f"({cov['eligible']} из {cov['eligible']})" if ok else
-                f"Пока нельзя отдавать в тестирование: критерии приёмки есть для всех требований{blocked_tail}")
+        text = ("Можно отдавать в тестирование: критерии приёмки есть для всех требований" if ok else
+                "Пока нельзя отдавать в тестирование: критерии есть для всех требований, но в документе есть блокеры")
     test = {"ok": ok, "text": text + prelim, "coverage_pct": pct, "uncovered": unc}
     return {"dev": dev, "test": test}
 

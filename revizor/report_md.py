@@ -1510,7 +1510,7 @@ def _questions(result: Result, name: str = "") -> str:
             who = ADDRESSEE_RU.get(q.addressee, q.addressee)
             to = links(q.finding_ids) if q.finding_ids else (quote_location(q.quote) if q.quote is not None else "—")
             pr = PRIORITY_ONE.get(q.priority, q.priority) + ("; есть ответ" if q.answer else "")
-            ass = md_cell(q.assumption.rstrip("."), Q_ASSUMPTION) if q.assumption else "—"
+            ass = md_cell(clarify.assumption_tail(q), Q_ASSUMPTION) if q.assumption else "—"
             out.append(f'| <a id="{anchor(q.qid)}"></a>{q.qid} | {md_cell(q.text, Q_TABLE)} | {md_cell(who)} | {pr} | {to} | {ass} |')
     stem = name[:-3] if name.endswith(".md") else name
     qfile = f"`{md_code(stem)}.questions.md`" if stem else "`*.questions.md`"
@@ -1594,7 +1594,7 @@ def assumptions_in_force(result: Result) -> list[str]:
     out = ["", "### Принято без ответа автора", "",
            "На эти вопросы автор не ответил. Пока ответа нет, команда считает так:", ""]
     for q in rows:
-        out.append(f"- {link(q.qid)}: {md(shorten(q.text, DIALOG_CUT))} → {md(q.assumption.rstrip('.'))}.")
+        out.append(f"- {link(q.qid)}: {md(shorten(q.text, DIALOG_CUT))} → {md(clarify.assumption_tail(q))}.")
     if blocked:
         out += ["", "Без ответа автора работу по этим пунктам начинать нельзя: " + ", ".join(link(q.qid) for q in blocked) + "."]
     return out

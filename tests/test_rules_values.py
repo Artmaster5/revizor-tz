@@ -82,7 +82,7 @@ class Threshold(Case):
         self.assertEqual(f.severity, "MAJOR")
         self.assertEqual(len(f.quotes), 2)
         self.assertEqual(f.criterion, "set_consistency")
-        self.assertIn("Пример: при значении ровно 1 000", f.problem)
+        self.assertIn("Пример: при значении ровно 1 000", f.problem.replace("\xa0", " "))
         self.assertIn("не действует", f.problem)
         self.fires("threshold-conflict",
                    "- ТР-1. Лимит перевода — до 5 000 ₸.\n- ТР-2. Перевод не более 5 000 ₸ включительно проходит без подтверждения.\n")

@@ -60,6 +60,8 @@ def shape(res) -> dict:
     data = json.loads(report_json.render(res))
     data["run"] = {k: v for k, v in data["run"].items()
                    if k not in ("duration_s", "stage_seconds", "stage_usage", "started_at")}
+    if isinstance(data.get("passport"), dict):
+        data["passport"].pop("duration_s", None)
     data["audit"] = [a for a in data.get("audit", []) if a.get("type") not in ("model_call", "stage_usage")]
     return data
 

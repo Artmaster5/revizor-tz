@@ -1103,10 +1103,13 @@ class OptionalFieldsTests(unittest.TestCase):
         r = pipeline.run(REQ_DOC, backend=None, depth="full")
         for q in r.questions:
             q.assumption = ""
+        for f in r.findings:
+            f.fix_check, f.standard = None, ""
+        r.readiness = None
         d = webui.details_from(r)
         self.assertTrue(all(q["assumption"] == "" for q in d["questions"]))
         self.assertTrue(all(f["fix_check"] is None and f["standard"] == "" for f in d["findings"]))
-        self.assertIsNone(self.summary(self.result)["readiness"])
+        self.assertIsNone(self.summary(r)["readiness"])
 
     def test_present_fields_pass_through_cleaned(self):
         r = pipeline.run(REQ_DOC, backend=None, depth="full")

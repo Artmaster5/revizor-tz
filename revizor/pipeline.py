@@ -638,7 +638,7 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
     cl_unchecked: list[str] = []
     cl_lines: list[str] = []
     cl_pool = cl_fut = None
-    if model_on:
+    if model_on and gate.backend.concurrency > 1:  # with one request at a time (LLM_CONCURRENCY=1) it stays in line
         def _checklist_beside() -> list:
             t_cl = time.monotonic()
             gate._tls.sink = cl_audit
@@ -688,7 +688,7 @@ def _run(input_path, backend, depth, say, context_paths, max_cost_usd, unavailab
                     say(s)
         else:
             t_cl = time.monotonic()
-            checklist_items = _checklist_stage(doc, counted_open, None, inj, audit, unchecked,
+            checklist_items = _checklist_stage(doc, counted_open, gate if model_on else None, inj, audit, unchecked,
                                                lambda s: say(f"{s} · {int(round(time.monotonic() - t_cl))} с"))
     except (KeyboardInterrupt, SystemExit):
         raise

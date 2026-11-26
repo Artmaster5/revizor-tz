@@ -58,6 +58,13 @@ WHY_RU = {"stated": "документ отвечает прямо", "misread": "
 # «missing_part» (a missing section, a missing mock-up…) and «loss» when the finding is about service text (a hidden
 # instruction for an AI, an invisible character). Without such a consequence the finding is capped at MAJOR and the
 # level trail says so. Nothing here knows any particular document.
+CAP_ENV = "REVIZOR_BLOCKER_CAP"   # the ceiling is OFF by default; set to 1 to turn it on
+
+
+def cap_on() -> bool:
+    return os.environ.get(CAP_ENV, "").strip().lower() in ("1", "true", "yes", "on")
+
+
 CAP_REASONS = ("missing_part", "loss")
 SERVICE_RULES = ("prompt-injection", "hidden-text")
 _SERVICE_TEXT = re.compile(
@@ -67,11 +74,11 @@ _SERVICE_TEXT = re.compile(
 _OBJ = (r"(?:деньг|денежн|средств|платеж|оплат|баланс|сумм[аыуе]|комисс|остатк|счет\w*|перевод|"
         r"данн|персональн|доступ|заказ|учетн\w+ запис|парол)")
 _HARM = (r"(?:потер|утрат|утечк|искаж|дважды|двойн|дублир|недополуч|переплат|убыт|штраф|взлом|несанкционир|подмен|"
-         r"мошенн|компромет|раскры[тв]|пропад|исчез|удален|поврежд|разруш|списан\w*\s+(?:дважды|повторно|неверно|лишн))")
+         r"мошенн|компромет|раскры[тв]|пропад|исчез|удал|поврежд|разруш|списан\w*\s+(?:дважды|повторно|неверно|лишн))")
 _CONSEQUENCE = re.compile(
     r"дважды|двойн\w*\s+(?:списан|оплат|перевод)|несанкционир|мошенн|"
     r"(?:основн|главн|ключев)\w*\s+(?:сценар|поток|операци|функци|процесс)|"
-    rf"{_HARM}\W+(?:\w+\W+){{0,4}}?{_OBJ}|{_OBJ}\W+(?:\w+\W+){{0,4}}?{_HARM}")
+    rf"{_HARM}\w*\W+(?:\w+\W+){{0,4}}?{_OBJ}|{_OBJ}\w*\W+(?:\w+\W+){{0,4}}?{_HARM}")
 CAP_WHY = "понижено кодом: в тексте замечания не названо последствие для денег, данных или основного сценария"
 
 
@@ -88,6 +95,8 @@ def cap_blockers(findings: list[Finding], audit: list[dict] | None = None) -> in
     """Cap open counted CRITICAL findings that name no consequence (see above) at MAJOR; record the step in
     ``level_trail`` (by «code») and in the audit. Returns how many were lowered. Idempotent."""
     n = 0
+    if not cap_on():
+        return 0
     for f in findings:
         if f.status != "open" or f.advisory or f.severity != "CRITICAL" or f.blocker_reason not in CAP_REASONS:
             continue
@@ -400,6 +409,6 @@ def apply_dedup(findings: list[Finding], groups: list[dict], *, injection: bool,
 
 
 __all__ = ["HARD_WHY", "SOFT_WHY", "EFFECT", "REASON_NOT_FOR", "FOCUS_ENV", "focus_on", "STATED_NEEDS_QUOTE", "SOFT_ONLY_MINOR", "SOFT_ON_HIGHER",
-           "CAP_REASONS", "SERVICE_RULES", "cap_blockers", "names_consequence",
+           "CAP_ENV", "cap_on", "CAP_REASONS", "SERVICE_RULES", "cap_blockers", "names_consequence",
            "DROP_NEEDS_EMPTY_DIFFER", "MERGE_GUARD", "DEDUP_GUARD", "WHY_RU", "GateOutcome", "apply_gate",
            "apply_dedup", "merge_allowed", "decision_of", "verified_answer"]
