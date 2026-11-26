@@ -17,7 +17,7 @@ from datetime import datetime
 from . import answers as ans_mod, baseline as baseline_mod, clarify, consistency, gapcheck, impact as impact_mod, readiness as readiness_mod, rules as rules_mod, score, standard as standard_mod, verdict
 from .config import version_label
 from .consistency import BLOCKER_SHORT, blockers as _blocker_list, fix_links, marks_of, tally
-from .merge import FAMILY, FOLD_STAGE, STANDARDS
+from .merge import FAMILY, FOLD_STAGE
 from .model import (ADDRESSEE_RU, BLOCKER_RU, CHECKLIST_VERDICT_RU, CRITERION_RU, GAP_RU, KIND_RU, PRIORITY_RU, REQ_CRITERIA, SET_CRITERIA,
                     SEVERITY_ICON, SKIP_CATEGORY_RU, TEST_KIND_RU, Finding, Question, Quote, Requirement, Result)
 from .prompts import FORMAT_RU, GAPS_NAME, GAPS_STAGE, LENS_BY_STAGE, SET_NAME

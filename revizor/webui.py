@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any, Callable, Mapping
 from urllib.parse import parse_qs, quote, unquote, urlsplit
 
-from . import __version__, answers as ans_mod, cli, config, rewrite_gate, score as score_mod, verdict as verdict_mod
+from . import __version__, answers as ans_mod, clarify, cli, config, rewrite_gate, score as score_mod, verdict as verdict_mod
 from .llm import choose_provider, is_placeholder, normalize_provider, review_batch_size_for
 from .llm.pricing import PRICES
 from .merge import FOLD_STAGE, SEV_RANK, sort_key
@@ -545,20 +545,34 @@ def details_from(result: Result, *, offline: bool = False) -> dict:
                           "options": list(q.options), "priority": q.priority, "answer": q.answer,
                           "answer_effect": q.answer_effect,
                           "assumption": " ".join(str(getattr(q, "assumption", "") or "").split())[:400],
-                          "addressee": str(getattr(q, "addressee", "") or ""), "closes": closable, "option_closes": option_closes,
+                          "addressee": str(getattr(q, "addressee", "") or ""),
+                          "letter_group": str(getattr(q, "letter_group", "") or ""),
+                          "fingerprint": str(getattr(q, "fingerprint", "") or ""),
+                          "no_safe_assumption": str(getattr(q, "assumption", "") or "").strip() == clarify.NO_ASSUMPTION,
+                          "closes": closable, "option_closes": option_closes,
                           "closed": [fid for fid, qids in closes_map.items() if q.qid in qids],
                           "effect": {"critical": crit, "major": major, "minor": minor,
                                      "text": effect_text(crit, major, minor, offline=offline)}})
     return {"questions": questions, "findings": findings, "fixes": fixes_from(result, questions, findings), "offline": offline,
+            "doc_fingerprint": str(getattr(result.run, "doc_sha256", "") or "")[:12],
             "observations": sum(1 for f in result.findings if f.status == "open" and f.advisory)}
 
 
-def answers_file_text(answers: dict[str, str]) -> str:
+def answers_file_text(answers: dict[str, str], fingerprints: dict[str, str] | None = None,
+                      doc_fingerprint: str = "") -> str:
     """The author's answers in the questionnaire format that ``--answers`` reads (``### В-01`` and «Ответ: …»).
-    Line breaks are folded into spaces: an answer must never look like the next question's heading."""
+    Line breaks are folded into spaces: an answer must never look like the next question's heading.
+    «Отпечаток документа» on top and «Отпечаток вопроса» before each «Ответ:» are what the engine checks (answers.py):
+    an answer given for another version of the question is reported as stale instead of being applied."""
     out = ["# Ответы автора, введённые в окне Ревизора", ""]
+    if doc_fingerprint:
+        out += [f"Отпечаток документа: {doc_fingerprint}", ""]
     for qid, text in answers.items():
-        out += [f"### {qid}", "", "Ответ: " + " ".join(str(text).split()), ""]
+        out += [f"### {qid}", ""]
+        fp = (fingerprints or {}).get(qid)
+        if fp:
+            out += [f"Отпечаток вопроса: {fp}", ""]
+        out += ["Ответ: " + " ".join(str(text).split()), ""]
     return "\n".join(out)
 
 
@@ -660,7 +674,8 @@ def _answers_block(result: Result, previous: dict | None) -> dict:
              "verdict_note": anote, "verdict_level": VERDICT_LEVEL.get(code, "unknown")}
     return {"taken": int(sm.get("answered") or 0), "total": int(sm.get("total") or len(result.questions)),
             "closed": closed, "closed_count": len(closed), "follow_ups": int(sm.get("follow_ups") or 0),
-            "by_model": bool(sm.get("by_model")), "after": after, "previous": previous}
+            "by_model": bool(sm.get("by_model")), "stale": [str(x) for x in (sm.get("stale") or [])],
+            "after": after, "previous": previous}
 
 
 # -- estimate ---------------------------------------------------------------------------------------------------
@@ -1027,7 +1042,8 @@ class UIServer:
         findings = [dict(f) for f in d["findings"]]
         return {"ok": True, "job_id": job.id, "questions": questions, "findings": findings,
                 "unblock": unblock_plan(questions, findings, offline=d["offline"]), "fixes": d["fixes"],
-                "offline": d["offline"], "observations": d["observations"]}
+                "offline": d["offline"], "observations": d["observations"],
+                "doc_fingerprint": d.get("doc_fingerprint", "")}
 
     def rerun(self, body: dict) -> dict:
         """The check again, same document, model and depth, plus the answers typed on the page."""
@@ -1060,7 +1076,8 @@ class UIServer:
         uid = secrets.token_hex(8)
         folder = self.temp_root / uid
         dest = folder / "answers.md"
-        data = answers_file_text(typed).encode("utf-8")
+        data = answers_file_text(typed, {qid: known[qid].get("fingerprint", "") for qid in typed},
+                                 d.get("doc_fingerprint", "")).encode("utf-8")
         try:
             folder.mkdir()
             dest.write_bytes(data)

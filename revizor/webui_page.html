@@ -261,6 +261,7 @@ padding:16px 20px;font-size:1.42rem;line-height:1.3;font-weight:680;letter-spaci
 .qaddr{flex:none;font-size:.72rem;font-weight:650;border:1px solid var(--line);border-radius:99px;padding:1px 8px;color:var(--muted);white-space:nowrap}
 .qassume{margin:4px 0 0;font-size:.86rem;color:var(--ink);overflow-wrap:anywhere}
 .qassume.blocks{color:var(--crit);font-weight:600}
+.qassume.stale{color:var(--crit)}
 .fcheck{flex:none;font-size:.74rem;white-space:nowrap}.fcheck.c-ok{color:var(--accent)}.fcheck.c-bad{color:var(--crit)}
 .fxcheck{margin:6px 0;font-size:.9rem;font-weight:600}.fxcheck.c-ok{color:var(--accent)}.fxcheck.c-bad{color:var(--crit)}.fxcheck.c-un{color:var(--muted);font-weight:400}
 .ub{border-left:5px solid var(--crit)}
@@ -795,7 +796,7 @@ function renderStages(stages,stepText,failed){
     var secs=(state==="done"||state==="running")&&s.seconds!=null?num(s.seconds):null;
     S.stageSec[i]=state==="running"&&secs!=null?secs:null;
     row.querySelector(".st-word").textContent=STAGE_WORD[state]+(secs!=null?" · "+fmtSec(secs):"");
-    var det=row.querySelector(".st-detail");var dt=(state==="done"||state==="skipped")&&s.detail?String(s.detail):"";det.textContent=dt;det.hidden=!dt;
+    var det=row.querySelector(".st-detail");var dt=(state==="done"||state==="skipped")&&s.detail?String(s.detail).replace(/\s*·\s*[\d\s.,]+\s*с\s*$/,""):"";det.textContent=dt;det.hidden=!dt;
     var stp=row.querySelector(".st-step");var sx=state==="running"&&stepText?String(stepText):"";stp.textContent=sx;stp.hidden=!sx;
     if(state==="running")row.setAttribute("aria-current","step");else row.removeAttribute("aria-current");
   }
@@ -974,11 +975,15 @@ function copyText(t,cb){
   fallback();
 }
 
-var ADDR_RU={business:"бизнес-заказчик",architect:"архитектор / разработка",security:"безопасность",testing:"тестирование"};
+var ADDR_RU={business:"Бизнес",architect:"Архитектор",security:"Безопасность",testing:"Тестирование"};
 var ADDR_KEY={business:"business",architect:"architect",security:"security",testing:"testing",qa:"testing"};
+/* the engine's group of the letter first; the older «addressee» only when the group is absent */
+function addrOf(q){return ADDR_KEY[q.letter_group]||ADDR_KEY[q.addressee]||"";}
+function lowerTail(t){t=String(t||"").trim();return(t.charAt(0)!==t.charAt(0).toLowerCase()&&!/^[A-ZА-ЯЁ]{2}/.test(t))?t.charAt(0).toLowerCase()+t.slice(1):t;}
+function staleIds(){var a=((S.lastStatus||{}).result||{}).answers;return (a&&a.stale)||[];}
 function renderQFilters(qs){
   var box=$("q-filters");clear(box);
-  var counts={},order=[];qs.forEach(function(q){var k=ADDR_KEY[q.addressee];if(!k)return;if(!counts[k]){counts[k]=0;order.push(k);}counts[k]++;});
+  var counts={},order=[];qs.forEach(function(q){var k=addrOf(q);if(!k)return;if(!counts[k]){counts[k]=0;order.push(k);}counts[k]++;});
   if(order.length<2){box.hidden=true;S.qAddr="all";return;}
   [["all","все ("+qs.length+")"]].concat(order.map(function(k){return [k,ADDR_RU[k]+" ("+counts[k]+")"];})).forEach(function(x){
     var b=mk("button","chip",x[1]);b.type="button";b.setAttribute("data-addr",x[0]);b.setAttribute("aria-pressed",x[0]===S.qAddr?"true":"false");
@@ -1023,11 +1028,12 @@ function buildQuestion(q,n,draft,done){
   var mark=null;
   if(done){mark=(q.closed||[]).length?["m-ok","ответ закрыл: "+q.closed.join(", ")]:["","ответ учтён, замечания остались открытыми"];}
   else if(q.effect&&q.effect.text){mark=[q.effect.critical>0?"m-crit":"",q.effect.text];}
-  var addr=ADDR_KEY[q.addressee]||"";
+  var addr=addrOf(q);
   if(addr)head.appendChild(mk("span","qaddr",ADDR_RU[addr]));
   if(mark)li.appendChild(mk("span","qmark "+mark[0],mark[1]));
-  if(q.assumption)li.appendChild(mk("p","qassume","Если не ответите, считаем так: "+q.assumption));
-  else if(q.priority==="blocker"&&!done)li.appendChild(mk("p","qassume blocks","Без ответа работу по этому пункту начинать нельзя"));
+  if(q.no_safe_assumption)li.appendChild(mk("p","qassume blocks","Без ответа автора начинать нельзя"));
+  else if(q.assumption)li.appendChild(mk("p","qassume","Если не ответите, считаем так: "+lowerTail(q.assumption)));
+  if(staleIds().indexOf(q.id)>=0)li.appendChild(mk("p","qassume stale","Ответ не применён: вопрос изменился после правки документа"));
   var why=mk("p","qwhy");
   if(q.why)why.appendChild(document.createTextNode("Почему спрашиваем: "+q.why+" "));
   if(q.line!=null||q.location){why.appendChild(document.createTextNode("Место в документе: "+(q.location||("строка "+q.line))+". "));}
@@ -1158,14 +1164,14 @@ function renderFindings(d){
     sm.appendChild(mk("span","lv lv-"+(f.level||"minor"),f.level_text||"замечание"));
     sm.appendChild(mk("span","ftitle",f.title));
     if(f.closed_by_answer)sm.appendChild(mk("span","fclosed","закрыто ответом"));
-    var fc=checkText(f.fix_check);if(fc)sm.appendChild(mk("span","fcheck "+fc[0],fc[1].length>60?fc[1].slice(0,57)+"…":fc[1]));
+    var fc=checkText(f.fix_check);if(fc)sm.appendChild(mk("span","fcheck "+fc[0],({"c-ok":"правка проверена","c-bad":"замечание остаётся","c-un":"правка не проверена"})[fc[0]]||""));
     var loc=f.line!=null?"строка "+f.line:(f.location||"");if(loc)sm.appendChild(mk("span","floc",loc));
     det.appendChild(sm);
     var body=mk("div","fbody");body.appendChild(mk("h3",null,"Почему это дефект"));
     if(f.quote){var pq=mk("p");pq.appendChild(mk("span","k","В документе"+(f.location?" ("+f.location+")":"")+":"));body.appendChild(pq);body.appendChild(mk("div","fquote",f.quote));}
     if(f.problem){var pp=mk("p");pp.appendChild(mk("span","k","В чём проблема: "));pp.appendChild(document.createTextNode(f.problem));body.appendChild(pp);}
     if(f.found_by){var pf=mk("p");pf.appendChild(mk("span","k","Как найдено: "));pf.appendChild(document.createTextNode(f.found_by));body.appendChild(pf);}
-    if(f.standard){var ps=mk("p");ps.appendChild(mk("span","k","Требование стандарта: "));ps.appendChild(document.createTextNode(f.standard));body.appendChild(ps);}
+    if(f.standard){var ps=mk("p");ps.appendChild(mk("span","k","Основание: "));ps.appendChild(document.createTextNode(f.standard));body.appendChild(ps);}
     if(fc){var pk=mk("p");pk.appendChild(mk("span","k","Проверка исправления: "));pk.appendChild(document.createTextNode(fc[1]));body.appendChild(pk);}
     if(f.recommendation){var pr=mk("p");pr.appendChild(mk("span","k","Что сделать: "));pr.appendChild(document.createTextNode(f.recommendation));body.appendChild(pr);}
     var links=mk("div","flinks");

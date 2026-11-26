@@ -1159,6 +1159,68 @@ class OptionalFieldsTests(unittest.TestCase):
             self.assertIn(needle, text, needle)
 
 
+class WaveNineJoinTests(unittest.TestCase):
+    """Window and engine agree: letter group, fingerprints in the answers file, no-safe-assumption flag, stale answers."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.result = pipeline.run(REQ_DOC, backend=None, depth="full")
+
+    def test_details_carry_group_fingerprint_and_flag(self):
+        from revizor import clarify
+        r = pipeline.run(REQ_DOC, backend=None, depth="full")
+        r.questions[0].assumption = clarify.NO_ASSUMPTION
+        r.questions[0].letter_group = "security"
+        d = webui.details_from(r)
+        row = d["questions"][0]
+        self.assertTrue(row["no_safe_assumption"])
+        self.assertEqual(row["letter_group"], "security")
+        self.assertEqual(row["fingerprint"], r.questions[0].fingerprint)
+        self.assertTrue(row["fingerprint"])
+        self.assertEqual(d["doc_fingerprint"], r.run.doc_sha256[:12])
+        other = d["questions"][-1]
+        self.assertEqual(other["no_safe_assumption"], other["assumption"] == clarify.NO_ASSUMPTION)
+
+    def test_answers_file_carries_fingerprints_the_engine_reads(self):
+        qs = self.result.questions[:2]
+        typed = {q.qid: "не знаю, уточню" if i else "другой срок" for i, q in enumerate(qs)}
+        text = webui.answers_file_text(typed, {q.qid: q.fingerprint for q in qs}, self.result.run.doc_sha256[:12])
+        self.assertTrue(text.splitlines()[2].startswith("Отпечаток документа: "))
+        self.assertIn(f"Отпечаток вопроса: {qs[0].fingerprint}\n\nОтвет: другой срок", text)
+        parsed = webui.ans_mod.parse(text, qs)
+        self.assertEqual(parsed.doc_fingerprint, self.result.run.doc_sha256[:12].lower())
+        self.assertEqual(parsed.stale, {})
+        self.assertIn(qs[0].qid, parsed.answers)
+
+    def test_changed_question_is_stale_not_applied(self):
+        q = self.result.questions[0]
+        text = webui.answers_file_text({q.qid: "другой срок"}, {q.qid: "0" * 12}, "")
+        parsed = webui.ans_mod.parse(text, [q])
+        self.assertIn(q.qid, parsed.stale)
+        self.assertNotIn(q.qid, parsed.answers)
+
+    def test_answers_without_fingerprints_stay_readable(self):
+        text = webui.answers_file_text({"В-01": "да"})
+        self.assertNotIn("Отпечаток", text)
+
+    def test_stale_ids_reach_the_result(self):
+        r = pipeline.run(REQ_DOC, backend=None, depth="full")
+        r.audit.append({"type": "answers_summary", "answered": 0, "total": len(r.questions), "closed": [],
+                        "stale": ["В-02"], "follow_ups": 0, "by_model": False})
+        self.assertEqual(webui._answers_block(r, None)["stale"], ["В-02"])
+
+    def test_page_uses_group_then_addressee_and_new_wording(self):
+        text = (AGENT / "revizor" / "webui_page.html").read_text(encoding="utf-8")
+        self.assertIn("ADDR_KEY[q.letter_group]||ADDR_KEY[q.addressee]", text)
+        for needle in ("Бизнес", "Архитектор", "Безопасность", "Тестирование", "Без ответа автора начинать нельзя",
+                       "Ответ не применён: вопрос изменился после правки документа", "no_safe_assumption", "Основание: ", "Проверка исправления: "):
+            self.assertIn(needle, text, needle)
+
+    def test_one_table_of_standards(self):
+        from revizor import merge
+        self.assertFalse(hasattr(merge, "STANDARDS"))
+
+
 class RealPageTests(unittest.TestCase):
     """The page that ships: the demo video is filmed by a script that finds elements by these ids."""
     IDS = ("doc-drop", "doc-input", "answers-input", "model-select", "depth-select", "cap-input", "estimate",

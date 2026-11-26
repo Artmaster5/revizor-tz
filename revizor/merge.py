@@ -26,22 +26,6 @@ FAMILY = {
 SET_STAGE_DEFAULT = {"set_consistency": "set_consistency", "set_completeness": "set_completeness",
                      "set_standards": "set_feasibility", "set_gaps": "set_completeness"}
 
-# Clause each finding rests on (addendum A6).
-STANDARDS = {
-    "completeness": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3",
-    "unambiguity": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2",
-    "consistency": "IEEE 830-1998 п. 4.3.4 (внутренняя согласованность)",
-    "verifiability": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6",
-    "feasibility": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Feasible)",
-    "necessity": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Necessary, Appropriate)",
-    "singularity": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)",
-    "set_completeness": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3",
-    "set_consistency": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4",
-    "set_feasibility": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)",
-    "comprehensibility": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Comprehensible)",
-    "traceability": "IEEE 830-1998 п. 4.3.8 (Traceable)",
-}
-
 
 # Rules whose findings can be CRITICAL → the blocker reason they rest on. Criterion is the fallback for a rule
 # not listed here, so every open CRITICAL carries a reason.
