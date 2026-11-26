@@ -141,7 +141,7 @@ class ExitCodeTests(_Base):
         buf = io.StringIO()
         with self.assertRaises(SystemExit) as cm, contextlib.redirect_stdout(buf):
             self.main("--version")
-        self.assertIn("1.0.0", buf.getvalue())
+        self.assertIn("1.1.3", buf.getvalue())
         self.assertEqual(cm.exception.code, 0)
 
 
