@@ -43,6 +43,10 @@ main.wrap{flex:1;padding-top:22px;padding-bottom:20px}
 .notice{margin:0 0 14px;padding:9px 14px;border:1px solid var(--line);border-left:4px solid var(--link);border-radius:8px;background:var(--paper);
 color:var(--ink);font-size:.9rem}
 .notice-err{border-left-color:var(--crit);background:var(--crit-bg)}
+.pub-intro a{font-weight:600;color:var(--link)}
+.pub-intro .quiet{display:block;margin-top:4px;font-size:.82rem}
+.keybox.pub{padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.keybox.pub .keyswitch{cursor:default}
 .err{margin:6px 2px 0;color:var(--crit);font-size:.88rem}
 .quiet{color:var(--muted);font-size:.86rem}
 h1.lead{font-size:1.42rem;line-height:1.25;margin:0 0 4px;font-weight:680;letter-spacing:-.01em}
@@ -343,6 +347,7 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
 <main class="wrap">
  <p id="notice" class="notice" hidden></p>
  <p id="conn" class="notice notice-err" role="alert" hidden></p>
+ <div id="pub-intro" class="notice pub-intro" hidden><span id="pub-intro-text"></span> <a id="pub-example" href="/example" target="_blank" rel="noopener">Открыть готовый пример</a><span id="pub-example-ans-wrap" hidden> · <a id="pub-example-ans" href="/example/answered" target="_blank" rel="noopener">он же после ответов автора</a></span><span class="quiet" id="pub-limits"></span></div>
 
  <section id="setup" aria-label="Выбор документа и настройки">
   <h1 class="lead">Какое ТЗ проверить?</h1>
@@ -390,6 +395,9 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
     <p id="key-ok" class="keyok" role="status" hidden><b id="key-ok-text"></b><span class="quiet" id="key-note"></span><button type="button" class="btn" id="key-forget">Забыть ключ</button></p>
     <p class="hint" id="key-hint">Ключ хранится только в памяти окна до его закрытия и никуда не записывается.</p>
    </div>
+  </div>
+  <div class="keybox" id="code-field" hidden>
+   <div class="field"><label for="code-input">Код доступа к модели сервера</label><input type="password" id="code-input" autocomplete="off" spellcheck="false" maxlength="200"><div class="hint">Код публикуют организаторы. Со своим ключом или без модели код не нужен.</div></div>
   </div>
 
   <div id="estimate" class="estimate" aria-live="polite"><p class="est-empty">Здесь появится оценка времени и стоимости — как только вы выберете документ.</p></div>
@@ -512,6 +520,7 @@ function labelFor(list,id){list=list||[];for(var i=0;i<list.length;i++){if(list[
 function shortModel(id){if(id==="offline")return "без модели";return id||"";}
 
 /* ---------- network ---------- */
+var PUB=null;/* the public site's settings (null in the local window) */
 var NET_ERR="Нет связи с программой. Похоже, она остановлена в терминале — запустите «python main.py --ui» ещё раз и обновите страницу.";
 function api(path,opts){
   return fetch(path,opts||{}).then(function(res){
@@ -570,13 +579,40 @@ function applyConfig(c){
   buildStages(c.stages||DEFAULT_STAGES);
   paintNotice(c);paintKey(c);
   txt("foot","Ревизор ТЗ"+(c.version?" "+c.version:"")+" · окно работает только на этом компьютере (127.0.0.1)");
+  if(c.public)applyPublic(c);
   onModelChange(false);
   S.example=!!c.example;
-  txt("try-note",c.provider==="offline"?"Откроет пример и сразу проверит его правилами, без модели: бесплатно.":"Загрузит пример и покажет оценку времени и стоимости: запускать или нет, решаете вы.");
+  txt("try-note",PUB?"Загрузит документ организаторов: останется нажать «Проверить».":c.provider==="offline"?"Откроет пример и сразу проверит его правилами, без модели: бесплатно.":"Загрузит пример и покажет оценку времени и стоимости: запускать или нет, решаете вы.");
   if(c.job&&c.job.job_id){restoreJob(c.job);return;}
   if(c.preloaded&&c.preloaded.upload_id){setDoc(c.preloaded);runEstimate(true);}
   else setState("idle");
   refreshRun();
+}
+/* ---------- public site (python main.py --public): the key lives in this tab only and goes with one check ---------- */
+function applyPublic(c){
+  PUB=c.public||{};
+  NET_ERR="Нет связи с сервером. Обновите страницу через минуту: бесплатный сервер просыпается до минуты.";
+  txt("pub-intro-text","Проверьте своё ТЗ или посмотрите готовый отчёт по документу организаторов — сразу, без ожидания:");
+  show("pub-example",!!PUB.example_url);show("pub-example-ans-wrap",!!PUB.example_answered_url);
+  txt("pub-limits",PUB.limits_text||"");show("pub-intro",true);
+  $("key-box").classList.add("pub");$("key-toggle").checked=true;$("key-toggle").hidden=true;show("key-panel",true);
+  if(!S.pubKey){show("key-form",true);show("key-ok",false);}
+  txt("key-hint",PUB.key_note||"");
+  show("code-field",!!PUB.access_code);
+  txt("foot","Ревизор ТЗ"+(c.version?" "+c.version:"")+" · "+(PUB.local_note||""));
+  pubModels();
+}
+function pubModels(){
+  var c=S.cfg||{};var list=(c.models||[]).slice();var def=c.default_model;
+  if(S.pubKey){list.unshift({id:"own",label:String((c.key_models||{})[S.pubKey.provider]||"модель")+" — ваш ключ"});def="own";}
+  fillSelect($("model-select"),list,def);
+}
+function pubFields(o,rerun){
+  if(!PUB)return o;
+  var own=rerun==="none"?false:rerun?!!S.pubKey:(S.pubKey&&$("model-select").value==="own");
+  if(own){o.key=S.pubKey.key;o.key_provider=S.pubKey.provider;}
+  var code=$("code-input").value.trim();if(code)o.access_code=code;
+  return o;
 }
 function loadConfig(){
   buildStages(DEFAULT_STAGES);
@@ -672,7 +708,24 @@ function keyRefresh(){
     onModelChange(true);refreshRun();
   });
 }
+/* public site: the key stays in this tab's memory (S.pubKey) and goes only in the body of a check */
+function keyApplyPublic(){
+  var el=$("key-input");var k=el.value.trim();keyError(null);
+  if(!k){keyError("Ключ не принят: поле пустое.");return;}
+  if(/\s/.test(k)){keyError("Ключ не принят: внутри есть пробелы или переносы строк.");return;}
+  var prov=$("key-provider").value;
+  S.pubKey={provider:prov,key:k};el.value="";
+  show("key-form",false);show("key-ok",true);
+  txt("key-ok-text","Ключ готов · "+labelFor((S.cfg||{}).key_providers,prov));
+  txt("key-note"," Уйдёт на сервер только вместе с проверкой.");
+  pubModels();onModelChange(true);refreshRun();
+}
+function keyForgetPublic(){
+  S.pubKey=null;$("key-input").value="";show("key-form",true);show("key-ok",false);keyError(null);
+  pubModels();onModelChange(true);refreshRun();
+}
 function keyApply(){
+  if(PUB){keyApplyPublic();return;}
   var field=$("key-input");var btn=$("key-apply");
   if(btn.disabled)return;
   keyError(null);btn.disabled=true;
@@ -684,6 +737,7 @@ function keyApply(){
   });
 }
 function keyForget(){
+  if(PUB){keyForgetPublic();return Promise.resolve();}
   keyError(null);
   return postJSON("/api/key/forget",{}).then(function(r){
     if(!r.ok){keyError(r.error);$("key-toggle").checked=true;show("key-panel",true);return;}
@@ -692,6 +746,7 @@ function keyForget(){
   });
 }
 $("key-toggle").addEventListener("change",function(){
+  if(PUB){this.checked=true;return;}
   if(this.checked){show("key-panel",true);keyError(null);$("key-input").focus();return;}
   if(S.cfg&&S.cfg.user_key&&S.cfg.user_key.set){keyForget();return;}
   show("key-panel",false);keyError(null);$("key-input").value="";
@@ -707,6 +762,7 @@ function onModelChange(doEstimate){
   var off=isOffline();var cap=$("cap-input");cap.disabled=off;
   txt("cap-hint",off?"Без модели расходов нет":"Остановится, если дойдёт до суммы");
   txt("model-hint",off?"Только правила, бесплатно":"Какой ИИ читает документ");
+  if(PUB&&!off&&$("model-select").value!=="own"){cap.disabled=true;cap.value="";txt("cap-hint","Модель сервера: для вас бесплатно");txt("model-hint","Ключ сервера, в пределах дневного лимита");}
   if(doEstimate&&S.doc)runEstimate(false);
 }
 $("model-select").addEventListener("change",function(){onModelChange(true);});
@@ -720,7 +776,9 @@ function runEstimate(firstTime){
   var seq=++S.estSeq;var box=$("estimate");
   if(!S.est){clear(box);box.appendChild(mk("p","est-empty","Считаю оценку…"));}
   else box.style.opacity=".6";
-  return postJSON("/api/estimate",{doc:S.doc.upload_id,model:$("model-select").value,depth:$("depth-select").value}).then(function(r){
+  var eb={doc:S.doc.upload_id,model:$("model-select").value,depth:$("depth-select").value};
+  if(PUB&&S.pubKey)eb.key_provider=S.pubKey.provider;
+  return postJSON("/api/estimate",eb).then(function(r){
     if(seq!==S.estSeq)return;
     box.style.opacity="";
     if(!r.ok){S.est=null;clear(box);var p=mk("p","est-bad",r.error);box.appendChild(p);}
@@ -772,7 +830,7 @@ function tryExample(){
       runMsg("");beginJob(String(r.job_id),{doc_name:S.doc.name,model:"offline",depth:(S.cfg&&S.cfg.default_depth)||"full",answers_name:""});
     }else{
       runEstimate(true);
-      runMsg("Пример загружен. Для него настроена модель, поэтому проверка будет платной: посмотрите оценку, при желании задайте потолок расходов и нажмите «Проверить».");
+      runMsg(PUB?"Пример загружен: нажмите «Проверить».":"Пример загружен. Для него настроена модель, поэтому проверка будет платной: посмотрите оценку, при желании задайте потолок расходов и нажмите «Проверить».");
     }
   });
 }
@@ -790,9 +848,10 @@ function startRun(){
   var cap=isOffline()?"":capValue();
   if(cap&&!(Number(cap)>0)){runMsg("Потолок расходов — это сумма в долларах больше нуля, например 5 или 0.15.",true);$("cap-input").focus();return;}
   S.starting=true;refreshRun();runMsg("Запускаю…");
-  postJSON("/api/run",{doc:S.doc.upload_id,answers:S.answers?S.answers.upload_id:null,model:$("model-select").value,
-    depth:$("depth-select").value,max_cost:cap}).then(function(r){
+  postJSON("/api/run",pubFields({doc:S.doc.upload_id,answers:S.answers?S.answers.upload_id:null,model:$("model-select").value,
+    depth:$("depth-select").value,max_cost:cap})).then(function(r){
     S.starting=false;
+    if(PUB&&r.ok){if(r.note){$("notice").textContent=String(r.note);show("notice",true);}else show("notice",false);}
     if(!r.ok){
       if(r.status===409){runMsg("");attachLatest(r.error);return;}
       runMsg(r.error,true);refreshRun();return;}
@@ -1210,7 +1269,7 @@ function recheck(){
   if(!Object.keys(ans).length)return;
   var st=S.lastStatus||{};var msg=$("recheck-msg");
   S.rechecking=true;updateAnswered();msg.classList.remove("bad");msg.textContent="Запускаю повторную проверку…";
-  postJSON("/api/rerun",{job:S.jobId,answers:ans,max_cost:st.model==="offline"?"":String(st.max_cost||"")}).then(function(r){
+  postJSON("/api/rerun",pubFields({job:S.jobId,answers:ans,max_cost:st.model==="offline"?"":String(st.max_cost||"")},st.model==="offline"?"none":"rerun")).then(function(r){
     S.rechecking=false;
     if(!r.ok){msg.textContent=r.error;msg.classList.add("bad");updateAnswered();return;}
     msg.textContent="";S.backJob=S.jobId;

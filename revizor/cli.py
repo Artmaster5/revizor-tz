@@ -78,6 +78,10 @@ def build_parser() -> argparse.ArgumentParser:
                         "--max-cost — то, что выбрано в окне сразу; --provider и --no-cache действуют на каждую проверку из окна")
     p.add_argument("--port", type=int, default=8765, metavar="N",
                    help="для --ui: номер порта окна (по умолчанию 8765); если он занят, укажите другой")
+    p.add_argument("--public", action="store_true",
+                   help="окно как публичный сайт (Render.com и т. п.): у каждой проверки свой номер и своя папка, ключ "
+                        "сервера из GEMINI_API_KEY в пределах дневных лимитов, свой ключ посетителя — только на одну "
+                        "проверку; порт из $PORT, адрес 0.0.0.0. Лимиты и шаги — docs/DEPLOY.md")
     p.add_argument("--no-browser", action="store_true",
                    help="для --ui: не открывать браузер самому, только напечатать адрес окна")
     p.add_argument("--version", action="version", version=f"Ревизор ТЗ {__version__}")
@@ -187,6 +191,10 @@ def _main(argv, env_in, say, injected_backend, input_fn=None) -> int:
     args = build_parser().parse_args(argv)
     if args.focus:
         os.environ["REVIZOR_FOCUS"] = "1"   # read by the re-check (gate.focus_on); also applies to the window
+    if args.public:
+        from . import public
+
+        return public.serve(args, config.build_env(env_in), say)
     if args.ui:
         from . import webui
 

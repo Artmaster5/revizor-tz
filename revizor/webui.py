@@ -850,6 +850,8 @@ class UIServer:
     """The window's server. ``start()`` binds 127.0.0.1 and returns the real port; ``serve_forever()``; ``close()``
     stops it and removes the temporary folder with uploads."""
 
+    ID_BYTES = 8  # random bytes in an upload id (the public site uses more: public.PublicServer)
+
     def __init__(self, env: Mapping[str, str], *, port: int = 8765, out_dir: str | Path = DEFAULT_OUT_DIR,
                  defaults: Mapping[str, Any] | None = None, provider: str = "auto", no_cache: bool = False,
                  backend=None, page_path: str | Path | None = None, preload: str | None = None,
@@ -890,7 +892,7 @@ class UIServer:
         self._serving = False
         if preload:
             p = Path(preload)
-            uid = secrets.token_hex(8)
+            uid = secrets.token_hex(self.ID_BYTES)
             self.uploads[uid] = {"id": uid, "kind": "doc", "name": p.name, "path": p,
                                  "size": p.stat().st_size if p.is_file() else 0, "t": time.monotonic(), "pinned": True}
             self.preload_id = uid
@@ -1000,7 +1002,7 @@ class UIServer:
         src = self.example_path
         if not src.is_file():
             raise ApiError(404, "Примера в этой установке нет.")
-        uid = secrets.token_hex(8)
+        uid = secrets.token_hex(self.ID_BYTES)
         folder = self.temp_root / uid
         dest = folder / EXAMPLE_NAME
         try:
@@ -1039,7 +1041,7 @@ class UIServer:
             raise ApiError(413, f"Файл слишком большой: можно до {limit / 1024 / 1024:g} МБ.")
         if length <= 0:
             raise ApiError(400, "Файл пустой.")
-        uid = secrets.token_hex(8)
+        uid = secrets.token_hex(self.ID_BYTES)
         folder = self.temp_root / uid
         dest = folder / name
         if dest.resolve().parent != folder.resolve() or not dest.resolve().is_relative_to(self.temp_root):
@@ -1225,7 +1227,7 @@ class UIServer:
             doc = self.uploads.get(job.doc_upload)
         if doc is None or not Path(doc["path"]).is_file():
             raise ApiError(404, "Документ больше не хранится в окне: загрузите его ещё раз и проверьте заново.")
-        uid = secrets.token_hex(8)
+        uid = secrets.token_hex(self.ID_BYTES)
         folder = self.temp_root / uid
         dest = folder / "answers.md"
         data = answers_file_text(typed, {qid: known[qid].get("fingerprint", "") for qid in typed},
