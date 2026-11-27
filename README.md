@@ -15,10 +15,12 @@
 | Требования, переписанные агентом | [`reports/report.fixed.md`](reports/report.fixed.md) |
 | Черновики приёмочных тестов и задачи для Jira | [`report.tests.md`](reports/report.tests.md), [`report.jira.csv`](reports/report.jira.csv) |
 | Точность | все 10 дефектов организаторов; 49 из 52 и ещё 2 частично по нашему списку (независимый судья, Opus); 102 из 109 на 8 незнакомых документах, включая казахский и английский (Sonnet) — [подробно](#точность) |
+| Бесплатно и локально | бесплатный Gemini: 2 мин 43 с, $0, все 10 дефектов организаторов; локальная Gemma 4 на MacBook (модель 6,4 ГБ, документ не покидает компьютер): 36 мин, $0, 9 из 10 полностью и место десятого — [`docs/runs/`](docs/runs/README.md) |
 | Запустить за минуту, без ключа | [Запуск одной командой](#запуск-одной-командой); окно — `python main.py --ui`, кнопка «Попробовать на примере» |
 | Как устроен | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | Тесты агента | 1198 тестов без ключей и без сети; на GitHub проходят на Windows, macOS и Linux — [запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) |
 | Ценность для банка и пилот | [`docs/VALUE.md`](docs/VALUE.md), [`docs/PILOT.md`](docs/PILOT.md) |
+| Полная карта проекта: все функции, где каждая в коде, все числа с источником | [`docs/FOR_AI_REVIEW.md`](docs/FOR_AI_REVIEW.md), удобно и для проверки с помощью ИИ |
 | Всё по четырём критериям | [`SUBMISSION.md`](SUBMISSION.md) |
 
 **Агент сам переписывает требования.** К отчёту он прикладывает [`reports/report.fixed.md`](reports/report.fixed.md): таблицу «было → стало» с новой формулировкой требования и ссылкой на замечание. После ответов автора — [`reports/report_answered.fixed.md`](reports/report_answered.fixed.md): формулировки с учётом ответов и со ссылкой на ответ. Автору остаётся прочитать их и вставить в документ.
