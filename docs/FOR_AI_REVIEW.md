@@ -8,7 +8,7 @@
 - Runs with no key, for free: `python main.py --input docs/requirements.md --output reports/my_report.md --provider offline`.
 - Providers: Anthropic, Google Gemini, OpenAI-compatible servers, Ollama / any local OpenAI-compatible server, offline (`revizor/llm/`).
 - Clarification loop: questions to the author with options and an assumption, answers, re-check, «было → стало» diff, rewritten requirements (`*.fixed.md`), letter by addressee.
-- 1269 tests in 58 test files (`tests/`), no network and no keys. Measured results and method: `eval/ACCURACY.md`; two runs from 27.11.2026 (free Gemini, local Gemma 4) are stored in `docs/runs/`.
+- 1273 tests in 59 test files (`tests/`), no network and no keys. Measured results and method: `eval/ACCURACY.md`; two runs from 27.11.2026 (free Gemini, local Gemma 4) are stored in `docs/runs/`.
 
 ---
 
@@ -193,8 +193,8 @@ python main.py --ui
 
 | Что | Значение | Где проверить |
 | :--- | :--- | :--- |
-| Число тестов | 1269 (число определений `def test_` в `tests/`) | `README.md`; `grep -rn "def test_" tests` |
-| Файлов с тестами | 58 (`tests/test_*.py`) | `ls tests` |
+| Число тестов | 1273 (число определений `def test_` в `tests/`) | `README.md`; `grep -rn "def test_" tests` |
+| Файлов с тестами | 59 (`tests/test_*.py`) | `ls tests` |
 | Запуск | `python -m unittest discover -s tests -t .`; без сети и без ключей, провайдеры проверяются с заглушкой вместо сервера | `docs/ARCHITECTURE.md` |
 | CI | GitHub Actions, матрица 3 системы × 3 версии Python: Ubuntu, Windows, macOS × Python 3.10, 3.12, 3.13; установка зависимостей, тесты, дымовой прогон `--provider offline`; отдельный прогон в консоли Windows с кодовой страницей 866. Запускается вручную (`workflow_dispatch`) | `.github/workflows/tests.yml` |
 | Переменная для тестов | `REVIZOR_NO_DOTENV=1` отключает чтение `.env` | `revizor/config.py`, `.github/workflows/tests.yml` |
@@ -281,7 +281,7 @@ eval/                      ACCURACY.md, RESULTS.md, score.py, run_all.py, summar
                            docs/ (документ организаторов и четыре документа с ключами), blind/ blind2/ blind3/ (двенадцать документов с ключами), results/
 reports/                   сданный отчёт (report.*), повторная проверка с ответами (report_answered.*), образцы Haiku, без модели, диагностики
 examples/                  PDF-версия документа организаторов, испорченные файлы (examples/broken/)
-tests/                     58 файлов с тестами, 1269 тестов; fixtures/
+tests/                     59 файлов с тестами, 1273 тестов; fixtures/
 tools/                     roi.py (окупаемость), rerender.py (пересборка отчёта из JSON), make_fixtures.py, shots.py, build_slides.py
 .github/workflows/         tests.yml
 ```
