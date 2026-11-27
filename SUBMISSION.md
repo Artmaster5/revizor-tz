@@ -18,7 +18,7 @@ python main.py --ui                                                             
 ## Видео и слайды
 
 - Слайды: [`presentation.pdf`](presentation.pdf); исходник и сборка — [`docs/slides/`](docs/slides/README.md).
-- Видео: **ссылка на видео: будет добавлена**.
+- Видео (4 мин 44 с, YouTube, доступ по ссылке): https://youtu.be/4_AOG0X5nH4
 
 ## Что смотреть первым
 
