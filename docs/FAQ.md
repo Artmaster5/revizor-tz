@@ -220,7 +220,7 @@
 
 ### 28. Как проверить ваши слова, не веря нам на слово?
 
-Всё лежит в репозитории. Без ключа `python main.py --input docs/requirements.md --output reports/my_report.md --provider offline` даёт отчёт за доли секунды, а окно `python main.py --ui` — кнопку «Попробовать на примере». Любую цитату можно открыть по номеру строки или проверить инструментом `verify_quote`. Точность пересчитывает `python eval/score.py <отчёт>.json --key eval/docs/requirements.md.key.json`, тесты запускает `python -m unittest discover -s tests -t .`. Полная карта проекта, где у каждой функции указан код, а у каждого числа — источник, удобна и для проверки своим ИИ.
+Проще всего — открыть сайт агента https://revizor-tz.onrender.com: свой документ или готовый пример, без установки. Всё остальное лежит в репозитории. Без ключа `python main.py --input docs/requirements.md --output reports/my_report.md --provider offline` даёт отчёт за доли секунды, а окно `python main.py --ui` — кнопку «Попробовать на примере». Любую цитату можно открыть по номеру строки или проверить инструментом `verify_quote`. Точность пересчитывает `python eval/score.py <отчёт>.json --key eval/docs/requirements.md.key.json`, тесты запускает `python -m unittest discover -s tests -t .`. Полная карта проекта, где у каждой функции указан код, а у каждого числа — источник, удобна и для проверки своим ИИ.
 
 Где видно: [docs/FOR_AI_REVIEW.md](FOR_AI_REVIEW.md), команды прогонов — [docs/runs/README.md](runs/README.md).
 
