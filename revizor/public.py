@@ -568,9 +568,7 @@ def _plural(n: int, forms: tuple[str, str, str]) -> str:
 
 
 # -- HTTP ---------------------------------------------------------------------------------------------------------
-class _PublicHTTPServer(webui._HTTPServer):
-    allow_reuse_address = True
-
+class _PublicHTTPServer(webui._HTTPServer):  # the window's socket options (exclusive port on Windows)
     def handle_error(self, request, client_address) -> None:
         self.ui._say("Ошибка при обработке запроса.")
 
