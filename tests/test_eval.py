@@ -238,7 +238,7 @@ class RunAll(unittest.TestCase):
         md = run_all.RESULTS_MD.read_text(encoding="utf-8")
         self.assertIn("## Провайдер `offline`, модель `stub-model`", md)
         self.assertIn("Настроечные вместе (4)", md)
-        self.assertIn("Честные оговорки", md)
+        self.assertIn("Как читать цифры", md)
         self.assertTrue((run_all.RESULTS_DIR / "requirements.offline.score.json").exists())
 
     def test_non_offline_refused_without_flag(self):

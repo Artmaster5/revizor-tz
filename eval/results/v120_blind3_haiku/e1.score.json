@@ -1,0 +1,779 @@
+{
+  "document": "e1_travel_insurance_api.md",
+  "run": {
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "mode": "full",
+    "cost_usd": 0.211721,
+    "cost_note": "по тарифу claude-haiku-5-5: $0.1 / $0.5 за 1 млн токенов (вход / выход)",
+    "duration_s": 695.2,
+    "doc_name": "e1_travel_insurance_api.md"
+  },
+  "options": {
+    "absorbed": true
+  },
+  "counts": {
+    "requirements": 61,
+    "findings_open": 102,
+    "advisory": 14
+  },
+  "recall": {
+    "overall": {
+      "total": 14,
+      "strict": 11,
+      "loose": 14,
+      "strict_share": 0.7857142857142857,
+      "loose_share": 1.0
+    },
+    "by_severity": {
+      "CRITICAL": {
+        "total": 3,
+        "strict": 3,
+        "loose": 3,
+        "strict_share": 1.0,
+        "loose_share": 1.0
+      },
+      "MAJOR": {
+        "total": 7,
+        "strict": 5,
+        "loose": 7,
+        "strict_share": 0.7142857142857143,
+        "loose_share": 1.0
+      },
+      "MINOR": {
+        "total": 4,
+        "strict": 3,
+        "loose": 4,
+        "strict_share": 0.75,
+        "loose_share": 1.0
+      }
+    },
+    "by_origin": {
+      "own": {
+        "total": 14,
+        "strict": 11,
+        "loose": 14,
+        "strict_share": 0.7857142857142857,
+        "loose_share": 1.0
+      }
+    }
+  },
+  "severity_agreement": {
+    "same": 8,
+    "tool_higher": 2,
+    "tool_lower": 1
+  },
+  "defects": [
+    {
+      "id": "E1-01",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Возврат при отмене: в 5.4 — премия минус 20 % при любой отмене, в 8.1 — полный возврат в течение 14 дней до начала поездки.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-106",
+        "D-146"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-106",
+        "D-146",
+        "D-147",
+        "D-150"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-02",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Единицы суммы: котировка возвращает premium в тенге с копейками (12500.00), выпуск полиса требует amount в тиынах, а пример передаёт \"amount\": 12500.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-058",
+        "D-059"
+      ],
+      "loose_fids": [
+        "D-058",
+        "D-059"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_lower"
+    },
+    {
+      "id": "E1-03",
+      "severity": "CRITICAL",
+      "origin": "own",
+      "title": "Выпуск полиса после списания премии: при тайм-ауте результат неизвестен, повтор не поддерживается и может создать второй полис; ключа идемпотентности и сценария восстановления нет.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-092"
+      ],
+      "loose_fids": [
+        "D-092"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-04",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Котировка допускает до 5 путешественников, а выпуск полиса принимает одного insured (объект, не массив).",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-040",
+        "D-061",
+        "D-072"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "E1-05",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Начало и конец покрытия (00:00 / 23:59) без часового пояса, при том что все временные метки — в UTC: возможен разрыв покрытия в 5 часов для клиента в Казахстане.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-045"
+      ],
+      "loose_fids": [
+        "D-045"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-06",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Возрастная граница: «over 70» — включается ли ровно 70; на какую дату считается возраст (покупка, начало поездки); 75 включительно?",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-025",
+        "D-032"
+      ],
+      "loose_fids": [
+        "D-014",
+        "D-025",
+        "D-032",
+        "D-038"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-07",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Список стран повышенного риска не определён и меняется «время от времени»; способа получить его через API нет, а он меняет премию на 30 %.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-014",
+        "D-038"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "E1-08",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Шаблон ИИН ^\\d{11}$ — 11 цифр, а ИИН в Казахстане из 12 цифр (и пример содержит 12).",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-075"
+      ],
+      "loose_fids": [
+        "D-052",
+        "D-075"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-09",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "Повтор вебхуков «до подтверждения»: нет лимита попыток и интервалов, идентификатора события для дедупликации и гарантии порядка.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-116"
+      ],
+      "loose_fids": [
+        "D-116"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-10",
+      "severity": "MAJOR",
+      "origin": "own",
+      "title": "SLA «highly available and responds quickly» непроверяемо: нет процента доступности и времени ответа.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-161"
+      ],
+      "loose_fids": [
+        "D-161"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-11",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "«Сообщения об ошибках понятны пользователю и могут показываться как есть» — непроверяемо, язык сообщений (каз./рус.) не задан.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-139",
+        "D-140",
+        "D-141"
+      ],
+      "loose_fids": [
+        "D-006",
+        "D-014",
+        "D-139",
+        "D-140",
+        "D-141"
+      ],
+      "tool_severity": "MAJOR",
+      "severity_agreement": "tool_higher"
+    },
+    {
+      "id": "E1-12",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Требование к экрану оплаты банка (логотип Pantone, 48 px, шрифт 12 pt) вынесено в спецификацию API.",
+      "strict": false,
+      "loose": true,
+      "status": "loose",
+      "strict_fids": [],
+      "loose_fids": [
+        "D-154",
+        "D-156"
+      ],
+      "tool_severity": "",
+      "severity_agreement": ""
+    },
+    {
+      "id": "E1-13",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Срок жизни токена дублируется в 4.1 и 9.3.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-166"
+      ],
+      "loose_fids": [
+        "D-047",
+        "D-166",
+        "D-167"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "same"
+    },
+    {
+      "id": "E1-14",
+      "severity": "MINOR",
+      "origin": "own",
+      "title": "Статус «draft», история ревизий TBD: нет версии и даты документа.",
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-002",
+        "D-179"
+      ],
+      "loose_fids": [
+        "D-002",
+        "D-179"
+      ],
+      "tool_severity": "CRITICAL",
+      "severity_agreement": "tool_higher"
+    }
+  ],
+  "false_alarms": [
+    {
+      "fid": "D-004",
+      "severity": "MAJOR",
+      "title": "Отмена полиса: в колл-центре по обзору или через API по разделу 5.4",
+      "line": 15,
+      "good_anchor": "Out of scope: claims handling, medical assistance requests and policy changes after issuance"
+    },
+    {
+      "fid": "D-042",
+      "severity": "MAJOR",
+      "title": "Округление премии до тиынов не задано",
+      "line": 35,
+      "good_anchor": "3.6. Premium is always charged in KZT. The EUR coverage amount is fixed"
+    },
+    {
+      "fid": "D-050",
+      "severity": "MAJOR",
+      "title": "Не назван субъект требования о месте хранения",
+      "line": 42,
+      "good_anchor": "4.3. Personal data of travellers is stored only on servers located in the Republic of Kazakhstan."
+    },
+    {
+      "fid": "D-052",
+      "severity": "MAJOR",
+      "title": "Нет требований к хранению, журналу и доступу к персональным данным",
+      "line": 42,
+      "good_anchor": "4.3. Personal data of travellers is stored only on servers located in the Republic of Kazakhstan."
+    },
+    {
+      "fid": "D-100",
+      "severity": "MAJOR",
+      "title": "Не описана проверка принадлежности для выпуска и отмены",
+      "line": 106,
+      "good_anchor": "Returns `404` both for an unknown policy and for"
+    },
+    {
+      "fid": "D-122",
+      "severity": "MAJOR",
+      "title": "Не описано, что и как подписывается",
+      "line": 120,
+      "good_anchor": "6.4. Webhook requests are signed with HMAC-SHA256 in header `X-Steppe-Signature`"
+    },
+    {
+      "fid": "D-131",
+      "severity": "MAJOR",
+      "title": "Не указаны единицы при сравнении суммы с премией",
+      "line": 130,
+      "good_anchor": "| 409 | `AMOUNT_MISMATCH` | `amount` differs from the quote premium |"
+    }
+  ],
+  "false_alarms_exempt": [],
+  "unmatched": [
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Не описано, что делать с групповыми и корпоративными поездками",
+      "line": 16
+    },
+    {
+      "fid": "D-007",
+      "severity": "MAJOR",
+      "title": "Бизнес-процесс описан только для успешного пути",
+      "line": 20
+    },
+    {
+      "fid": "D-010",
+      "severity": "MINOR",
+      "title": "Источник списания: карта или текущий счёт",
+      "line": 22
+    },
+    {
+      "fid": "D-012",
+      "severity": "CRITICAL",
+      "title": "Списание до выпуска полиса без правила возврата при ошибке выпуска",
+      "line": 22
+    },
+    {
+      "fid": "D-013",
+      "severity": "CRITICAL",
+      "title": "PDF полиса должен быть показан до оплаты, но создаётся только после списания",
+      "line": 22
+    },
+    {
+      "fid": "D-016",
+      "severity": "MINOR",
+      "title": "Не задан срок отправки webhook после события",
+      "line": 25
+    },
+    {
+      "fid": "D-017",
+      "severity": "MINOR",
+      "title": "Сумма покрытия не возвращается ни одним полем API",
+      "line": 29
+    },
+    {
+      "fid": "D-022",
+      "severity": "MINOR",
+      "title": "Граница 180 дней не отмечена как включаемая",
+      "line": 30
+    },
+    {
+      "fid": "D-023",
+      "severity": "MAJOR",
+      "title": "Нет критериев приёмки и проверок границ и отказов",
+      "line": 30
+    },
+    {
+      "fid": "D-035",
+      "severity": "MAJOR",
+      "title": "Не сказано, при какой стране действует надбавка",
+      "line": 32
+    },
+    {
+      "fid": "D-048",
+      "severity": "MAJOR",
+      "title": "Неясна область действия «All calls»",
+      "line": 41
+    },
+    {
+      "fid": "D-051",
+      "severity": "MINOR",
+      "title": "Не перечислены персональные данные и способ проверки места хранения",
+      "line": 42
+    },
+    {
+      "fid": "D-053",
+      "severity": "MINOR",
+      "title": "Не перечислены получатели персональных данных",
+      "line": 42
+    },
+    {
+      "fid": "D-056",
+      "severity": "MINOR",
+      "title": "Не описаны регистр и повторы кодов стран",
+      "line": 54
+    },
+    {
+      "fid": "D-064",
+      "severity": "MAJOR",
+      "title": "Повтор выпуска полиса запрещён, но без него после таймаута результат не узнать",
+      "line": 67
+    },
+    {
+      "fid": "D-063",
+      "severity": "MINOR",
+      "title": "Не описано, где хранится признак использованной котировки",
+      "line": 67
+    },
+    {
+      "fid": "D-065",
+      "severity": "MINOR",
+      "title": "Код 410 Gone для истёкшей котировки не соответствует смыслу HTTP",
+      "line": 67
+    },
+    {
+      "fid": "D-066",
+      "severity": "MINOR",
+      "title": "Проверяется действие Партнёра, а не Страховщика",
+      "line": 68
+    },
+    {
+      "fid": "D-067",
+      "severity": "MINOR",
+      "title": "Требования раздела 5 не имеют номеров, связь с критериями приёмки невозможна",
+      "line": 70
+    },
+    {
+      "fid": "D-071",
+      "severity": "MINOR",
+      "title": "Не заданы допустимые символы и минимальная длина",
+      "line": 78
+    },
+    {
+      "fid": "D-078",
+      "severity": "MAJOR",
+      "title": "Не определён набор допустимых символов и длина имени",
+      "line": 86
+    },
+    {
+      "fid": "D-079",
+      "severity": "MINOR",
+      "title": "Соответствие паспорту не проверяется системой",
+      "line": 86
+    },
+    {
+      "fid": "D-080",
+      "severity": "MAJOR",
+      "title": "Неясно, какая дата рождения используется для проверки возраста",
+      "line": 87
+    },
+    {
+      "fid": "D-081",
+      "severity": "MAJOR",
+      "title": "Не определено, какие документы и какой формат номера допустимы",
+      "line": 88
+    },
+    {
+      "fid": "D-083",
+      "severity": "MAJOR",
+      "title": "Срок доступности PDF может быть короче срока действия полиса",
+      "line": 98
+    },
+    {
+      "fid": "D-084",
+      "severity": "MAJOR",
+      "title": "Непонятно, от какого момента считаются 90 дней доступности PDF",
+      "line": 98
+    },
+    {
+      "fid": "D-086",
+      "severity": "MAJOR",
+      "title": "Информационный лист не передаётся через API, хотя его нужно показать клиенту",
+      "line": 98
+    },
+    {
+      "fid": "D-087",
+      "severity": "MAJOR",
+      "title": "Не описан доступ к ссылке documentUrl с персональными данными",
+      "line": 98
+    },
+    {
+      "fid": "D-089",
+      "severity": "MINOR",
+      "title": "Внутреннее название базы страховщика не нужно партнёру",
+      "line": 100
+    },
+    {
+      "fid": "D-090",
+      "severity": "MINOR",
+      "title": "Слово «may» не показывает, является ли 40 секунд обязательным пределом",
+      "line": 100
+    },
+    {
+      "fid": "D-091",
+      "severity": "MINOR",
+      "title": "Срок 40 секунд без условий измерения",
+      "line": 100
+    },
+    {
+      "fid": "D-093",
+      "severity": "MAJOR",
+      "title": "Не описано состояние экрана во время выпуска и при сбое",
+      "line": 100
+    },
+    {
+      "fid": "D-097",
+      "severity": "MINOR",
+      "title": "Нет идемпотентности изменяющих запросов и одновременных изменений",
+      "line": 101
+    },
+    {
+      "fid": "D-098",
+      "severity": "MAJOR",
+      "title": "Состав полей ответа не описан",
+      "line": 106
+    },
+    {
+      "fid": "D-099",
+      "severity": "MAJOR",
+      "title": "Повторная отмена полиса в статусах CANCELLED и EXPIRED не описана",
+      "line": 106
+    },
+    {
+      "fid": "D-102",
+      "severity": "MAJOR",
+      "title": "Операция отмены не проверяет, что полис принадлежит этому партнёру",
+      "line": 111
+    },
+    {
+      "fid": "D-103",
+      "severity": "MINOR",
+      "title": "Не указано округление дробных тийин при возврате и надбавках",
+      "line": 111
+    },
+    {
+      "fid": "D-104",
+      "severity": "MINOR",
+      "title": "Нет требований к журналу операций, выключателю и откату",
+      "line": 111
+    },
+    {
+      "fid": "D-109",
+      "severity": "MAJOR",
+      "title": "Неясно, можно ли отменить полис в день startDate",
+      "line": 113
+    },
+    {
+      "fid": "D-111",
+      "severity": "MAJOR",
+      "title": "Нет ошибок для отмены: повторная отмена, отмена после старта, неактивный полис",
+      "line": 113
+    },
+    {
+      "fid": "D-112",
+      "severity": "MINOR",
+      "title": "Не задан срок отправки события",
+      "line": 117
+    },
+    {
+      "fid": "D-113",
+      "severity": "MINOR",
+      "title": "Не описано, как передать URL webhook и доступ к SFTP",
+      "line": 117
+    },
+    {
+      "fid": "D-114",
+      "severity": "MINOR",
+      "title": "Не заданы типы полей и значения event",
+      "line": 118
+    },
+    {
+      "fid": "D-115",
+      "severity": "MINOR",
+      "title": "В webhook нет идентификатора события для защиты от повторной обработки",
+      "line": 118
+    },
+    {
+      "fid": "D-123",
+      "severity": "MAJOR",
+      "title": "Ротация секрета без переходного периода",
+      "line": 120
+    },
+    {
+      "fid": "D-129",
+      "severity": "MINOR",
+      "title": "Структура details не описана",
+      "line": 127
+    },
+    {
+      "fid": "D-130",
+      "severity": "MINOR",
+      "title": "Не описан формат тела ошибки и закрытый перечень кодов",
+      "line": 127
+    },
+    {
+      "fid": "D-132",
+      "severity": "MINOR",
+      "title": "Граница срока квоты не определена",
+      "line": 131
+    },
+    {
+      "fid": "D-133",
+      "severity": "MAJOR",
+      "title": "Не ясно, какие правила раздела 3 дают 422",
+      "line": 132
+    },
+    {
+      "fid": "D-134",
+      "severity": "MAJOR",
+      "title": "Не задана дата расчёта возраста для 422",
+      "line": 132
+    },
+    {
+      "fid": "D-135",
+      "severity": "MINOR",
+      "title": "Не сказано, на каком этапе проверяются возраст, срок и дата старта",
+      "line": 132
+    },
+    {
+      "fid": "D-136",
+      "severity": "MINOR",
+      "title": "Окно подсчёта лимита 50 запросов в секунду",
+      "line": 133
+    },
+    {
+      "fid": "D-137",
+      "severity": "MINOR",
+      "title": "Ответ 429 без заголовка Retry-After",
+      "line": 133
+    },
+    {
+      "fid": "D-138",
+      "severity": "MAJOR",
+      "title": "Нет сценария для 500 при выпуске полиса",
+      "line": 134
+    },
+    {
+      "fid": "D-163",
+      "severity": "MINOR",
+      "title": "Термин «business days» не определён",
+      "line": 149
+    },
+    {
+      "fid": "D-164",
+      "severity": "MINOR",
+      "title": "Не задан способ объявления плановых работ",
+      "line": 149
+    },
+    {
+      "fid": "D-168",
+      "severity": "MAJOR",
+      "title": "Формат CSV-реестра не описан",
+      "line": 155
+    },
+    {
+      "fid": "D-169",
+      "severity": "MAJOR",
+      "title": "Неясно, какие полисы попадают в реестр",
+      "line": 155
+    },
+    {
+      "fid": "D-171",
+      "severity": "MINOR",
+      "title": "Значения статуса и возврата в реестре не заданы",
+      "line": 156
+    },
+    {
+      "fid": "D-172",
+      "severity": "MAJOR",
+      "title": "Не указано, от какого момента считаются сроки",
+      "line": 158
+    },
+    {
+      "fid": "D-173",
+      "severity": "MAJOR",
+      "title": "Термин «discrepancies» не определён",
+      "line": 158
+    },
+    {
+      "fid": "D-175",
+      "severity": "MINOR",
+      "title": "Не определены «расхождение», «ответ» и «рабочий день»",
+      "line": 158
+    },
+    {
+      "fid": "D-176",
+      "severity": "MAJOR",
+      "title": "Период расчёта комиссии и учёт возвратов не определены",
+      "line": 159
+    },
+    {
+      "fid": "D-177",
+      "severity": "MAJOR",
+      "title": "Возврат после закрытого периода комиссии и сверки не описан",
+      "line": 159
+    },
+    {
+      "fid": "D-178",
+      "severity": "MINOR",
+      "title": "Комиссия отсылает к внешнему договору",
+      "line": 160
+    },
+    {
+      "fid": "D-180",
+      "severity": "MINOR",
+      "title": "В документе есть похожие на настоящие номера карт или ИИН",
+      "line": 164
+    }
+  ],
+  "warnings": [],
+  "result_file": "eval/results/v120_blind3_haiku/e1.json",
+  "key_file": "eval/blind3/e1_travel_insurance_api.md.key.json"
+}

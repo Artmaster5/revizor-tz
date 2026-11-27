@@ -109,19 +109,21 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 </ol></details></nav>
 <main class="doc"><article class="sheet">
 <h1>Отчёт о статической проверке требований</h1>
-<p><strong>Документ:</strong> <code>requirements.md</code> · проверен 26.11.2026 07:23 (UTC+05:00) · без модели — только автоматические правила</p>
+<p><strong>Документ:</strong> <code>requirements.md</code> · проверен 27.11.2026 09:11 (UTC+05:00) · без модели — только автоматические правила</p>
 <blockquote class="verdict verdict-blocked">
 <p><strong>Итог:</strong> ⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (итог предварительный)<br>
-Замечаний 22: блокеров 3 · существенных 10 · мелких 9 · вопросов автору 21 · требований 58 · ответы автора закрывают 4 замечания, из них блокеров 2; после внесения ответов в текст останется 18, блокеров 1<br>
+Замечаний 23: блокеров 3 · существенных 10 · мелких 10 · вопросов автору 22 · требований 58 · ответы автора закрывают 4 замечания, из них блокеров 2; после внесения ответов в текст останется 19, блокеров 1<br>
+⛔ Нельзя отдавать в разработку: 1 блокер — с учётом ответов; в тексте документа пока: 3 блокера (предварительно).<br>
+⛔ Пока нельзя отдавать в тестирование: критерии не названы по требованиям, долю покрытия не посчитать — с учётом ответов то же (предварительно).<br>
 Индекс готовности документа: <strong>54 из 100</strong> — нужна существенная доработка, предварительно. Индекс считается по тексту документа; пока ответы не внесены в текст, он прежний.<br>
-💬 Ответы автора учтены: 5 из 21. Закрыто замечаний: 4. Итог после внесения ответов не меняется: ответы не закрывают блокер <a href="#d-006">D-006</a>.<br>
+💬 Ответы автора учтены: 5 из 22. Закрыто замечаний: 4. Итог после внесения ответов не меняется: ответы не закрывают блокер <a href="#d-007">D-007</a>.<br>
 ⚠️ Без модели смысл не проверялся: противоречия и пропущенные сценарии не искались.</p>
 </blockquote>
 <p><strong>Блокеры — исправить до начала работы (3):</strong></p>
 <ol>
-<li><a href="#d-006">D-006</a> Раздел «Тестирование требований» не заполнен: вместо содержания заглушка — нет обязательной части, строки 56, 57</li>
-<li><a href="#d-010">D-010</a> Метод GET используется для изменения данных — нарушение протокола, строки 103, 104, 108, 109</li>
-<li><a href="#d-020">D-020</a> Ошибка возвращается с успешным кодом 200 — нарушение протокола, строки 165, 171</li>
+<li><a href="#d-007">D-007</a> Раздел «Тестирование требований» не заполнен: вместо содержания заглушка — нет обязательной части, строки 56, 57</li>
+<li><a href="#d-011">D-011</a> Метод GET используется для изменения данных — нарушение протокола, строки 103, 104, 108, 109</li>
+<li><a href="#d-021">D-021</a> Ошибка возвращается с успешным кодом 200 — нарушение протокола, строки 165, 171</li>
 </ol>
 <p><strong>Сначала спросить автора:</strong></p>
 <ol>
@@ -133,11 +135,11 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 </ol>
 <p><strong>Что исправить в первую очередь:</strong></p>
 <ol>
-<li>Заполните раздел до начала разработки: для раздела о тестировании — что… (<a href="#d-006">D-006</a>)</li>
-<li>Используйте PUT или PATCH для изменения настройки (POST — для создания новой… (<a href="#d-010">D-010</a>)</li>
-<li>Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом… (<a href="#d-020">D-020</a>)</li>
-<li>Схема процесса показывает только успешный путь. Добавьте на схему ветки, о… (<a href="#d-002">D-002</a>, <a href="#d-003">D-003</a>)</li>
-<li>Ограничение по времени без условий измерения. Допишите условия измерения: «в… (<a href="#d-004">D-004</a>)</li>
+<li>Заполните раздел до начала разработки: для раздела о тестировании — что… (<a href="#d-007">D-007</a>)</li>
+<li>Используйте PUT или PATCH для изменения настройки (POST — для создания новой… (<a href="#d-011">D-011</a>)</li>
+<li>Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом… (<a href="#d-021">D-021</a>)</li>
+<li>Схема процесса показывает только успешный путь. Добавьте на схему ветки, о… (<a href="#d-002">D-002</a>, <a href="#d-004">D-004</a>)</li>
+<li>Ограничение по времени без условий измерения. Допишите условия измерения: «в… (<a href="#d-005">D-005</a>)</li>
 </ol>
 <p>Прогон: 0,1 с · $0, модель не вызывалась.</p>
 <p><strong>Разделы:</strong> <a href="#s1">1. Паспорт прогона</a> · <a href="#s2">2. Как агент нарезал требования</a> · <a href="#s3">3. Проверка каждого требования</a> · <a href="#s4">4. Проверка всего набора требований</a> · <a href="#s5">5. Сводка</a> · <a href="#s6">6. Итог</a> · <a href="#s7">7. Уточняющие вопросы к автору ТЗ</a> · <a href="#s8">8. Черновики приёмочных тестов</a> · <a href="#app">Приложение. Как получен отчёт</a></p>
@@ -145,14 +147,17 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <h2 id="s1">1. Паспорт прогона</h2>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Поле</th><th class="a-left">Значение</th></tr></thead><tbody>
 <tr><td class="a-left">Документ</td><td class="a-left"><code>requirements.md</code> · Markdown · 13,2 КБ · 199 строк · 1 001 слово · SHA-256 <code>e7dae55e5453</code> · «Уведомление о расходах по карте»</td></tr>
-<tr><td class="a-left">Дата и время прогона</td><td class="a-left">26.11.2026 07:23 (UTC+05:00)</td></tr>
+<tr><td class="a-left">Дата и время прогона</td><td class="a-left">27.11.2026 09:11 (UTC+05:00)</td></tr>
 <tr><td class="a-left">Модель</td><td class="a-left">без модели</td></tr>
-<tr><td class="a-left">Версия агента</td><td class="a-left">v1.0.0 (тег <code>v1.1.2</code>) · коммит <code>9744508</code> · набор правил 1.1</td></tr>
+<tr><td class="a-left">SHA-256 документа</td><td class="a-left"><code>e7dae55e5453a250d93e335f5ff9c7f775f4457ccddd333f4a67e47b20d74381</code></td></tr>
+<tr><td class="a-left">SHA-256 файла ответов</td><td class="a-left"><code>3c266ffb49b241ff48ba0ca63d72a572022bb78053228da6d0e9d136bc8fdc7d</code></td></tr>
+<tr><td class="a-left">Набор правил</td><td class="a-left">версия 1.2</td></tr>
+<tr><td class="a-left">Версия агента</td><td class="a-left">v1.4.0 · коммит <code>75f63c7</code> + незакоммиченные правки · набор правил 1.2</td></tr>
 <tr><td class="a-left">Режим</td><td class="a-left">без модели: только автоматические правила</td></tr>
 <tr><td class="a-left">Вёрстка отчёта</td><td class="a-left">2: короткий отчёт и файл подробностей</td></tr>
 <tr><td class="a-left">Время анализа</td><td class="a-left">0,1 с</td></tr>
 <tr><td class="a-left">Стоимость прогона</td><td class="a-left">$0 (модель не вызывалась)</td></tr>
-<tr><td class="a-left">Проверка цитат</td><td class="a-left">подтверждено 39, отброшено 0</td></tr>
+<tr><td class="a-left">Проверка цитат</td><td class="a-left">подтверждено 40, отброшено 0</td></tr>
 <tr><td class="a-left">Перепроверка</td><td class="a-left">не выполнялась (без модели)</td></tr>
 <tr><td class="a-left">Защита данных</td><td class="a-left">значений, похожих на номера карт, ИИН/БИН, адреса почты или телефоны, не найдено</td></tr>
 </tbody></table></div>
@@ -233,48 +238,49 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <a id="s3-matrix"></a><p><strong>Матрица «требование × критерий»</strong></p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-center">Полнота</th><th class="a-center">Однозн.</th><th class="a-center">Непротив.</th><th class="a-center">Провер.</th><th class="a-center">Реализ.</th><th class="a-center">Необх.</th><th class="a-center">Атом.</th><th class="a-right">Ясность</th></tr></thead><tbody>
 <tr><td class="a-left"><a href="#req-004">REQ-004</a></td><td class="a-center"><a href="#d-002">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-005">REQ-005</a> Ф-1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-009">REQ-009</a></td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-010">REQ-010</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-004">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
-<tr><td class="a-left"><a href="#req-011">REQ-011</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-017">REQ-017</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-010">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
-<tr><td class="a-left"><a href="#req-018">REQ-018</a></td><td class="a-center"><a href="#d-011">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-010">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,4</td></tr>
-<tr><td class="a-left"><a href="#req-022">REQ-022</a></td><td class="a-center"><a href="#d-012">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-010">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,0</td></tr>
-<tr><td class="a-left"><a href="#req-023">REQ-023</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-010">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
-<tr><td class="a-left"><a href="#req-024">REQ-024</a></td><td class="a-center"><a href="#d-013">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,2</td></tr>
-<tr><td class="a-left"><a href="#req-038">REQ-038</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-014">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-039">REQ-039</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-015">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-040">REQ-040</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-016">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-041">REQ-041</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-017">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
-<tr><td class="a-left"><a href="#req-042">REQ-042</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-017">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
-<tr><td class="a-left"><a href="#req-043">REQ-043</a></td><td class="a-center"><a href="#d-018">⚠️</a></td><td class="a-center">❔</td><td class="a-center"><a href="#d-019">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,0</td></tr>
-<tr><td class="a-left"><a href="#req-045">REQ-045</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-015">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-046">REQ-046</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-016">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-050">REQ-050</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-020">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
-<tr><td class="a-left"><a href="#req-056">REQ-056</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-022">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-005">REQ-005</a> Ф-1</td><td class="a-center">❔</td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center"><a href="#d-006">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,4</td></tr>
+<tr><td class="a-left"><a href="#req-009">REQ-009</a></td><td class="a-center"><a href="#d-004">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-010">REQ-010</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+<tr><td class="a-left"><a href="#req-011">REQ-011</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-006">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-017">REQ-017</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-011">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
+<tr><td class="a-left"><a href="#req-018">REQ-018</a></td><td class="a-center"><a href="#d-012">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-011">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,4</td></tr>
+<tr><td class="a-left"><a href="#req-022">REQ-022</a></td><td class="a-center"><a href="#d-013">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-011">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,0</td></tr>
+<tr><td class="a-left"><a href="#req-023">REQ-023</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-011">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
+<tr><td class="a-left"><a href="#req-024">REQ-024</a></td><td class="a-center"><a href="#d-014">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,2</td></tr>
+<tr><td class="a-left"><a href="#req-038">REQ-038</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-015">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-039">REQ-039</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-016">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-040">REQ-040</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-017">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-041">REQ-041</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-018">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
+<tr><td class="a-left"><a href="#req-042">REQ-042</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-018">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
+<tr><td class="a-left"><a href="#req-043">REQ-043</a></td><td class="a-center"><a href="#d-019">⚠️</a></td><td class="a-center">❔</td><td class="a-center"><a href="#d-020">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,0</td></tr>
+<tr><td class="a-left"><a href="#req-045">REQ-045</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-016">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-046">REQ-046</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-017">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-050">REQ-050</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-021">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">6,8</td></tr>
+<tr><td class="a-left"><a href="#req-056">REQ-056</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-023">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
 </tbody></table></div>
 <p>Не проверены ни по одному критерию (во всех клетках было бы ❔): 38 требований — <a href="#req-001">REQ-001</a>, <a href="#req-002">REQ-002</a>, <a href="#req-003">REQ-003</a>, <a href="#req-006">REQ-006</a>, <a href="#req-007">REQ-007</a>, <a href="#req-008">REQ-008</a>, <a href="#req-012">REQ-012</a>, <a href="#req-013">REQ-013</a>, <a href="#req-014">REQ-014</a>, <a href="#req-015">REQ-015</a>, <a href="#req-016">REQ-016</a>, <a href="#req-019">REQ-019</a>, <a href="#req-020">REQ-020</a>, <a href="#req-021">REQ-021</a>, <a href="#req-025">REQ-025</a>, <a href="#req-026">REQ-026</a>, <a href="#req-027">REQ-027</a>, <a href="#req-028">REQ-028</a>, <a href="#req-029">REQ-029</a>, <a href="#req-030">REQ-030</a>, <a href="#req-031">REQ-031</a>, <a href="#req-032">REQ-032</a>, <a href="#req-033">REQ-033</a>, <a href="#req-034">REQ-034</a>, <a href="#req-035">REQ-035</a>, <a href="#req-036">REQ-036</a>, <a href="#req-037">REQ-037</a>, <a href="#req-044">REQ-044</a>, <a href="#req-047">REQ-047</a>, <a href="#req-048">REQ-048</a>, <a href="#req-049">REQ-049</a>, <a href="#req-051">REQ-051</a>, <a href="#req-052">REQ-052</a>, <a href="#req-053">REQ-053</a>, <a href="#req-054">REQ-054</a>, <a href="#req-055">REQ-055</a>, <a href="#req-057">REQ-057</a>, <a href="#req-058">REQ-058</a>.</p>
-<p>Пустых клеток (не проверено): 383.</p>
+<p>Пустых клеток (не проверено): 382.</p>
 <p><strong>Замечания к отдельным требованиям (4): блокеров 0 · существенных 1 · мелких 3</strong></p>
-<div class="card card-major"><a id="d-004"></a>
-<p><strong>D-004 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
+<div class="card card-major"><a id="d-005"></a>
+<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
 <ul>
 <li>Где: строка 46, <a href="#req-010">REQ-010</a>: «Сервис передаёт push на отправку в течение минуты после получения события»</li>
-<li>Как исправить: Допишите условия измерения: «в течение минуты для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан. · вопрос автору <a href="#v-05">В-05</a>; <a href="#x-d-004">подробно</a></li>
+<li>Как исправить: Допишите условия измерения: «в течение минуты для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан. · вопрос автору <a href="#v-05">В-05</a>; <a href="#x-d-005">подробно</a></li>
+<li>Как найдено: правило без модели: «Срок без доли случаев и нагрузки» (<code>time-without-conditions</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым</li>
 </ul>
 <p>Мелкие замечания (3):</p>
 </div>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="d-012"></a>D-012 · Полнота</td><td class="a-left">строка 108, <a href="#req-022">REQ-022</a></td><td class="a-left">Заглушка вместо значения: «Prod: —»</td></tr>
-<tr><td class="a-left"><a id="d-013"></a>D-013 · Полнота</td><td class="a-left">строка 110, <a href="#req-024">REQ-024</a></td><td class="a-left">Не заполнено поле «Swagger»</td></tr>
-<tr><td class="a-left"><a id="d-018"></a>D-018 · Полнота</td><td class="a-left">строка 151, <a href="#req-043">REQ-043</a></td><td class="a-left">Незакрытый перечень: «и далее»</td></tr>
+<tr><td class="a-left"><a id="d-013"></a>D-013 · Полнота</td><td class="a-left">строка 108, <a href="#req-022">REQ-022</a></td><td class="a-left">Заглушка вместо значения: «Prod: —»</td></tr>
+<tr><td class="a-left"><a id="d-014"></a>D-014 · Полнота</td><td class="a-left">строка 110, <a href="#req-024">REQ-024</a></td><td class="a-left">Не заполнено поле «Swagger»</td></tr>
+<tr><td class="a-left"><a id="d-019"></a>D-019 · Полнота</td><td class="a-left">строка 151, <a href="#req-043">REQ-043</a></td><td class="a-left">Незакрытый перечень: «и далее»</td></tr>
 </tbody></table></div>
 <p>Цитаты, ход перепроверки и разбор по каждому требованию — в файле <code>report_offline_answered.details.md</code>, раздел А.</p>
 <h2 id="s4">4. Проверка всего набора требований</h2>
 <p>Здесь замечания к документу в целом: противоречия между разделами, пропуски, стандарты, термины, нумерация. Без модели — только то, что находят автоматические правила.</p>
 <h3>4.1 Полнота набора</h3>
-<div class="card card-critical"><a id="d-006"></a>
-<p><strong>D-006 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Полнота набора.</strong> Раздел «Тестирование требований» не заполнен: вместо содержания заглушка</p>
+<div class="card card-critical"><a id="d-007"></a>
+<p><strong>D-007 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Полнота набора.</strong> Раздел «Тестирование требований» не заполнен: вместо содержания заглушка</p>
 <p>Вместо содержания раздела стоит заглушка «заполняются тестировщиками». Значит, эта часть требований не готова: по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел формально есть. Это раздел о проверке результата: пока он не заполнен, нет согласованного способа принять работу, поэтому передавать документ в разработку и тестирование нельзя.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -283,7 +289,8 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 </ul></li>
 <li>Как исправить: Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.</li>
 <li>Почему блокер: нет обязательной части документа</li>
-<li>Вопрос автору <a href="#v-02">В-02</a>; <a href="#x-d-006">подробно</a></li>
+<li>Как найдено: правило без модели: «Пустые разделы и разделы-заглушки» (<code>empty-section</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
+<li>Вопрос автору <a href="#v-02">В-02</a>; <a href="#x-d-007">подробно</a></li>
 </ul>
 </div>
 <div class="card card-major"><a id="d-002"></a>
@@ -291,24 +298,26 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <ul>
 <li>Где: строки 33, 34, <a href="#req-004">REQ-004</a>: «Проведение покупки → пересчёт расходов → проверка порога → при достижении отправка push →…»</li>
 <li>Как исправить: Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь. · вопрос автору <a href="#v-04">В-04</a>; <a href="#x-d-002">подробно</a></li>
+<li>Как найдено: правило без модели: «Схема процесса только с успешным путём» (<code>flow-happy-path</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
 </ul>
 </div>
-<div class="card card-major"><a id="d-003"></a>
-<p><strong>D-003 · 🟡 <span class="sev sev-major">MAJOR</span> · Полнота набора.</strong> Схема процесса показывает только успешный путь</p>
+<div class="card card-major"><a id="d-004"></a>
+<p><strong>D-004 · 🟡 <span class="sev sev-major">MAJOR</span> · Полнота набора.</strong> Схема процесса показывает только успешный путь</p>
 <ul>
 <li>Где: строки 42, 43, <a href="#req-009">REQ-009</a>: «Процессинг → сервис расходов: проведена покупка. Сервис расходов → настройки: получить порог…»</li>
-<li>Как исправить: Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь. · вопрос автору <a href="#v-04">В-04</a>; <a href="#x-d-003">подробно</a></li>
+<li>Как исправить: Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь. · вопрос автору <a href="#v-04">В-04</a>; <a href="#x-d-004">подробно</a></li>
+<li>Как найдено: правило без модели: «Схема процесса только с успешным путём» (<code>flow-happy-path</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
 </ul>
 <p>Мелкие замечания (3):</p>
 </div>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="d-007"></a>D-007 · Полнота набора</td><td class="a-left">строки 67, 72</td><td class="a-left">Чек-лист ревью не заполнен</td></tr>
-<tr><td class="a-left"><a id="d-009"></a>D-009 · Полнота набора</td><td class="a-left">строки 87, 89</td><td class="a-left">Таблица в разделе «Блок согласующих» не заполнена</td></tr>
-<tr><td class="a-left"><a id="d-011"></a>D-011 · Полнота набора</td><td class="a-left">строка 104, <a href="#req-018">REQ-018</a></td><td class="a-left">В описании интерфейса не хватает правил надёжности</td></tr>
+<tr><td class="a-left"><a id="d-008"></a>D-008 · Полнота набора</td><td class="a-left">строки 67, 72</td><td class="a-left">Чек-лист ревью не заполнен</td></tr>
+<tr><td class="a-left"><a id="d-010"></a>D-010 · Полнота набора</td><td class="a-left">строки 87, 89</td><td class="a-left">Таблица в разделе «Блок согласующих» не заполнена</td></tr>
+<tr><td class="a-left"><a id="d-012"></a>D-012 · Полнота набора</td><td class="a-left">строка 104, <a href="#req-018">REQ-018</a></td><td class="a-left">В описании интерфейса не хватает правил надёжности</td></tr>
 </tbody></table></div>
 <h3>4.2 Взаимная непротиворечивость</h3>
-<div class="card card-critical"><a id="d-020"></a>
-<p><strong>D-020 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Взаимная непротиворечивость.</strong> Ошибка возвращается с успешным кодом 200</p>
+<div class="card card-critical"><a id="d-021"></a>
+<p><strong>D-021 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Взаимная непротиворечивость.</strong> Ошибка возвращается с успешным кодом 200</p>
 <p>В описании ответа 200 приведён пример с признаком ошибки ("result":"ERROR"). Клиентское приложение, балансировщики и мониторинг по коду 200 решат, что операция прошла успешно, и ошибка останется незамеченной; тестировщик не знает, какой ответ считать правильным.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -316,59 +325,67 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 171, <a href="#req-050">REQ-050</a>: «{"result":"ERROR","message":"Проверьте сумму"}»</li>
 </ul></li>
 <li>Как исправить: Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом значении) с телом ошибки, а в ответ 2xx включайте только успешный результат.</li>
+<li>Проверка исправления: не проверено кодом — выбран вариант ответа, а готовой формулировки нет: проверять нечего. Внесите ответ в документ и запустите проверку ещё раз.</li>
 <li>Почему блокер: нарушение стандарта протокола</li>
-<li>Вопрос автору <a href="#v-03">В-03</a>; <a href="#x-d-020">подробно</a></li>
+<li>Как найдено: правило без модели: «Ответ с ошибкой под успешным кодом 2xx» (<code>error-in-success</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#v-03">В-03</a>; <a href="#x-d-021">подробно</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="d-005"></a>
-<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
+<div class="card card-major"><a id="d-006"></a>
+<p><strong>D-006 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
 <ul>
 <li>Где: строки 37, 49, <a href="#req-011">REQ-011</a>, <a href="#req-005">REQ-005</a>: «Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак…»</li>
-<li>Как исправить: Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт. · вопрос автору <a href="#v-06">В-06</a>; <a href="#x-d-005">подробно</a></li>
-</ul>
-</div>
-<div class="card card-major"><a id="d-015"></a>
-<p><strong>D-015 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «amount» описан с разными типами: integer и string</p>
-<ul>
-<li>Где: строки 143, 156, <a href="#req-039">REQ-039</a>, <a href="#req-045">REQ-045</a>: «amount | integer | 32 bit | Да | 1 000–1 000 000 | Порог в тенге | limit_kzt»</li>
-<li>Как исправить: Выберите для «amount» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места. · вопрос автору <a href="#v-08">В-08</a>; <a href="#x-d-015">подробно</a></li>
+<li>Как исправить: Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт. · вопрос автору <a href="#v-06">В-06</a>; <a href="#x-d-006">подробно</a></li>
+<li>Как найдено: правило без модели: «Одна величина в разных единицах без правила пересчёта» (<code>unit-mix</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
 </ul>
 </div>
 <div class="card card-major"><a id="d-016"></a>
-<p><strong>D-016 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «enabled» описан с разными типами: integer и string</p>
+<p><strong>D-016 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «amount» описан с разными типами: integer и string</p>
+<ul>
+<li>Где: строки 143, 156, <a href="#req-039">REQ-039</a>, <a href="#req-045">REQ-045</a>: «amount | integer | 32 bit | Да | 1 000–1 000 000 | Порог в тенге | limit_kzt»</li>
+<li>Как исправить: Выберите для «amount» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места. · вопрос автору <a href="#v-08">В-08</a>; <a href="#x-d-016">подробно</a></li>
+<li>Как найдено: правило без модели: «Один параметр с разными типами в разных таблицах» (<code>param-type-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-017"></a>
+<p><strong>D-017 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «enabled» описан с разными типами: integer и string</p>
 <ul>
 <li>Где: строки 144, 157, <a href="#req-040">REQ-040</a>, <a href="#req-046">REQ-046</a>: «enabled | integer | 1 знак | Да | 0 или 1 | Признак включения | enabled»</li>
-<li>Как исправить: Выберите для «enabled» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места. · вопрос автору <a href="#v-09">В-09</a>; <a href="#x-d-016">подробно</a></li>
+<li>Как исправить: Выберите для «enabled» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места. · вопрос автору <a href="#v-09">В-09</a>; <a href="#x-d-017">подробно</a></li>
+<li>Как найдено: правило без модели: «Один параметр с разными типами в разных таблицах» (<code>param-type-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
 </ul>
 </div>
-<div class="card card-major"><a id="d-019"></a>
-<p><strong>D-019 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код ответа 201 назван успешным, но не описан</p>
+<div class="card card-major"><a id="d-020"></a>
+<p><strong>D-020 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код ответа 201 назван успешным, но не описан</p>
 <ul>
 <li>Где: строка 151, <a href="#req-043">REQ-043</a>: «Если результат 200 или 201 — успешный»</li>
-<li>Как исправить: Добавьте описание кода 201: при каком условии он возвращается и пример тела ответа; или уберите упоминание. · вопрос автору <a href="#v-10">В-10</a>; <a href="#x-d-019">подробно</a></li>
-</ul>
-</div>
-<div class="card card-major"><a id="d-021"></a>
-<p><strong>D-021 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код 200 подписан названием другого кода («Created» — это 201)</p>
-<ul>
-<li>Где: строка 165: «200. Successful — Created»</li>
-<li>Как исправить: Исправьте подпись: 200 — OK. Если нужен ответ «Created», используйте код 201 и опишите его отдельно. · вопрос автору <a href="#v-11">В-11</a>; <a href="#x-d-021">подробно</a></li>
+<li>Как исправить: Добавьте описание кода 201: при каком условии он возвращается и пример тела ответа; или уберите упоминание. · вопрос автору <a href="#v-10">В-10</a>; <a href="#x-d-020">подробно</a></li>
+<li>Как найдено: правило без модели: «Коды ответов: упомянутые, но не описанные или перепутанные» (<code>status-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
 </ul>
 </div>
 <div class="card card-major"><a id="d-022"></a>
-<p><strong>D-022 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> В описании кода 403 сказано, что возвращается 404</p>
+<p><strong>D-022 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код 200 подписан названием другого кода («Created» — это 201)</p>
+<ul>
+<li>Где: строка 165: «200. Successful — Created»</li>
+<li>Как исправить: Исправьте подпись: 200 — OK. Если нужен ответ «Created», используйте код 201 и опишите его отдельно. · вопрос автору <a href="#v-11">В-11</a>; <a href="#x-d-022">подробно</a></li>
+<li>Как найдено: правило без модели: «Коды ответов: упомянутые, но не описанные или перепутанные» (<code>status-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+</ul>
+</div>
+<div class="card card-major"><a id="d-023"></a>
+<p><strong>D-023 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> В описании кода 403 сказано, что возвращается 404</p>
 <ul>
 <li>Где: строки 188, 189, <a href="#req-056">REQ-056</a>: «403. Unsuccessful — Forbidden»</li>
-<li>Как исправить: Оставьте для этого случая один код и опишите его. Если 403 больше не возвращается — удалите его описание; если возвращается в другом случае — назовите этот случай. · вопрос автору <a href="#v-12">В-12</a>; <a href="#x-d-022">подробно</a></li>
+<li>Как исправить: Оставьте для этого случая один код и опишите его. Если 403 больше не возвращается — удалите его описание; если возвращается в другом случае — назовите этот случай. · вопрос автору <a href="#v-12">В-12</a>; <a href="#x-d-023">подробно</a></li>
+<li>Как найдено: правило без модели: «Коды ответов: упомянутые, но не описанные или перепутанные» (<code>status-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
 </ul>
 <p>Мелкие замечания (1):</p>
 </div>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="d-017"></a>D-017 · Взаимная непротиворечивость</td><td class="a-left">строки 147, 148, <a href="#req-041">REQ-041</a>, <a href="#req-042">REQ-042</a></td><td class="a-left">Указан Content-Type, хотя тела запроса нет</td></tr>
+<tr><td class="a-left"><a id="d-018"></a>D-018 · Взаимная непротиворечивость</td><td class="a-left">строки 147, 148, <a href="#req-041">REQ-041</a>, <a href="#req-042">REQ-042</a></td><td class="a-left">Указан Content-Type, хотя тела запроса нет</td></tr>
 </tbody></table></div>
 <h3>4.3 Реализуемость, стандарты и безопасность</h3>
-<div class="card card-critical"><a id="d-010"></a>
-<p><strong>D-010 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Реализуемость, стандарты и безопасность.</strong> Метод GET используется для изменения данных</p>
+<div class="card card-critical"><a id="d-011"></a>
+<p><strong>D-011 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Реализуемость, стандарты и безопасность.</strong> Метод GET используется для изменения данных</p>
 <p>Запрос описан как GET, но по пути или описанию он сохраняет или меняет данные («Сохранение», «/alerts/saveLimit», «$BASE/alerts/saveLimit»). По стандарту HTTP (RFC 9110, п. 9.2.1) GET — безопасный метод, он только читает. Браузеры, прокси и кэши вправе повторять и кэшировать такие запросы, а параметры попадают в адресную строку и журналы: изменение может выполниться повторно или без ведома клиента.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -378,26 +395,30 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>и ещё 1 цитата: строка 109</li>
 </ul></li>
 <li>Как исправить: Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.</li>
+<li>Проверка исправления: не проверено кодом — выбран вариант ответа, а готовой формулировки нет: проверять нечего. Внесите ответ в документ и запустите проверку ещё раз.</li>
 <li>Почему блокер: нарушение стандарта протокола</li>
-<li>Вопрос автору <a href="#v-01">В-01</a>; <a href="#x-d-010">подробно</a></li>
+<li>Как найдено: правило без модели: «GET для изменяющего запроса (RFC 9110 §9.2.1)» (<code>get-mutation</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым</li>
+<li>Вопрос автору <a href="#v-01">В-01</a>; <a href="#x-d-011">подробно</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="d-014"></a>
-<p><strong>D-014 · 🟡 <span class="sev sev-major">MAJOR</span> · Реализуемость, стандарты и безопасность.</strong> Чувствительные данные передаются в адресной строке запроса</p>
+<div class="card card-major"><a id="d-015"></a>
+<p><strong>D-015 · 🟡 <span class="sev sev-major">MAJOR</span> · Реализуемость, стандарты и безопасность.</strong> Чувствительные данные передаются в адресной строке запроса</p>
 <ul>
 <li>Где: строка 142, <a href="#req-038">REQ-038</a>: «cardId | string | 1–64 | Да | Карта клиента | Идентификатор карты | card_id»</li>
-<li>Как исправить: Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы. · вопрос автору <a href="#v-07">В-07</a>; <a href="#x-d-014">подробно</a></li>
+<li>Как исправить: Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы. · вопрос автору <a href="#v-07">В-07</a>; <a href="#x-d-015">подробно</a></li>
+<li>Как найдено: правило без модели: «Чувствительные данные в строке запроса» (<code>sensitive-in-query</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым</li>
 </ul>
 </div>
 <h3>4.4 Понятность и термины</h3>
-<p>Мелкие замечания (1):</p>
+<p>Мелкие замечания (2):</p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
 <tr><td class="a-left"><a id="d-001"></a>D-001 · Понятность и термины</td><td class="a-left">строки 1, 14</td><td class="a-left">Название в заголовке и в сведениях о документе расходятся</td></tr>
+<tr><td class="a-left"><a id="d-003"></a>D-003 · Понятность и термины</td><td class="a-left">строка 37, <a href="#req-005">REQ-005</a></td><td class="a-left">Условие зависит от неопределённого понятия: «активной карты»</td></tr>
 </tbody></table></div>
 <h3>4.5 Прослеживаемость</h3>
 <p>Мелкие замечания (1):</p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="d-008"></a>D-008 · Прослеживаемость</td><td class="a-left">строка 68</td><td class="a-left">У документа не указаны версия и дата</td></tr>
+<tr><td class="a-left"><a id="d-009"></a>D-009 · Прослеживаемость</td><td class="a-left">строка 68</td><td class="a-left">У документа не указаны версия и дата</td></tr>
 </tbody></table></div>
 <p>Покрытие требований критериями приёмки строит модель; без неё оно не оценивалось.</p>
 <h3 id="s4-gaps">Карта полноты: контрольные вопросы к документу</h3>
@@ -415,32 +436,32 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <tr><td class="a-left">Требований всего</td><td class="a-right">58</td></tr>
 <tr><td class="a-left">— без замечаний</td><td class="a-right">38</td></tr>
 <tr><td class="a-left">— с замечаниями</td><td class="a-right">20</td></tr>
-<tr><td class="a-left">Замечаний всего</td><td class="a-right">22</td></tr>
+<tr><td class="a-left">Замечаний всего</td><td class="a-right">23</td></tr>
 <tr><td class="a-left">— 🔴 <span class="sev sev-critical">CRITICAL</span> (блокеры)</td><td class="a-right">3</td></tr>
 <tr><td class="a-left">— 🟡 <span class="sev sev-major">MAJOR</span> (существенные)</td><td class="a-right">10</td></tr>
-<tr><td class="a-left">— 🟢 <span class="sev sev-minor">MINOR</span> (мелкие)</td><td class="a-right">9</td></tr>
+<tr><td class="a-left">— 🟢 <span class="sev sev-minor">MINOR</span> (мелкие)</td><td class="a-right">10</td></tr>
 <tr><td class="a-left">Наблюдений (на итог не влияют)</td><td class="a-right">2</td></tr>
-<tr><td class="a-left">Вопросов автору</td><td class="a-right">21</td></tr>
+<tr><td class="a-left">Вопросов автору</td><td class="a-right">22</td></tr>
 <tr><td class="a-left">Контрольных вопросов к документу</td><td class="a-right">35, из них пробелов 3</td></tr>
 <tr><td class="a-left">Тестов можно написать уже сейчас</td><td class="a-right">12</td></tr>
 <tr><td class="a-left">Тестов нельзя написать без ответа автора</td><td class="a-right">0</td></tr>
 </tbody></table></div>
 <p><strong>Замечания по критериям качества</strong></p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Критерий</th><th class="a-right">Замечаний</th><th class="a-left">Основание</th></tr></thead><tbody>
-<tr><td class="a-left">Полнота</td><td class="a-right">3</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
-<tr><td class="a-left">Проверяемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6</td></tr>
-<tr><td class="a-left">Полнота набора</td><td class="a-right">6</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
-<tr><td class="a-left">Взаимная непротиворечивость</td><td class="a-right">8</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4</td></tr>
-<tr><td class="a-left">Реализуемость, стандарты и безопасность</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)</td></tr>
-<tr><td class="a-left">Понятность и термины</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Comprehensible)</td></tr>
-<tr><td class="a-left">Прослеживаемость</td><td class="a-right">1</td><td class="a-left">IEEE 830-1998 п. 4.3.8 (Traceable)</td></tr>
+<tr><td class="a-left">Полнота</td><td class="a-right">3</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть полным</td></tr>
+<tr><td class="a-left">Проверяемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым</td></tr>
+<tr><td class="a-left">Полнота набора</td><td class="a-right">6</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</td></tr>
+<tr><td class="a-left">Взаимная непротиворечивость</td><td class="a-right">8</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</td></tr>
+<tr><td class="a-left">Реализуемость, стандарты и безопасность</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым</td></tr>
+<tr><td class="a-left">Понятность и термины</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть понятным</td></tr>
+<tr><td class="a-left">Прослеживаемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен допускать проверку на соответствие потребности</td></tr>
 </tbody></table></div>
 <p><strong>Индекс готовности документа</strong></p>
 <p><strong>54 из 100 — нужна существенная доработка</strong> (предварительно: применены только правила). Шкала: 85 и выше — готов, 60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов.</p>
-<p>Как посчитан: 10 × 9,39 (средняя ясность 58 треб.) − 40 (штраф за замечания к набору: 8×3 + 3×9 + 1×6 = 57, но не больше 40) = 54. Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
+<p>Как посчитан: 10 × 9,38 (средняя ясность 58 треб.) − 40 (штраф за замечания к набору: 8×3 + 3×9 + 1×7 = 58, но не больше 40) = 54. Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
 <p>Требования по ясности: ясное — 41 · есть замечания — 12 · нужна доработка — 5 · в таком виде использовать нельзя — 0.</p>
-<p>Плотность: 0,38 дефекта на одно требование · 22,0 на 1000 слов документа. Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.</p>
-<p><strong>Критичные дефекты:</strong> <a href="#d-006">D-006</a>, <a href="#d-010">D-010</a>, <a href="#d-020">D-020</a> — с основаниями и строками перечислены в начале отчёта.</p>
+<p>Плотность: 0,40 дефекта на одно требование · 23,0 на 1000 слов документа. Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.</p>
+<p><strong>Критичные дефекты:</strong> <a href="#d-007">D-007</a>, <a href="#d-011">D-011</a>, <a href="#d-021">D-021</a> — с основаниями и строками перечислены в начале отчёта.</p>
 <p><strong>Время и стоимость:</strong> 0,1 с, $0 (модель не вызывалась).</p>
 <h2 id="s6">6. Итог</h2>
 <p>По документу как он есть: <strong>⛔ Начинать разработку и тестирование нельзя: сначала устранить блокеры (модель не использовалась: проверены только автоматические правила, итог предварительный)</strong></p>
@@ -449,51 +470,64 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <p>Найдено блокеров: 3 (Раздел «Тестирование требований» не заполнен: вместо содержания заглушка; Метод GET используется для изменения данных; Ошибка возвращается с успешным кодом 200). Пока они не устранены, разработчик и тестировщик будут работать по описанию, которое противоречит себе или общепринятым стандартам, и часть работы придётся переделывать. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.</p>
 <p><strong>Что исправить в первую очередь</strong></p>
 <ol>
-<li>Раздел «Тестирование требований» не заполнен: вместо содержания заглушка. (<a href="#d-006">D-006</a>)</li>
-<li>Метод GET используется для изменения данных. (<a href="#d-010">D-010</a>)</li>
-<li>Ошибка возвращается с успешным кодом 200. (<a href="#d-020">D-020</a>)</li>
-<li>Схема процесса показывает только успешный путь. (<a href="#d-002">D-002</a>, <a href="#d-003">D-003</a>)</li>
-<li>Ограничение по времени без условий измерения. (<a href="#d-004">D-004</a>)</li>
-<li>Денежные суммы в разных единицах: тиын и тенге. (<a href="#d-005">D-005</a>)</li>
+<li>Раздел «Тестирование требований» не заполнен: вместо содержания заглушка. (<a href="#d-007">D-007</a>)</li>
+<li>Метод GET используется для изменения данных. (<a href="#d-011">D-011</a>)</li>
+<li>Ошибка возвращается с успешным кодом 200. (<a href="#d-021">D-021</a>)</li>
+<li>Схема процесса показывает только успешный путь. (<a href="#d-002">D-002</a>, <a href="#d-004">D-004</a>)</li>
+<li>Ограничение по времени без условий измерения. (<a href="#d-005">D-005</a>)</li>
+<li>Денежные суммы в разных единицах: тиын и тенге. (<a href="#d-006">D-006</a>)</li>
 </ol>
 <p><strong>Что в документе уже хорошо</strong></p>
 <p>Без модели сильные стороны документа не оцениваются.</p>
 <h2 id="s7">7. Уточняющие вопросы к автору ТЗ</h2>
 <p>Если автор ответит на блокирующие вопросы и внесёт правки, вердикт станет: <strong>⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (предварительно)</strong>.</p>
 <p>Чтобы снять все блокеры, нужны ответы на вопросы: <a href="#v-01">В-01</a>, <a href="#v-02">В-02</a>, <a href="#v-03">В-03</a>.</p>
-<p>21 вопрос составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
+<p>22 вопроса составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
 <h3>Диалог с автором</h3>
-<p>Ответы автора учтены: 5 из 21. Закрыто замечаний: 4.</p>
+<p>Ответы автора учтены: 5 из 22. Закрыто замечаний: 4.</p>
 <ul>
-<li><a href="#v-01">В-01</a>: Какой HTTP-метод использовать для этого изменения? → «PATCH — изменение отдельных полей» → закрывает <a href="#d-010">D-010</a></li>
+<li><a href="#v-01">В-01</a>: Какой HTTP-метод использовать для этого изменения? → «PATCH — изменение отдельных полей» → закрывает <a href="#d-011">D-011</a></li>
 <li><a href="#v-02">В-02</a>: Кто и когда заполнит раздел «Тестирование требований»? → «Раздел заполняет QA-лид до начала разработки; срок — за неделю до старта.» → замечания остаются</li>
-<li><a href="#v-03">В-03</a>: Какой код возвращать, когда операция отклонена? → «400 Bad Request» → закрывает <a href="#d-020">D-020</a></li>
-<li><a href="#v-05">В-05</a>: Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»? → «95% случаев при обычной нагрузке» → закрывает <a href="#d-004">D-004</a></li>
-<li><a href="#v-06">В-06</a>: В каких единицах хранить, передавать и сравнивать суммы? → «Везде в тиын, клиенту показывать в тенге» → закрывает <a href="#d-005">D-005</a></li>
+<li><a href="#v-03">В-03</a>: Какой код возвращать, когда операция отклонена? → «400 Bad Request» → закрывает <a href="#d-021">D-021</a></li>
+<li><a href="#v-05">В-05</a>: Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»? → «95% случаев при обычной нагрузке» → закрывает <a href="#d-005">D-005</a></li>
+<li><a href="#v-06">В-06</a>: В каких единицах хранить, передавать и сравнивать суммы? → «Везде в тиын, клиенту показывать в тенге» → закрывает <a href="#d-006">D-006</a></li>
 </ul>
-<p>Что остаётся открытым: замечаний 18 из 22; вопросов без ответа: 16.</p>
-<div class="tablewrap"><table><thead><tr><th class="a-left">№</th><th class="a-left">Вопрос</th><th class="a-left">Кому</th><th class="a-left">Приоритет</th><th class="a-left">К замечаниям</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="v-01"></a>В-01</td><td class="a-left">Какой HTTP-метод использовать для этого изменения?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">блокирующий; есть ответ</td><td class="a-left"><a href="#d-010">D-010</a></td></tr>
-<tr><td class="a-left"><a id="v-02"></a>В-02</td><td class="a-left">Кто и когда заполнит раздел «Тестирование требований»?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">блокирующий; есть ответ</td><td class="a-left"><a href="#d-006">D-006</a></td></tr>
-<tr><td class="a-left"><a id="v-03"></a>В-03</td><td class="a-left">Какой код возвращать, когда операция отклонена?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">блокирующий; есть ответ</td><td class="a-left"><a href="#d-020">D-020</a></td></tr>
-<tr><td class="a-left"><a id="v-04"></a>В-04</td><td class="a-left">Какие ветки, кроме успешной, должны быть на схеме?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">важный</td><td class="a-left"><a href="#d-002">D-002</a>, <a href="#d-003">D-003</a></td></tr>
-<tr><td class="a-left"><a id="v-05"></a>В-05</td><td class="a-left">Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">важный; есть ответ</td><td class="a-left"><a href="#d-004">D-004</a></td></tr>
-<tr><td class="a-left"><a id="v-06"></a>В-06</td><td class="a-left">В каких единицах хранить, передавать и сравнивать суммы?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный; есть ответ</td><td class="a-left"><a href="#d-005">D-005</a></td></tr>
-<tr><td class="a-left"><a id="v-07"></a>В-07</td><td class="a-left">Как передавать идентификатор карты и другие чувствительные значения?</td><td class="a-left">информационная безопасность</td><td class="a-left">важный</td><td class="a-left"><a href="#d-014">D-014</a></td></tr>
-<tr><td class="a-left"><a id="v-08"></a>В-08</td><td class="a-left">Какой тип у параметра «amount»?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-015">D-015</a></td></tr>
-<tr><td class="a-left"><a id="v-09"></a>В-09</td><td class="a-left">Какой тип у параметра «enabled»?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-016">D-016</a></td></tr>
-<tr><td class="a-left"><a id="v-10"></a>В-10</td><td class="a-left">Возвращает ли сервис код 201?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-019">D-019</a></td></tr>
-<tr><td class="a-left"><a id="v-11"></a>В-11</td><td class="a-left">Какой код должен возвращаться в этом случае?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-021">D-021</a></td></tr>
-<tr><td class="a-left"><a id="v-12"></a>В-12</td><td class="a-left">Какой код возвращается в этом случае?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-022">D-022</a></td></tr>
-<tr><td class="a-left"><a id="v-13"></a>В-13</td><td class="a-left">Какое название задачи правильное?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-001">D-001</a></td></tr>
-<tr><td class="a-left"><a id="v-14"></a>В-14</td><td class="a-left">Кто проводит ревью по чек-листу и когда?</td><td class="a-left">тестирование</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-007">D-007</a></td></tr>
-<tr><td class="a-left"><a id="v-15"></a>В-15</td><td class="a-left">Какую версию и дату присвоить документу?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-008">D-008</a></td></tr>
-<tr><td class="a-left"><a id="v-16"></a>В-16</td><td class="a-left">Кто должен быть в этой таблице?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-009">D-009</a></td></tr>
-<tr><td class="a-left"><a id="v-17"></a>В-17</td><td class="a-left">Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-011">D-011</a></td></tr>
-<tr><td class="a-left"><a id="v-18"></a>В-18</td><td class="a-left">Чем заменить заглушку «Prod: —»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-012">D-012</a></td></tr>
-<tr><td class="a-left"><a id="v-19"></a>В-19</td><td class="a-left">Чем заменить заглушку «—»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-013">D-013</a></td></tr>
-<tr><td class="a-left"><a id="v-20"></a>В-20</td><td class="a-left">Передаются ли параметры в теле запроса?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-017">D-017</a></td></tr>
-<tr><td class="a-left"><a id="v-21"></a>В-21</td><td class="a-left">Какие именно значения входят в перечень?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-018">D-018</a></td></tr>
+<p>Что остаётся открытым: замечаний 19 из 23; вопросов без ответа: 17.</p>
+<h3>Принято без ответа автора</h3>
+<p>На эти вопросы автор не ответил. Пока ответа нет, команда считает так:</p>
+<ul>
+<li><a href="#v-04">В-04</a>: Какие ветки, кроме успешной, должны быть на схеме? → в ошибочных путях операция отклоняется, пользователь видит сообщение, данные не меняются.</li>
+<li><a href="#v-07">В-07</a>: Как передавать идентификатор карты и другие чувствительные значения? → чувствительные данные передаём только в теле запроса по защищённому каналу.</li>
+<li><a href="#v-13">В-13</a>: Какое название задачи правильное? → верным считаем название из заголовка документа.</li>
+<li><a href="#v-16">В-16</a>: Какую версию и дату присвоить документу? → версией считаем дату последнего изменения файла.</li>
+<li><a href="#v-17">В-17</a>: Кто должен быть в этой таблице? → пустую таблицу считаем не входящей в первую версию.</li>
+<li><a href="#v-21">В-21</a>: Передаются ли параметры в теле запроса? → заголовок Content-Type у запроса без тела не используем.</li>
+<li><a href="#v-22">В-22</a>: Какие именно значения входят в перечень? → перечень считаем закрытым: в нём только то, что названо в тексте.</li>
+</ul>
+<p>Без ответа автора работу по этим пунктам начинать нельзя: <a href="#v-08">В-08</a>, <a href="#v-09">В-09</a>, <a href="#v-10">В-10</a>, <a href="#v-11">В-11</a>, <a href="#v-12">В-12</a>, <a href="#v-14">В-14</a>, <a href="#v-15">В-15</a>, <a href="#v-18">В-18</a>, <a href="#v-19">В-19</a>, <a href="#v-20">В-20</a>.</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">№</th><th class="a-left">Вопрос</th><th class="a-left">Кому</th><th class="a-left">Приоритет</th><th class="a-left">К замечаниям</th><th class="a-left">Если автор не ответит, считаем так</th></tr></thead><tbody>
+<tr><td class="a-left"><a id="v-01"></a>В-01</td><td class="a-left">Какой HTTP-метод использовать для этого изменения?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">блокирующий; есть ответ</td><td class="a-left"><a href="#d-011">D-011</a></td><td class="a-left">изменяющее действие выполняем методом POST</td></tr>
+<tr><td class="a-left"><a id="v-02"></a>В-02</td><td class="a-left">Кто и когда заполнит раздел «Тестирование требований»?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">блокирующий; есть ответ</td><td class="a-left"><a href="#d-007">D-007</a></td><td class="a-left">пустой раздел считаем не входящим в первую версию</td></tr>
+<tr><td class="a-left"><a id="v-03"></a>В-03</td><td class="a-left">Какой код возвращать, когда операция отклонена?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">блокирующий; есть ответ</td><td class="a-left"><a href="#d-021">D-021</a></td><td class="a-left">ошибка возвращается с кодом 4xx или 5xx по смыслу ошибки, а не с 2xx</td></tr>
+<tr><td class="a-left"><a id="v-04"></a>В-04</td><td class="a-left">Какие ветки, кроме успешной, должны быть на схеме?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">важный</td><td class="a-left"><a href="#d-002">D-002</a>, <a href="#d-004">D-004</a></td><td class="a-left">в ошибочных путях операция отклоняется, пользователь видит сообщение, данные не меняются</td></tr>
+<tr><td class="a-left"><a id="v-05"></a>В-05</td><td class="a-left">Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">важный; есть ответ</td><td class="a-left"><a href="#d-005">D-005</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-06"></a>В-06</td><td class="a-left">В каких единицах хранить, передавать и сравнивать суммы?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный; есть ответ</td><td class="a-left"><a href="#d-006">D-006</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-07"></a>В-07</td><td class="a-left">Как передавать идентификатор карты и другие чувствительные значения?</td><td class="a-left">информационная безопасность</td><td class="a-left">важный</td><td class="a-left"><a href="#d-015">D-015</a></td><td class="a-left">чувствительные данные передаём только в теле запроса по защищённому каналу</td></tr>
+<tr><td class="a-left"><a id="v-08"></a>В-08</td><td class="a-left">Какой тип у параметра «amount»?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-016">D-016</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-09"></a>В-09</td><td class="a-left">Какой тип у параметра «enabled»?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-017">D-017</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-10"></a>В-10</td><td class="a-left">Возвращает ли сервис код 201?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-020">D-020</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-11"></a>В-11</td><td class="a-left">Какой код должен возвращаться в этом случае?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-022">D-022</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-12"></a>В-12</td><td class="a-left">Какой код возвращается в этом случае?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-023">D-023</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-13"></a>В-13</td><td class="a-left">Какое название задачи правильное?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-001">D-001</a></td><td class="a-left">верным считаем название из заголовка документа</td></tr>
+<tr><td class="a-left"><a id="v-14"></a>В-14</td><td class="a-left">Как в документе определяется понятие «активной карты»?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-003">D-003</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-15"></a>В-15</td><td class="a-left">Кто проводит ревью по чек-листу и когда?</td><td class="a-left">тестирование</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-008">D-008</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-16"></a>В-16</td><td class="a-left">Какую версию и дату присвоить документу?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-009">D-009</a></td><td class="a-left">версией считаем дату последнего изменения файла</td></tr>
+<tr><td class="a-left"><a id="v-17"></a>В-17</td><td class="a-left">Кто должен быть в этой таблице?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-010">D-010</a></td><td class="a-left">пустую таблицу считаем не входящей в первую версию</td></tr>
+<tr><td class="a-left"><a id="v-18"></a>В-18</td><td class="a-left">Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-012">D-012</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-19"></a>В-19</td><td class="a-left">Чем заменить заглушку «Prod: —»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-013">D-013</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-20"></a>В-20</td><td class="a-left">Чем заменить заглушку «—»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-014">D-014</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-21"></a>В-21</td><td class="a-left">Передаются ли параметры в теле запроса?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-018">D-018</a></td><td class="a-left">заголовок Content-Type у запроса без тела не используем</td></tr>
+<tr><td class="a-left"><a id="v-22"></a>В-22</td><td class="a-left">Какие именно значения входят в перечень?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-019">D-019</a></td><td class="a-left">перечень считаем закрытым: в нём только то, что названо в тексте</td></tr>
 </tbody></table></div>
 <p>Варианты ответа и что изменит каждый — в файле-анкете <code>report_offline_answered.questions.md</code>; вопросы полностью — в файле <code>report_offline_answered.details.md</code>, раздел Г.</p>
 <h2 id="s8">8. Черновики приёмочных тестов</h2>
@@ -506,7 +540,7 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <ol>
 <li>Документ читается и делится на блоки (абзацы, пункты, строки таблиц); номера строк берутся из исходного текста. Значения, похожие на номера карт и ИИН, маскируются до любой обработки.</li>
 <li>Блоки делятся на требования и служебные части эвристикой; номера REQ-… присваивает программа.</li>
-<li>Автоматические правила (набор 1.1: 27 основных и 8 слабых «наблюдений») ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, схемы без веток ошибок, подсадной текст для ИИ.</li>
+<li>Автоматические правила (набор 1.2: 47 основных и 8 слабых «наблюдений») ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, схемы без веток ошибок, подсадной текст для ИИ.</li>
 <li>Модель не использовалась: проверки по смыслу (противоречия, пропущенные сценарии, пограничные случаи) не выполнялись.</li>
 <li>Каждую цитату программа ищет в тексте документа; замечание без найденной цитаты выбрасывается, в отчёт попадает исходный текст, а не пересказ. Номера, индексы, вердикт и отметки в матрице считает программа; перед записью отчёта она проверяет, что его части не противоречат друг другу.</li>
 </ol>
@@ -534,129 +568,134 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <blockquote>
 <p>Ф-1. Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно. По умолчанию уведомление выключено.</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-005">D-005</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,4 — есть замечания · ⚠️ Однозн. <a href="#x-d-003">D-003</a> 🟢; Непротив. <a href="#x-d-006">D-006</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-009">REQ-009 · Sequence Diagram · строка 43</h3>
 <blockquote>
 <p>Процессинг → сервис расходов: проведена покупка. Сервис расходов → настройки: получить порог карты. Сервис расходов → push: передать последние четыре цифры карты и сумму при достижении порога.</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Полнота <a href="#x-d-003">D-003</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Полнота <a href="#x-d-004">D-004</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-010">REQ-010 · Нефункциональные требования · строка 46</h3>
 <blockquote>
 <p>Сервис передаёт push на отправку в течение минуты после получения события.</p>
 </blockquote>
-<p>Ясность 7,5 — есть замечания · ⚠️ Провер. <a href="#x-d-004">D-004</a> 🟡 · прочие без модели не проверялись</p>
-<div class="card card-major"><a id="x-d-004"></a>
-<p><strong>D-004 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
+<p>Ясность 7,5 — есть замечания · ⚠️ Провер. <a href="#x-d-005">D-005</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="x-d-005"></a>
+<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
 <p>Задан срок «в течение минуты», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.</p>
 <ul>
 <li>Цитата: строка 46</li>
 <li>Как исправить: Допишите условия измерения: «в течение минуты для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан.</li>
-<li>Вопрос автору <a href="#x-v-05">В-05</a>; источник: правило <code>time-without-conditions</code></li>
+<li>Проверка исправления: не проверено кодом — выбран вариант ответа, а готовой формулировки нет: проверять нечего. Внесите ответ в документ и запустите проверку ещё раз.</li>
+<li>Как найдено: правило без модели: «Срок без доли случаев и нагрузки» (<code>time-without-conditions</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым</li>
+<li>Вопрос автору <a href="#x-v-05">В-05</a></li>
 </ul>
 </div>
 <h3 id="x-req-011">REQ-011 · Требования к данным · строка 49</h3>
 <blockquote>
 <p>Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-005">D-005</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-006">D-006</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-017">REQ-017 · Общие параметры · строка 103</h3>
 <blockquote>
 <p>Поле: Description | Значение: Сохранение порога. Функциональные требования: чтение порога</p>
 </blockquote>
-<p>Ясность 6,8 — нужна доработка · ⚠️ Реализ. <a href="#x-d-010">D-010</a> 🔴 · прочие без модели не проверялись</p>
+<p>Ясность 6,8 — нужна доработка · ⚠️ Реализ. <a href="#x-d-011">D-011</a> 🔴 · прочие без модели не проверялись</p>
 <h3 id="x-req-018">REQ-018 · Общие параметры · строка 104</h3>
 <blockquote>
 <p>Поле: REST type | Значение: GET</p>
 </blockquote>
-<p>Ясность 6,4 — нужна доработка · ⚠️ Полнота <a href="#x-d-011">D-011</a> 🟢; Реализ. <a href="#x-d-010">D-010</a> 🔴 · прочие без модели не проверялись</p>
+<p>Ясность 6,4 — нужна доработка · ⚠️ Полнота <a href="#x-d-012">D-012</a> 🟢; Реализ. <a href="#x-d-011">D-011</a> 🔴 · прочие без модели не проверялись</p>
 <h3 id="x-req-022">REQ-022 · Общие параметры · строка 108</h3>
 <blockquote>
 <p>Поле: Request URL | Значение: Dev: /alerts/saveLimit . Prod: —</p>
 </blockquote>
-<p>Ясность 6,0 — нужна доработка · ⚠️ Полнота <a href="#x-d-012">D-012</a> 🟢; Реализ. <a href="#x-d-010">D-010</a> 🔴 · прочие без модели не проверялись</p>
-<div class="card card-minor"><a id="x-d-012"></a>
-<p><strong>D-012 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Заглушка вместо значения: «Prod: —». Вместо содержания стоит заглушка «Prod: —». Пока значение не определено, эту часть нельзя ни реализовать, ни проверить: каждый подставит своё, и расхождение обнаружится только на приёмке.</p>
+<p>Ясность 6,0 — нужна доработка · ⚠️ Полнота <a href="#x-d-013">D-013</a> 🟢; Реализ. <a href="#x-d-011">D-011</a> 🔴 · прочие без модели не проверялись</p>
+<div class="card card-minor"><a id="x-d-013"></a>
+<p><strong>D-013 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Заглушка вместо значения: «Prod: —». Вместо содержания стоит заглушка «Prod: —». Пока значение не определено, эту часть нельзя ни реализовать, ни проверить: каждый подставит своё, и расхождение обнаружится только на приёмке.</p>
 <ul>
 <li>Где: строка 108: «Request URL | Dev: /alerts/saveLimit . Prod: —». Как исправить: Впишите значение. Если оно ещё неизвестно — укажите, кто и к какой дате его определит, и не начинайте работу над этой частью до решения.</li>
-<li>Вопрос автору <a href="#x-v-18">В-18</a>; источник: правило <code>placeholder</code></li>
+<li>Как найдено: правило без модели: «Заглушки вместо значений (TBD, «уточнить», «—»)» (<code>placeholder</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть полным</li>
+<li>Вопрос автору <a href="#x-v-19">В-19</a></li>
 </ul>
 </div>
 <h3 id="x-req-023">REQ-023 · Общие параметры · строка 109</h3>
 <blockquote>
 <p>Поле: CURL | Значение: curl -G "$BASE/alerts/saveLimit" -H "Authorization: Bearer $TOKEN" --data 'cardId=demo-42&amp;amount=50000&amp;enabled=1'</p>
 </blockquote>
-<p>Ясность 6,8 — нужна доработка · ⚠️ Реализ. <a href="#x-d-010">D-010</a> 🔴 · прочие без модели не проверялись</p>
+<p>Ясность 6,8 — нужна доработка · ⚠️ Реализ. <a href="#x-d-011">D-011</a> 🔴 · прочие без модели не проверялись</p>
 <h3 id="x-req-024">REQ-024 · Общие параметры · строка 110</h3>
 <blockquote>
 <p>Поле: Swagger | Значение: —</p>
 </blockquote>
-<p>Ясность 9,2 — ясное · ⚠️ Полнота <a href="#x-d-013">D-013</a> 🟢 · прочие без модели не проверялись</p>
-<div class="card card-minor"><a id="x-d-013"></a>
-<p><strong>D-013 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Не заполнено поле «Swagger». Вместо содержания стоит заглушка «—». Как в <a href="#x-d-012">D-012</a>.</p>
+<p>Ясность 9,2 — ясное · ⚠️ Полнота <a href="#x-d-014">D-014</a> 🟢 · прочие без модели не проверялись</p>
+<div class="card card-minor"><a id="x-d-014"></a>
+<p><strong>D-014 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Не заполнено поле «Swagger». Вместо содержания стоит заглушка «—». Как в <a href="#x-d-013">D-013</a>.</p>
 <ul>
-<li>Где: строка 110: «Swagger | —». Как исправить: Впишите значение. Дальше — как в <a href="#x-d-012">D-012</a>.</li>
-<li>Вопрос автору <a href="#x-v-19">В-19</a>; источник: правило <code>placeholder</code></li>
+<li>Где: строка 110: «Swagger | —». Как исправить: Впишите значение. Дальше — как в <a href="#x-d-013">D-013</a>.</li>
+<li>Как найдено: правило без модели: «Заглушки вместо значений (TBD, «уточнить», «—»)» (<code>placeholder</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть полным</li>
+<li>Вопрос автору <a href="#x-v-20">В-20</a></li>
 </ul>
 </div>
 <h3 id="x-req-038">REQ-038 · Query-параметры · строка 142</h3>
 <blockquote>
 <p>Parameter: cardId | Format: string | Size: 1–64 | Mandatory: Да | Logic: Карта клиента | Description: Идентификатор карты | DB field: card_id</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Реализ. <a href="#x-d-014">D-014</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Реализ. <a href="#x-d-015">D-015</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-039">REQ-039 · Query-параметры · строка 143</h3>
 <blockquote>
 <p>Parameter: amount | Format: integer | Size: 32 bit | Mandatory: Да | Logic: 1 000–1 000 000 | Description: Порог в тенге | DB field: limit_kzt</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-015">D-015</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-016">D-016</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-040">REQ-040 · Query-параметры · строка 144</h3>
 <blockquote>
 <p>Parameter: enabled | Format: integer | Size: 1 знак | Mandatory: Да | Logic: 0 или 1 | Description: Признак включения | DB field: enabled</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-016">D-016</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-017">D-017</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-041">REQ-041 · Request body · строка 147</h3>
 <blockquote>
 <p>Content-Type: application/json .</p>
 </blockquote>
-<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#x-d-017">D-017</a> 🟢 · прочие без модели не проверялись</p>
+<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#x-d-018">D-018</a> 🟢 · прочие без модели не проверялись</p>
 <h3 id="x-req-042">REQ-042 · Request body · строка 148</h3>
 <blockquote>
 <p>Тело не используется.</p>
 </blockquote>
-<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#x-d-017">D-017</a> 🟢 · прочие без модели не проверялись</p>
+<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#x-d-018">D-018</a> 🟢 · прочие без модели не проверялись</p>
 <h3 id="x-req-043">REQ-043 · Ответ · строка 151</h3>
 <blockquote>
 <p>Если результат 200 или 201 — успешный. Если результат 400, 401 и далее — неуспешный.</p>
 </blockquote>
-<p>Ясность 8,0 — есть замечания · ⚠️ Полнота <a href="#x-d-018">D-018</a> 🟢; Непротив. <a href="#x-d-019">D-019</a> 🟡 · прочие без модели не проверялись</p>
-<div class="card card-minor"><a id="x-d-018"></a>
-<p><strong>D-018 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Незакрытый перечень: «и далее». Перечень заканчивается словами «и далее», поэтому непонятно, что ещё в него входит. Разработчик реализует только названное, а тестировщик не знает, какие ещё случаи проверять.</p>
+<p>Ясность 8,0 — есть замечания · ⚠️ Полнота <a href="#x-d-019">D-019</a> 🟢; Непротив. <a href="#x-d-020">D-020</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-minor"><a id="x-d-019"></a>
+<p><strong>D-019 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Незакрытый перечень: «и далее». Перечень заканчивается словами «и далее», поэтому непонятно, что ещё в него входит. Разработчик реализует только названное, а тестировщик не знает, какие ещё случаи проверять.</p>
 <ul>
 <li>Где: строка 151. Как исправить: Перечислите все значения полностью или назовите правило, по которому их можно определить (например, «все коды 4xx из таблицы статусов» или ссылку на справочник).</li>
-<li>Вопрос автору <a href="#x-v-21">В-21</a>; источник: правило <code>open-list</code></li>
+<li>Как найдено: правило без модели: «Незакрытые перечни («и т.д.», «и другие»)» (<code>open-list</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть открытых формулировок («и т. д.», «и другие»)</li>
+<li>Вопрос автору <a href="#x-v-22">В-22</a></li>
 </ul>
 </div>
 <h3 id="x-req-045">REQ-045 · Ответ · строка 156</h3>
 <blockquote>
 <p>Parameter: amount | Format: string | Logic: При успехе | Description: Порог в тенге | DB field: limit_kzt</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-015">D-015</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-016">D-016</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-046">REQ-046 · Ответ · строка 157</h3>
 <blockquote>
 <p>Parameter: enabled | Format: string | Logic: «0» или «1» | Description: Признак включения | DB field: enabled</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-016">D-016</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-017">D-017</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-050">REQ-050 · 200. Successful — Created · строки 166–172</h3>
 <blockquote>
 <p>{"result":"OK","amount":"50000","enabled":"1"}<br>
 или<br>
 {"result":"ERROR","message":"Проверьте сумму"}</p>
 </blockquote>
-<p>Ясность 6,8 — нужна доработка · ⚠️ Непротив. <a href="#x-d-020">D-020</a> 🔴 · прочие без модели не проверялись</p>
+<p>Ясность 6,8 — нужна доработка · ⚠️ Непротив. <a href="#x-d-021">D-021</a> 🔴 · прочие без модели не проверялись</p>
 <h3 id="x-req-056">REQ-056 · 403. Unsuccessful — Forbidden · строка 189</h3>
 <blockquote>
 <p>Для чужой карты возвращается 404, как и для отсутствующей карты.</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-022">D-022</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-023">D-023</a> 🟡 · прочие без модели не проверялись</p>
 <a id="x-s3-clean"></a><p><strong>Требования без замечаний (38)</strong></p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-left">Где</th><th class="a-left">Начало текста (полностью — в <a href="#s2">разделе 2</a>)</th></tr></thead><tbody>
 <tr><td class="a-left"><a id="x-req-001"></a>REQ-001</td><td class="a-left">строка 23</td><td class="a-left">Дать клиенту возможность узнать о…</td></tr>
@@ -709,11 +748,12 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 33: «BPMN схема процесса»</li>
 </ul></li>
 <li>Как исправить: Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь.</li>
-<li>Вопрос автору <a href="#x-v-04">В-04</a>; источник: правило <code>flow-happy-path</code></li>
+<li>Как найдено: правило без модели: «Схема процесса только с успешным путём» (<code>flow-happy-path</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
+<li>Вопрос автору <a href="#x-v-04">В-04</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="x-d-003"></a>
-<p><strong>D-003 · 🟡 <span class="sev sev-major">MAJOR</span> · Полнота набора.</strong> Схема процесса показывает только успешный путь</p>
+<div class="card card-major"><a id="x-d-004"></a>
+<p><strong>D-004 · 🟡 <span class="sev sev-major">MAJOR</span> · Полнота набора.</strong> Схема процесса показывает только успешный путь</p>
 <p>Как в <a href="#x-d-002">D-002</a>.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -721,11 +761,12 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 42: «Sequence Diagram»</li>
 </ul></li>
 <li>Как исправить: Как в <a href="#x-d-002">D-002</a>.</li>
-<li>Вопрос автору <a href="#x-v-04">В-04</a>; источник: правило <code>flow-happy-path</code></li>
+<li>Как найдено: правило без модели: «Схема процесса только с успешным путём» (<code>flow-happy-path</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
+<li>Вопрос автору <a href="#x-v-04">В-04</a></li>
 </ul>
 </div>
-<div class="card card-critical"><a id="x-d-006"></a>
-<p><strong>D-006 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Полнота набора.</strong> Раздел «Тестирование требований» не заполнен: вместо содержания заглушка</p>
+<div class="card card-critical"><a id="x-d-007"></a>
+<p><strong>D-007 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Полнота набора.</strong> Раздел «Тестирование требований» не заполнен: вместо содержания заглушка</p>
 <p>Вместо содержания раздела стоит заглушка «заполняются тестировщиками». Значит, эта часть требований не готова: по ней нельзя начать работу и нельзя проверить результат, а пробел легко пропустить, потому что раздел формально есть. Это раздел о проверке результата: пока он не заполнен, нет согласованного способа принять работу, поэтому передавать документ в разработку и тестирование нельзя.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -734,33 +775,37 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 </ul></li>
 <li>Как исправить: Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.</li>
 <li>Почему блокер: нет обязательной части документа</li>
-<li>Вопрос автору <a href="#x-v-02">В-02</a>; источник: правило <code>empty-section</code></li>
+<li>Как найдено: правило без модели: «Пустые разделы и разделы-заглушки» (<code>empty-section</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
+<li>Вопрос автору <a href="#x-v-02">В-02</a></li>
 </ul>
 </div>
-<div class="card card-minor"><a id="x-d-007"></a>
-<p><strong>D-007 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Чек-лист ревью не заполнен. В 28 ячейках таблицы (14 строк) оставлены все варианты ответа, например «Да / Нет». Значит, ревью по чек-листу не проводилось: не видно, кто и что проверил и какие пункты не выполнены.</p>
+<div class="card card-minor"><a id="x-d-008"></a>
+<p><strong>D-008 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Чек-лист ревью не заполнен. В 28 ячейках таблицы (14 строк) оставлены все варианты ответа, например «Да / Нет». Значит, ревью по чек-листу не проводилось: не видно, кто и что проверил и какие пункты не выполнены.</p>
 <ul>
 <li>Где: строка 67: «Ревью требований»; строка 72: «Техническое требование зафиксировано и покрывает бизнес-требование | Да / Нет | Да / Нет». Как исправить: Проведите ревью по чек-листу: в каждой ячейке оставьте один ответ, для ответов «Нет» впишите в примечания, что будет сделано и кем.</li>
-<li>Вопрос автору <a href="#x-v-14">В-14</a>; источник: правило <code>unfilled-checklist</code></li>
+<li>Как найдено: правило без модели: «Незаполненный чек-лист ревью» (<code>unfilled-checklist</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
+<li>Вопрос автору <a href="#x-v-15">В-15</a></li>
 </ul>
 </div>
-<div class="card card-minor"><a id="x-d-009"></a>
-<p><strong>D-009 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Таблица в разделе «Блок согласующих» не заполнена. Таблица есть, но ни одна её строка не заполнена. Это таблица согласования: документ формально никем не согласован, и непонятно, кто отвечает за требования и чья редакция действует.</p>
+<div class="card card-minor"><a id="x-d-010"></a>
+<p><strong>D-010 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Таблица в разделе «Блок согласующих» не заполнена. Таблица есть, но ни одна её строка не заполнена. Это таблица согласования: документ формально никем не согласован, и непонятно, кто отвечает за требования и чья редакция действует.</p>
 <ul>
 <li>Где: строка 87: «Блок согласующих»; строка 89: «Подразделение | ФИО ответственного | Подпись». Как исправить: Заполните таблицу: укажите подразделения, ФИО ответственных и дату согласования.</li>
-<li>Вопрос автору <a href="#x-v-16">В-16</a>; источник: правило <code>empty-table</code></li>
+<li>Как найдено: правило без модели: «Незаполненные таблицы» (<code>empty-table</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
+<li>Вопрос автору <a href="#x-v-17">В-17</a></li>
 </ul>
 </div>
-<div class="card card-minor"><a id="x-d-011"></a>
-<p><strong>D-011 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> В описании интерфейса не хватает правил надёжности. Интерфейс меняет данные, но в документе не описано: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса. Без этих правил разработчики клиента и сервера по-разному поведут себя при перегрузке, медленном ответе, повторной отправке и одновременной правке одного объекта, а тестировщик не знает, какое поведение ожидать.</p>
+<div class="card card-minor"><a id="x-d-012"></a>
+<p><strong>D-012 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> В описании интерфейса не хватает правил надёжности. Интерфейс меняет данные, но в документе не описано: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса. Без этих правил разработчики клиента и сервера по-разному поведут себя при перегрузке, медленном ответе, повторной отправке и одновременной правке одного объекта, а тестировщик не знает, какое поведение ожидать.</p>
 <ul>
 <li>Где: строка 104, <a href="#x-req-018">REQ-018</a>: «REST type | GET». Как исправить: Добавьте в описание интерфейса: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса — с конкретными значениями (лимит запросов и код ответа при превышении, тайм-аут и число повторов, способ защиты от одновременной правки, ключ идемпотентности, номер версии в пути или заголовке).</li>
-<li>Вопрос автору <a href="#x-v-17">В-17</a>; источник: правило <code>api-reliability</code></li>
+<li>Как найдено: правило без модели: «Интерфейс без лимитов, тайм-аутов, идемпотентности или версии» (<code>api-reliability</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
+<li>Вопрос автору <a href="#x-v-18">В-18</a></li>
 </ul>
 </div>
 <h3>4.2 Взаимная непротиворечивость</h3>
-<div class="card card-major"><a id="x-d-005"></a>
-<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
+<div class="card card-major"><a id="x-d-006"></a>
+<p><strong>D-006 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
 <p>Одни суммы заданы в единицах «тиын», другие — в «тенге», а правило пересчёта нигде не записано. Разработчик может сохранить сумму в одних единицах, а сравнить её с порогом в других — ошибка в 100 раз, которую не заметят до первого реального платежа.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -768,11 +813,13 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 37, <a href="#x-req-005">REQ-005</a>: «Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно»</li>
 </ul></li>
 <li>Как исправить: Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.</li>
-<li>Вопрос автору <a href="#x-v-06">В-06</a>; источник: правило <code>unit-mix</code></li>
+<li>Проверка исправления: не проверено кодом — выбран вариант ответа, а готовой формулировки нет: проверять нечего. Внесите ответ в документ и запустите проверку ещё раз.</li>
+<li>Как найдено: правило без модели: «Одна величина в разных единицах без правила пересчёта» (<code>unit-mix</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-06">В-06</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="x-d-015"></a>
-<p><strong>D-015 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «amount» описан с разными типами: integer и string</p>
+<div class="card card-major"><a id="x-d-016"></a>
+<p><strong>D-016 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «amount» описан с разными типами: integer и string</p>
 <p>В одной таблице параметр «amount» имеет тип integer, в другой — string. Клиент и сервер разберут значение по-разному: например, число 50000 и строка "50000" по-разному проходят проверку и сравнение, и интеграция сломается на первом же запросе.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -780,11 +827,12 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 156, <a href="#x-req-045">REQ-045</a>: «amount | string | При успехе | Порог в тенге | limit_kzt»</li>
 </ul></li>
 <li>Как исправить: Выберите для «amount» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места.</li>
-<li>Вопрос автору <a href="#x-v-08">В-08</a>; источник: правило <code>param-type-mismatch</code></li>
+<li>Как найдено: правило без модели: «Один параметр с разными типами в разных таблицах» (<code>param-type-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-08">В-08</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="x-d-016"></a>
-<p><strong>D-016 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «enabled» описан с разными типами: integer и string</p>
+<div class="card card-major"><a id="x-d-017"></a>
+<p><strong>D-017 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Параметр «enabled» описан с разными типами: integer и string</p>
 <p>В одной таблице параметр «enabled» имеет тип integer, в другой — string. Клиент и сервер разберут значение по-разному: например, значение true и строка "true" по-разному проходят проверку и сравнение, и интеграция сломается на первом же запросе.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -792,27 +840,30 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 157, <a href="#x-req-046">REQ-046</a>: «enabled | string | «0» или «1» | Признак включения | enabled»</li>
 </ul></li>
 <li>Как исправить: Выберите для «enabled» один тип и формат во всех таблицах (для сумм и признаков обычно integer или boolean) и исправьте остальные места.</li>
-<li>Вопрос автору <a href="#x-v-09">В-09</a>; источник: правило <code>param-type-mismatch</code></li>
+<li>Как найдено: правило без модели: «Один параметр с разными типами в разных таблицах» (<code>param-type-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-09">В-09</a></li>
 </ul>
 </div>
-<div class="card card-minor"><a id="x-d-017"></a>
-<p><strong>D-017 · 🟢 <span class="sev sev-minor">MINOR</span> · Взаимная непротиворечивость.</strong> Указан Content-Type, хотя тела запроса нет. Для запроса задан заголовок Content-Type, но сказано, что тело запроса не используется. Непонятно, нужно ли отправлять тело и в каком виде: одни клиенты пошлют пустое тело с заголовком, другие — параметры в теле, третьи — без заголовка.</p>
+<div class="card card-minor"><a id="x-d-018"></a>
+<p><strong>D-018 · 🟢 <span class="sev sev-minor">MINOR</span> · Взаимная непротиворечивость.</strong> Указан Content-Type, хотя тела запроса нет. Для запроса задан заголовок Content-Type, но сказано, что тело запроса не используется. Непонятно, нужно ли отправлять тело и в каком виде: одни клиенты пошлют пустое тело с заголовком, другие — параметры в теле, третьи — без заголовка.</p>
 <ul>
 <li>Где: строка 147, <a href="#x-req-041">REQ-041</a>: «Content-Type: application/json .»; строка 148, <a href="#x-req-042">REQ-042</a>: «Тело не используется.». Как исправить: Если тело не нужно — уберите Content-Type из описания запроса. Если параметры должны идти в теле — опишите тело (поля и типы) и используйте метод POST, PUT или PATCH.</li>
-<li>Вопрос автору <a href="#x-v-20">В-20</a>; источник: правило <code>content-type-without-body</code></li>
+<li>Как найдено: правило без модели: «Content-Type у запроса без тела» (<code>content-type-without-body</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-21">В-21</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="x-d-019"></a>
-<p><strong>D-019 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код ответа 201 назван успешным, но не описан</p>
+<div class="card card-major"><a id="x-d-020"></a>
+<p><strong>D-020 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код ответа 201 назван успешным, но не описан</p>
 <p>В тексте код 201 назван успешным, но в описании ответов для него нет ни условия, ни примера тела ответа. Разработчик не знает, когда его возвращать, а тестировщик — что проверять.</p>
 <ul>
 <li>Цитата: строка 151, <a href="#x-req-043">REQ-043</a>: «Если результат 200 или 201 — успешный»</li>
 <li>Как исправить: Добавьте описание кода 201: при каком условии он возвращается и пример тела ответа; или уберите упоминание.</li>
-<li>Вопрос автору <a href="#x-v-10">В-10</a>; источник: правило <code>status-mismatch</code></li>
+<li>Как найдено: правило без модели: «Коды ответов: упомянутые, но не описанные или перепутанные» (<code>status-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-10">В-10</a></li>
 </ul>
 </div>
-<div class="card card-critical"><a id="x-d-020"></a>
-<p><strong>D-020 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Взаимная непротиворечивость.</strong> Ошибка возвращается с успешным кодом 200</p>
+<div class="card card-critical"><a id="x-d-021"></a>
+<p><strong>D-021 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Взаимная непротиворечивость.</strong> Ошибка возвращается с успешным кодом 200</p>
 <p>В описании ответа 200 приведён пример с признаком ошибки ("result":"ERROR"). Клиентское приложение, балансировщики и мониторинг по коду 200 решат, что операция прошла успешно, и ошибка останется незамеченной; тестировщик не знает, какой ответ считать правильным.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -820,21 +871,24 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 171, <a href="#x-req-050">REQ-050</a>: «{"result":"ERROR","message":"Проверьте сумму"}»</li>
 </ul></li>
 <li>Как исправить: Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом значении) с телом ошибки, а в ответ 2xx включайте только успешный результат.</li>
+<li>Проверка исправления: не проверено кодом — выбран вариант ответа, а готовой формулировки нет: проверять нечего. Внесите ответ в документ и запустите проверку ещё раз.</li>
 <li>Почему блокер: нарушение стандарта протокола</li>
-<li>Вопрос автору <a href="#x-v-03">В-03</a>; источник: правило <code>error-in-success</code></li>
+<li>Как найдено: правило без модели: «Ответ с ошибкой под успешным кодом 2xx» (<code>error-in-success</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-03">В-03</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="x-d-021"></a>
-<p><strong>D-021 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код 200 подписан названием другого кода («Created» — это 201)</p>
+<div class="card card-major"><a id="x-d-022"></a>
+<p><strong>D-022 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Код 200 подписан названием другого кода («Created» — это 201)</p>
 <p>В описании ответа 200 стоит название «Created», которое по стандарту HTTP относится к коду 201. Разработчик может вернуть 201, а тестировщик будет ждать 200.</p>
 <ul>
 <li>Цитата: строка 165: «200. Successful — Created»</li>
 <li>Как исправить: Исправьте подпись: 200 — OK. Если нужен ответ «Created», используйте код 201 и опишите его отдельно.</li>
-<li>Вопрос автору <a href="#x-v-11">В-11</a>; источник: правило <code>status-mismatch</code></li>
+<li>Как найдено: правило без модели: «Коды ответов: упомянутые, но не описанные или перепутанные» (<code>status-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-11">В-11</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="x-d-022"></a>
-<p><strong>D-022 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> В описании кода 403 сказано, что возвращается 404</p>
+<div class="card card-major"><a id="x-d-023"></a>
+<p><strong>D-023 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> В описании кода 403 сказано, что возвращается 404</p>
 <p>Раздел описывает ответ 403, но в нём же сказано, что в этом случае возвращается 404. Непонятно, какой код вернёт сервис: разработчик и тестировщик будут ожидать разное, а клиентское приложение может неправильно показать ошибку.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -842,12 +896,13 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 189, <a href="#x-req-056">REQ-056</a>: «Для чужой карты возвращается 404, как и для отсутствующей карты»</li>
 </ul></li>
 <li>Как исправить: Оставьте для этого случая один код и опишите его. Если 403 больше не возвращается — удалите его описание; если возвращается в другом случае — назовите этот случай.</li>
-<li>Вопрос автору <a href="#x-v-12">В-12</a>; источник: правило <code>status-mismatch</code></li>
+<li>Как найдено: правило без модели: «Коды ответов: упомянутые, но не описанные или перепутанные» (<code>status-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-12">В-12</a></li>
 </ul>
 </div>
 <h3>4.3 Реализуемость, стандарты и безопасность</h3>
-<div class="card card-critical"><a id="x-d-010"></a>
-<p><strong>D-010 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Реализуемость, стандарты и безопасность.</strong> Метод GET используется для изменения данных</p>
+<div class="card card-critical"><a id="x-d-011"></a>
+<p><strong>D-011 · 🔴 <span class="sev sev-critical">CRITICAL</span> · Реализуемость, стандарты и безопасность.</strong> Метод GET используется для изменения данных</p>
 <p>Запрос описан как GET, но по пути или описанию он сохраняет или меняет данные («Сохранение», «/alerts/saveLimit», «$BASE/alerts/saveLimit»). По стандарту HTTP (RFC 9110, п. 9.2.1) GET — безопасный метод, он только читает. Браузеры, прокси и кэши вправе повторять и кэшировать такие запросы, а параметры попадают в адресную строку и журналы: изменение может выполниться повторно или без ведома клиента.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -857,17 +912,20 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строка 109, <a href="#x-req-023">REQ-023</a>: «CURL | curl -G "$BASE/alerts/saveLimit" -H "Authorization: Bearer $TOKEN" --data 'cardId=demo-42&amp;amount=50000&amp;enabled=1'»</li>
 </ul></li>
 <li>Как исправить: Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.</li>
+<li>Проверка исправления: не проверено кодом — выбран вариант ответа, а готовой формулировки нет: проверять нечего. Внесите ответ в документ и запустите проверку ещё раз.</li>
 <li>Почему блокер: нарушение стандарта протокола</li>
-<li>Вопрос автору <a href="#x-v-01">В-01</a>; источник: правило <code>get-mutation</code></li>
+<li>Как найдено: правило без модели: «GET для изменяющего запроса (RFC 9110 §9.2.1)» (<code>get-mutation</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым</li>
+<li>Вопрос автору <a href="#x-v-01">В-01</a></li>
 </ul>
 </div>
-<div class="card card-major"><a id="x-d-014"></a>
-<p><strong>D-014 · 🟡 <span class="sev sev-major">MAJOR</span> · Реализуемость, стандарты и безопасность.</strong> Чувствительные данные передаются в адресной строке запроса</p>
+<div class="card card-major"><a id="x-d-015"></a>
+<p><strong>D-015 · 🟡 <span class="sev sev-major">MAJOR</span> · Реализуемость, стандарты и безопасность.</strong> Чувствительные данные передаются в адресной строке запроса</p>
 <p>Параметры «cardId» передаются в строке запроса (query). Адрес запроса целиком попадает в журналы веб-серверов и прокси, историю браузера и системы мониторинга — идентификаторы карт, счетов, телефонов и токены окажутся там в открытом виде. Это противоречит требованиям к защите платёжных и персональных данных (PCI DSS).</p>
 <ul>
 <li>Цитата: строка 142, <a href="#x-req-038">REQ-038</a>: «cardId | string | 1–64 | Да | Карта клиента | Идентификатор карты | card_id»</li>
 <li>Как исправить: Передавайте такие значения в теле запроса (POST/PUT/PATCH), а токены — только в заголовке Authorization; вместо номера карты используйте внутренний непрозрачный идентификатор и запретите запись этих значений в журналы.</li>
-<li>Вопрос автору <a href="#x-v-07">В-07</a>; источник: правило <code>sensitive-in-query</code></li>
+<li>Как найдено: правило без модели: «Чувствительные данные в строке запроса» (<code>sensitive-in-query</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым</li>
+<li>Вопрос автору <a href="#x-v-07">В-07</a></li>
 </ul>
 </div>
 <h3>4.4 Понятность и термины</h3>
@@ -875,15 +933,25 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <p><strong>D-001 · 🟢 <span class="sev sev-minor">MINOR</span> · Понятность и термины.</strong> Название в заголовке и в сведениях о документе расходятся. Заголовок документа — «Уведомление о расходах по карте», а в сведениях о документе указано «Месячный порог расходов по карте». Общих слов в названиях меньше половины: непонятно, о какой задаче документ, и при поиске по названию в системе задач или в реестре документов его можно не найти или перепутать с другим.</p>
 <ul>
 <li>Где: строка 1: «Уведомление о расходах по карте»; строка 14: «Наименование задачи | Месячный порог расходов по карте». Как исправить: Приведите название к одному виду во всех местах: в заголовке, в служебных полях и в ссылках.</li>
-<li>Вопрос автору <a href="#x-v-13">В-13</a>; источник: правило <code>title-mismatch</code></li>
+<li>Как найдено: правило без модели: «Название в заголовке и в сведениях о документе расходятся» (<code>title-mismatch</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть понятным</li>
+<li>Вопрос автору <a href="#x-v-13">В-13</a></li>
+</ul>
+</div>
+<div class="card card-minor"><a id="x-d-003"></a>
+<p><strong>D-003 · 🟢 <span class="sev sev-minor">MINOR</span> · Понятность и термины.</strong> Условие зависит от неопределённого понятия: «активной карты». Правило срабатывает или нет в зависимости от свойства, которое в документе нигде не определено: «активной карты». Каждый поймёт его по-своему: разработчик заложит одно условие, тестировщик проверит другое, а клиент увидит третье.</p>
+<ul>
+<li>Где: строка 37, <a href="#x-req-005">REQ-005</a>: «Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно». Как исправить: Для каждого понятия добавьте проверяемое определение в разделе «Термины» (например: «Карта считается активной, если по ней была операция за последние 90 дней»).</li>
+<li>Как найдено: правило без модели: «Условие зависит от понятия, которое нигде не определено» (<code>condition-undefined</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть понятным</li>
+<li>Вопрос автору <a href="#x-v-14">В-14</a></li>
 </ul>
 </div>
 <h3>4.5 Прослеживаемость</h3>
-<div class="card card-minor"><a id="x-d-008"></a>
-<p><strong>D-008 · 🟢 <span class="sev sev-minor">MINOR</span> · Прослеживаемость.</strong> У документа не указаны версия и дата. В документе версия или дата оставлены незаполненными. Нельзя понять, какая редакция актуальна: замечания ревью, задачи и тесты нельзя привязать к конкретной версии, а изменения требований — отследить.</p>
+<div class="card card-minor"><a id="x-d-009"></a>
+<p><strong>D-009 · 🟢 <span class="sev sev-minor">MINOR</span> · Прослеживаемость.</strong> У документа не указаны версия и дата. В документе версия или дата оставлены незаполненными. Нельзя понять, какая редакция актуальна: замечания ревью, задачи и тесты нельзя привязать к конкретной версии, а изменения требований — отследить.</p>
 <ul>
 <li>Где: строка 68: «Документ (версия/дата) в источнике не заполнен». Как исправить: Добавьте в начало документа номер версии (например, 1.0), дату, автора и таблицу истории изменений.</li>
-<li>Вопрос автору <a href="#x-v-15">В-15</a>; источник: правило <code>no-version</code></li>
+<li>Как найдено: правило без модели: «Нет версии и даты документа» (<code>no-version</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен допускать проверку на соответствие потребности</li>
+<li>Вопрос автору <a href="#x-v-16">В-16</a></li>
 </ul>
 <p>Покрытие требований критериями приёмки строит модель; без неё оно не оценивалось.</p>
 </div>
@@ -892,118 +960,189 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <p>Итого: описано 0 · пробелов 3 · не относится 0 · не оценено 32.</p>
 <p>Без модели на остальные 32 вопросов никто не отвечал; их список — в JSON-версии отчёта (поле <code>gap_map</code>).</p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Вопрос</th><th class="a-left">Ответ</th><th class="a-left">На чём основан ответ</th></tr></thead><tbody>
-<tr><td class="a-left">NP2. Ветки ошибок на схемах</td><td class="a-left">⚠️ пробел — <a href="#x-d-002">D-002</a>, <a href="#x-d-003">D-003</a></td><td class="a-left">ответ дало автоматическое правило</td></tr>
-<tr><td class="a-left">IF1. Надёжность интерфейса</td><td class="a-left">⚠️ пробел — <a href="#x-d-011">D-011</a></td><td class="a-left">ответ дало автоматическое правило</td></tr>
+<tr><td class="a-left">NP2. Ветки ошибок на схемах</td><td class="a-left">⚠️ пробел — <a href="#x-d-002">D-002</a>, <a href="#x-d-004">D-004</a></td><td class="a-left">ответ дало автоматическое правило</td></tr>
+<tr><td class="a-left">IF1. Надёжность интерфейса</td><td class="a-left">⚠️ пробел — <a href="#x-d-012">D-012</a></td><td class="a-left">ответ дало автоматическое правило</td></tr>
 <tr><td class="a-left">CN1. Название задачи</td><td class="a-left">⚠️ пробел — <a href="#x-d-001">D-001</a></td><td class="a-left">ответ дало автоматическое правило</td></tr>
 </tbody></table></div>
 <h2 id="x-part-g">Г. Вопросы автору полностью</h2>
 <p>Если автор ответит на блокирующие вопросы и внесёт правки, вердикт станет: <strong>⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (предварительно)</strong>.</p>
 <p>Чтобы снять все блокеры, нужны ответы на вопросы: <a href="#x-v-01">В-01</a>, <a href="#x-v-02">В-02</a>, <a href="#x-v-03">В-03</a>.</p>
-<p>21 вопрос составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
+<p>22 вопроса составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
 <h3>Диалог с автором</h3>
-<p>Ответы автора учтены: 5 из 21. Закрыто замечаний: 4.<br>
+<p>Ответы автора учтены: 5 из 22. Закрыто замечаний: 4.<br>
 Ответы записаны; без модели агент не проверяет, закрывает ли ответ замечание, кроме случая, когда выбран вариант из вопроса, составленного по шаблону этого замечания.</p>
 <ul>
-<li><a href="#x-v-01">В-01</a>: Какой HTTP-метод использовать для этого изменения? → ответ: «PATCH — изменение отдельных полей» → Выбран вариант «PATCH — изменение отдельных полей»: замечания D-010 закрыты ответом; внесите этот вариант в документ.</li>
+<li><a href="#x-v-01">В-01</a>: Какой HTTP-метод использовать для этого изменения? → ответ: «PATCH — изменение отдельных полей» → Выбран вариант «PATCH — изменение отдельных полей»: замечания D-011 закрыты ответом; внесите этот вариант в документ.</li>
 <li><a href="#x-v-02">В-02</a>: Кто и когда заполнит раздел «Тестирование требований»? → ответ: «Раздел заполняет QA-лид до начала разработки; срок — за неделю до старта.» → Ответ учтён, требуется правка текста. Без модели агент не проверяет, закрывает ли ответ замечание: оно остаётся открытым.</li>
-<li><a href="#x-v-03">В-03</a>: Какой код возвращать, когда операция отклонена? → ответ: «400 Bad Request» → Выбран вариант «400 Bad Request»: замечания D-020 закрыты ответом; внесите этот вариант в документ.</li>
-<li><a href="#x-v-05">В-05</a>: Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»? → ответ: «95% случаев при обычной нагрузке» → Выбран вариант «95% случаев при обычной нагрузке»: замечания D-004 закрыты ответом; внесите этот вариант в документ.</li>
-<li><a href="#x-v-06">В-06</a>: В каких единицах хранить, передавать и сравнивать суммы? → ответ: «Везде в тиын, клиенту показывать в тенге» → Выбран вариант «Везде в тиын, клиенту показывать в тенге»: замечания D-005 закрыты ответом; внесите этот вариант в документ.</li>
+<li><a href="#x-v-03">В-03</a>: Какой код возвращать, когда операция отклонена? → ответ: «400 Bad Request» → Выбран вариант «400 Bad Request»: замечания D-021 закрыты ответом; внесите этот вариант в документ.</li>
+<li><a href="#x-v-05">В-05</a>: Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»? → ответ: «95% случаев при обычной нагрузке» → Выбран вариант «95% случаев при обычной нагрузке»: замечания D-005 закрыты ответом; внесите этот вариант в документ.</li>
+<li><a href="#x-v-06">В-06</a>: В каких единицах хранить, передавать и сравнивать суммы? → ответ: «Везде в тиын, клиенту показывать в тенге» → Выбран вариант «Везде в тиын, клиенту показывать в тенге»: замечания D-006 закрыты ответом; внесите этот вариант в документ.</li>
 </ul>
-<p>Что остаётся открытым: замечаний 18 из 22; вопросы без ответа: <a href="#x-v-04">В-04</a>, <a href="#x-v-07">В-07</a>, <a href="#x-v-08">В-08</a>, <a href="#x-v-09">В-09</a>, <a href="#x-v-10">В-10</a>, <a href="#x-v-11">В-11</a>, <a href="#x-v-12">В-12</a>, <a href="#x-v-13">В-13</a>, <a href="#x-v-14">В-14</a>, <a href="#x-v-15">В-15</a>, <a href="#x-v-16">В-16</a>, <a href="#x-v-17">В-17</a>, <a href="#x-v-18">В-18</a>, <a href="#x-v-19">В-19</a>, <a href="#x-v-20">В-20</a>, <a href="#x-v-21">В-21</a>.</p>
+<p>Что остаётся открытым: замечаний 19 из 23; вопросы без ответа: <a href="#x-v-04">В-04</a>, <a href="#x-v-07">В-07</a>, <a href="#x-v-08">В-08</a>, <a href="#x-v-09">В-09</a>, <a href="#x-v-10">В-10</a>, <a href="#x-v-11">В-11</a>, <a href="#x-v-12">В-12</a>, <a href="#x-v-13">В-13</a>, <a href="#x-v-14">В-14</a>, <a href="#x-v-15">В-15</a>, <a href="#x-v-16">В-16</a>, <a href="#x-v-17">В-17</a>, <a href="#x-v-18">В-18</a>, <a href="#x-v-19">В-19</a>, <a href="#x-v-20">В-20</a>, <a href="#x-v-21">В-21</a>, <a href="#x-v-22">В-22</a>.</p>
+<h3>Принято без ответа автора</h3>
+<p>На эти вопросы автор не ответил. Пока ответа нет, команда считает так:</p>
+<ul>
+<li><a href="#x-v-04">В-04</a>: Какие ветки, кроме успешной, должны быть на схеме? → в ошибочных путях операция отклоняется, пользователь видит сообщение, данные не меняются.</li>
+<li><a href="#x-v-07">В-07</a>: Как передавать идентификатор карты и другие чувствительные значения? → чувствительные данные передаём только в теле запроса по защищённому каналу.</li>
+<li><a href="#x-v-13">В-13</a>: Какое название задачи правильное? → верным считаем название из заголовка документа.</li>
+<li><a href="#x-v-16">В-16</a>: Какую версию и дату присвоить документу? → версией считаем дату последнего изменения файла.</li>
+<li><a href="#x-v-17">В-17</a>: Кто должен быть в этой таблице? → пустую таблицу считаем не входящей в первую версию.</li>
+<li><a href="#x-v-21">В-21</a>: Передаются ли параметры в теле запроса? → заголовок Content-Type у запроса без тела не используем.</li>
+<li><a href="#x-v-22">В-22</a>: Какие именно значения входят в перечень? → перечень считаем закрытым: в нём только то, что названо в тексте.</li>
+</ul>
+<p>Без ответа автора работу по этим пунктам начинать нельзя: <a href="#x-v-08">В-08</a>, <a href="#x-v-09">В-09</a>, <a href="#x-v-10">В-10</a>, <a href="#x-v-11">В-11</a>, <a href="#x-v-12">В-12</a>, <a href="#x-v-14">В-14</a>, <a href="#x-v-15">В-15</a>, <a href="#x-v-18">В-18</a>, <a href="#x-v-19">В-19</a>, <a href="#x-v-20">В-20</a>.</p>
 <h3>Блокирующие (3)</h3>
 <div class="card"><a id="x-v-01"></a>
-<p><strong>В-01.</strong> Какой HTTP-метод использовать для этого изменения? (кому: архитектор или разработчик; к <a href="#x-d-010">D-010</a>)</p>
+<p><strong>В-01.</strong> Какой HTTP-метод использовать для этого изменения? (кому: архитектор или разработчик; к <a href="#x-d-011">D-011</a>)</p>
 <ul>
 <li>Варианты: а) PUT — полная замена настройки; б) PATCH — изменение отдельных полей; в) POST — создание новой записи</li>
+<li>Если автор не ответит, считаем так: изменяющее действие выполняем методом POST.</li>
 <li>Что изменит ответ в итоге: закроет 1 из 3 блокеров · индекс готовности 54 → 56</li>
 <li>Ответ автора: PATCH — изменение отдельных полей</li>
-<li>Что сделал агент: Выбран вариант «PATCH — изменение отдельных полей»: замечания D-010 закрыты ответом; внесите этот вариант в документ.</li>
+<li>Что сделал агент: Выбран вариант «PATCH — изменение отдельных полей»: замечания D-011 закрыты ответом; внесите этот вариант в документ.</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-02"></a>
-<p><strong>В-02.</strong> Кто и когда заполнит раздел «Тестирование требований»? (кому: аналитик — автор документа; к <a href="#x-d-006">D-006</a>)</p>
+<p><strong>В-02.</strong> Кто и когда заполнит раздел «Тестирование требований»? (кому: аналитик — автор документа; к <a href="#x-d-007">D-007</a>)</p>
 <ul>
 <li>Варианты: а) Автор документа — до начала разработки; б) Другая команда — указать ответственного и срок; в) Раздел не нужен — удалить</li>
+<li>Если автор не ответит, считаем так: пустой раздел считаем не входящим в первую версию.</li>
 <li>Что изменит ответ в итоге: закроет 1 из 3 блокеров</li>
 <li>Ответ автора: Раздел заполняет QA-лид до начала разработки; срок — за неделю до старта.</li>
 <li>Что сделал агент: Ответ учтён, требуется правка текста. Без модели агент не проверяет, закрывает ли ответ замечание: оно остаётся открытым.</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-03"></a>
-<p><strong>В-03.</strong> Какой код возвращать, когда операция отклонена? (кому: архитектор или разработчик; к <a href="#x-d-020">D-020</a>)</p>
+<p><strong>В-03.</strong> Какой код возвращать, когда операция отклонена? (кому: архитектор или разработчик; к <a href="#x-d-021">D-021</a>)</p>
 <ul>
 <li>Варианты: а) 400 Bad Request; б) 422 Unprocessable Content; в) Оставить 200 и описать признак ошибки в контракте (не рекомендуется)</li>
+<li>Если автор не ответит, считаем так: ошибка возвращается с кодом 4xx или 5xx по смыслу ошибки, а не с 2xx.</li>
 <li>Что изменит ответ в итоге: закроет 1 из 3 блокеров</li>
 <li>Ответ автора: 400 Bad Request</li>
-<li>Что сделал агент: Выбран вариант «400 Bad Request»: замечания D-020 закрыты ответом; внесите этот вариант в документ.</li>
+<li>Что сделал агент: Выбран вариант «400 Bad Request»: замечания D-021 закрыты ответом; внесите этот вариант в документ.</li>
 </ul>
 </div>
 <h3>Важные (9)</h3>
 <div class="card"><a id="x-v-04"></a>
-<p><strong>В-04.</strong> Какие ветки, кроме успешной, должны быть на схеме? (кому: аналитик — автор документа; к <a href="#x-d-002">D-002</a>, <a href="#x-d-003">D-003</a>)</p>
+<p><strong>В-04.</strong> Какие ветки, кроме успешной, должны быть на схеме? (кому: аналитик — автор документа; к <a href="#x-d-002">D-002</a>, <a href="#x-d-004">D-004</a>)</p>
+<ul>
+<li>Если автор не ответит, считаем так: в ошибочных путях операция отклоняется, пользователь видит сообщение, данные не меняются.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-05"></a>
-<p><strong>В-05.</strong> Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»? (кому: владелец продукта (бизнес); к <a href="#x-d-004">D-004</a>)</p>
+<p><strong>В-05.</strong> Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение минуты»? (кому: владелец продукта (бизнес); к <a href="#x-d-005">D-005</a>)</p>
 <ul>
 <li>Варианты: а) 95% случаев при обычной нагрузке; б) 99% случаев при пиковой нагрузке (указать какой); в) Каждый случай без исключений</li>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
 <li>Ответ автора: 95% случаев при обычной нагрузке</li>
-<li>Что сделал агент: Выбран вариант «95% случаев при обычной нагрузке»: замечания D-004 закрыты ответом; внесите этот вариант в документ.</li>
+<li>Что сделал агент: Выбран вариант «95% случаев при обычной нагрузке»: замечания D-005 закрыты ответом; внесите этот вариант в документ.</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-06"></a>
-<p><strong>В-06.</strong> В каких единицах хранить, передавать и сравнивать суммы? (кому: архитектор или разработчик; к <a href="#x-d-005">D-005</a>)</p>
+<p><strong>В-06.</strong> В каких единицах хранить, передавать и сравнивать суммы? (кому: архитектор или разработчик; к <a href="#x-d-006">D-006</a>)</p>
 <ul>
 <li>Варианты: а) Везде в тиын, клиенту показывать в тенге; б) Везде в тенге с двумя знаками после запятой; в) Как сейчас, но с явным правилом пересчёта при сравнении</li>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
 <li>Ответ автора: Везде в тиын, клиенту показывать в тенге</li>
-<li>Что сделал агент: Выбран вариант «Везде в тиын, клиенту показывать в тенге»: замечания D-005 закрыты ответом; внесите этот вариант в документ.</li>
+<li>Что сделал агент: Выбран вариант «Везде в тиын, клиенту показывать в тенге»: замечания D-006 закрыты ответом; внесите этот вариант в документ.</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-07"></a>
-<p><strong>В-07.</strong> Как передавать идентификатор карты и другие чувствительные значения? (кому: информационная безопасность; к <a href="#x-d-014">D-014</a>)</p>
+<p><strong>В-07.</strong> Как передавать идентификатор карты и другие чувствительные значения? (кому: информационная безопасность; к <a href="#x-d-015">D-015</a>)</p>
+<ul>
+<li>Если автор не ответит, считаем так: чувствительные данные передаём только в теле запроса по защищённому каналу.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-08"></a>
-<p><strong>В-08.</strong> Какой тип у параметра «amount»? (кому: архитектор или разработчик; к <a href="#x-d-015">D-015</a>)</p>
+<p><strong>В-08.</strong> Какой тип у параметра «amount»? (кому: архитектор или разработчик; к <a href="#x-d-016">D-016</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-09"></a>
-<p><strong>В-09.</strong> Какой тип у параметра «enabled»? (кому: архитектор или разработчик; к <a href="#x-d-016">D-016</a>)</p>
+<p><strong>В-09.</strong> Какой тип у параметра «enabled»? (кому: архитектор или разработчик; к <a href="#x-d-017">D-017</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-10"></a>
-<p><strong>В-10.</strong> Возвращает ли сервис код 201? (кому: архитектор или разработчик; к <a href="#x-d-019">D-019</a>)</p>
+<p><strong>В-10.</strong> Возвращает ли сервис код 201? (кому: архитектор или разработчик; к <a href="#x-d-020">D-020</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-11"></a>
-<p><strong>В-11.</strong> Какой код должен возвращаться в этом случае? (кому: архитектор или разработчик; к <a href="#x-d-021">D-021</a>)</p>
+<p><strong>В-11.</strong> Какой код должен возвращаться в этом случае? (кому: архитектор или разработчик; к <a href="#x-d-022">D-022</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-12"></a>
-<p><strong>В-12.</strong> Какой код возвращается в этом случае? (кому: архитектор или разработчик; к <a href="#x-d-022">D-022</a>)</p>
+<p><strong>В-12.</strong> Какой код возвращается в этом случае? (кому: архитектор или разработчик; к <a href="#x-d-023">D-023</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
-<h3>Желательные (9)</h3>
+<h3>Желательные (10)</h3>
 <div class="card"><a id="x-v-13"></a>
 <p><strong>В-13.</strong> Какое название задачи правильное? (кому: аналитик — автор документа; к <a href="#x-d-001">D-001</a>)</p>
+<ul>
+<li>Если автор не ответит, считаем так: верным считаем название из заголовка документа.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-14"></a>
-<p><strong>В-14.</strong> Кто проводит ревью по чек-листу и когда? (кому: тестирование; к <a href="#x-d-007">D-007</a>)</p>
+<p><strong>В-14.</strong> Как в документе определяется понятие «активной карты»? (кому: аналитик — автор документа; к <a href="#x-d-003">D-003</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-15"></a>
-<p><strong>В-15.</strong> Какую версию и дату присвоить документу? (кому: аналитик — автор документа; к <a href="#x-d-008">D-008</a>)</p>
+<p><strong>В-15.</strong> Кто проводит ревью по чек-листу и когда? (кому: тестирование; к <a href="#x-d-008">D-008</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-16"></a>
-<p><strong>В-16.</strong> Кто должен быть в этой таблице? (кому: владелец продукта (бизнес); к <a href="#x-d-009">D-009</a>)</p>
+<p><strong>В-16.</strong> Какую версию и дату присвоить документу? (кому: аналитик — автор документа; к <a href="#x-d-009">D-009</a>)</p>
+<ul>
+<li>Если автор не ответит, считаем так: версией считаем дату последнего изменения файла.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-17"></a>
-<p><strong>В-17.</strong> Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях? (кому: архитектор или разработчик; к <a href="#x-d-011">D-011</a>)</p>
+<p><strong>В-17.</strong> Кто должен быть в этой таблице? (кому: владелец продукта (бизнес); к <a href="#x-d-010">D-010</a>)</p>
+<ul>
+<li>Если автор не ответит, считаем так: пустую таблицу считаем не входящей в первую версию.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-18"></a>
-<p><strong>В-18.</strong> Чем заменить заглушку «Prod: —»? (кому: владелец продукта (бизнес); к <a href="#x-d-012">D-012</a>)</p>
+<p><strong>В-18.</strong> Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях? (кому: архитектор или разработчик; к <a href="#x-d-012">D-012</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-19"></a>
-<p><strong>В-19.</strong> Чем заменить заглушку «—»? (кому: владелец продукта (бизнес); к <a href="#x-d-013">D-013</a>)</p>
+<p><strong>В-19.</strong> Чем заменить заглушку «Prod: —»? (кому: владелец продукта (бизнес); к <a href="#x-d-013">D-013</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-20"></a>
-<p><strong>В-20.</strong> Передаются ли параметры в теле запроса? (кому: архитектор или разработчик; к <a href="#x-d-017">D-017</a>)</p>
+<p><strong>В-20.</strong> Чем заменить заглушку «—»? (кому: владелец продукта (бизнес); к <a href="#x-d-014">D-014</a>)</p>
+<ul>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+</ul>
 </div>
 <div class="card"><a id="x-v-21"></a>
-<p><strong>В-21.</strong> Какие именно значения входят в перечень? (кому: аналитик — автор документа; к <a href="#x-d-018">D-018</a>)</p>
+<p><strong>В-21.</strong> Передаются ли параметры в теле запроса? (кому: архитектор или разработчик; к <a href="#x-d-018">D-018</a>)</p>
+<ul>
+<li>Если автор не ответит, считаем так: заголовок Content-Type у запроса без тела не используем.</li>
+</ul>
+</div>
+<div class="card"><a id="x-v-22"></a>
+<p><strong>В-22.</strong> Какие именно значения входят в перечень? (кому: аналитик — автор документа; к <a href="#x-d-019">D-019</a>)</p>
+<ul>
+<li>Если автор не ответит, считаем так: перечень считаем закрытым: в нём только то, что названо в тексте.</li>
+</ul>
 </div>
 </article></main>
 <footer>Отчёт сформирован программой «Ревизор ТЗ». Решение остаётся за человеком.</footer>

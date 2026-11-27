@@ -10,11 +10,11 @@
     "baseline": null,
     "requirements": 58,
     "requirements_with_findings": 20,
-    "findings": 22,
+    "findings": 23,
     "by_severity": {
       "CRITICAL": 3,
       "MAJOR": 10,
-      "MINOR": 9
+      "MINOR": 10
     },
     "by_criterion": {
       "completeness": 3,
@@ -27,15 +27,15 @@
       "set_completeness": 6,
       "set_consistency": 8,
       "set_feasibility": 2,
-      "comprehensibility": 1,
+      "comprehensibility": 2,
       "traceability": 1
     },
     "observations": 2,
-    "questions": 21,
+    "questions": 22,
     "questions_by_priority": {
       "blocker": 3,
       "important": 9,
-      "nice": 9
+      "nice": 10
     },
     "readiness": 54,
     "readiness_band": "нужна существенная доработка",
@@ -49,11 +49,25 @@
     "verdict_after_blocker_answers": "CONDITIONAL",
     "preliminary": true
   },
+  "passport": {
+    "doc_name": "requirements.md",
+    "doc_sha256": "e7dae55e5453a250d93e335f5ff9c7f775f4457ccddd333f4a67e47b20d74381",
+    "answers_sha256": "",
+    "ruleset_version": "1.2",
+    "agent_version": "1.4.0 (v1.4.0-1-g75f63c7-dirty)",
+    "provider": "offline",
+    "model": "",
+    "model_version": "",
+    "started_at": "2026-11-27T09:10:59+05:00",
+    "duration_s": 0.14,
+    "cost_usd": 0.0,
+    "mode": "offline"
+  },
   "run": {
     "agent_name": "Ревизор ТЗ",
-    "agent_version": "1.0.0 (v1.1.2)",
-    "started_at": "2026-11-26T07:23:29+05:00",
-    "duration_s": 0.16,
+    "agent_version": "1.4.0 (v1.4.0-1-g75f63c7-dirty)",
+    "started_at": "2026-11-27T09:10:59+05:00",
+    "duration_s": 0.14,
     "mode": "offline",
     "provider": "offline",
     "model": "",
@@ -63,6 +77,7 @@
     "doc_format": "md",
     "doc_size_bytes": 13507,
     "doc_sha256": "e7dae55e5453a250d93e335f5ff9c7f775f4457ccddd333f4a67e47b20d74381",
+    "answers_sha256": "",
     "doc_pages": null,
     "doc_lines": 199,
     "doc_chars": 8445,
@@ -74,27 +89,40 @@
     "cache_write_tokens": 0,
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "quotes_confirmed": 39,
+    "quotes_confirmed": 40,
     "quotes_restored": 0,
     "quotes_dropped": 0,
     "skeptic_kept": 0,
     "skeptic_rejected": 0,
     "skeptic_merged": 0,
+    "skeptic_advisory": 0,
+    "skeptic_dedup": 0,
     "manual_minutes_estimate": null,
     "warnings": [],
     "injection_suspected": false,
     "masked_values": 0,
     "score": 54,
-    "score_formula": "10 × 9,39 (средняя ясность 58 треб.) − 40 (штраф за замечания к набору: 8×3 + 3×9 + 1×6 = 57, но не больше 40) = 54",
-    "rules_version": "1.1",
+    "score_formula": "10 × 9,38 (средняя ясность 58 треб.) − 40 (штраф за замечания к набору: 8×3 + 3×9 + 1×7 = 58, но не больше 40) = 54",
+    "rules_version": "1.2",
     "doc_words": 1001,
     "context_files": [],
     "dup_merged": 0,
     "critical_demoted": 0,
-    "agent_commit": "9744508",
-    "agent_tag": "v1.1.2",
-    "agent_dirty": false,
-    "doc_title": "Уведомление о расходах по карте"
+    "agent_commit": "75f63c7",
+    "agent_tag": "",
+    "agent_dirty": true,
+    "doc_title": "Уведомление о расходах по карте",
+    "stage_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
   },
   "diagnostic": null,
   "requirements": [
@@ -1843,8 +1871,8 @@
           "note": "не проверялось без модели"
         },
         "unambiguity": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Условие зависит от неопределённого понятия: «активной карты»"
         },
         "consistency": {
           "status": "issue",
@@ -1868,7 +1896,7 @@
         }
       },
       "by_model": false,
-      "clarity": 8.8
+      "clarity": 8.4
     },
     {
       "rid": "REQ-006",
@@ -3762,7 +3790,8 @@
           "Как в сведениях: «Месячный порог расходов по карте»"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:title-mismatch",
       "rule_ids": [
@@ -3777,12 +3806,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Comprehensible)"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть понятным"
     },
     {
       "scope": "set",
@@ -3822,7 +3853,8 @@
           "Отмена пользователем и повтор"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:flow-happy-path",
       "rule_ids": [
@@ -3837,12 +3869,67 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
+    },
+    {
+      "scope": "set",
+      "criterion": "comprehensibility",
+      "severity": "MINOR",
+      "title": "Условие зависит от неопределённого понятия: «активной карты»",
+      "problem": "Правило срабатывает или нет в зависимости от свойства, которое в документе нигде не определено: «активной карты». Каждый поймёт его по-своему: разработчик заложит одно условие, тестировщик проверит другое, а клиент увидит третье.",
+      "recommendation": "Для каждого понятия добавьте проверяемое определение в разделе «Термины» (например: «Карта считается активной, если по ней была операция за последние 90 дней»).",
+      "quotes": [
+        {
+          "text": "Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно",
+          "line_start": 37,
+          "line_end": 37,
+          "page": null,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+          "rid": "REQ-005",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-005"
+      ],
+      "question": {
+        "text": "Как в документе определяется понятие «активной карты»?",
+        "options": [
+          "Дать определение с числами",
+          "Сослаться на справочник или статус в системе"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:condition-undefined",
+      "rule_ids": [
+        "condition-undefined"
+      ],
+      "stage": "rules",
+      "fid": "D-003",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-14",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть понятным"
     },
     {
       "scope": "requirement",
@@ -3872,7 +3959,8 @@
           "Нет — это одно правило, переписать одним утверждением"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:non-atomic",
       "rule_ids": [
@@ -3887,12 +3975,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Singular)"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть атомарным: одно требование — одно утверждение"
     },
     {
       "scope": "set",
@@ -3932,14 +4022,15 @@
           "Отмена пользователем и повтор"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:flow-happy-path",
       "rule_ids": [
         "flow-happy-path"
       ],
       "stage": "rules",
-      "fid": "D-003",
+      "fid": "D-004",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -3947,12 +4038,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "requirement",
@@ -3983,14 +4076,15 @@
           "Каждый случай без исключений"
         ],
         "addressee": "business",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:time-without-conditions",
       "rule_ids": [
         "time-without-conditions"
       ],
       "stage": "rules",
-      "fid": "D-004",
+      "fid": "D-005",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -3998,12 +4092,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым"
     },
     {
       "scope": "set",
@@ -4044,14 +4140,15 @@
           "Как сейчас, но с явным правилом пересчёта при сравнении"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:unit-mix",
       "rule_ids": [
         "unit-mix"
       ],
       "stage": "rules",
-      "fid": "D-005",
+      "fid": "D-006",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4059,12 +4156,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     },
     {
       "scope": "set",
@@ -4102,14 +4201,15 @@
           "Раздел не нужен — удалить"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:empty-section",
       "rule_ids": [
         "empty-section"
       ],
       "stage": "rules",
-      "fid": "D-006",
+      "fid": "D-007",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4117,12 +4217,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "missing_part",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "set",
@@ -4159,27 +4261,30 @@
           "Чек-лист не нужен для этой задачи — удалить"
         ],
         "addressee": "qa",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:unfilled-checklist",
       "rule_ids": [
         "unfilled-checklist"
       ],
       "stage": "rules",
-      "fid": "D-007",
+      "fid": "D-008",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-14",
+      "question_id": "В-15",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "set",
@@ -4207,27 +4312,30 @@
           "0.x — черновик до согласования"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:no-version",
       "rule_ids": [
         "no-version"
       ],
       "stage": "rules",
-      "fid": "D-008",
+      "fid": "D-009",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-15",
+      "question_id": "В-16",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "IEEE 830-1998 п. 4.3.8 (Traceable)"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен допускать проверку на соответствие потребности"
     },
     {
       "scope": "set",
@@ -4264,27 +4372,30 @@
           "Таблица не нужна — удалить"
         ],
         "addressee": "business",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:empty-table",
       "rule_ids": [
         "empty-table"
       ],
       "stage": "rules",
-      "fid": "D-009",
+      "fid": "D-010",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-16",
+      "question_id": "В-17",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "set",
@@ -4345,14 +4456,15 @@
           "POST — создание новой записи"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:get-mutation",
       "rule_ids": [
         "get-mutation"
       ],
       "stage": "rules",
-      "fid": "D-010",
+      "fid": "D-011",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4360,12 +4472,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "protocol",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым"
     },
     {
       "scope": "set",
@@ -4396,27 +4510,30 @@
           "Принять риск и не описывать"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:api-reliability",
       "rule_ids": [
         "api-reliability"
       ],
       "stage": "rules",
-      "fid": "D-011",
+      "fid": "D-012",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-17",
+      "question_id": "В-18",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "requirement",
@@ -4447,27 +4564,30 @@
           "Поле не нужно — удалить его"
         ],
         "addressee": "business",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:placeholder",
       "rule_ids": [
         "placeholder"
       ],
       "stage": "rules",
-      "fid": "D-012",
+      "fid": "D-013",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-18",
+      "question_id": "В-19",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть полным"
     },
     {
       "scope": "requirement",
@@ -4498,27 +4618,30 @@
           "Поле не нужно — удалить его"
         ],
         "addressee": "business",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:placeholder",
       "rule_ids": [
         "placeholder"
       ],
       "stage": "rules",
-      "fid": "D-013",
+      "fid": "D-014",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-19",
+      "question_id": "В-20",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть полным"
     },
     {
       "scope": "set",
@@ -4549,14 +4672,15 @@
           "Оставить в query (обосновать для ИБ)"
         ],
         "addressee": "security",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:sensitive-in-query",
       "rule_ids": [
         "sensitive-in-query"
       ],
       "stage": "rules",
-      "fid": "D-014",
+      "fid": "D-015",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4564,12 +4688,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым"
     },
     {
       "scope": "set",
@@ -4609,14 +4735,15 @@
           "string"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:param-type-mismatch",
       "rule_ids": [
         "param-type-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-015",
+      "fid": "D-016",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4624,12 +4751,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     },
     {
       "scope": "set",
@@ -4669,14 +4798,15 @@
           "string"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:param-type-mismatch",
       "rule_ids": [
         "param-type-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-016",
+      "fid": "D-017",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4684,12 +4814,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     },
     {
       "scope": "set",
@@ -4729,27 +4861,30 @@
           "Да — описать тело и сменить метод"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:content-type-without-body",
       "rule_ids": [
         "content-type-without-body"
       ],
       "stage": "rules",
-      "fid": "D-017",
+      "fid": "D-018",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-20",
+      "question_id": "В-21",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     },
     {
       "scope": "requirement",
@@ -4780,27 +4915,30 @@
           "Все значения из справочника — дать ссылку на него"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:open-list",
       "rule_ids": [
         "open-list"
       ],
       "stage": "rules",
-      "fid": "D-018",
+      "fid": "D-019",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-21",
+      "question_id": "В-22",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть открытых формулировок («и т. д.», «и другие»)"
     },
     {
       "scope": "set",
@@ -4830,14 +4968,15 @@
           "Нет — убрать упоминание"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:status-mismatch",
       "rule_ids": [
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-019",
+      "fid": "D-020",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4845,12 +4984,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     },
     {
       "scope": "set",
@@ -4890,14 +5031,15 @@
           "Оставить 200 и описать признак ошибки в контракте (не рекомендуется)"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:error-in-success",
       "rule_ids": [
         "error-in-success"
       ],
       "stage": "rules",
-      "fid": "D-020",
+      "fid": "D-021",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4905,12 +5047,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "protocol",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     },
     {
       "scope": "set",
@@ -4938,14 +5082,15 @@
           "201"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:status-mismatch",
       "rule_ids": [
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-021",
+      "fid": "D-022",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4953,12 +5098,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     },
     {
       "scope": "requirement",
@@ -4988,7 +5135,8 @@
           "Оставить как есть — запрет понятен"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:negative-wording",
       "rule_ids": [
@@ -5003,12 +5151,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании следует избегать отрицательных формулировок"
     },
     {
       "scope": "set",
@@ -5048,14 +5198,15 @@
           "Оба — в разных случаях (описать какие)"
         ],
         "addressee": "architect",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:status-mismatch",
       "rule_ids": [
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-022",
+      "fid": "D-023",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -5063,12 +5214,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     }
   ],
   "rejected": [],
@@ -5086,7 +5239,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-010"
+        "D-011"
       ],
       "req_ids": [
         "REQ-018",
@@ -5107,9 +5260,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "Изменяющее действие выполняем методом POST.",
+      "fingerprint": "6680308f1348",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-010"
+          "D-011"
         ],
         "blockers_closed": 1,
         "verdict_after": "BLOCKED",
@@ -5129,7 +5285,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-006"
+        "D-007"
       ],
       "req_ids": [],
       "quote": {
@@ -5145,9 +5301,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "Пустой раздел считаем не входящим в первую версию.",
+      "fingerprint": "f2e5e67edf99",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-006"
+          "D-007"
         ],
         "blockers_closed": 1,
         "verdict_after": "BLOCKED",
@@ -5167,7 +5326,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-020"
+        "D-021"
       ],
       "req_ids": [
         "REQ-050"
@@ -5185,9 +5344,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "Ошибка возвращается с кодом 4xx или 5xx по смыслу ошибки, а не с 2xx.",
+      "fingerprint": "b746b5d89a20",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-020"
+          "D-021"
         ],
         "blockers_closed": 1,
         "verdict_after": "BLOCKED",
@@ -5208,7 +5370,7 @@
       "priority": "important",
       "finding_ids": [
         "D-002",
-        "D-003"
+        "D-004"
       ],
       "req_ids": [
         "REQ-004",
@@ -5227,10 +5389,13 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "В ошибочных путях операция отклоняется, пользователь видит сообщение, данные не меняются.",
+      "fingerprint": "bad439ff37dd",
+      "letter_group": "business",
       "impact": {
         "closes": [
           "D-002",
-          "D-003"
+          "D-004"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5250,7 +5415,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-004"
+        "D-005"
       ],
       "req_ids": [
         "REQ-010"
@@ -5268,9 +5433,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "value",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "f52146638454",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-004"
+          "D-005"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5290,7 +5458,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-005"
+        "D-006"
       ],
       "req_ids": [
         "REQ-011",
@@ -5309,9 +5477,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "bb1efd49cdec",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-005"
+          "D-006"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5331,7 +5502,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-014"
+        "D-015"
       ],
       "req_ids": [
         "REQ-038"
@@ -5349,9 +5520,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "Чувствительные данные передаём только в теле запроса по защищённому каналу.",
+      "fingerprint": "878f1f2d52d6",
+      "letter_group": "security",
       "impact": {
         "closes": [
-          "D-014"
+          "D-015"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5370,7 +5544,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-015"
+        "D-016"
       ],
       "req_ids": [
         "REQ-039",
@@ -5389,9 +5563,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "56b94632caef",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-015"
+          "D-016"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5410,7 +5587,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-016"
+        "D-017"
       ],
       "req_ids": [
         "REQ-040",
@@ -5429,9 +5606,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "4bb815605f9c",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-016"
+          "D-017"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5450,7 +5630,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-019"
+        "D-020"
       ],
       "req_ids": [
         "REQ-043"
@@ -5468,9 +5648,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "4dbf4046ddb1",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-019"
+          "D-020"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5489,7 +5672,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-021"
+        "D-022"
       ],
       "req_ids": [],
       "quote": {
@@ -5505,9 +5688,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "c9108bb5f518",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-021"
+          "D-022"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5527,7 +5713,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-022"
+        "D-023"
       ],
       "req_ids": [
         "REQ-056"
@@ -5545,9 +5731,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "d4525a60d70b",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-022"
+          "D-023"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5582,6 +5771,9 @@
       "answer": "",
       "answer_effect": "",
       "gap": "term",
+      "assumption": "Верным считаем название из заголовка документа.",
+      "fingerprint": "2edfea2a071a",
+      "letter_group": "business",
       "impact": {
         "closes": [
           "D-001"
@@ -5594,6 +5786,48 @@
     },
     {
       "qid": "В-14",
+      "text": "Как в документе определяется понятие «активной карты»?",
+      "why": "Правило срабатывает или нет в зависимости от свойства, которое в документе нигде не определено: «активной карты».",
+      "addressee": "analyst",
+      "options": [
+        "Дать определение с числами",
+        "Сослаться на справочник или статус в системе"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-003"
+      ],
+      "req_ids": [
+        "REQ-005"
+      ],
+      "quote": {
+        "text": "Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно",
+        "line_start": 37,
+        "line_end": 37,
+        "page": null,
+        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+        "rid": "REQ-005",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "term",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "9ef774c42daf",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-003"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-15",
       "text": "Кто проводит ревью по чек-листу и когда?",
       "why": "В 28 ячейках таблицы (14 строк) оставлены все варианты ответа, например «Да / Нет».",
       "addressee": "qa",
@@ -5603,7 +5837,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-007"
+        "D-008"
       ],
       "req_ids": [],
       "quote": {
@@ -5619,9 +5853,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "cfe7cd78eb38",
+      "letter_group": "testing",
       "impact": {
         "closes": [
-          "D-007"
+          "D-008"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5630,7 +5867,7 @@
       }
     },
     {
-      "qid": "В-15",
+      "qid": "В-16",
       "text": "Какую версию и дату присвоить документу?",
       "why": "В документе версия или дата оставлены незаполненными.",
       "addressee": "analyst",
@@ -5640,7 +5877,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-008"
+        "D-009"
       ],
       "req_ids": [],
       "quote": {
@@ -5656,9 +5893,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "owner",
+      "assumption": "Версией считаем дату последнего изменения файла.",
+      "fingerprint": "770af99dd2bc",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-008"
+          "D-009"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5667,7 +5907,7 @@
       }
     },
     {
-      "qid": "В-16",
+      "qid": "В-17",
       "text": "Кто должен быть в этой таблице?",
       "why": "Таблица есть, но ни одна её строка не заполнена.",
       "addressee": "business",
@@ -5677,7 +5917,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-009"
+        "D-010"
       ],
       "req_ids": [],
       "quote": {
@@ -5693,9 +5933,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "Пустую таблицу считаем не входящей в первую версию.",
+      "fingerprint": "4e3959081aaf",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-009"
+          "D-010"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5704,7 +5947,7 @@
       }
     },
     {
-      "qid": "В-17",
+      "qid": "В-18",
       "text": "Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях?",
       "why": "Интерфейс меняет данные, но в документе не описано: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса.",
       "addressee": "architect",
@@ -5715,7 +5958,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-011"
+        "D-012"
       ],
       "req_ids": [
         "REQ-018"
@@ -5733,9 +5976,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "85d37c4b4f6e",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-011"
+          "D-012"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5744,7 +5990,7 @@
       }
     },
     {
-      "qid": "В-18",
+      "qid": "В-19",
       "text": "Чем заменить заглушку «Prod: —»?",
       "why": "Вместо содержания стоит заглушка «Prod: —».",
       "addressee": "business",
@@ -5755,7 +6001,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-012"
+        "D-013"
       ],
       "req_ids": [
         "REQ-022"
@@ -5773,9 +6019,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "value",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "3da14629a627",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-012"
+          "D-013"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5784,7 +6033,7 @@
       }
     },
     {
-      "qid": "В-19",
+      "qid": "В-20",
       "text": "Чем заменить заглушку «—»?",
       "why": "Вместо содержания стоит заглушка «—».",
       "addressee": "business",
@@ -5795,7 +6044,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-013"
+        "D-014"
       ],
       "req_ids": [
         "REQ-024"
@@ -5813,9 +6062,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "value",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "ddc4113a339e",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-013"
+          "D-014"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5824,7 +6076,7 @@
       }
     },
     {
-      "qid": "В-20",
+      "qid": "В-21",
       "text": "Передаются ли параметры в теле запроса?",
       "why": "Для запроса задан заголовок Content-Type, но сказано, что тело запроса не используется.",
       "addressee": "architect",
@@ -5834,7 +6086,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-017"
+        "D-018"
       ],
       "req_ids": [
         "REQ-041",
@@ -5853,9 +6105,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "Заголовок Content-Type у запроса без тела не используем.",
+      "fingerprint": "48ad415aa124",
+      "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-017"
+          "D-018"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5864,7 +6119,7 @@
       }
     },
     {
-      "qid": "В-21",
+      "qid": "В-22",
       "text": "Какие именно значения входят в перечень?",
       "why": "Перечень заканчивается словами «и далее», поэтому непонятно, что ещё в него входит.",
       "addressee": "analyst",
@@ -5875,7 +6130,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-018"
+        "D-019"
       ],
       "req_ids": [
         "REQ-043"
@@ -5893,9 +6148,12 @@
       "answer": "",
       "answer_effect": "",
       "gap": "value",
+      "assumption": "Перечень считаем закрытым: в нём только то, что названо в тексте.",
+      "fingerprint": "ca9f7e17bc05",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-018"
+          "D-019"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5908,38 +6166,38 @@
     {
       "action": "Раздел «Тестирование требований» не заполнен: вместо содержания заглушка. Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.",
       "finding_ids": [
-        "D-006"
+        "D-007"
       ]
     },
     {
       "action": "Метод GET используется для изменения данных. Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.",
       "finding_ids": [
-        "D-010"
+        "D-011"
       ]
     },
     {
       "action": "Ошибка возвращается с успешным кодом 200. Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом значении) с телом ошибки, а в ответ 2xx включайте только успешный результат.",
       "finding_ids": [
-        "D-020"
+        "D-021"
       ]
     },
     {
       "action": "Схема процесса показывает только успешный путь. Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь.",
       "finding_ids": [
         "D-002",
-        "D-003"
+        "D-004"
       ]
     },
     {
       "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «в течение минуты для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
       "finding_ids": [
-        "D-004"
+        "D-005"
       ]
     },
     {
       "action": "Денежные суммы в разных единицах: тиын и тенге. Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.",
       "finding_ids": [
-        "D-005"
+        "D-006"
       ]
     }
   ],
@@ -6178,7 +6436,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-003"
+            "D-004"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6192,7 +6450,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-004"
+            "D-005"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6206,7 +6464,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-005"
+            "D-006"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6220,7 +6478,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-010"
+            "D-011"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6234,7 +6492,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-014"
+            "D-015"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6248,7 +6506,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-015"
+            "D-016"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6262,7 +6520,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-016"
+            "D-017"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6276,7 +6534,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-019"
+            "D-020"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6290,7 +6548,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-020"
+            "D-021"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6304,7 +6562,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-022"
+            "D-023"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         }
@@ -6510,7 +6768,7 @@
       "line": 0,
       "finding_ids": [
         "D-002",
-        "D-003"
+        "D-004"
       ],
       "checked": [],
       "note": "ответ дало автоматическое правило"
@@ -6622,7 +6880,7 @@
       "status": "gap",
       "line": 0,
       "finding_ids": [
-        "D-011"
+        "D-012"
       ],
       "checked": [],
       "note": "ответ дало автоматическое правило"
@@ -6819,5 +7077,22 @@
       "checked": [],
       "note": "без модели не оценивается"
     }
-  ]
+  ],
+  "readiness": {
+    "dev": {
+      "ok": false,
+      "text": "Нельзя отдавать в разработку: 3 блокера (предварительно)",
+      "blockers": [
+        "D-007",
+        "D-011",
+        "D-021"
+      ]
+    },
+    "test": {
+      "ok": false,
+      "text": "Пока нельзя отдавать в тестирование: критерии не названы по требованиям, долю покрытия не посчитать (предварительно)",
+      "coverage_pct": null,
+      "uncovered": []
+    }
+  }
 }

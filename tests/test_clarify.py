@@ -208,14 +208,14 @@ class FingerprintTests(Base):
         self.assertEqual(p.stale, {})
 
     def test_demo_answers_file_applies_exactly_as_before(self):
+        # the demo file is the filled questionnaire of the committed report: every answer matches its question
         text = DEMO_ANSWERS.read_text(encoding="utf-8")
-        res = self.run_offline()
+        res = report_json.load_result(AGENT / "reports" / "report.json")
         p = ans_mod.parse(text, res.questions)
         self.assertEqual(p.stale, {})
         self.assertFalse(any("не применён" in w for w in p.warnings))
-        self.assertEqual(p.doc_fingerprint, "")
-        applied = self.run_offline(answers=provider_from_text(text))
-        self.assertTrue(ans_mod.summary(applied.audit)["answered"] >= 1)
+        self.assertEqual(p.doc_fingerprint, "e7dae55e5453")
+        self.assertEqual(len(p.answers), 18)
 
     def test_doc_and_answers_hashes_in_the_run_info(self):
         res = self.run_offline()
