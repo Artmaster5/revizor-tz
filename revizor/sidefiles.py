@@ -35,8 +35,12 @@ def rerun_line(input_path: str, output_path: str, questions_path: str) -> str:
 def _answer_cell(q: Question) -> str:
     """The answer as the author would type it: the option letter when one was chosen, else the words."""
     for k, o in enumerate(q.options):
-        if o == q.answer and k < len(LETTERS):
+        if k >= len(LETTERS):
+            break
+        if o == q.answer:
             return LETTERS[k]
+        if q.answer.startswith(o + ans_mod.NOTE_SEP):  # an option with the author's words after the letter
+            return f"{LETTERS[k]}. {q.answer[len(o) + len(ans_mod.NOTE_SEP):]}".replace("\n", " ")
     return (q.answer or "").replace("\n", " ")
 
 

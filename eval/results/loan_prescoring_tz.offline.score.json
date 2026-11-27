@@ -6,21 +6,24 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.08,
+    "duration_s": 0.18,
     "doc_name": "loan_prescoring_tz.txt"
+  },
+  "options": {
+    "absorbed": true
   },
   "counts": {
     "requirements": 56,
-    "findings_open": 7,
+    "findings_open": 8,
     "advisory": 3
   },
   "recall": {
     "overall": {
       "total": 17,
-      "strict": 6,
-      "loose": 6,
-      "strict_share": 0.35294117647058826,
-      "loose_share": 0.35294117647058826
+      "strict": 7,
+      "loose": 7,
+      "strict_share": 0.4117647058823529,
+      "loose_share": 0.4117647058823529
     },
     "by_severity": {
       "CRITICAL": {
@@ -32,10 +35,10 @@
       },
       "MAJOR": {
         "total": 10,
-        "strict": 4,
-        "loose": 4,
-        "strict_share": 0.4,
-        "loose_share": 0.4
+        "strict": 5,
+        "loose": 5,
+        "strict_share": 0.5,
+        "loose_share": 0.5
       },
       "MINOR": {
         "total": 4,
@@ -50,7 +53,7 @@
   "severity_agreement": {
     "same": 3,
     "tool_higher": 1,
-    "tool_lower": 2
+    "tool_lower": 3
   },
   "defects": [
     {
@@ -114,10 +117,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-003"
+        "D-004"
       ],
       "loose_fids": [
-        "D-003"
+        "D-004"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -144,10 +147,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-004"
+        "D-005"
       ],
       "loose_fids": [
-        "D-004"
+        "D-005"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "tool_lower"
@@ -174,10 +177,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-002"
+        "D-003"
       ],
       "loose_fids": [
-        "D-002"
+        "D-003"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "tool_lower"
@@ -204,10 +207,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-005"
+        "D-006"
       ],
       "loose_fids": [
-        "D-005"
+        "D-006"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -230,13 +233,17 @@
       "severity": "MAJOR",
       "origin": "",
       "title": "«Стабильный доход» и «положительная кредитная история» не определены",
-      "strict": false,
-      "loose": false,
-      "status": "missed",
-      "strict_fids": [],
-      "loose_fids": [],
-      "tool_severity": "",
-      "severity_agreement": ""
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-002"
+      ],
+      "loose_fids": [
+        "D-002"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
     },
     {
       "id": "K-14",
@@ -273,10 +280,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-006"
+        "D-007"
       ],
       "loose_fids": [
-        "D-006"
+        "D-007"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "tool_higher"
@@ -303,7 +310,7 @@
   "false_alarms_exempt": [],
   "unmatched": [
     {
-      "fid": "D-007",
+      "fid": "D-008",
       "severity": "MINOR",
       "title": "Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена",
       "line": 122

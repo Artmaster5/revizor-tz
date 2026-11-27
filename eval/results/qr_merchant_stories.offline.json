@@ -9,12 +9,12 @@
     "verdict_after_answers": "",
     "baseline": null,
     "requirements": 56,
-    "requirements_with_findings": 3,
-    "findings": 3,
+    "requirements_with_findings": 10,
+    "findings": 9,
     "by_severity": {
       "CRITICAL": 0,
-      "MAJOR": 3,
-      "MINOR": 0
+      "MAJOR": 4,
+      "MINOR": 5
     },
     "by_criterion": {
       "completeness": 0,
@@ -24,24 +24,24 @@
       "feasibility": 0,
       "necessity": 0,
       "singularity": 0,
-      "set_completeness": 0,
+      "set_completeness": 6,
       "set_consistency": 0,
       "set_feasibility": 0,
       "comprehensibility": 0,
       "traceability": 0
     },
     "observations": 6,
-    "questions": 3,
+    "questions": 9,
     "questions_by_priority": {
       "blocker": 0,
-      "important": 3,
-      "nice": 0
+      "important": 4,
+      "nice": 5
     },
-    "readiness": 99,
+    "readiness": 90,
     "readiness_band": "готов",
     "clarity_bands": {
-      "ясное": 53,
-      "есть замечания": 3,
+      "ясное": 52,
+      "есть замечания": 4,
       "нужна доработка": 0,
       "в таком виде использовать нельзя": 0
     },
@@ -49,11 +49,25 @@
     "verdict_after_blocker_answers": "",
     "preliminary": true
   },
+  "passport": {
+    "doc_name": "qr_merchant_stories.md",
+    "doc_sha256": "7abd9447446b3060461b4d3e0ba414851fbe97f8573c3dc6b894868a45123395",
+    "answers_sha256": "",
+    "ruleset_version": "1.2",
+    "agent_version": "1.4.0 (v1.4.0-8-gc699fc4-dirty)",
+    "provider": "offline",
+    "model": "",
+    "model_version": "",
+    "started_at": "2026-11-27T09:21:52+05:00",
+    "duration_s": 0.18,
+    "cost_usd": 0.0,
+    "mode": "offline"
+  },
   "run": {
     "agent_name": "Ревизор ТЗ",
-    "agent_version": "1.0.0 (v1.1.2)",
-    "started_at": "2026-11-26T07:23:33+05:00",
-    "duration_s": 0.08,
+    "agent_version": "1.4.0 (v1.4.0-8-gc699fc4-dirty)",
+    "started_at": "2026-11-27T09:21:52+05:00",
+    "duration_s": 0.18,
     "mode": "offline",
     "provider": "offline",
     "model": "",
@@ -63,6 +77,7 @@
     "doc_format": "md",
     "doc_size_bytes": 8778,
     "doc_sha256": "7abd9447446b3060461b4d3e0ba414851fbe97f8573c3dc6b894868a45123395",
+    "answers_sha256": "",
     "doc_pages": null,
     "doc_lines": 114,
     "doc_chars": 5055,
@@ -74,27 +89,40 @@
     "cache_write_tokens": 0,
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "quotes_confirmed": 9,
+    "quotes_confirmed": 18,
     "quotes_restored": 0,
     "quotes_dropped": 0,
     "skeptic_kept": 0,
     "skeptic_rejected": 0,
     "skeptic_merged": 0,
+    "skeptic_advisory": 0,
+    "skeptic_dedup": 0,
     "manual_minutes_estimate": null,
     "warnings": [],
     "injection_suspected": false,
     "masked_values": 0,
-    "score": 99,
-    "score_formula": "10 × 9,87 (средняя ясность 56 треб.) − 0 (штраф за замечания к набору: 8×0 + 3×0 + 1×0 = 0) = 99",
-    "rules_version": "1.1",
+    "score": 90,
+    "score_formula": "10 × 9,79 (средняя ясность 56 треб.) − 8 (штраф за замечания к набору: 8×0 + 3×1 + 1×5 = 8) = 90",
+    "rules_version": "1.2",
     "doc_words": 744,
     "context_files": [],
     "dup_merged": 0,
     "critical_demoted": 0,
-    "agent_commit": "9744508",
-    "agent_tag": "v1.1.2",
-    "agent_dirty": false,
-    "doc_title": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR»)"
+    "agent_commit": "c699fc4",
+    "agent_tag": "",
+    "agent_dirty": true,
+    "doc_title": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR»)",
+    "stage_seconds": [
+      0.0,
+      0.1,
+      0.1,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
   },
   "diagnostic": null,
   "requirements": [
@@ -1338,8 +1366,8 @@
       "rid": "REQ-005",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Расчёт денег без правила округления"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -1367,7 +1395,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 8.8
     },
     {
       "rid": "REQ-006",
@@ -2143,8 +2171,8 @@
       "rid": "REQ-028",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Время или граница дня задана без часового пояса"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2172,7 +2200,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.6
     },
     {
       "rid": "REQ-029",
@@ -2283,8 +2311,8 @@
       "rid": "REQ-032",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Не сказано, входит ли граничный день в срок или период"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2312,7 +2340,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.2
     },
     {
       "rid": "REQ-033",
@@ -2668,8 +2696,8 @@
       "rid": "REQ-043",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Уведомления клиенту описаны без нескольких обязательных частей"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2697,14 +2725,14 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.6
     },
     {
       "rid": "REQ-044",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Время или граница дня задана без часового пояса"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2732,7 +2760,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.6
     },
     {
       "rid": "REQ-045",
@@ -2808,8 +2836,8 @@
       "rid": "REQ-047",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Уведомления клиенту описаны без нескольких обязательных частей"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2837,7 +2865,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.6
     },
     {
       "rid": "REQ-048",
@@ -2913,8 +2941,8 @@
       "rid": "REQ-050",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Уведомления клиенту описаны без нескольких обязательных частей"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2942,7 +2970,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.6
     },
     {
       "rid": "REQ-051",
@@ -3088,8 +3116,8 @@
       "rid": "REQ-055",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "История без критериев приёмки: Как пользователь, я хочу удоб…"
         },
         "unambiguity": {
           "status": "issue",
@@ -3117,7 +3145,7 @@
         }
       },
       "by_model": false,
-      "clarity": 7.5
+      "clarity": 7.1
     },
     {
       "rid": "REQ-056",
@@ -3157,6 +3185,60 @@
   ],
   "findings": [
     {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MAJOR",
+      "title": "Расчёт денег без правила округления",
+      "problem": "Сумма считается как процент, доля или по курсу, но нигде не сказано, как округлять результат и до какой единицы (до целого тенге, до тиына, в какую сторону). У 1 % от 1 234 ₸ получается 12,34 ₸; разработчик округлит вниз, банк — вверх, а тестировщику нечем доказать, кто прав. На большом потоке копейки превращаются в разницу в учёте.",
+      "recommendation": "Добавьте правило: «Суммы округляются до тиына по математическим правилам; при делении остаток отдаётся последней части» (или укажите своё).",
+      "quotes": [
+        {
+          "text": "**Комиссия** — плата банка за принятую оплату: 0,95% от суммы, удерживается при зачислении; покупатель комиссию не платит",
+          "line_start": 14,
+          "line_end": 14,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Глоссарий",
+          "rid": "REQ-005",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-005"
+      ],
+      "question": {
+        "text": "Как округлять рассчитанные суммы: до какой единицы и в какую сторону?",
+        "options": [
+          "До тиына, математически",
+          "До целого тенге, вниз",
+          "До целого тенге, вверх"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:rounding-missing",
+      "rule_ids": [
+        "rounding-missing"
+      ],
+      "stage": "rules",
+      "fid": "D-001",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-01",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
+    },
+    {
       "scope": "requirement",
       "criterion": "verifiability",
       "severity": "MINOR",
@@ -3184,7 +3266,8 @@
           "Есть — перечислить"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:universal-quantifier",
       "rule_ids": [
@@ -3199,12 +3282,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым"
     },
     {
       "scope": "requirement",
@@ -3235,27 +3320,30 @@
           "Убрать слово — оно ничего не добавляет"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:vague-word",
       "rule_ids": [
         "vague-word"
       ],
       "stage": "rules",
-      "fid": "D-001",
+      "fid": "D-002",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-01",
+      "question_id": "В-02",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть расплывчатых и субъективных слов"
     },
     {
       "scope": "requirement",
@@ -3286,27 +3374,201 @@
           "Каждый случай без исключений"
         ],
         "addressee": "business",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:time-without-conditions",
       "rule_ids": [
         "time-without-conditions"
       ],
       "stage": "rules",
-      "fid": "D-002",
+      "fid": "D-003",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-02",
+      "question_id": "В-03",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Время или граница дня задана без часового пояса",
+      "problem": "В требованиях есть привязка к времени суток или к границе дня («в 00:00», «на следующий день», «в день покупки»), но нигде не сказано, по какому часовому поясу это считается. Клиент, сервер и банк могут жить в разных поясах, поэтому разработчик и тестировщик выберут разное, а граница суток сдвинется на несколько часов.",
+      "recommendation": "Добавьте одно общее правило: «Все даты и время — по времени Астаны (UTC+5)» или укажите пояс в каждом месте.",
+      "quotes": [
+        {
+          "text": "Зачисление на текущий счёт продавца — в день оплаты, за вычетом комиссии",
+          "line_start": 59,
+          "line_end": 59,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-5. Зачисление выручки",
+          "rid": "REQ-028",
+          "exact": true
+        },
+        {
+          "text": "Средства по оплатам QR зачисляются на счёт продавца на следующий рабочий день после оплаты единой суммой за день",
+          "line_start": 86,
+          "line_end": 86,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-9. Выплаты",
+          "rid": "REQ-044",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-028",
+        "REQ-044"
+      ],
+      "question": {
+        "text": "По какому часовому поясу считаются время и границы суток в документе?",
+        "options": [
+          "Время Астаны (UTC+5)",
+          "UTC",
+          "Местное время клиента"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:time-zone-missing",
+      "rule_ids": [
+        "time-zone-missing"
+      ],
+      "stage": "rules",
+      "fid": "D-004",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-05",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Не сказано, входит ли граничный день в срок или период",
+      "problem": "Срок или период задан границами («с 1 по 15 число», «до 5 числа», «в течение 30 дней с даты покупки»), но не сказано, входит ли граничный день в срок. Если клиент пришёл в последний день, разработчик может принять заявку, а тестировщик — ждать отказа; разница в один день меняет деньги и сроки.",
+      "recommendation": "Допишите «включительно» или «не включая» либо добавьте общее правило: «День события в срок входит / не входит».",
+      "quotes": [
+        {
+          "text": "Возврат оформляется из карточки оплаты в течение 30 дней с даты оплаты",
+          "line_start": 66,
+          "line_end": 66,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+          "rid": "REQ-032",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-032"
+      ],
+      "question": {
+        "text": "Входит ли граничный день (или момент) в срок и период?",
+        "options": [
+          "Да, включительно",
+          "Нет, не включая"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:period-boundary",
+      "rule_ids": [
+        "period-boundary"
+      ],
+      "stage": "rules",
+      "fid": "D-005",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-06",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Срок в днях без указания, какие это дни",
+      "problem": "Срок задан числом дней («в течение 30 дней»), но не сказано, календарные это дни или рабочие, и в документе нет общего правила на этот счёт. Срок «30 дней» календарных и рабочих отличается больше чем в полтора раза; разработчик и тестировщик посчитают дату по-разному.",
+      "recommendation": "Допишите «календарных» или «рабочих» в каждом месте либо добавьте общее правило: «Дни в сроках — календарные, если не сказано иное».",
+      "quotes": [
+        {
+          "text": "Возврат оформляется из карточки оплаты в течение 30 дней с даты оплаты",
+          "line_start": 66,
+          "line_end": 66,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+          "rid": "REQ-032",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-032"
+      ],
+      "question": {
+        "text": "Какие дни считаются в сроках — календарные или рабочие?",
+        "options": [
+          "Календарные",
+          "Рабочие",
+          "Банковские (по календарю банка)"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:days-without-kind",
+      "rule_ids": [
+        "days-without-kind"
+      ],
+      "stage": "rules",
+      "fid": "D-006",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-07",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "requirement",
@@ -3336,7 +3598,8 @@
           "Необязательно — пометить приоритет"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:weak-modal",
       "rule_ids": [
@@ -3351,12 +3614,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть лазеек («может», «желательно», «по возможности»)"
     },
     {
       "scope": "requirement",
@@ -3386,7 +3651,8 @@
           "Необязательно — пометить приоритет"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:weak-modal",
       "rule_ids": [
@@ -3401,12 +3667,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть лазеек («может», «желательно», «по возможности»)"
     },
     {
       "scope": "requirement",
@@ -3436,7 +3704,8 @@
           "Оставить как есть — запрет понятен"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:negative-wording",
       "rule_ids": [
@@ -3451,12 +3720,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании следует избегать отрицательных формулировок"
     },
     {
       "scope": "requirement",
@@ -3486,7 +3757,8 @@
           "Необязательно — пометить приоритет"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:weak-modal",
       "rule_ids": [
@@ -3501,12 +3773,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть лазеек («может», «желательно», «по возможности»)"
     },
     {
       "scope": "requirement",
@@ -3536,7 +3810,8 @@
           "Есть — перечислить"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:universal-quantifier",
       "rule_ids": [
@@ -3551,12 +3826,88 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Уведомления клиенту описаны без нескольких обязательных частей",
+      "problem": "В документе есть требования об отправке уведомлений, но не описано: текст и содержимое уведомления; язык уведомления; что делать, если уведомление не доставлено; защита от повторной отправки; время суток, когда уведомления можно отправлять. Без этого каждая команда решит по-своему: клиент получит дубли или ночью, на непонятном языке, а если уведомление не дошло — никто об этом не узнает.",
+      "recommendation": "Для уведомлений добавьте: текст и содержимое уведомления; язык уведомления; что делать, если уведомление не доставлено; защита от повторной отправки; время суток, когда уведомления можно отправлять. Достаточно одного общего раздела «Уведомления» для всех каналов.",
+      "quotes": [
+        {
+          "text": "Отчёт автоматически отправляется на e-mail бухгалтера каждый понедельник",
+          "line_start": 83,
+          "line_end": 83,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-8. Отчёт для бухгалтерии",
+          "rid": "REQ-043",
+          "exact": true
+        },
+        {
+          "text": "После оплаты покупателю приходит SMS со ссылкой на чек вида https://check.example.kz/r?phone=77000000000&amount=4500",
+          "line_start": 94,
+          "line_end": 94,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-10. Электронный чек покупателю",
+          "rid": "REQ-047",
+          "exact": true
+        },
+        {
+          "text": "Как продавец, я хочу получать push о каждой оплате, чтобы видеть продажи без открытия приложения",
+          "line_start": 99,
+          "line_end": 99,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-11. Push продавцу",
+          "rid": "REQ-050",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-043",
+        "REQ-047",
+        "REQ-050"
+      ],
+      "question": {
+        "text": "Какие общие правила действуют для всех уведомлений клиенту (текст, язык, сбой доставки, повторы, время, отключение)?",
+        "options": [
+          "Описать общие правила в отдельном разделе",
+          "Принять стандарт банка и сослаться на него",
+          "Правила отличаются по уведомлениям — описать каждое"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:notification-checklist",
+      "rule_ids": [
+        "notification-checklist"
+      ],
+      "stage": "rules",
+      "fid": "D-007",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-08",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "requirement",
@@ -3587,27 +3938,82 @@
           "Убрать слово — оно ничего не добавляет"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:vague-word",
       "rule_ids": [
         "vague-word"
       ],
       "stage": "rules",
-      "fid": "D-003",
+      "fid": "D-008",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-03",
+      "question_id": "В-04",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть расплывчатых и субъективных слов"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "История без критериев приёмки: Как пользователь, я хочу удоб…",
+      "problem": "У 10 историй документа есть критерии приёмки, а у 1 — нет: Как пользователь, я хочу удоб…. Без критериев нечем подтвердить, что история выполнена: тестировщик напишет проверки по догадке, а заказчик примет работу по ощущению.",
+      "recommendation": "Допишите критерии приёмки каждой истории: 2–5 проверяемых условий с числами и ожидаемым результатом.",
+      "quotes": [
+        {
+          "text": "Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно.",
+          "line_start": 109,
+          "line_end": 109,
+          "page": null,
+          "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-13. Удобство",
+          "rid": "REQ-055",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-055"
+      ],
+      "question": {
+        "text": "Какие критерии приёмки у истории «Как пользователь, я хочу удоб…»?",
+        "options": [
+          "Автор допишет критерии"
+        ],
+        "addressee": "qa",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:story-no-criteria",
+      "rule_ids": [
+        "story-no-criteria"
+      ],
+      "stage": "rules",
+      "fid": "D-009",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-09",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     }
   ],
   "rejected": [],
@@ -3615,6 +4021,49 @@
   "questions": [
     {
       "qid": "В-01",
+      "text": "Как округлять рассчитанные суммы: до какой единицы и в какую сторону?",
+      "why": "Сумма считается как процент, доля или по курсу, но нигде не сказано, как округлять результат и до какой единицы (до целого тенге, до тиына, в какую сторону).",
+      "addressee": "analyst",
+      "options": [
+        "До тиына, математически",
+        "До целого тенге, вниз",
+        "До целого тенге, вверх"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-001"
+      ],
+      "req_ids": [
+        "REQ-005"
+      ],
+      "quote": {
+        "text": "**Комиссия** — плата банка за принятую оплату: 0,95% от суммы, удерживается при зачислении; покупатель комиссию не платит",
+        "line_start": 14,
+        "line_end": 14,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Глоссарий",
+        "rid": "REQ-005",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "Округляем математически (от 0,5 вверх) до сотых долей валюты, только в конце расчёта.",
+      "fingerprint": "4964706944fe",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-001"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 93,
+        "index_delta": 3
+      }
+    },
+    {
+      "qid": "В-02",
       "text": "Что конкретно означает «мгновенно» в этом требовании?",
       "why": "Слово «мгновенно» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное.",
       "addressee": "analyst",
@@ -3625,7 +4074,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-001"
+        "D-002"
       ],
       "req_ids": [
         "REQ-019"
@@ -3643,18 +4092,21 @@
       "answer": "",
       "answer_effect": "",
       "gap": "term",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "d7448fe32b81",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-001"
+          "D-002"
         ],
         "blockers_closed": 0,
         "verdict_after": "CONDITIONAL",
-        "index_after": 99,
+        "index_after": 90,
         "index_delta": 0
       }
     },
     {
-      "qid": "В-02",
+      "qid": "В-03",
       "text": "Для какой доли случаев и при какой нагрузке должен выполняться срок «в течение 10 минут»?",
       "why": "Задан срок «в течение 10 минут», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать.",
       "addressee": "business",
@@ -3665,7 +4117,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-002"
+        "D-003"
       ],
       "req_ids": [
         "REQ-021"
@@ -3683,18 +4135,21 @@
       "answer": "",
       "answer_effect": "",
       "gap": "value",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "e2476c082f9f",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-002"
+          "D-003"
         ],
         "blockers_closed": 0,
         "verdict_after": "CONDITIONAL",
-        "index_after": 99,
+        "index_after": 90,
         "index_delta": 0
       }
     },
     {
-      "qid": "В-03",
+      "qid": "В-04",
       "text": "Что конкретно означает «удобный» в этом требовании?",
       "why": "Слово «удобный» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное.",
       "addressee": "analyst",
@@ -3705,7 +4160,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-003"
+        "D-008"
       ],
       "req_ids": [
         "REQ-055"
@@ -3723,34 +4178,258 @@
       "answer": "",
       "answer_effect": "",
       "gap": "term",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "8d8f9ee41499",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-003"
+          "D-008"
         ],
         "blockers_closed": 0,
         "verdict_after": "CONDITIONAL",
-        "index_after": 99,
+        "index_after": 90,
         "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-05",
+      "text": "По какому часовому поясу считаются время и границы суток в документе?",
+      "why": "В требованиях есть привязка к времени суток или к границе дня («в 00:00», «на следующий день», «в день покупки»), но нигде не сказано, по какому часовому поясу это считается.",
+      "addressee": "analyst",
+      "options": [
+        "Время Астаны (UTC+5)",
+        "UTC",
+        "Местное время клиента"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-004"
+      ],
+      "req_ids": [
+        "REQ-028",
+        "REQ-044"
+      ],
+      "quote": {
+        "text": "Зачисление на текущий счёт продавца — в день оплаты, за вычетом комиссии",
+        "line_start": 59,
+        "line_end": 59,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-5. Зачисление выручки",
+        "rid": "REQ-028",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "Время и границы суток считаем по времени Алматы, UTC+5.",
+      "fingerprint": "ac892ff654f5",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-004"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 91,
+        "index_delta": 1
+      }
+    },
+    {
+      "qid": "В-06",
+      "text": "Входит ли граничный день (или момент) в срок и период?",
+      "why": "Срок или период задан границами («с 1 по 15 число», «до 5 числа», «в течение 30 дней с даты покупки»), но не сказано, входит ли граничный день в срок.",
+      "addressee": "analyst",
+      "options": [
+        "Да, включительно",
+        "Нет, не включая"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-005"
+      ],
+      "req_ids": [
+        "REQ-032"
+      ],
+      "quote": {
+        "text": "Возврат оформляется из карточки оплаты в течение 30 дней с даты оплаты",
+        "line_start": 66,
+        "line_end": 66,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+        "rid": "REQ-032",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "Границы срока и периода считаем включительными: «до 5 дней» — это 5 дней и меньше.",
+      "fingerprint": "64af5005f5b9",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-005"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 91,
+        "index_delta": 1
+      }
+    },
+    {
+      "qid": "В-07",
+      "text": "Какие дни считаются в сроках — календарные или рабочие?",
+      "why": "Срок задан числом дней («в течение 30 дней»), но не сказано, календарные это дни или рабочие, и в документе нет общего правила на этот счёт.",
+      "addressee": "analyst",
+      "options": [
+        "Календарные",
+        "Рабочие",
+        "Банковские (по календарю банка)"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-006"
+      ],
+      "req_ids": [
+        "REQ-032"
+      ],
+      "quote": {
+        "text": "Возврат оформляется из карточки оплаты в течение 30 дней с даты оплаты",
+        "line_start": 66,
+        "line_end": 66,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-6. Возврат покупателю",
+        "rid": "REQ-032",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "Сроки в днях считаем календарными.",
+      "fingerprint": "19a5e01284ff",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-006"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 91,
+        "index_delta": 1
+      }
+    },
+    {
+      "qid": "В-08",
+      "text": "Какие общие правила действуют для всех уведомлений клиенту (текст, язык, сбой доставки, повторы, время, отключение)?",
+      "why": "В документе есть требования об отправке уведомлений, но не описано: текст и содержимое уведомления; язык уведомления; что делать, если уведомление не доставлено; защита от повторной отправки; время суток, когда уведомления можно отправлять.",
+      "addressee": "analyst",
+      "options": [
+        "Описать общие правила в отдельном разделе",
+        "Принять стандарт банка и сослаться на него",
+        "Правила отличаются по уведомлениям — описать каждое"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-007"
+      ],
+      "req_ids": [
+        "REQ-043",
+        "REQ-047",
+        "REQ-050"
+      ],
+      "quote": {
+        "text": "Отчёт автоматически отправляется на e-mail бухгалтера каждый понедельник",
+        "line_start": 83,
+        "line_end": 83,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 2. Деньги продавца › QR-8. Отчёт для бухгалтерии",
+        "rid": "REQ-043",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "1687eb8006ad",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-007"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 91,
+        "index_delta": 1
+      }
+    },
+    {
+      "qid": "В-09",
+      "text": "Какие критерии приёмки у истории «Как пользователь, я хочу удоб…»?",
+      "why": "У 10 историй документа есть критерии приёмки, а у 1 — нет: Как пользователь, я хочу удоб….",
+      "addressee": "qa",
+      "options": [
+        "Автор допишет критерии"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-009"
+      ],
+      "req_ids": [
+        "REQ-055"
+      ],
+      "quote": {
+        "text": "Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно.",
+        "line_start": 109,
+        "line_end": 109,
+        "page": null,
+        "section": "Бэклог: приём оплаты по QR для малого бизнеса («Касса QR») › Эпик 3. Чеки и уведомления › QR-13. Удобство",
+        "rid": "REQ-055",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "8f124b43ac56",
+      "letter_group": "testing",
+      "impact": {
+        "closes": [
+          "D-009"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 91,
+        "index_delta": 1
       }
     }
   ],
   "fix_first": [
     {
-      "action": "Размытая формулировка: «мгновенно». Замените «мгновенно» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
+      "action": "Расчёт денег без правила округления. Добавьте правило: «Суммы округляются до тиына по математическим правилам; при делении остаток отдаётся последней части» (или укажите своё).",
       "finding_ids": [
         "D-001"
       ]
     },
     {
-      "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «в течение 10 минут для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
+      "action": "Размытая формулировка: «мгновенно». Замените «мгновенно» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
       "finding_ids": [
         "D-002"
       ]
     },
     {
-      "action": "Размытые формулировки: «удобный», «понятный», «удобно». Замените «удобный» проверяемым условием: задайте проверяемый критерий: число шагов до цели, время выполнения задачи пользователем или ссылку на утверждённый макет.",
+      "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «в течение 10 минут для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
       "finding_ids": [
         "D-003"
+      ]
+    },
+    {
+      "action": "Размытые формулировки: «удобный», «понятный», «удобно». Замените «удобный» проверяемым условием: задайте проверяемый критерий: число шагов до цели, время выполнения задачи пользователем или ссылку на утверждённый макет.",
+      "finding_ids": [
+        "D-008"
       ]
     }
   ],
@@ -3758,7 +4437,7 @@
   "coverage": [],
   "verdict": "CONDITIONAL",
   "verdict_text": "⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (модель не использовалась: проверены только автоматические правила, итог предварительный)",
-  "verdict_reason": "Блокеров нет, но есть 3 существенных замечания: без ответов автора разработчик и тестировщик могут понять эти места по-разному. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.",
+  "verdict_reason": "Блокеров нет, но есть 4 существенных замечания: без ответов автора разработчик и тестировщик могут понять эти места по-разному. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.",
   "tests": [
     {
       "tid": "Т-01",
@@ -3862,6 +4541,20 @@
       "items": [
         {
           "req_ids": [
+            "REQ-005"
+          ],
+          "what": "REQ-005: Комиссия — плата банка за принятую оплату: 0,95% от суммы, удерживается при зачислении; покупатель…",
+          "blocked_by": [
+            "В-01"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-001"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
             "REQ-006"
           ],
           "what": "REQ-006: значения сразу за границей 99, 1000000 ₸",
@@ -3876,20 +4569,6 @@
           ],
           "what": "QR-3: Статус оплаты обновляется на экране кассира мгновенно",
           "blocked_by": [
-            "В-01"
-          ],
-          "answered": [],
-          "finding_ids": [
-            "D-001"
-          ],
-          "why": "в документе нет конкретного действия или ожидаемого результата"
-        },
-        {
-          "req_ids": [
-            "REQ-021"
-          ],
-          "what": "QR-3: Если оплата не поступила в течение 10 минут, счёт отменяется автоматически",
-          "blocked_by": [
             "В-02"
           ],
           "answered": [],
@@ -3900,15 +4579,29 @@
         },
         {
           "req_ids": [
-            "REQ-055"
+            "REQ-021"
           ],
-          "what": "QR-13: Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно",
+          "what": "QR-3: Если оплата не поступила в течение 10 минут, счёт отменяется автоматически",
           "blocked_by": [
             "В-03"
           ],
           "answered": [],
           "finding_ids": [
             "D-003"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        },
+        {
+          "req_ids": [
+            "REQ-055"
+          ],
+          "what": "QR-13: Как пользователь, я хочу удобный и понятный интерфейс кассы, чтобы мне было удобно",
+          "blocked_by": [
+            "В-04"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-008"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         }
@@ -4267,5 +4960,18 @@
       "checked": [],
       "note": "без модели не оценивается"
     }
-  ]
+  ],
+  "readiness": {
+    "dev": {
+      "ok": true,
+      "text": "Можно отдавать в разработку: блокеров нет (предварительно)",
+      "blockers": []
+    },
+    "test": {
+      "ok": false,
+      "text": "Нельзя отдавать в тестирование: в документе нет критериев приёмки (предварительно)",
+      "coverage_pct": null,
+      "uncovered": []
+    }
+  }
 }

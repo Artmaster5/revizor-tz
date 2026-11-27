@@ -166,7 +166,7 @@ def render_results(items: list[dict], groups: dict, problems: list[str], now: st
         L += [f"Уровень у строго найденных дефектов: совпал {ag['same']}, инструмент поставил выше {ag['tool_higher']}, ниже {ag['tool_lower']}.", ""]
         unm = sum(len(r["unmatched"]) for r in docs.values())
         exm = sum(len(r["false_alarms_exempt"]) for r in docs.values())
-        L += [f"Замечаний без совпадения с ключом (нужен ручной разбор, это не обязательно ошибки): {unm}. Спорных замечаний на «хороших» строках, не засчитанных как ложные тревоги: {exm}.", ""]
+        L += [f"Замечаний без совпадения с ключом (нужен ручной разбор, это не обязательно ошибки): {unm}. Спорных замечаний на «хороших» строках, не засчитанных как замечания на месте без дефекта: {exm}.", ""]
     if problems:
         L += ["## Предупреждения при оценке", ""] + [f"- {p}" for p in problems] + [""]
     L.append(EXPLANATION)

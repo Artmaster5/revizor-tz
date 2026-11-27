@@ -48,8 +48,8 @@
 
 Для этих требований в документе нет конкретного действия или ожидаемого результата, поэтому черновик теста не составлен.
 
-- REQ-014: Example: curl -X POST "\$BASE/v1/onboarding/ /documents?iin=000000000000" \\ -H "Authorization… — ответ: В-02; замечание D-001
-- REQ-021: If a document of the same docType and side has already been uploaded in the session, the server… — ответ: В-03; замечание D-002
-- REQ-022: The upload endpoint responds within 3 seconds — ответ: В-06; замечание D-003
-- REQ-027: Submits all uploaded documents for verification — ответ: В-04; замечание D-005
-- REQ-028: The verification provider is called asynchronously — ответ: В-07; замечание D-006
+- REQ-014: Example: curl -X POST "\$BASE/v1/onboarding/ /documents?iin=000000000000" \\ -H "Authorization… — ответ: В-02; замечание D-002
+- REQ-021: If a document of the same docType and side has already been uploaded in the session, the server… — ответ: В-03; замечание D-003
+- REQ-022: The upload endpoint responds within 3 seconds — ответ: В-06; замечание D-004
+- REQ-027: Submits all uploaded documents for verification — ответ: В-04; замечание D-006
+- REQ-028: The verification provider is called asynchronously — ответ: В-07; замечание D-007

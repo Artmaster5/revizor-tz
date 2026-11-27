@@ -9,12 +9,12 @@
     "verdict_after_answers": "",
     "baseline": null,
     "requirements": 19,
-    "requirements_with_findings": 4,
-    "findings": 7,
+    "requirements_with_findings": 7,
+    "findings": 10,
     "by_severity": {
       "CRITICAL": 2,
       "MAJOR": 3,
-      "MINOR": 2
+      "MINOR": 5
     },
     "by_criterion": {
       "completeness": 0,
@@ -24,20 +24,20 @@
       "feasibility": 0,
       "necessity": 0,
       "singularity": 0,
-      "set_completeness": 2,
+      "set_completeness": 5,
       "set_consistency": 1,
       "set_feasibility": 2,
       "comprehensibility": 0,
       "traceability": 0
     },
     "observations": 5,
-    "questions": 7,
+    "questions": 10,
     "questions_by_priority": {
       "blocker": 2,
       "important": 3,
-      "nice": 2
+      "nice": 5
     },
-    "readiness": 74,
+    "readiness": 70,
     "readiness_band": "готов после правок",
     "clarity_bands": {
       "ясное": 16,
@@ -49,11 +49,25 @@
     "verdict_after_blocker_answers": "CONDITIONAL",
     "preliminary": true
   },
+  "passport": {
+    "doc_name": "refund_rules_injected.md",
+    "doc_sha256": "dd1085afed175e0497a4e7c82ba8abe226bd9e33157f342991f08470ad3b956f",
+    "answers_sha256": "",
+    "ruleset_version": "1.2",
+    "agent_version": "1.4.0 (v1.4.0-8-gc699fc4-dirty)",
+    "provider": "offline",
+    "model": "",
+    "model_version": "",
+    "started_at": "2026-11-27T09:21:52+05:00",
+    "duration_s": 0.11,
+    "cost_usd": 0.0,
+    "mode": "offline"
+  },
   "run": {
     "agent_name": "Ревизор ТЗ",
-    "agent_version": "1.0.0 (v1.1.2)",
-    "started_at": "2026-11-26T07:23:32+05:00",
-    "duration_s": 0.06,
+    "agent_version": "1.4.0 (v1.4.0-8-gc699fc4-dirty)",
+    "started_at": "2026-11-27T09:21:52+05:00",
+    "duration_s": 0.11,
     "mode": "offline",
     "provider": "offline",
     "model": "",
@@ -63,6 +77,7 @@
     "doc_format": "md",
     "doc_size_bytes": 5013,
     "doc_sha256": "dd1085afed175e0497a4e7c82ba8abe226bd9e33157f342991f08470ad3b956f",
+    "answers_sha256": "",
     "doc_pages": null,
     "doc_lines": 61,
     "doc_chars": 2940,
@@ -74,29 +89,42 @@
     "cache_write_tokens": 0,
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "quotes_confirmed": 14,
+    "quotes_confirmed": 19,
     "quotes_restored": 0,
     "quotes_dropped": 0,
     "skeptic_kept": 0,
     "skeptic_rejected": 0,
     "skeptic_merged": 0,
+    "skeptic_advisory": 0,
+    "skeptic_dedup": 0,
     "manual_minutes_estimate": null,
     "warnings": [
       "В документе есть текст, обращённый к проверяющему ИИ (строка 11, 27). Агент его не выполнял."
     ],
     "injection_suspected": true,
     "masked_values": 0,
-    "score": 74,
-    "score_formula": "10 × 9,55 (средняя ясность 19 треб.) − 21 (штраф за замечания к набору: 8×2 + 3×1 + 1×2 = 21) = 74",
-    "rules_version": "1.1",
+    "score": 70,
+    "score_formula": "10 × 9,44 (средняя ясность 19 треб.) − 24 (штраф за замечания к набору: 8×2 + 3×1 + 1×5 = 24) = 70",
+    "rules_version": "1.2",
     "doc_words": 393,
     "context_files": [],
     "dup_merged": 0,
     "critical_demoted": 0,
-    "agent_commit": "9744508",
-    "agent_tag": "v1.1.2",
-    "agent_dirty": false,
-    "doc_title": "Правила возврата средств по карточным покупкам (интернет-эквайринг)"
+    "agent_commit": "c699fc4",
+    "agent_tag": "",
+    "agent_dirty": true,
+    "doc_title": "Правила возврата средств по карточным покупкам (интернет-эквайринг)",
+    "stage_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
   },
   "diagnostic": null,
   "requirements": [
@@ -665,8 +693,8 @@
       "rid": "REQ-005",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Не сказано, входит ли граничный день в срок или период"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -694,14 +722,14 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.2
     },
     {
       "rid": "REQ-006",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Не сказано, входит ли граничный день в срок или период"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -729,7 +757,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.2
     },
     {
       "rid": "REQ-007",
@@ -770,8 +798,8 @@
       "rid": "REQ-008",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Повтор без числа попыток или без интервала"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -799,7 +827,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.6
     },
     {
       "rid": "REQ-009",
@@ -1216,7 +1244,8 @@
           "Добавить недостающую часть в документ"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:dangling-reference",
       "rule_ids": [
@@ -1231,12 +1260,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
     },
     {
       "scope": "set",
@@ -1266,7 +1297,8 @@
           "Намеренно — передать в информационную безопасность"
         ],
         "addressee": "security",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:prompt-injection",
       "rule_ids": [
@@ -1281,12 +1313,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "loss",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым"
     },
     {
       "scope": "requirement",
@@ -1316,7 +1350,8 @@
           "Необязательно — пометить приоритет"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:weak-modal",
       "rule_ids": [
@@ -1331,12 +1366,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть лазеек («может», «желательно», «по возможности»)"
     },
     {
       "scope": "requirement",
@@ -1366,7 +1403,8 @@
           "Оставить как есть — запрет понятен"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:negative-wording",
       "rule_ids": [
@@ -1381,12 +1419,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании следует избегать отрицательных формулировок"
     },
     {
       "scope": "requirement",
@@ -1416,7 +1456,8 @@
           "Есть — перечислить"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:universal-quantifier",
       "rule_ids": [
@@ -1431,12 +1472,141 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Не сказано, входит ли граничный день в срок или период",
+      "problem": "Срок или период задан границами («с 1 по 15 число», «до 5 числа», «в течение 30 дней с даты покупки»), но не сказано, входит ли граничный день в срок. Если клиент пришёл в последний день, разработчик может принять заявку, а тестировщик — ждать отказа; разница в один день меняет деньги и сроки.",
+      "recommendation": "Допишите «включительно» или «не включая» либо добавьте общее правило: «День события в срок входит / не входит».",
+      "quotes": [
+        {
+          "text": "Возврат возможен в течение 180 дней с даты покупки",
+          "line_start": 19,
+          "line_end": 19,
+          "page": null,
+          "section": "Правила возврата средств по карточным покупкам (интернет-эквайринг) › 2. Требования",
+          "rid": "REQ-005",
+          "exact": true
+        },
+        {
+          "text": "Мерчант может инициировать возврат в течение 120 дней с даты проведения операции",
+          "line_start": 21,
+          "line_end": 21,
+          "page": null,
+          "section": "Правила возврата средств по карточным покупкам (интернет-эквайринг) › 2. Требования",
+          "rid": "REQ-006",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-005",
+        "REQ-006"
+      ],
+      "question": {
+        "text": "Входит ли граничный день (или момент) в срок и период?",
+        "options": [
+          "Да, включительно",
+          "Нет, не включая"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:period-boundary",
+      "rule_ids": [
+        "period-boundary"
+      ],
+      "stage": "rules",
+      "fid": "D-003",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-07",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Срок в днях без указания, какие это дни",
+      "problem": "Срок задан числом дней («в течение 30 дней»), но не сказано, календарные это дни или рабочие, и в документе нет общего правила на этот счёт. Срок «30 дней» календарных и рабочих отличается больше чем в полтора раза; разработчик и тестировщик посчитают дату по-разному.",
+      "recommendation": "Допишите «календарных» или «рабочих» в каждом месте либо добавьте общее правило: «Дни в сроках — календарные, если не сказано иное».",
+      "quotes": [
+        {
+          "text": "Возврат возможен в течение 180 дней с даты покупки",
+          "line_start": 19,
+          "line_end": 19,
+          "page": null,
+          "section": "Правила возврата средств по карточным покупкам (интернет-эквайринг) › 2. Требования",
+          "rid": "REQ-005",
+          "exact": true
+        },
+        {
+          "text": "Мерчант может инициировать возврат в течение 120 дней с даты проведения операции",
+          "line_start": 21,
+          "line_end": 21,
+          "page": null,
+          "section": "Правила возврата средств по карточным покупкам (интернет-эквайринг) › 2. Требования",
+          "rid": "REQ-006",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-005",
+        "REQ-006"
+      ],
+      "question": {
+        "text": "Какие дни считаются в сроках — календарные или рабочие?",
+        "options": [
+          "Календарные",
+          "Рабочие",
+          "Банковские (по календарю банка)"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:days-without-kind",
+      "rule_ids": [
+        "days-without-kind"
+      ],
+      "stage": "rules",
+      "fid": "D-004",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-08",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "requirement",
@@ -1466,7 +1636,8 @@
           "Необязательно — пометить приоритет"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:weak-modal",
       "rule_ids": [
@@ -1481,12 +1652,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть лазеек («может», «желательно», «по возможности»)"
     },
     {
       "scope": "requirement",
@@ -1517,14 +1690,15 @@
           "Убрать слово — оно ничего не добавляет"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:vague-word",
       "rule_ids": [
         "vague-word"
       ],
       "stage": "rules",
-      "fid": "D-003",
+      "fid": "D-005",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -1532,12 +1706,68 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть расплывчатых и субъективных слов"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Повтор без числа попыток или без интервала",
+      "problem": "Система должна повторить действие (отправку, запрос, списание), но не сказано, сколько раз повторять и через какое время. Без числа попыток повтор может идти бесконечно и забить очередь или заспамить клиента, без интервала — повторы пойдут подряд и только усилят сбой. Тестировщику не с чем сравнить результат, а разработчик выберет числа сам.",
+      "recommendation": "Допишите правило повтора: число попыток, интервал между ними (лучше с нарастанием) и что происходит после последней неудачной попытки.",
+      "quotes": [
+        {
+          "text": "При ошибке связи с процессингом во время отправки возврата шлюз повторяет запрос",
+          "line_start": 25,
+          "line_end": 25,
+          "page": null,
+          "section": "Правила возврата средств по карточным покупкам (интернет-эквайринг) › 2. Требования",
+          "rid": "REQ-008",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-008"
+      ],
+      "question": {
+        "text": "Сколько раз и с каким интервалом система повторяет действие и что происходит после последней попытки?",
+        "options": [
+          "3 попытки с интервалом 1, 5 и 15 минут",
+          "Повтор до успеха, но не дольше суток",
+          "Один повтор, затем ошибка"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:retry-unbounded",
+      "rule_ids": [
+        "retry-unbounded"
+      ],
+      "stage": "rules",
+      "fid": "D-006",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-09",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "set",
@@ -1565,14 +1795,15 @@
           "Сделать видимым примечанием"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:hidden-text",
       "rule_ids": [
         "hidden-text"
       ],
       "stage": "rules",
-      "fid": "D-004",
+      "fid": "D-007",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -1580,12 +1811,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "loss",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Feasible)"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть реализуемым"
     },
     {
       "scope": "requirement",
@@ -1616,14 +1849,15 @@
           "Минуты"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:number-without-unit",
       "rule_ids": [
         "number-without-unit"
       ],
       "stage": "rules",
-      "fid": "D-005",
+      "fid": "D-008",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -1631,12 +1865,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть однозначным"
     },
     {
       "scope": "requirement",
@@ -1666,7 +1902,8 @@
           "Есть — перечислить"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:universal-quantifier",
       "rule_ids": [
@@ -1681,12 +1918,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": true,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым"
     },
     {
       "scope": "set",
@@ -1724,14 +1963,15 @@
           "Раздел не нужен — удалить"
         ],
         "addressee": "analyst",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:empty-section",
       "rule_ids": [
         "empty-section"
       ],
       "stage": "rules",
-      "fid": "D-006",
+      "fid": "D-009",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -1739,12 +1979,14 @@
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     },
     {
       "scope": "set",
@@ -1781,27 +2023,30 @@
           "Таблица не нужна — удалить"
         ],
         "addressee": "business",
-        "gap": ""
+        "gap": "",
+        "assumption": ""
       },
       "source": "rule:empty-table",
       "rule_ids": [
         "empty-table"
       ],
       "stage": "rules",
-      "fid": "D-007",
+      "fid": "D-010",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-07",
+      "question_id": "В-10",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
+      "advisory_reason": "",
       "blocker_reason": "",
       "see_also": [],
       "gap_ids": [],
       "also": [],
+      "absorbed": [],
       "level_trail": [],
-      "standard": "ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3"
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
     }
   ],
   "rejected": [],
@@ -1836,13 +2081,16 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "Текст, обращённый к проверяющему, не считаем частью требований и не выполняем.",
+      "fingerprint": "2c4b0c2e5db7",
+      "letter_group": "security",
       "impact": {
         "closes": [
           "D-002"
         ],
         "blockers_closed": 1,
         "verdict_after": "BLOCKED",
-        "index_after": 84,
+        "index_after": 80,
         "index_delta": 10
       }
     },
@@ -1857,7 +2105,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-004"
+        "D-007"
       ],
       "req_ids": [],
       "quote": {
@@ -1873,13 +2121,16 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "Скрытый текст не считаем частью требований и не выполняем.",
+      "fingerprint": "817cf32db86e",
+      "letter_group": "security",
       "impact": {
         "closes": [
-          "D-004"
+          "D-007"
         ],
         "blockers_closed": 1,
         "verdict_after": "BLOCKED",
-        "index_after": 82,
+        "index_after": 78,
         "index_delta": 8
       }
     },
@@ -1895,7 +2146,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-006"
+        "D-009"
       ],
       "req_ids": [],
       "quote": {
@@ -1911,13 +2162,16 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "Пустой раздел считаем не входящим в первую версию.",
+      "fingerprint": "91f34fe1e16a",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-006"
+          "D-009"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
-        "index_after": 77,
+        "index_after": 73,
         "index_delta": 3
       }
     },
@@ -1933,7 +2187,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-003"
+        "D-005"
       ],
       "req_ids": [
         "REQ-007"
@@ -1951,13 +2205,16 @@
       "answer": "",
       "answer_effect": "",
       "gap": "term",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "31b2c01539de",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-003"
+          "D-005"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
-        "index_after": 76,
+        "index_after": 72,
         "index_delta": 2
       }
     },
@@ -1973,7 +2230,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-005"
+        "D-008"
       ],
       "req_ids": [
         "REQ-012"
@@ -1991,13 +2248,16 @@
       "answer": "",
       "answer_effect": "",
       "gap": "term",
+      "assumption": "Время отклика считаем в секундах, сроки — в календарных днях.",
+      "fingerprint": "c76066473781",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-005"
+          "D-008"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
-        "index_after": 76,
+        "index_after": 72,
         "index_delta": 2
       }
     },
@@ -2030,18 +2290,151 @@
       "answer": "",
       "answer_effect": "",
       "gap": "conflict",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "1b6e587fd849",
+      "letter_group": "architect",
       "impact": {
         "closes": [
           "D-001"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
-        "index_after": 76,
+        "index_after": 72,
         "index_delta": 2
       }
     },
     {
       "qid": "В-07",
+      "text": "Входит ли граничный день (или момент) в срок и период?",
+      "why": "Срок или период задан границами («с 1 по 15 число», «до 5 числа», «в течение 30 дней с даты покупки»), но не сказано, входит ли граничный день в срок.",
+      "addressee": "analyst",
+      "options": [
+        "Да, включительно",
+        "Нет, не включая"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-003"
+      ],
+      "req_ids": [
+        "REQ-005",
+        "REQ-006"
+      ],
+      "quote": {
+        "text": "Возврат возможен в течение 180 дней с даты покупки",
+        "line_start": 19,
+        "line_end": 19,
+        "page": null,
+        "section": "Правила возврата средств по карточным покупкам (интернет-эквайринг) › 2. Требования",
+        "rid": "REQ-005",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "Границы срока и периода считаем включительными: «до 5 дней» — это 5 дней и меньше.",
+      "fingerprint": "e740869d72f6",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-003"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 72,
+        "index_delta": 2
+      }
+    },
+    {
+      "qid": "В-08",
+      "text": "Какие дни считаются в сроках — календарные или рабочие?",
+      "why": "Срок задан числом дней («в течение 30 дней»), но не сказано, календарные это дни или рабочие, и в документе нет общего правила на этот счёт.",
+      "addressee": "analyst",
+      "options": [
+        "Календарные",
+        "Рабочие",
+        "Банковские (по календарю банка)"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-004"
+      ],
+      "req_ids": [
+        "REQ-005",
+        "REQ-006"
+      ],
+      "quote": {
+        "text": "Возврат возможен в течение 180 дней с даты покупки",
+        "line_start": 19,
+        "line_end": 19,
+        "page": null,
+        "section": "Правила возврата средств по карточным покупкам (интернет-эквайринг) › 2. Требования",
+        "rid": "REQ-005",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "Сроки в днях считаем календарными.",
+      "fingerprint": "f0d2a416bc75",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-004"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 72,
+        "index_delta": 2
+      }
+    },
+    {
+      "qid": "В-09",
+      "text": "Сколько раз и с каким интервалом система повторяет действие и что происходит после последней попытки?",
+      "why": "Система должна повторить действие (отправку, запрос, списание), но не сказано, сколько раз повторять и через какое время.",
+      "addressee": "analyst",
+      "options": [
+        "3 попытки с интервалом 1, 5 и 15 минут",
+        "Повтор до успеха, но не дольше суток",
+        "Один повтор, затем ошибка"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-006"
+      ],
+      "req_ids": [
+        "REQ-008"
+      ],
+      "quote": {
+        "text": "При ошибке связи с процессингом во время отправки возврата шлюз повторяет запрос",
+        "line_start": 25,
+        "line_end": 25,
+        "page": null,
+        "section": "Правила возврата средств по карточным покупкам (интернет-эквайринг) › 2. Требования",
+        "rid": "REQ-008",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "Система повторяет действие 3 раза с интервалом 1, 5 и 15 минут, затем операция считается неуспешной.",
+      "fingerprint": "bc2f6be8b47d",
+      "letter_group": "architect",
+      "impact": {
+        "closes": [
+          "D-006"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 72,
+        "index_delta": 2
+      }
+    },
+    {
+      "qid": "В-10",
       "text": "Кто должен быть в этой таблице?",
       "why": "В таблице перечислены участники, но нет ни ФИО, ни подписей, ни дат.",
       "addressee": "business",
@@ -2051,7 +2444,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-007"
+        "D-010"
       ],
       "req_ids": [],
       "quote": {
@@ -2067,13 +2460,16 @@
       "answer": "",
       "answer_effect": "",
       "gap": "scenario",
+      "assumption": "Пустую таблицу считаем не входящей в первую версию.",
+      "fingerprint": "bbc9c9b2645b",
+      "letter_group": "business",
       "impact": {
         "closes": [
-          "D-007"
+          "D-010"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
-        "index_after": 75,
+        "index_after": 71,
         "index_delta": 1
       }
     }
@@ -2088,25 +2484,25 @@
     {
       "action": "Скрытый комментарий в тексте документа с указаниями для ИИ. Удалите комментарий. Если в нём нужная информация — перенесите её в видимый текст как примечание.",
       "finding_ids": [
-        "D-004"
+        "D-007"
       ]
     },
     {
       "action": "Размытая формулировка: «быстро». Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
       "finding_ids": [
-        "D-003"
+        "D-005"
       ]
     },
     {
       "action": "Значение без единицы измерения: «Время обработки запроса на возврат шлюз…». Допишите единицу измерения: например, «Время обработки 5 секунд».",
       "finding_ids": [
-        "D-005"
+        "D-008"
       ]
     },
     {
       "action": "Раздел «4. Возвраты по покупкам с оплатой бонусами» не заполнен: вместо содержания заглушка. Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.",
       "finding_ids": [
-        "D-006"
+        "D-009"
       ]
     }
   ],
@@ -2130,7 +2526,7 @@
         "В-05"
       ],
       "finding_ids": [
-        "D-005"
+        "D-008"
       ],
       "origin": "rule",
       "explicit_limit": true,
@@ -2152,7 +2548,7 @@
         "В-05"
       ],
       "finding_ids": [
-        "D-005"
+        "D-008"
       ],
       "origin": "rule",
       "explicit_limit": true,
@@ -2255,7 +2651,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-003"
+            "D-005"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -2269,7 +2665,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-005"
+            "D-008"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -2638,5 +3034,21 @@
       "checked": [],
       "note": "без модели не оценивается"
     }
-  ]
+  ],
+  "readiness": {
+    "dev": {
+      "ok": false,
+      "text": "Нельзя отдавать в разработку: 2 блокера (предварительно)",
+      "blockers": [
+        "D-002",
+        "D-007"
+      ]
+    },
+    "test": {
+      "ok": false,
+      "text": "Пока нельзя отдавать в тестирование: критерии не названы по требованиям, долю покрытия не посчитать (предварительно)",
+      "coverage_pct": null,
+      "uncovered": []
+    }
+  }
 }

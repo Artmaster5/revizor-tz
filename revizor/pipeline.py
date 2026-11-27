@@ -833,7 +833,7 @@ def _answers_stage(provider, questions: list[Question], counted_open: list[Findi
     use_model = gate is not None and not gate.dead and not gate.budget_hit and bool(usable)
     if use_model:
         for q in usable:
-            q.answer = parsed.answers[q.qid].text
+            q.answer = ans_mod.shown(parsed.answers[q.qid])
         chunks = [usable[i:i + ANSWER_CHUNK] for i in range(0, len(usable), ANSWER_CHUNK)]
         gate.plan("answers", len(chunks))
         for ch in chunks:

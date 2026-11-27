@@ -89,12 +89,25 @@ def interpret(qid: str, raw: str, options: list[str]) -> Answer | None:
         k = LETTERS.find(lt)
         if 0 <= k < len(options):
             note = m.group(2).strip()
+            if _flat(note) == _flat(options[k]):
+                note = ""  # the author copied the option text after the letter
             return Answer(qid, raw, options[k], LETTERS[k], "option", note)
     ft = _flat(text)
     for k, o in enumerate(options):
         if ft and ft == _flat(o):
             return Answer(qid, raw, options[k], LETTERS[k], "option")
     return Answer(qid, raw, text, "", "free")
+
+
+NOTE_SEP = " — "
+
+
+def shown(a: Answer) -> str:
+    """The answer in full: the chosen option and the words the author added after the letter.
+
+    The words after the letter are a part of the answer («а. Только если порог изменён»): the model that
+    re-checks the findings and the reader of the report must see them, not only the text of the option."""
+    return a.text + (NOTE_SEP + a.note if a.note else "")
 
 
 def parse(text: str, questions: list[Question]) -> Parsed:
@@ -236,7 +249,7 @@ def apply_offline(questions: list[Question], findings: list[Finding], parsed: Pa
         a = parsed.answers.get(q.qid)
         if a is None or (only is not None and q.qid not in only):
             continue
-        q.answer = a.text
+        q.answer = shown(a)
         linked = [by_fid[i] for i in q.finding_ids if i in by_fid and by_fid[i].status == "open"]
         if a.kind == "option":
             close = [f for f in linked if same_question(q, f)]

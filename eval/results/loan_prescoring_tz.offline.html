@@ -109,42 +109,46 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 </ol></details></nav>
 <main class="doc"><article class="sheet">
 <h1>Отчёт о статической проверке требований</h1>
-<p><strong>Документ:</strong> <code>loan_prescoring_tz.txt</code> · проверен 26.11.2026 07:23 (UTC+05:00) · без модели — только автоматические правила</p>
+<p><strong>Документ:</strong> <code>loan_prescoring_tz.txt</code> · проверен 27.11.2026 09:21 (UTC+05:00) · без модели — только автоматические правила</p>
 <blockquote class="verdict verdict-conditional">
 <p><strong>Итог:</strong> ⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (итог предварительный)<br>
-Замечаний 7: блокеров 0 · существенных 3 · мелких 4 · вопросов автору 7 · требований 56<br>
-Индекс готовности документа: <strong>92 из 100</strong> — готов, предварительно. Вердикт определяют блокеры, а не индекс.<br>
+Замечаний 8: блокеров 0 · существенных 3 · мелких 5 · вопросов автору 8 · требований 56<br>
+✅ Можно отдавать в разработку: блокеров нет (предварительно).<br>
+⛔ Пока нельзя отдавать в тестирование: критерии не названы по требованиям, долю покрытия не посчитать (предварительно).<br>
+Индекс готовности документа: <strong>91 из 100</strong> — готов, предварительно. Вердикт определяют блокеры, а не индекс.<br>
 ⚠️ Без модели смысл не проверялся: противоречия и пропущенные сценарии не искались.</p>
 </blockquote>
-<p><strong>Блокеров нет.</strong> Существенных замечаний: 3 — <a href="#d-003">D-003</a>, <a href="#d-005">D-005</a>, <a href="#d-006">D-006</a>.</p>
+<p><strong>Блокеров нет.</strong> Существенных замечаний: 3 — <a href="#d-004">D-004</a>, <a href="#d-006">D-006</a>, <a href="#d-007">D-007</a>.</p>
 <p><strong>Сначала спросить автора:</strong></p>
 <ol>
 <li><a href="#v-01">В-01</a> В каких единицах хранить, передавать и сравнивать суммы? — индекс +4</li>
-<li><a href="#v-04">В-04</a> Что имелось в виду под «раздел 9.4»? — индекс +2</li>
 <li><a href="#v-02">В-02</a> Для какой доли случаев и при какой нагрузке должен выполняться срок «не… — индекс +1</li>
 <li><a href="#v-03">В-03</a> Что конкретно означает «быстро» в этом требовании? — индекс +1</li>
-<li><a href="#v-05">В-05</a> Какую версию и дату присвоить документу? — индекс +1</li>
+<li><a href="#v-04">В-04</a> Какую версию и дату присвоить документу? — индекс +1</li>
+<li><a href="#v-05">В-05</a> Как в документе определяется понятие «стабильный доход»? — индекс +1</li>
 </ol>
 <p><strong>Что исправить в первую очередь:</strong></p>
 <ol>
-<li>Денежные суммы в разных единицах: тиын и тенге. Выберите одну единицу для… (<a href="#d-003">D-003</a>)</li>
-<li>Ограничение по времени без условий измерения. Допишите условия измерения: «не… (<a href="#d-005">D-005</a>)</li>
-<li>Размытая формулировка: «быстро». Замените «быстро» проверяемым условием… (<a href="#d-006">D-006</a>)</li>
+<li>Денежные суммы в разных единицах: тиын и тенге. Выберите одну единицу для… (<a href="#d-004">D-004</a>)</li>
+<li>Ограничение по времени без условий измерения. Допишите условия измерения: «не… (<a href="#d-006">D-006</a>)</li>
+<li>Размытая формулировка: «быстро». Замените «быстро» проверяемым условием… (<a href="#d-007">D-007</a>)</li>
 </ol>
-<p>Прогон: 0,1 с · $0, модель не вызывалась.</p>
+<p>Прогон: 0,2 с · $0, модель не вызывалась.</p>
 <p><strong>Разделы:</strong> <a href="#s1">1. Паспорт прогона</a> · <a href="#s2">2. Как агент нарезал требования</a> · <a href="#s3">3. Проверка каждого требования</a> · <a href="#s4">4. Проверка всего набора требований</a> · <a href="#s5">5. Сводка</a> · <a href="#s6">6. Итог</a> · <a href="#s7">7. Уточняющие вопросы к автору ТЗ</a> · <a href="#s8">8. Черновики приёмочных тестов</a> · <a href="#app">Приложение. Как получен отчёт</a></p>
 <p>Полные карточки с цитатами, разбор по каждому требованию, карта полноты и вопросы с вариантами ответов — в файле <code>loan_prescoring_tz.offline.details.md</code>.</p>
 <h2 id="s1">1. Паспорт прогона</h2>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Поле</th><th class="a-left">Значение</th></tr></thead><tbody>
 <tr><td class="a-left">Документ</td><td class="a-left"><code>loan_prescoring_tz.txt</code> · обычный текст · 10,0 КБ · 128 строк · 811 слов · SHA-256 <code>00859c30b2d9</code> · «ТЕХНИЧЕСКОЕ ЗАДАНИЕ»</td></tr>
-<tr><td class="a-left">Дата и время прогона</td><td class="a-left">26.11.2026 07:23 (UTC+05:00)</td></tr>
+<tr><td class="a-left">Дата и время прогона</td><td class="a-left">27.11.2026 09:21 (UTC+05:00)</td></tr>
 <tr><td class="a-left">Модель</td><td class="a-left">без модели</td></tr>
-<tr><td class="a-left">Версия агента</td><td class="a-left">v1.0.0 (тег <code>v1.1.2</code>) · коммит <code>9744508</code> · набор правил 1.1</td></tr>
+<tr><td class="a-left">SHA-256 документа</td><td class="a-left"><code>00859c30b2d9358d35311db2e668af8ab9874d51d83ade7b53af7dc1888da2b0</code></td></tr>
+<tr><td class="a-left">Набор правил</td><td class="a-left">версия 1.2</td></tr>
+<tr><td class="a-left">Версия агента</td><td class="a-left">v1.4.0 · коммит <code>c699fc4</code> + незакоммиченные правки · набор правил 1.2</td></tr>
 <tr><td class="a-left">Режим</td><td class="a-left">без модели: только автоматические правила</td></tr>
 <tr><td class="a-left">Вёрстка отчёта</td><td class="a-left">2: короткий отчёт и файл подробностей</td></tr>
-<tr><td class="a-left">Время анализа</td><td class="a-left">0,1 с</td></tr>
+<tr><td class="a-left">Время анализа</td><td class="a-left">0,2 с</td></tr>
 <tr><td class="a-left">Стоимость прогона</td><td class="a-left">$0 (модель не вызывалась)</td></tr>
-<tr><td class="a-left">Проверка цитат</td><td class="a-left">подтверждено 12, отброшено 0</td></tr>
+<tr><td class="a-left">Проверка цитат</td><td class="a-left">подтверждено 13, отброшено 0</td></tr>
 <tr><td class="a-left">Перепроверка</td><td class="a-left">не выполнялась (без модели)</td></tr>
 <tr><td class="a-left">Защита данных</td><td class="a-left">значений, похожих на номера карт, ИИН/БИН, адреса почты или телефоны, не найдено</td></tr>
 </tbody></table></div>
@@ -220,33 +224,36 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
 <a id="s3-matrix"></a><p><strong>Матрица «требование × критерий»</strong></p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-center">Полнота</th><th class="a-center">Однозн.</th><th class="a-center">Непротив.</th><th class="a-center">Провер.</th><th class="a-center">Реализ.</th><th class="a-center">Необх.</th><th class="a-center">Атом.</th><th class="a-right">Ясность</th></tr></thead><tbody>
-<tr><td class="a-left"><a href="#req-001">REQ-001</a> 1.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-035">REQ-035</a> 6.4</td><td class="a-center"><a href="#d-002">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,2</td></tr>
-<tr><td class="a-left"><a href="#req-046">REQ-046</a> 8.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
-<tr><td class="a-left"><a href="#req-048">REQ-048</a> 8.3</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-004">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
-<tr><td class="a-left"><a href="#req-049">REQ-049</a> 9.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
-<tr><td class="a-left"><a href="#req-050">REQ-050</a> 9.2</td><td class="a-center">❔</td><td class="a-center"><a href="#d-006">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+<tr><td class="a-left"><a href="#req-001">REQ-001</a> 1.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-004">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-015">REQ-015</a> 3.5</td><td class="a-center">❔</td><td class="a-center"><a href="#d-002">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
+<tr><td class="a-left"><a href="#req-035">REQ-035</a> 6.4</td><td class="a-center"><a href="#d-003">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,2</td></tr>
+<tr><td class="a-left"><a href="#req-046">REQ-046</a> 8.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-004">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">8,8</td></tr>
+<tr><td class="a-left"><a href="#req-048">REQ-048</a> 8.3</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-005">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">9,6</td></tr>
+<tr><td class="a-left"><a href="#req-049">REQ-049</a> 9.1</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center"><a href="#d-006">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
+<tr><td class="a-left"><a href="#req-050">REQ-050</a> 9.2</td><td class="a-center">❔</td><td class="a-center"><a href="#d-007">⚠️</a></td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-center">❔</td><td class="a-right">7,5</td></tr>
 </tbody></table></div>
-<p>Не проверены ни по одному критерию (во всех клетках было бы ❔): 50 требований — <a href="#req-002">REQ-002</a>, <a href="#req-003">REQ-003</a>, <a href="#req-004">REQ-004</a>, <a href="#req-005">REQ-005</a>, <a href="#req-006">REQ-006</a>, <a href="#req-007">REQ-007</a>, <a href="#req-008">REQ-008</a>, <a href="#req-009">REQ-009</a>, <a href="#req-010">REQ-010</a>, <a href="#req-011">REQ-011</a>, <a href="#req-012">REQ-012</a>, <a href="#req-013">REQ-013</a>, <a href="#req-014">REQ-014</a>, <a href="#req-015">REQ-015</a>, <a href="#req-016">REQ-016</a>, <a href="#req-017">REQ-017</a>, <a href="#req-018">REQ-018</a>, <a href="#req-019">REQ-019</a>, <a href="#req-020">REQ-020</a>, <a href="#req-021">REQ-021</a>, <a href="#req-022">REQ-022</a>, <a href="#req-023">REQ-023</a>, <a href="#req-024">REQ-024</a>, <a href="#req-025">REQ-025</a>, <a href="#req-026">REQ-026</a>, <a href="#req-027">REQ-027</a>, <a href="#req-028">REQ-028</a>, <a href="#req-029">REQ-029</a>, <a href="#req-030">REQ-030</a>, <a href="#req-031">REQ-031</a>, <a href="#req-032">REQ-032</a>, <a href="#req-033">REQ-033</a>, <a href="#req-034">REQ-034</a>, <a href="#req-036">REQ-036</a>, <a href="#req-037">REQ-037</a>, <a href="#req-038">REQ-038</a>, <a href="#req-039">REQ-039</a>, <a href="#req-040">REQ-040</a>, <a href="#req-041">REQ-041</a>, <a href="#req-042">REQ-042</a>, <a href="#req-043">REQ-043</a>, <a href="#req-044">REQ-044</a>, <a href="#req-045">REQ-045</a>, <a href="#req-047">REQ-047</a>, <a href="#req-051">REQ-051</a>, <a href="#req-052">REQ-052</a>, <a href="#req-053">REQ-053</a>, <a href="#req-054">REQ-054</a>, <a href="#req-055">REQ-055</a>, <a href="#req-056">REQ-056</a>.</p>
-<p>Пустых клеток (не проверено): 386.</p>
+<p>Не проверены ни по одному критерию (во всех клетках было бы ❔): 49 требований — <a href="#req-002">REQ-002</a>, <a href="#req-003">REQ-003</a>, <a href="#req-004">REQ-004</a>, <a href="#req-005">REQ-005</a>, <a href="#req-006">REQ-006</a>, <a href="#req-007">REQ-007</a>, <a href="#req-008">REQ-008</a>, <a href="#req-009">REQ-009</a>, <a href="#req-010">REQ-010</a>, <a href="#req-011">REQ-011</a>, <a href="#req-012">REQ-012</a>, <a href="#req-013">REQ-013</a>, <a href="#req-014">REQ-014</a>, <a href="#req-016">REQ-016</a>, <a href="#req-017">REQ-017</a>, <a href="#req-018">REQ-018</a>, <a href="#req-019">REQ-019</a>, <a href="#req-020">REQ-020</a>, <a href="#req-021">REQ-021</a>, <a href="#req-022">REQ-022</a>, <a href="#req-023">REQ-023</a>, <a href="#req-024">REQ-024</a>, <a href="#req-025">REQ-025</a>, <a href="#req-026">REQ-026</a>, <a href="#req-027">REQ-027</a>, <a href="#req-028">REQ-028</a>, <a href="#req-029">REQ-029</a>, <a href="#req-030">REQ-030</a>, <a href="#req-031">REQ-031</a>, <a href="#req-032">REQ-032</a>, <a href="#req-033">REQ-033</a>, <a href="#req-034">REQ-034</a>, <a href="#req-036">REQ-036</a>, <a href="#req-037">REQ-037</a>, <a href="#req-038">REQ-038</a>, <a href="#req-039">REQ-039</a>, <a href="#req-040">REQ-040</a>, <a href="#req-041">REQ-041</a>, <a href="#req-042">REQ-042</a>, <a href="#req-043">REQ-043</a>, <a href="#req-044">REQ-044</a>, <a href="#req-045">REQ-045</a>, <a href="#req-047">REQ-047</a>, <a href="#req-051">REQ-051</a>, <a href="#req-052">REQ-052</a>, <a href="#req-053">REQ-053</a>, <a href="#req-054">REQ-054</a>, <a href="#req-055">REQ-055</a>, <a href="#req-056">REQ-056</a>.</p>
+<p>Пустых клеток (не проверено): 385.</p>
 <p><strong>Замечания к отдельным требованиям (3): блокеров 0 · существенных 2 · мелких 1</strong></p>
-<div class="card card-major"><a id="d-005"></a>
-<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
+<div class="card card-major"><a id="d-006"></a>
+<p><strong>D-006 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
 <ul>
 <li>Где: строка 108, <a href="#req-049">REQ-049</a>: «Время ответа модуля — не более 2 секунд»</li>
-<li>Как исправить: Допишите условия измерения: «не более 2 секунд для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан. · вопрос автору <a href="#v-02">В-02</a>; <a href="#x-d-005">подробно</a></li>
+<li>Как исправить: Допишите условия измерения: «не более 2 секунд для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан. · вопрос автору <a href="#v-02">В-02</a>; <a href="#x-d-006">подробно</a></li>
+<li>Как найдено: правило без модели: «Срок без доли случаев и нагрузки» (<code>time-without-conditions</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым</li>
 </ul>
 </div>
-<div class="card card-major"><a id="d-006"></a>
-<p><strong>D-006 · 🟡 <span class="sev sev-major">MAJOR</span> · Однозначность.</strong> Размытая формулировка: «быстро»</p>
+<div class="card card-major"><a id="d-007"></a>
+<p><strong>D-007 · 🟡 <span class="sev sev-major">MAJOR</span> · Однозначность.</strong> Размытая формулировка: «быстро»</p>
 <ul>
 <li>Где: строка 109, <a href="#req-050">REQ-050</a>: «Модуль должен работать быстро и не создавать неудобств клиенту»</li>
-<li>Как исправить: Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется. · вопрос автору <a href="#v-03">В-03</a>; <a href="#x-d-006">подробно</a></li>
+<li>Как исправить: Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется. · вопрос автору <a href="#v-03">В-03</a>; <a href="#x-d-007">подробно</a></li>
+<li>Как найдено: правило без модели: «Размытые слова без измеримого значения» (<code>vague-word</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть расплывчатых и субъективных слов</li>
 </ul>
 <p>Мелкие замечания (1):</p>
 </div>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="d-002"></a>D-002 · Полнота</td><td class="a-left">строка 81, <a href="#req-035">REQ-035</a></td><td class="a-left">Заглушка вместо значения: «TBD»</td></tr>
+<tr><td class="a-left"><a id="d-003"></a>D-003 · Полнота</td><td class="a-left">строка 81, <a href="#req-035">REQ-035</a></td><td class="a-left">Заглушка вместо значения: «TBD»</td></tr>
 </tbody></table></div>
 <p>Цитаты, ход перепроверки и разбор по каждому требованию — в файле <code>loan_prescoring_tz.offline.details.md</code>, раздел А.</p>
 <h2 id="s4">4. Проверка всего набора требований</h2>
@@ -254,24 +261,28 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <h3>4.1 Полнота набора</h3>
 <p>Мелкие замечания (1):</p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="d-007"></a>D-007 · Полнота набора</td><td class="a-left">строки 122, 124</td><td class="a-left">Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена</td></tr>
+<tr><td class="a-left"><a id="d-008"></a>D-008 · Полнота набора</td><td class="a-left">строки 122, 124</td><td class="a-left">Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена</td></tr>
 </tbody></table></div>
 <h3>4.2 Взаимная непротиворечивость</h3>
-<div class="card card-major"><a id="d-003"></a>
-<p><strong>D-003 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
+<div class="card card-major"><a id="d-004"></a>
+<p><strong>D-004 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
 <ul>
 <li>Где: строки 15, 102, <a href="#req-046">REQ-046</a>, <a href="#req-001">REQ-001</a>: «Сумма кредита передаётся в тиынах»</li>
-<li>Как исправить: Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт. · вопрос автору <a href="#v-01">В-01</a>; <a href="#x-d-003">подробно</a></li>
+<li>Как исправить: Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт. · вопрос автору <a href="#v-01">В-01</a>; <a href="#x-d-004">подробно</a></li>
+<li>Как найдено: правило без модели: «Одна величина в разных единицах без правила пересчёта» (<code>unit-mix</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
 </ul>
 <p>Мелкие замечания (1):</p>
 </div>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="d-004"></a>D-004 · Взаимная непротиворечивость</td><td class="a-left">строка 104, <a href="#req-048">REQ-048</a></td><td class="a-left">Ссылка на несуществующий объект: раздел 9.4</td></tr>
+<tr><td class="a-left"><a id="d-005"></a>D-005 · Взаимная непротиворечивость</td><td class="a-left">строка 104, <a href="#req-048">REQ-048</a></td><td class="a-left">Ссылка на несуществующий объект: раздел 9.4</td></tr>
 </tbody></table></div>
 <h3>4.3 Реализуемость, стандарты и безопасность</h3>
 <p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
 <h3>4.4 Понятность и термины</h3>
-<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<p>Мелкие замечания (1):</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
+<tr><td class="a-left"><a id="d-002"></a>D-002 · Понятность и термины</td><td class="a-left">строка 42, <a href="#req-015">REQ-015</a></td><td class="a-left">Условие зависит от неопределённого понятия: «стабильный доход»</td></tr>
+</tbody></table></div>
 <h3>4.5 Прослеживаемость</h3>
 <p>Мелкие замечания (1):</p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Замечание</th><th class="a-left">Где</th><th class="a-left">Что не так</th></tr></thead><tbody>
@@ -290,55 +301,57 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <h2 id="s5">5. Сводка</h2>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Показатель</th><th class="a-right">Значение</th></tr></thead><tbody>
 <tr><td class="a-left">Требований всего</td><td class="a-right">56</td></tr>
-<tr><td class="a-left">— без замечаний</td><td class="a-right">50</td></tr>
-<tr><td class="a-left">— с замечаниями</td><td class="a-right">6</td></tr>
-<tr><td class="a-left">Замечаний всего</td><td class="a-right">7</td></tr>
+<tr><td class="a-left">— без замечаний</td><td class="a-right">49</td></tr>
+<tr><td class="a-left">— с замечаниями</td><td class="a-right">7</td></tr>
+<tr><td class="a-left">Замечаний всего</td><td class="a-right">8</td></tr>
 <tr><td class="a-left">— 🔴 <span class="sev sev-critical">CRITICAL</span> (блокеры)</td><td class="a-right">0</td></tr>
 <tr><td class="a-left">— 🟡 <span class="sev sev-major">MAJOR</span> (существенные)</td><td class="a-right">3</td></tr>
-<tr><td class="a-left">— 🟢 <span class="sev sev-minor">MINOR</span> (мелкие)</td><td class="a-right">4</td></tr>
+<tr><td class="a-left">— 🟢 <span class="sev sev-minor">MINOR</span> (мелкие)</td><td class="a-right">5</td></tr>
 <tr><td class="a-left">Наблюдений (на итог не влияют)</td><td class="a-right">3</td></tr>
-<tr><td class="a-left">Вопросов автору</td><td class="a-right">7</td></tr>
+<tr><td class="a-left">Вопросов автору</td><td class="a-right">8</td></tr>
 <tr><td class="a-left">Контрольных вопросов к документу</td><td class="a-right">35, из них пробелов 0</td></tr>
 <tr><td class="a-left">Тестов можно написать уже сейчас</td><td class="a-right">19</td></tr>
 <tr><td class="a-left">Тестов нельзя написать без ответа автора</td><td class="a-right">2</td></tr>
 </tbody></table></div>
 <p><strong>Замечания по критериям качества</strong></p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Критерий</th><th class="a-right">Замечаний</th><th class="a-left">Основание</th></tr></thead><tbody>
-<tr><td class="a-left">Полнота</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
-<tr><td class="a-left">Однозначность</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Unambiguous), IEEE 830-1998 п. 4.3.2</td></tr>
-<tr><td class="a-left">Проверяемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.5 (Verifiable), IEEE 830-1998 п. 4.3.6</td></tr>
-<tr><td class="a-left">Полнота набора</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Complete), IEEE 830-1998 п. 4.3.3</td></tr>
-<tr><td class="a-left">Взаимная непротиворечивость</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018 п. 5.2.6 (Consistent), IEEE 830-1998 п. 4.3.4</td></tr>
-<tr><td class="a-left">Прослеживаемость</td><td class="a-right">1</td><td class="a-left">IEEE 830-1998 п. 4.3.8 (Traceable)</td></tr>
+<tr><td class="a-left">Полнота</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть полным</td></tr>
+<tr><td class="a-left">Однозначность</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть однозначным</td></tr>
+<tr><td class="a-left">Проверяемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым</td></tr>
+<tr><td class="a-left">Полнота набора</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</td></tr>
+<tr><td class="a-left">Взаимная непротиворечивость</td><td class="a-right">2</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</td></tr>
+<tr><td class="a-left">Понятность и термины</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть понятным</td></tr>
+<tr><td class="a-left">Прослеживаемость</td><td class="a-right">1</td><td class="a-left">ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен допускать проверку на соответствие потребности</td></tr>
 </tbody></table></div>
 <p><strong>Индекс готовности документа</strong></p>
-<p><strong>92 из 100 — готов</strong> (предварительно: применены только правила). Шкала: 85 и выше — готов, 60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов.</p>
-<p>Как посчитан: 10 × 9,85 (средняя ясность 56 треб.) − 6 (штраф за замечания к набору: 8×0 + 3×1 + 1×3 = 6) = 92. Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
+<p><strong>91 из 100 — готов</strong> (предварительно: применены только правила). Шкала: 85 и выше — готов, 60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов.</p>
+<p>Как посчитан: 10 × 9,84 (средняя ясность 56 треб.) − 7 (штраф за замечания к набору: 8×0 + 3×1 + 1×4 = 7) = 91. Ясность — 10 минус вес замечаний, которые называют требование: блокер 6,5, существенное 2,5, мелкое 0,75 (замечание к набору — вдвое меньше); не ниже 1, а без блокера не ниже 4.</p>
 <p>Требования по ясности: ясное — 52 · есть замечания — 4 · нужна доработка — 0 · в таком виде использовать нельзя — 0.</p>
-<p>Плотность: 0,12 дефекта на одно требование · 8,6 на 1000 слов документа. Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.</p>
+<p>Плотность: 0,14 дефекта на одно требование · 9,9 на 1000 слов документа. Вердикт определяют блокеры, а не индекс: индекс показывает, сколько работы осталось.</p>
 <p><strong>Критичные дефекты:</strong> нет.</p>
-<p><strong>Время и стоимость:</strong> 0,1 с, $0 (модель не вызывалась).</p>
+<p><strong>Время и стоимость:</strong> 0,2 с, $0 (модель не вызывалась).</p>
 <h2 id="s6">6. Итог</h2>
 <p><strong>⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (модель не использовалась: проверены только автоматические правила, итог предварительный)</strong></p>
 <p>Блокеров нет, но есть 3 существенных замечания: без ответов автора разработчик и тестировщик могут понять эти места по-разному. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.</p>
 <p><strong>Что исправить в первую очередь</strong></p>
 <ol>
-<li>Денежные суммы в разных единицах: тиын и тенге. (<a href="#d-003">D-003</a>)</li>
-<li>Ограничение по времени без условий измерения. (<a href="#d-005">D-005</a>)</li>
-<li>Размытая формулировка: «быстро». (<a href="#d-006">D-006</a>)</li>
+<li>Денежные суммы в разных единицах: тиын и тенге. (<a href="#d-004">D-004</a>)</li>
+<li>Ограничение по времени без условий измерения. (<a href="#d-006">D-006</a>)</li>
+<li>Размытая формулировка: «быстро». (<a href="#d-007">D-007</a>)</li>
 </ol>
 <p><strong>Что в документе уже хорошо</strong></p>
 <p>Без модели сильные стороны документа не оцениваются.</p>
 <h2 id="s7">7. Уточняющие вопросы к автору ТЗ</h2>
-<p>7 вопросов составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
-<div class="tablewrap"><table><thead><tr><th class="a-left">№</th><th class="a-left">Вопрос</th><th class="a-left">Кому</th><th class="a-left">Приоритет</th><th class="a-left">К замечаниям</th></tr></thead><tbody>
-<tr><td class="a-left"><a id="v-01"></a>В-01</td><td class="a-left">В каких единицах хранить, передавать и сравнивать суммы?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-003">D-003</a></td></tr>
-<tr><td class="a-left"><a id="v-02"></a>В-02</td><td class="a-left">Для какой доли случаев и при какой нагрузке должен выполняться срок «не более 2 секунд»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">важный</td><td class="a-left"><a href="#d-005">D-005</a></td></tr>
-<tr><td class="a-left"><a id="v-03"></a>В-03</td><td class="a-left">Что конкретно означает «быстро» в этом требовании?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">важный</td><td class="a-left"><a href="#d-006">D-006</a></td></tr>
-<tr><td class="a-left"><a id="v-04"></a>В-04</td><td class="a-left">Что имелось в виду под «раздел 9.4»?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-004">D-004</a></td></tr>
-<tr><td class="a-left"><a id="v-05"></a>В-05</td><td class="a-left">Какую версию и дату присвоить документу?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-001">D-001</a></td></tr>
-<tr><td class="a-left"><a id="v-06"></a>В-06</td><td class="a-left">Чем заменить заглушку «TBD»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-002">D-002</a></td></tr>
-<tr><td class="a-left"><a id="v-07"></a>В-07</td><td class="a-left">Кто должен быть в этой таблице?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-007">D-007</a></td></tr>
+<p>8 вопросов составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
+<div class="tablewrap"><table><thead><tr><th class="a-left">№</th><th class="a-left">Вопрос</th><th class="a-left">Кому</th><th class="a-left">Приоритет</th><th class="a-left">К замечаниям</th><th class="a-left">Если автор не ответит, считаем так</th></tr></thead><tbody>
+<tr><td class="a-left"><a id="v-01"></a>В-01</td><td class="a-left">В каких единицах хранить, передавать и сравнивать суммы?</td><td class="a-left">архитектор или разработчик</td><td class="a-left">важный</td><td class="a-left"><a href="#d-004">D-004</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-02"></a>В-02</td><td class="a-left">Для какой доли случаев и при какой нагрузке должен выполняться срок «не более 2 секунд»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">важный</td><td class="a-left"><a href="#d-006">D-006</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-03"></a>В-03</td><td class="a-left">Что конкретно означает «быстро» в этом требовании?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">важный</td><td class="a-left"><a href="#d-007">D-007</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-04"></a>В-04</td><td class="a-left">Какую версию и дату присвоить документу?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-001">D-001</a></td><td class="a-left">версией считаем дату последнего изменения файла</td></tr>
+<tr><td class="a-left"><a id="v-05"></a>В-05</td><td class="a-left">Как в документе определяется понятие «стабильный доход»?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-002">D-002</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-06"></a>В-06</td><td class="a-left">Чем заменить заглушку «TBD»?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-003">D-003</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-07"></a>В-07</td><td class="a-left">Что имелось в виду под «раздел 9.4»?</td><td class="a-left">аналитик — автор документа</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-005">D-005</a></td><td class="a-left">без ответа автора работу по этому пункту начинать нельзя</td></tr>
+<tr><td class="a-left"><a id="v-08"></a>В-08</td><td class="a-left">Кто должен быть в этой таблице?</td><td class="a-left">владелец продукта (бизнес)</td><td class="a-left">желательный</td><td class="a-left"><a href="#d-008">D-008</a></td><td class="a-left">пустую таблицу считаем не входящей в первую версию</td></tr>
 </tbody></table></div>
 <p>Варианты ответа и что изменит каждый — в файле-анкете <code>loan_prescoring_tz.offline.questions.md</code>; вопросы полностью — в файле <code>loan_prescoring_tz.offline.details.md</code>, раздел Г.</p>
 <h2 id="s8">8. Черновики приёмочных тестов</h2>
@@ -352,7 +365,7 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <ol>
 <li>Документ читается и делится на блоки (абзацы, пункты, строки таблиц); номера строк берутся из исходного текста. Значения, похожие на номера карт и ИИН, маскируются до любой обработки.</li>
 <li>Блоки делятся на требования и служебные части эвристикой; номера REQ-… присваивает программа.</li>
-<li>Автоматические правила (набор 1.1: 27 основных и 8 слабых «наблюдений») ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, схемы без веток ошибок, подсадной текст для ИИ.</li>
+<li>Автоматические правила (набор 1.2: 82 основных и 8 слабых «наблюдений») ищут формальные дефекты: размытые слова, заглушки, единицы измерения, коды и методы HTTP, пустые разделы, схемы без веток ошибок, подсадной текст для ИИ.</li>
 <li>Модель не использовалась: проверки по смыслу (противоречия, пропущенные сценарии, пограничные случаи) не выполнялись.</li>
 <li>Каждую цитату программа ищет в тексте документа; замечание без найденной цитаты выбрасывается, в отчёт попадает исходный текст, а не пересказ. Номера, индексы, вердикт и отметки в матрице считает программа; перед записью отчёта она проверяет, что его части не противоречат друг другу.</li>
 </ol>
@@ -375,58 +388,66 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <blockquote>
 <p>1.1. Модуль ПреСкор выполняет предварительную оценку заявки на беззалоговый потребительский кредит в тенге до передачи заявки в основной кредитный конвейер.</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-003">D-003</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-004">D-004</a> 🟡 · прочие без модели не проверялись</p>
+<h3 id="x-req-015">REQ-015 · 3.5 · 3. ТРЕБОВАНИЯ К ЗАЯВИТЕЛЮ И ЗАЯВКЕ · строка 42</h3>
+<blockquote>
+<p>3.5. Заявитель должен иметь стабильный доход и положительную кредитную историю.</p>
+</blockquote>
+<p>Ясность 9,6 — ясное · ⚠️ Однозн. <a href="#x-d-002">D-002</a> 🟢 · прочие без модели не проверялись</p>
 <h3 id="x-req-035">REQ-035 · 6.4 · 6. ОБРАБОТКА ИСКЛЮЧИТЕЛЬНЫХ СИТУАЦИЙ · строка 81</h3>
 <blockquote>
 <p>6.4. Повторная подача заявки после отказа — TBD.</p>
 </blockquote>
-<p>Ясность 9,2 — ясное · ⚠️ Полнота <a href="#x-d-002">D-002</a> 🟢 · прочие без модели не проверялись</p>
-<div class="card card-minor"><a id="x-d-002"></a>
-<p><strong>D-002 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Заглушка вместо значения: «TBD». Вместо содержания стоит заглушка «TBD». Пока значение не определено, эту часть нельзя ни реализовать, ни проверить: каждый подставит своё, и расхождение обнаружится только на приёмке.</p>
+<p>Ясность 9,2 — ясное · ⚠️ Полнота <a href="#x-d-003">D-003</a> 🟢 · прочие без модели не проверялись</p>
+<div class="card card-minor"><a id="x-d-003"></a>
+<p><strong>D-003 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота.</strong> Заглушка вместо значения: «TBD». Вместо содержания стоит заглушка «TBD». Пока значение не определено, эту часть нельзя ни реализовать, ни проверить: каждый подставит своё, и расхождение обнаружится только на приёмке.</p>
 <ul>
 <li>Где: строка 81. Как исправить: Впишите значение. Если оно ещё неизвестно — укажите, кто и к какой дате его определит, и не начинайте работу над этой частью до решения.</li>
-<li>Вопрос автору <a href="#x-v-06">В-06</a>; источник: правило <code>placeholder</code></li>
+<li>Как найдено: правило без модели: «Заглушки вместо значений (TBD, «уточнить», «—»)» (<code>placeholder</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть полным</li>
+<li>Вопрос автору <a href="#x-v-06">В-06</a></li>
 </ul>
 </div>
 <h3 id="x-req-046">REQ-046 · 8.1 · 8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ · строка 102</h3>
 <blockquote>
 <p>8.1. Фронт-системы вызывают модуль синхронно. Сумма кредита передаётся в тиынах.</p>
 </blockquote>
-<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-003">D-003</a> 🟡 · прочие без модели не проверялись</p>
+<p>Ясность 8,8 — есть замечания · ⚠️ Непротив. <a href="#x-d-004">D-004</a> 🟡 · прочие без модели не проверялись</p>
 <h3 id="x-req-048">REQ-048 · 8.3 · 8. ТРЕБОВАНИЯ К ИНТЕГРАЦИИ · строка 104</h3>
 <blockquote>
 <p>8.3. Формат обмена и коды ошибок — см. п. 9.4.</p>
 </blockquote>
-<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#x-d-004">D-004</a> 🟢 · прочие без модели не проверялись</p>
+<p>Ясность 9,6 — ясное · ⚠️ Непротив. <a href="#x-d-005">D-005</a> 🟢 · прочие без модели не проверялись</p>
 <h3 id="x-req-049">REQ-049 · 9.1 · 9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ · строка 108</h3>
 <blockquote>
 <p>9.1. Время ответа модуля — не более 2 секунд.</p>
 </blockquote>
-<p>Ясность 7,5 — есть замечания · ⚠️ Провер. <a href="#x-d-005">D-005</a> 🟡 · прочие без модели не проверялись</p>
-<div class="card card-major"><a id="x-d-005"></a>
-<p><strong>D-005 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
+<p>Ясность 7,5 — есть замечания · ⚠️ Провер. <a href="#x-d-006">D-006</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="x-d-006"></a>
+<p><strong>D-006 · 🟡 <span class="sev sev-major">MAJOR</span> · Проверяемость.</strong> Ограничение по времени без условий измерения</p>
 <p>Задан срок «не более 2 секунд», но не сказано, для какой доли случаев он должен выполняться (например, 95% или 99%), при какой нагрузке и от какого до какого момента его считать. Если хотя бы один случай окажется дольше, разработчик скажет, что требование выполнено, а тестировщик — что нет.</p>
 <ul>
 <li>Цитата: строка 108</li>
 <li>Как исправить: Допишите условия измерения: «не более 2 секунд для 95% событий при нагрузке до N событий в секунду; время считается от &lt;момента начала&gt; до &lt;момента окончания&gt;», и что делать, если срок не выдержан.</li>
-<li>Вопрос автору <a href="#x-v-02">В-02</a>; источник: правило <code>time-without-conditions</code></li>
+<li>Как найдено: правило без модели: «Срок без доли случаев и нагрузки» (<code>time-without-conditions</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым</li>
+<li>Вопрос автору <a href="#x-v-02">В-02</a></li>
 </ul>
 </div>
 <h3 id="x-req-050">REQ-050 · 9.2 · 9. НЕФУНКЦИОНАЛЬНЫЕ ТРЕБОВАНИЯ · строка 109</h3>
 <blockquote>
 <p>9.2. Модуль должен работать быстро и не создавать неудобств клиенту.</p>
 </blockquote>
-<p>Ясность 7,5 — есть замечания · ⚠️ Однозн. <a href="#x-d-006">D-006</a> 🟡 · прочие без модели не проверялись</p>
-<div class="card card-major"><a id="x-d-006"></a>
-<p><strong>D-006 · 🟡 <span class="sev sev-major">MAJOR</span> · Однозначность.</strong> Размытая формулировка: «быстро»</p>
+<p>Ясность 7,5 — есть замечания · ⚠️ Однозн. <a href="#x-d-007">D-007</a> 🟡 · прочие без модели не проверялись</p>
+<div class="card card-major"><a id="x-d-007"></a>
+<p><strong>D-007 · 🟡 <span class="sev sev-major">MAJOR</span> · Однозначность.</strong> Размытая формулировка: «быстро»</p>
 <p>Слово «быстро» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.</p>
 <ul>
 <li>Цитата: строка 109</li>
 <li>Как исправить: Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.</li>
-<li>Вопрос автору <a href="#x-v-03">В-03</a>; источник: правило <code>vague-word</code></li>
+<li>Как найдено: правило без модели: «Размытые слова без измеримого значения» (<code>vague-word</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть расплывчатых и субъективных слов</li>
+<li>Вопрос автору <a href="#x-v-03">В-03</a></li>
 </ul>
 </div>
-<a id="x-s3-clean"></a><p><strong>Требования без замечаний (50)</strong></p>
+<a id="x-s3-clean"></a><p><strong>Требования без замечаний (49)</strong></p>
 <div class="tablewrap"><table><thead><tr><th class="a-left">Требование</th><th class="a-left">Где</th><th class="a-left">Начало текста (полностью — в <a href="#s2">разделе 2</a>)</th></tr></thead><tbody>
 <tr><td class="a-left"><a id="x-req-002"></a>REQ-002 1.2</td><td class="a-left">строки 17–18</td><td class="a-left">1.2. Цель доработки — снизить число…</td></tr>
 <tr><td class="a-left"><a id="x-req-003"></a>REQ-003 1.3</td><td class="a-left">строка 19</td><td class="a-left">1.3. Каналы подачи заявки: мобильное…</td></tr>
@@ -441,7 +462,6 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <tr><td class="a-left"><a id="x-req-012"></a>REQ-012 3.2</td><td class="a-left">строки 36–37</td><td class="a-left">3.2. Запрашиваемая сумма — от 100 000…</td></tr>
 <tr><td class="a-left"><a id="x-req-013"></a>REQ-013 3.3</td><td class="a-left">строки 38–39</td><td class="a-left">3.3. Среднемесячный доход за последние…</td></tr>
 <tr><td class="a-left"><a id="x-req-014"></a>REQ-014 3.4</td><td class="a-left">строки 40–41</td><td class="a-left">3.4. КДН с учётом запрашиваемого…</td></tr>
-<tr><td class="a-left"><a id="x-req-015"></a>REQ-015 3.5</td><td class="a-left">строка 42</td><td class="a-left">3.5. Заявитель должен иметь стабильный…</td></tr>
 <tr><td class="a-left"><a id="x-req-016"></a>REQ-016 3.6</td><td class="a-left">строки 43–44</td><td class="a-left">3.6. Наличие в кредитном отчёте…</td></tr>
 <tr><td class="a-left"><a id="x-req-017"></a>REQ-017 3.7</td><td class="a-left">строки 45–46</td><td class="a-left">3.7. КДН округляется до двух знаков…</td></tr>
 <tr><td class="a-left"><a id="x-req-018"></a>REQ-018 4.1</td><td class="a-left">строки 50–51</td><td class="a-left">4.1. Модуль проверяет стоп-факторы…</td></tr>
@@ -481,16 +501,17 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 </tbody></table></div>
 <h2 id="x-part-b">Б. Замечания к набору требований</h2>
 <h3>4.1 Полнота набора</h3>
-<div class="card card-minor"><a id="x-d-007"></a>
-<p><strong>D-007 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена. В таблице перечислены участники, но нет ни ФИО, ни подписей, ни дат. Это таблица согласования: документ формально никем не согласован, и непонятно, кто отвечает за требования и чья редакция действует.</p>
+<div class="card card-minor"><a id="x-d-008"></a>
+<p><strong>D-008 · 🟢 <span class="sev sev-minor">MINOR</span> · Полнота набора.</strong> Таблица в разделе «11. СОГЛАСОВАНИЕ» не заполнена. В таблице перечислены участники, но нет ни ФИО, ни подписей, ни дат. Это таблица согласования: документ формально никем не согласован, и непонятно, кто отвечает за требования и чья редакция действует.</p>
 <ul>
 <li>Где: строка 122: «СОГЛАСОВАНИЕ»; строка 124: «Подразделение ФИО Дата». Как исправить: Заполните таблицу: укажите подразделения, ФИО ответственных и дату согласования.</li>
-<li>Вопрос автору <a href="#x-v-07">В-07</a>; источник: правило <code>empty-table</code></li>
+<li>Как найдено: правило без модели: «Незаполненные таблицы» (<code>empty-table</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным</li>
+<li>Вопрос автору <a href="#x-v-08">В-08</a></li>
 </ul>
 </div>
 <h3>4.2 Взаимная непротиворечивость</h3>
-<div class="card card-major"><a id="x-d-003"></a>
-<p><strong>D-003 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
+<div class="card card-major"><a id="x-d-004"></a>
+<p><strong>D-004 · 🟡 <span class="sev sev-major">MAJOR</span> · Взаимная непротиворечивость.</strong> Денежные суммы в разных единицах: тиын и тенге</p>
 <p>Одни суммы заданы в единицах «тиын», другие — в «тенге», а правило пересчёта нигде не записано. Разработчик может сохранить сумму в одних единицах, а сравнить её с порогом в других — ошибка в 100 раз, которую не заметят до первого реального платежа.</p>
 <ul>
 <li>Цитаты:<ul>
@@ -498,26 +519,36 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <li>строки 15–16, <a href="#x-req-001">REQ-001</a>: «Модуль ПреСкор выполняет предварительную оценку заявки на беззалоговый потребительский кредит в тенге до передачи заявки в основной кредитный конвейер»</li>
 </ul></li>
 <li>Как исправить: Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.</li>
-<li>Вопрос автору <a href="#x-v-01">В-01</a>; источник: правило <code>unit-mix</code></li>
+<li>Как найдено: правило без модели: «Одна величина в разных единицах без правила пересчёта» (<code>unit-mix</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-01">В-01</a></li>
 </ul>
 </div>
-<div class="card card-minor"><a id="x-d-004"></a>
-<p><strong>D-004 · 🟢 <span class="sev sev-minor">MINOR</span> · Взаимная непротиворечивость.</strong> Ссылка на несуществующий объект: раздел 9.4. Текст ссылается на «раздел 9.4», но в документе такого нет. Читатель не может открыть то, на что опирается требование, и каждый додумает содержание по-своему.</p>
+<div class="card card-minor"><a id="x-d-005"></a>
+<p><strong>D-005 · 🟢 <span class="sev sev-minor">MINOR</span> · Взаимная непротиворечивость.</strong> Ссылка на несуществующий объект: раздел 9.4. Текст ссылается на «раздел 9.4», но в документе такого нет. Читатель не может открыть то, на что опирается требование, и каждый додумает содержание по-своему.</p>
 <ul>
 <li>Где: строка 104, <a href="#x-req-048">REQ-048</a>: «Формат обмена и коды ошибок — см. п. 9.4». Как исправить: Исправьте ссылку на существующий раздел, таблицу или требование, либо добавьте «раздел 9.4» в документ.</li>
-<li>Вопрос автору <a href="#x-v-04">В-04</a>; источник: правило <code>dangling-reference</code></li>
+<li>Как найдено: правило без модели: «Ссылки на несуществующие разделы, таблицы, требования» (<code>dangling-reference</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым</li>
+<li>Вопрос автору <a href="#x-v-07">В-07</a></li>
 </ul>
 </div>
 <h3>4.3 Реализуемость, стандарты и безопасность</h3>
 <p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
 <h3>4.4 Понятность и термины</h3>
-<p>Правилами нарушений не найдено; без модели этот критерий проверен лишь частично.</p>
+<div class="card card-minor"><a id="x-d-002"></a>
+<p><strong>D-002 · 🟢 <span class="sev sev-minor">MINOR</span> · Понятность и термины.</strong> Условие зависит от неопределённого понятия: «стабильный доход». Правило срабатывает или нет в зависимости от свойства, которое в документе нигде не определено: «стабильный доход». Каждый поймёт его по-своему: разработчик заложит одно условие, тестировщик проверит другое, а клиент увидит третье.</p>
+<ul>
+<li>Где: строка 42, <a href="#x-req-015">REQ-015</a>: «Заявитель должен иметь стабильный доход и положительную кредитную историю». Как исправить: Для каждого понятия добавьте проверяемое определение в разделе «Термины» (например: «Карта считается активной, если по ней была операция за последние 90 дней»).</li>
+<li>Как найдено: правило без модели: «Условие зависит от понятия, которое нигде не определено» (<code>condition-undefined</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть понятным</li>
+<li>Вопрос автору <a href="#x-v-05">В-05</a></li>
+</ul>
+</div>
 <h3>4.5 Прослеживаемость</h3>
 <div class="card card-minor"><a id="x-d-001"></a>
 <p><strong>D-001 · 🟢 <span class="sev sev-minor">MINOR</span> · Прослеживаемость.</strong> В шапке документа не заполнено поле «Дата». В документе версия или дата оставлены незаполненными. Нельзя понять, какая редакция актуальна: замечания ревью, задачи и тесты нельзя привязать к конкретной версии, а изменения требований — отследить.</p>
 <ul>
 <li>Где: строка 8: «Дата: ..2026». Как исправить: Добавьте в начало документа номер версии (например, 1.0), дату, автора и таблицу истории изменений.</li>
-<li>Вопрос автору <a href="#x-v-05">В-05</a>; источник: правило <code>no-version</code></li>
+<li>Как найдено: правило без модели: «Нет версии и даты документа» (<code>no-version</code>). Основание: ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен допускать проверку на соответствие потребности</li>
+<li>Вопрос автору <a href="#x-v-04">В-04</a></li>
 </ul>
 <p>Покрытие требований критериями приёмки строит модель; без неё оно не оценивалось.</p>
 </div>
@@ -531,49 +562,63 @@ h2{border-bottom:1px solid #888;margin-top:1.6em}
 <tr><td class="a-left">IF3. Права доступа в интерфейсе</td><td class="a-left">— не относится</td><td class="a-left">в документе нет описания программного интерфейса</td></tr>
 </tbody></table></div>
 <h2 id="x-part-g">Г. Вопросы автору полностью</h2>
-<p>7 вопросов составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
+<p>8 вопросов составлено по шаблонам автоматических правил. Ответы удобно вписать в файл-анкету рядом с отчётом (<code>*.questions.md</code>): там у каждого вопроса есть варианты ответа.</p>
 <h3>Важные (3)</h3>
 <div class="card"><a id="x-v-01"></a>
-<p><strong>В-01.</strong> В каких единицах хранить, передавать и сравнивать суммы? (кому: архитектор или разработчик; к <a href="#x-d-003">D-003</a>)</p>
+<p><strong>В-01.</strong> В каких единицах хранить, передавать и сравнивать суммы? (кому: архитектор или разработчик; к <a href="#x-d-004">D-004</a>)</p>
 <ul>
-<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 96</li>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 91 → 95</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-02"></a>
-<p><strong>В-02.</strong> Для какой доли случаев и при какой нагрузке должен выполняться срок «не более 2 секунд»? (кому: владелец продукта (бизнес); к <a href="#x-d-005">D-005</a>)</p>
+<p><strong>В-02.</strong> Для какой доли случаев и при какой нагрузке должен выполняться срок «не более 2 секунд»? (кому: владелец продукта (бизнес); к <a href="#x-d-006">D-006</a>)</p>
 <ul>
-<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 91 → 92</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-03"></a>
-<p><strong>В-03.</strong> Что конкретно означает «быстро» в этом требовании? (кому: аналитик — автор документа; к <a href="#x-d-006">D-006</a>)</p>
+<p><strong>В-03.</strong> Что конкретно означает «быстро» в этом требовании? (кому: аналитик — автор документа; к <a href="#x-d-007">D-007</a>)</p>
 <ul>
-<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 91 → 92</li>
 </ul>
 </div>
-<h3>Желательные (4)</h3>
+<h3>Желательные (5)</h3>
 <div class="card"><a id="x-v-04"></a>
-<p><strong>В-04.</strong> Что имелось в виду под «раздел 9.4»? (кому: аналитик — автор документа; к <a href="#x-d-004">D-004</a>)</p>
+<p><strong>В-04.</strong> Какую версию и дату присвоить документу? (кому: аналитик — автор документа; к <a href="#x-d-001">D-001</a>)</p>
 <ul>
-<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 94</li>
+<li>Если автор не ответит, считаем так: версией считаем дату последнего изменения файла.</li>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 91 → 92</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-05"></a>
-<p><strong>В-05.</strong> Какую версию и дату присвоить документу? (кому: аналитик — автор документа; к <a href="#x-d-001">D-001</a>)</p>
+<p><strong>В-05.</strong> Как в документе определяется понятие «стабильный доход»? (кому: аналитик — автор документа; к <a href="#x-d-002">D-002</a>)</p>
 <ul>
-<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 91 → 92</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-06"></a>
-<p><strong>В-06.</strong> Чем заменить заглушку «TBD»? (кому: владелец продукта (бизнес); к <a href="#x-d-002">D-002</a>)</p>
+<p><strong>В-06.</strong> Чем заменить заглушку «TBD»? (кому: владелец продукта (бизнес); к <a href="#x-d-003">D-003</a>)</p>
 <ul>
-<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 91 → 92</li>
 </ul>
 </div>
 <div class="card"><a id="x-v-07"></a>
-<p><strong>В-07.</strong> Кто должен быть в этой таблице? (кому: владелец продукта (бизнес); к <a href="#x-d-007">D-007</a>)</p>
+<p><strong>В-07.</strong> Что имелось в виду под «раздел 9.4»? (кому: аналитик — автор документа; к <a href="#x-d-005">D-005</a>)</p>
 <ul>
-<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 92 → 93</li>
+<li>Если автор не ответит: без ответа автора работу по этому пункту начинать нельзя.</li>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 91 → 92</li>
+</ul>
+</div>
+<div class="card"><a id="x-v-08"></a>
+<p><strong>В-08.</strong> Кто должен быть в этой таблице? (кому: владелец продукта (бизнес); к <a href="#x-d-008">D-008</a>)</p>
+<ul>
+<li>Если автор не ответит, считаем так: пустую таблицу считаем не входящей в первую версию.</li>
+<li>Что изменит ответ в итоге: на вердикт не влияет · индекс готовности 91 → 92</li>
 </ul>
 </div>
 </article></main>

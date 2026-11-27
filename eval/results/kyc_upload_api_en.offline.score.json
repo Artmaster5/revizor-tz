@@ -6,12 +6,15 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.07,
+    "duration_s": 0.14,
     "doc_name": "kyc_upload_api_en.md"
+  },
+  "options": {
+    "absorbed": true
   },
   "counts": {
     "requirements": 44,
-    "findings_open": 7,
+    "findings_open": 8,
     "advisory": 9
   },
   "recall": {
@@ -127,10 +130,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-002"
+        "D-003"
       ],
       "loose_fids": [
-        "D-002"
+        "D-003"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -170,10 +173,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-004"
+        "D-005"
       ],
       "loose_fids": [
-        "D-004"
+        "D-005"
       ],
       "tool_severity": "CRITICAL",
       "severity_agreement": "tool_higher"
@@ -187,10 +190,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-003"
+        "D-004"
       ],
       "loose_fids": [
-        "D-003"
+        "D-004"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -204,10 +207,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-006"
+        "D-007"
       ],
       "loose_fids": [
-        "D-006"
+        "D-007"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -247,10 +250,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-007"
+        "D-008"
       ],
       "loose_fids": [
-        "D-007"
+        "D-008"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -278,7 +281,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-001"
+        "D-002"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -314,7 +317,13 @@
   "false_alarms_exempt": [],
   "unmatched": [
     {
-      "fid": "D-005",
+      "fid": "D-001",
+      "severity": "MINOR",
+      "title": "В интерфейсе не описаны ответы на отказ в доступе или на неизвестный объект",
+      "line": 18
+    },
+    {
+      "fid": "D-006",
       "severity": "MAJOR",
       "title": "Код ответа 202 возвращается, но не описан",
       "line": 78

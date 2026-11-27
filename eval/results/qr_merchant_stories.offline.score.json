@@ -6,43 +6,46 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.08,
+    "duration_s": 0.18,
     "doc_name": "qr_merchant_stories.md"
+  },
+  "options": {
+    "absorbed": true
   },
   "counts": {
     "requirements": 56,
-    "findings_open": 3,
+    "findings_open": 9,
     "advisory": 6
   },
   "recall": {
     "overall": {
       "total": 17,
       "strict": 2,
-      "loose": 3,
+      "loose": 8,
       "strict_share": 0.11764705882352941,
-      "loose_share": 0.17647058823529413
+      "loose_share": 0.47058823529411764
     },
     "by_severity": {
       "CRITICAL": {
         "total": 3,
         "strict": 0,
-        "loose": 1,
+        "loose": 3,
         "strict_share": 0.0,
-        "loose_share": 0.3333333333333333
+        "loose_share": 1.0
       },
       "MAJOR": {
         "total": 9,
         "strict": 2,
-        "loose": 2,
+        "loose": 4,
         "strict_share": 0.2222222222222222,
-        "loose_share": 0.2222222222222222
+        "loose_share": 0.4444444444444444
       },
       "MINOR": {
         "total": 5,
         "strict": 0,
-        "loose": 0,
+        "loose": 1,
         "strict_share": 0.0,
-        "loose_share": 0.0
+        "loose_share": 0.2
       }
     },
     "by_origin": {}
@@ -59,10 +62,12 @@
       "origin": "",
       "title": "Срок зачисления выручки: «в день оплаты» (QR-5) и «на следующий рабочий день» (QR-9)",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-004"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -72,10 +77,12 @@
       "origin": "",
       "title": "Номер телефона покупателя в URL чека, чек открывается без авторизации",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-007"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -89,7 +96,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-002"
+        "D-003"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -113,10 +120,12 @@
       "origin": "",
       "title": "Пример зачисления не соответствует комиссии 0,95%",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-001"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -129,10 +138,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-001"
+        "D-002"
       ],
       "loose_fids": [
-        "D-001"
+        "D-002"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -182,10 +191,12 @@
       "origin": "",
       "title": "Критерий про еженедельную отправку отчёта на e-mail не следует из истории",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-007"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -211,10 +222,11 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-003"
+        "D-008"
       ],
       "loose_fids": [
-        "D-003"
+        "D-008",
+        "D-009"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -277,17 +289,32 @@
       "origin": "",
       "title": "QR-9 записана не в формате истории и дублирует тему QR-5",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-004"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     }
   ],
   "false_alarms": [],
   "false_alarms_exempt": [],
-  "unmatched": [],
+  "unmatched": [
+    {
+      "fid": "D-005",
+      "severity": "MINOR",
+      "title": "Не сказано, входит ли граничный день в срок или период",
+      "line": 66
+    },
+    {
+      "fid": "D-006",
+      "severity": "MINOR",
+      "title": "Срок в днях без указания, какие это дни",
+      "line": 66
+    }
+  ],
   "warnings": [],
   "result_file": "eval/results/qr_merchant_stories.offline.json",
   "key_file": "eval/docs/qr_merchant_stories.md.key.json"

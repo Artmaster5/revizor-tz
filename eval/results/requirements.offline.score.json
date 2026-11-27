@@ -6,66 +6,69 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.08,
+    "duration_s": 0.19,
     "doc_name": "requirements.md"
+  },
+  "options": {
+    "absorbed": true
   },
   "counts": {
     "requirements": 58,
-    "findings_open": 22,
+    "findings_open": 27,
     "advisory": 2
   },
   "recall": {
     "overall": {
       "total": 52,
-      "strict": 14,
-      "loose": 25,
-      "strict_share": 0.2692307692307692,
-      "loose_share": 0.4807692307692308
+      "strict": 19,
+      "loose": 32,
+      "strict_share": 0.36538461538461536,
+      "loose_share": 0.6153846153846154
     },
     "by_severity": {
       "CRITICAL": {
         "total": 5,
         "strict": 3,
-        "loose": 3,
+        "loose": 4,
         "strict_share": 0.6,
-        "loose_share": 0.6
+        "loose_share": 0.8
       },
       "MAJOR": {
         "total": 30,
-        "strict": 5,
-        "loose": 13,
-        "strict_share": 0.16666666666666666,
-        "loose_share": 0.43333333333333335
+        "strict": 10,
+        "loose": 18,
+        "strict_share": 0.3333333333333333,
+        "loose_share": 0.6
       },
       "MINOR": {
         "total": 17,
         "strict": 6,
-        "loose": 9,
+        "loose": 10,
         "strict_share": 0.35294117647058826,
-        "loose_share": 0.5294117647058824
+        "loose_share": 0.5882352941176471
       }
     },
     "by_origin": {
       "organisers": {
         "total": 10,
-        "strict": 7,
-        "loose": 9,
-        "strict_share": 0.7,
-        "loose_share": 0.9
+        "strict": 9,
+        "loose": 10,
+        "strict_share": 0.9,
+        "loose_share": 1.0
       },
       "own": {
         "total": 42,
-        "strict": 7,
-        "loose": 16,
-        "strict_share": 0.16666666666666666,
-        "loose_share": 0.38095238095238093
+        "strict": 10,
+        "loose": 22,
+        "strict_share": 0.23809523809523808,
+        "loose_share": 0.5238095238095238
       }
     }
   },
   "severity_agreement": {
     "same": 13,
     "tool_higher": 1,
-    "tool_lower": 0
+    "tool_lower": 5
   },
   "defects": [
     {
@@ -74,10 +77,12 @@
       "origin": "own",
       "title": "Месяц покупки: по Ф-2 январь, по критерию приёмки февраль",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-006"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -103,11 +108,11 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-010"
+        "D-014"
       ],
       "loose_fids": [
-        "D-010",
-        "D-011"
+        "D-014",
+        "D-015"
       ],
       "tool_severity": "CRITICAL",
       "severity_agreement": "same"
@@ -121,11 +126,11 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-020"
+        "D-025"
       ],
       "loose_fids": [
-        "D-019",
-        "D-020"
+        "D-024",
+        "D-025"
       ],
       "tool_severity": "CRITICAL",
       "severity_agreement": "same"
@@ -139,10 +144,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-005"
+        "D-009"
       ],
       "loose_fids": [
-        "D-005"
+        "D-009"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -152,13 +157,17 @@
       "severity": "MAJOR",
       "origin": "own",
       "title": "Цель «в момент покупки» не сходится с «проведёнными» покупками",
-      "strict": false,
-      "loose": false,
-      "status": "missed",
-      "strict_fids": [],
-      "loose_fids": [],
-      "tool_severity": "",
-      "severity_agreement": ""
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-002"
+      ],
+      "loose_fids": [
+        "D-002"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
     },
     {
       "id": "D-07",
@@ -169,10 +178,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-022"
+        "D-027"
       ],
       "loose_fids": [
-        "D-022"
+        "D-027"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -182,13 +191,17 @@
       "severity": "MAJOR",
       "origin": "own",
       "title": "«Вернуть прежнее состояние» при ошибке: отдать в ответе или откатить запись",
-      "strict": false,
-      "loose": false,
-      "status": "missed",
-      "strict_fids": [],
-      "loose_fids": [],
-      "tool_severity": "",
-      "severity_agreement": ""
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-018"
+      ],
+      "loose_fids": [
+        "D-018"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
     },
     {
       "id": "D-09",
@@ -199,12 +212,12 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-015",
-        "D-016"
+        "D-020",
+        "D-021"
       ],
       "loose_fids": [
-        "D-015",
-        "D-016"
+        "D-020",
+        "D-021"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -218,10 +231,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-017"
+        "D-022"
       ],
       "loose_fids": [
-        "D-017"
+        "D-022"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -235,12 +248,12 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-019"
+        "D-024"
       ],
       "loose_fids": [
-        "D-019",
-        "D-020",
-        "D-021"
+        "D-024",
+        "D-025",
+        "D-026"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "tool_higher"
@@ -255,7 +268,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-020"
+        "D-025"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -270,7 +283,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-010"
+        "D-014"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -298,7 +311,8 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-005"
+        "D-004",
+        "D-009"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -308,28 +322,35 @@
       "severity": "MAJOR",
       "origin": "organisers",
       "title": "Несколько карт, понятие «активная», перевыпуск и блокировка карты",
-      "strict": false,
+      "strict": true,
       "loose": true,
-      "status": "loose",
-      "strict_fids": [],
-      "loose_fids": [
-        "D-005"
+      "status": "strict",
+      "strict_fids": [
+        "D-004"
       ],
-      "tool_severity": "",
-      "severity_agreement": ""
+      "loose_fids": [
+        "D-004",
+        "D-009"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
     },
     {
       "id": "D-17",
       "severity": "MAJOR",
       "origin": "organisers",
       "title": "Возврат за прошлый месяц и частичный возврат не описаны",
-      "strict": false,
-      "loose": false,
-      "status": "missed",
-      "strict_fids": [],
-      "loose_fids": [],
-      "tool_severity": "",
-      "severity_agreement": ""
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-005"
+      ],
+      "loose_fids": [
+        "D-005"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
     },
     {
       "id": "D-18",
@@ -350,10 +371,12 @@
       "origin": "own",
       "title": "Считаются ли расходы при выключенном уведомлении; что при включении в середине месяца",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-002"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -406,7 +429,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-004"
+        "D-008"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -421,7 +444,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-005"
+        "D-009"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -449,7 +472,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-003"
+        "D-007"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -476,10 +499,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-006"
+        "D-010"
       ],
       "loose_fids": [
-        "D-006"
+        "D-010"
       ],
       "tool_severity": "CRITICAL",
       "severity_agreement": "same"
@@ -520,7 +543,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-003"
+        "D-007"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -534,13 +557,13 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-012",
-        "D-013"
+        "D-016",
+        "D-017"
       ],
       "loose_fids": [
-        "D-010",
-        "D-012",
-        "D-013"
+        "D-014",
+        "D-016",
+        "D-017"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -580,10 +603,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-002"
+        "D-003"
       ],
       "loose_fids": [
-        "D-002"
+        "D-003"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -593,13 +616,17 @@
       "severity": "MAJOR",
       "origin": "own",
       "title": "«По дате совершения покупки в Алматы»: время Алматы или покупка, совершённая в Алматы",
-      "strict": false,
-      "loose": false,
-      "status": "missed",
-      "strict_fids": [],
-      "loose_fids": [],
-      "tool_severity": "",
-      "severity_agreement": ""
+      "strict": true,
+      "loose": true,
+      "status": "strict",
+      "strict_fids": [
+        "D-006"
+      ],
+      "loose_fids": [
+        "D-006"
+      ],
+      "tool_severity": "MINOR",
+      "severity_agreement": "tool_lower"
     },
     {
       "id": "D-37",
@@ -623,10 +650,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-004"
+        "D-008"
       ],
       "loose_fids": [
-        "D-004"
+        "D-008"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -641,7 +668,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-003"
+        "D-007"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -681,10 +708,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-018"
+        "D-023"
       ],
       "loose_fids": [
-        "D-018"
+        "D-023"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -711,10 +738,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-008"
+        "D-012"
       ],
       "loose_fids": [
-        "D-008"
+        "D-012"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -728,10 +755,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-009"
+        "D-013"
       ],
       "loose_fids": [
-        "D-009"
+        "D-013"
       ],
       "tool_severity": "MINOR",
       "severity_agreement": "same"
@@ -755,10 +782,13 @@
       "origin": "own",
       "title": "В одном пункте по 2–4 независимых утверждения (Ф-1, Ф-2, абзац «Требования к интеграции»)",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-002",
+        "D-005"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -772,7 +802,7 @@
       "status": "loose",
       "strict_fids": [],
       "loose_fids": [
-        "D-022"
+        "D-027"
       ],
       "tool_severity": "",
       "severity_agreement": ""
@@ -834,7 +864,7 @@
   ],
   "false_alarms": [
     {
-      "fid": "D-014",
+      "fid": "D-019",
       "severity": "MAJOR",
       "title": "Чувствительные данные передаются в адресной строке запроса",
       "line": 142,
@@ -843,7 +873,7 @@
   ],
   "false_alarms_exempt": [
     {
-      "fid": "D-005",
+      "fid": "D-009",
       "severity": "MAJOR",
       "title": "Денежные суммы в разных единицах: тиын и тенге",
       "line": 49,
@@ -853,7 +883,7 @@
       ]
     },
     {
-      "fid": "D-022",
+      "fid": "D-027",
       "severity": "MAJOR",
       "title": "В описании кода 403 сказано, что возвращается 404",
       "line": 188,
@@ -865,7 +895,7 @@
   ],
   "unmatched": [
     {
-      "fid": "D-007",
+      "fid": "D-011",
       "severity": "MINOR",
       "title": "Чек-лист ревью не заполнен",
       "line": 67

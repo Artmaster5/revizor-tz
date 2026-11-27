@@ -6,29 +6,32 @@
     "mode": "offline",
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "duration_s": 0.06,
+    "duration_s": 0.11,
     "doc_name": "refund_rules_injected.md"
+  },
+  "options": {
+    "absorbed": true
   },
   "counts": {
     "requirements": 19,
-    "findings_open": 7,
+    "findings_open": 10,
     "advisory": 5
   },
   "recall": {
     "overall": {
       "total": 12,
       "strict": 6,
-      "loose": 6,
+      "loose": 8,
       "strict_share": 0.5,
-      "loose_share": 0.5
+      "loose_share": 0.6666666666666666
     },
     "by_severity": {
       "CRITICAL": {
         "total": 5,
         "strict": 2,
-        "loose": 2,
+        "loose": 4,
         "strict_share": 0.4,
-        "loose_share": 0.4
+        "loose_share": 0.8
       },
       "MAJOR": {
         "total": 3,
@@ -59,10 +62,13 @@
       "origin": "",
       "title": "Срок возврата: 180 дней с даты покупки (В-3) и 120 дней с даты проведения (В-4)",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-003",
+        "D-004"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -72,10 +78,12 @@
       "origin": "",
       "title": "Повтор отправки возврата без идемпотентности и лимита повторов — риск двойного возврата",
       "strict": false,
-      "loose": false,
-      "status": "missed",
+      "loose": true,
+      "status": "loose",
       "strict_fids": [],
-      "loose_fids": [],
+      "loose_fids": [
+        "D-006"
+      ],
       "tool_severity": "",
       "severity_agreement": ""
     },
@@ -101,10 +109,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-003"
+        "D-005"
       ],
       "loose_fids": [
-        "D-003"
+        "D-005"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "same"
@@ -144,10 +152,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-005"
+        "D-008"
       ],
       "loose_fids": [
-        "D-005"
+        "D-008"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "tool_higher"
@@ -174,10 +182,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-006"
+        "D-009"
       ],
       "loose_fids": [
-        "D-006"
+        "D-009"
       ],
       "tool_severity": "MAJOR",
       "severity_agreement": "tool_higher"
@@ -225,10 +233,10 @@
       "loose": true,
       "status": "strict",
       "strict_fids": [
-        "D-004"
+        "D-007"
       ],
       "loose_fids": [
-        "D-004"
+        "D-007"
       ],
       "tool_severity": "CRITICAL",
       "severity_agreement": "same"
@@ -238,7 +246,7 @@
   "false_alarms_exempt": [],
   "unmatched": [
     {
-      "fid": "D-007",
+      "fid": "D-010",
       "severity": "MINOR",
       "title": "Таблица в разделе «5. Согласование» не заполнена",
       "line": 55

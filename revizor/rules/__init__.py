@@ -20,7 +20,7 @@ from .time_rules import TIME_RULES
 from .value_rules import VALUE_RULES
 from .general_rules import GENERAL_RULES  # noqa: E402
 
-RULESET_VERSION = "1.2"
+RULESET_VERSION = "1.3"
 
 
 @dataclass
