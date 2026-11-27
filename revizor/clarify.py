@@ -28,6 +28,14 @@ RULE_ASSUMPTIONS: dict[str, str] = {
     "period-undefined": "месяц считаем календарным (с 1-го по последнее число), сутки — с 00:00 до 24:00",
     "relative-period": "«прошлым» периодом считаем последний полностью закончившийся календарный период",
     "rounding-missing": "округляем математически (от 0,5 вверх) до сотых долей валюты, только в конце расчёта",
+    "period-event": "операция относится к месяцу или суткам по дате проведения",
+    "city-or-zone": "город означает часовой пояс: время Астаны, UTC+5",
+    "moment-vs-posted": "величина считается по проведённым операциям; в момент покупки показываем предварительное значение",
+    "amount-currency": "сумма операции берётся в валюте счёта после конвертации",
+    "balance-hold": "остаток для проверки «хватает ли денег» считаем доступным, за вычетом блокировок",
+    "operation-date": "датой операции считаем дату проведения",
+    "fee-inclusion": "границы суммы проверяются по сумме без комиссии",
+    "actor-names": "клиент, пользователь и держатель карты — один и тот же участник",
     "step-missing": "шаг изменения значения считаем равным единице его измерения",
     "limit-no-behaviour": "при превышении лимита операция отклоняется с понятным сообщением, данные не меняются",
     "number-without-unit": "время отклика считаем в секундах, сроки — в календарных днях",
@@ -81,6 +89,10 @@ RULE_GROUP: dict[str, str] = {
     "month-end-day": "business", "period-undefined": "business", "relative-period": "business",
     "rounding-missing": "business", "value-without-unit": "business", "step-missing": "business",
     "threshold-conflict": "business", "limit-no-behaviour": "architect",
+    # words with two readings, one rule in two places
+    "period-event": "business", "city-or-zone": "business", "revert-no-list": "business", "moment-vs-posted": "business",
+    "restated-rule": "business", "amount-currency": "business", "balance-hold": "business", "operation-date": "business",
+    "fee-inclusion": "business", "actor-names": "business",
     # terms
     "abbreviation-undefined": "business", "term-defined-twice": "business", "condition-undefined": "business",
     # the document against itself
