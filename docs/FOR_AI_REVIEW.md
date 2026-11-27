@@ -126,6 +126,7 @@ python main.py --ui
 | MCP-сервер | агент вызывается из Claude Desktop, Cursor и VS Code; инструменты `check_requirements` (в том числе быстрый режим `depth: fast`), `verify_quote`, `list_checks`, `estimate_run`; stdio, JSON-RPC 2.0, без внешних библиотек | `revizor/mcp_server.py`, `mcp_server.py`, `docs/MCP.md`, `tests/test_mcp_server.py` | `python mcp_server.py` |
 | Сравнение двух версий ТЗ | сопоставляет дефекты двух проверок по правилу, критерию и тексту цитаты (номера строк не важны): «Закрыто · Осталось · Новых», индекс готовности и блокеры «было → стало»; пишет `.compare.md` и `.compare.html` | `revizor/compare.py`, `tests/test_compare.py` | `python main.py --compare старый.json новый.json --output reports/diff` |
 | Пример сравнения | исходный документ организаторов против версии, где внесены 9 формулировок агента и ответы автора из `docs/demo/answers.md`: закрыто 15, осталось 12, новых 6; индекс готовности 54 → 82; блокеры 3 → 0 (проверка правилами без модели); каждая правка с источником | `docs/demo/compare/v1_v3.compare.md`, `docs/demo/compare/CHANGES.md` | см. `docs/USAGE.md` |
+| Сайт для пробы | окно как публичный сайт: у каждой проверки свой случайный номер и временная папка; ключ сервера (бесплатный Gemini) в пределах дневных лимитов, иначе только правила; свой ключ посетителя — на одну проверку, только в памяти; «Открыть готовый пример» без вызова модели; вопросы и перепроверка как в окне; Render.com по `render.yaml` | `revizor/public.py`, `Dockerfile`, `render.yaml`, `docs/DEPLOY.md`, `tests/test_public.py` | `python main.py --public` |
 | Тема отчёта | кнопка в HTML-отчёте: авто (как в системе), светлая, тёмная; выбор запоминается в браузере; при печати отчёт светлый; скрипт разрешён по хешу в Content-Security-Policy, внешних ресурсов нет | `revizor/report_html.py`, `tests/test_theme_toggle.py` | открыть `reports/report.html` |
 
 ## 4. Точность
@@ -272,6 +273,7 @@ revizor/                   код агента
   estimate.py              оценка цены до запуска
   report_md.py report_html.py report_json.py sidefiles.py exports.py   отчёты и файлы рядом
   webui.py webui_page.html окно в браузере
+  public.py                окно как публичный сайт (--public); Dockerfile, render.yaml, docs/DEPLOY.md — выкладка на Render.com
   llm/                     anthropic_backend, gemini_backend, openai_compat_backend (openai и ollama), fake, cache, pricing, schema, base
 docs/                      ARCHITECTURE, USAGE, VALUE, PILOT, INTEGRATION, HISTORY, FAQ (трудные вопросы жюри и ответы со ссылками на файлы), requirements.md (документ организаторов),
                            ci-example.yml, ci-gitlab-example.yml, demo/answers.md, slides/, img/, runs/ (два прогона от 27.11.2026)
