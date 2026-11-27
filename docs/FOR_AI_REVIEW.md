@@ -273,7 +273,7 @@ revizor/                   код агента
   report_md.py report_html.py report_json.py sidefiles.py exports.py   отчёты и файлы рядом
   webui.py webui_page.html окно в браузере
   llm/                     anthropic_backend, gemini_backend, openai_compat_backend (openai и ollama), fake, cache, pricing, schema, base
-docs/                      ARCHITECTURE, USAGE, VALUE, PILOT, INTEGRATION, HISTORY, requirements.md (документ организаторов),
+docs/                      ARCHITECTURE, USAGE, VALUE, PILOT, INTEGRATION, HISTORY, FAQ (трудные вопросы жюри и ответы со ссылками на файлы), requirements.md (документ организаторов),
                            ci-example.yml, ci-gitlab-example.yml, demo/answers.md, slides/, img/, runs/ (два прогона от 27.11.2026)
 eval/                      ACCURACY.md, RESULTS.md, score.py, run_all.py, summarize.py, check_keys.py, judge/BRIEF.md,
                            docs/ (документ организаторов и четыре документа с ключами), blind/ blind2/ blind3/ (двенадцать документов с ключами), results/

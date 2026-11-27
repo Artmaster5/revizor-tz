@@ -22,6 +22,7 @@
 | Как устроен | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | Тесты агента | 1224 теста без ключей и без сети; на GitHub проходят на Windows, macOS и Linux — [запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) |
 | Ценность для банка и пилот | [`docs/VALUE.md`](docs/VALUE.md), [`docs/PILOT.md`](docs/PILOT.md) |
+| Трудные вопросы и ответы на них: секретные документы, ошибки ИИ, деньги, внедрение | [`docs/FAQ.md`](docs/FAQ.md) |
 | Полная карта проекта: все функции, где каждая в коде, все числа с источником | [`docs/FOR_AI_REVIEW.md`](docs/FOR_AI_REVIEW.md), удобно и для проверки с помощью ИИ |
 | Всё по четырём критериям | [`SUBMISSION.md`](SUBMISSION.md) |
 
