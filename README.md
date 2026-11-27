@@ -1,5 +1,7 @@
 # Ревизор ТЗ
 
+[![тесты](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) — 1198 тестов проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13
+
 ИИ-агент проверяет документ с требованиями до начала разработки и пишет отчёт на русском языке. Главное в нём — уточнение: агент задаёт автору конкретные вопросы, принимает ответы, перепроверяет документ и показывает, что изменилось.
 
 ## Для жюри: где что
@@ -15,6 +17,7 @@
 | Точность | все 10 дефектов организаторов; 49 из 52 и ещё 2 частично по нашему списку (независимый судья, Opus); 102 из 109 на 8 незнакомых документах, включая казахский и английский (Sonnet) — [подробно](#точность) |
 | Запустить за минуту, без ключа | [Запуск одной командой](#запуск-одной-командой); окно — `python main.py --ui`, кнопка «Попробовать на примере» |
 | Как устроен | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| Тесты агента | 1198 тестов без ключей и без сети; на GitHub проходят на Windows, macOS и Linux — [запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) |
 | Ценность для банка и пилот | [`docs/VALUE.md`](docs/VALUE.md), [`docs/PILOT.md`](docs/PILOT.md) |
 | Всё по четырём критериям | [`SUBMISSION.md`](SUBMISSION.md) |
 
@@ -166,7 +169,7 @@ python main.py --input docs/requirements.md --output reports/my_answered.md --pr
 
 Сданный отчёт `reports/report.md` сделан в глубоком режиме на модели `claude-opus-5-5`, версия 1.5.0. Его написал сам агент командой `python main.py --input docs/requirements.md --output reports/report.md --model claude-opus-5-5`; повторная проверка с ответами автора — та же команда с `--output reports/report_answered.md --answers docs/demo/answers.md`. Тот же документ на модели `claude-haiku-5-5` — [`reports/report_haiku.md`](reports/report_haiku.md). История тегов и перерисованных отчётов — в [`docs/HISTORY.md`](docs/HISTORY.md). Отчёт на модели Haiku в `reports/` собран на прежней версии (тег `v1.1.1`); числа раздела «Точность» ниже измерены на версии 1.4.0 отдельными прогонами.
 
-**Тесты.** Более тысячи тестов, без ключей и без сети:
+**Тесты.** 1198 тестов, без ключей и без сети; на GitHub они проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13 ([запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml)):
 
 ```bash
 python -m unittest discover -s tests -t .
