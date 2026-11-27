@@ -98,6 +98,15 @@ input.vh:focus-visible+label,input.vh:focus-visible+.btn{outline:3px solid var(-
 .cap-wrap{position:relative}
 .cap-wrap span{position:absolute;left:10px;top:0;line-height:38px;color:var(--muted)}
 .cap-wrap input{padding-left:22px}
+.keybox{margin:12px 2px 0}
+.keyswitch{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem;cursor:pointer}
+.keyswitch input{width:16px;height:16px;margin:0;cursor:pointer}
+.keyswitch input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.keyform{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto;gap:10px 14px;align-items:end;margin-top:10px}
+.keyok{margin:8px 0 0;display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;font-size:.9rem}
+.keyok b{font-weight:600}
+.keybox .hint{margin:6px 0 0;color:var(--muted);font-size:.78rem;line-height:1.35}
+@media (max-width:760px){.keyform{grid-template-columns:1fr}.keyform .btn{width:100%}}
 
 /* estimate */
 .estimate{margin-top:16px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--paper);box-shadow:var(--shadow)}
@@ -369,6 +378,20 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
    <div class="field"><label for="cap-input">Потолок расходов</label><div class="cap-wrap"><span aria-hidden="true">$</span><input id="cap-input" type="text" inputmode="decimal" autocomplete="off" placeholder="без потолка"></div><div class="hint" id="cap-hint">Остановится, если дойдёт до суммы</div></div>
   </div>
 
+  <div class="keybox" id="key-box">
+   <label class="keyswitch" for="key-toggle"><input type="checkbox" id="key-toggle"> Вставить свой ключ</label>
+   <div id="key-panel" hidden>
+    <div class="keyform" id="key-form">
+     <div class="field"><label for="key-provider">Провайдер</label><select id="key-provider"></select></div>
+     <div class="field"><label for="key-input">Ключ</label><input type="password" id="key-input" autocomplete="off" spellcheck="false" aria-describedby="key-hint key-error" maxlength="600"></div>
+     <button type="button" class="btn" id="key-apply">Применить</button>
+    </div>
+    <p id="key-error" class="err" role="alert" hidden></p>
+    <p id="key-ok" class="keyok" role="status" hidden><b id="key-ok-text"></b><span class="quiet" id="key-note"></span><button type="button" class="btn" id="key-forget">Забыть ключ</button></p>
+    <p class="hint" id="key-hint">Ключ хранится только в памяти окна до его закрытия и никуда не записывается.</p>
+   </div>
+  </div>
+
   <div id="estimate" class="estimate" aria-live="polite"><p class="est-empty">Здесь появится оценка времени и стоимости — как только вы выберете документ.</p></div>
 
   <div class="run-row">
@@ -545,7 +568,7 @@ function applyConfig(c){
   txt("formats-hint",(fm.length?fm.join(", "):"PDF, DOCX, MD, TXT, HTML")+(c.max_doc_mb?" · до "+c.max_doc_mb+" МБ":""));
   if(c.formats&&c.formats.length)$("doc-input").setAttribute("accept",c.formats.join(","));
   buildStages(c.stages||DEFAULT_STAGES);
-  if(c.provider_note){$("notice").textContent=String(c.provider_note);show("notice",true);}
+  paintNotice(c);paintKey(c);
   txt("foot","Ревизор ТЗ"+(c.version?" "+c.version:"")+" · окно работает только на этом компьютере (127.0.0.1)");
   onModelChange(false);
   S.example=!!c.example;
@@ -622,6 +645,61 @@ $("answers-input").addEventListener("change",function(){
   });
 });
 $("answers-clear").addEventListener("click",function(){setAnswers(null);answersError(null);});
+
+/* ---------- own key ---------- */
+/* key:begin — the key lives only in the password field and in the body of one request; nothing here stores it */
+function paintNotice(c){
+  if(c.provider_note){$("notice").textContent=String(c.provider_note);show("notice",true);}
+  else show("notice",false);
+}
+function keyError(msg){var e=$("key-error");if(msg){e.textContent=String(msg);e.hidden=false;}else e.hidden=true;}
+function paintKey(c){
+  var uk=c.user_key||{};
+  fillSelect($("key-provider"),c.key_providers||[],uk.provider||null);
+  var on=!!uk.set;
+  if(on){$("key-toggle").checked=true;}
+  show("key-panel",$("key-toggle").checked);
+  show("key-form",!on);show("key-ok",on);
+  if(on){txt("key-ok-text","Ключ принят · "+String(uk.label||""));}
+  else txt("key-note","");
+}
+function keyRefresh(){
+  return api("/api/config").then(function(c){
+    if(!c.ok)return;
+    S.cfg=c;fillSelect($("model-select"),c.models,c.default_model);
+    paintNotice(c);paintKey(c);
+    txt("try-note",c.provider==="offline"?"Откроет пример и сразу проверит его правилами, без модели: бесплатно.":"Загрузит пример и покажет оценку времени и стоимости: запускать или нет, решаете вы.");
+    onModelChange(true);refreshRun();
+  });
+}
+function keyApply(){
+  var field=$("key-input");var btn=$("key-apply");
+  if(btn.disabled)return;
+  keyError(null);btn.disabled=true;
+  postJSON("/api/key",{provider:$("key-provider").value,key:field.value}).then(function(r){
+    btn.disabled=false;
+    if(!r.ok){keyError(r.error);return;}
+    field.value="";
+    return keyRefresh().then(function(){txt("key-note",r.note?String(r.note):"");});
+  });
+}
+function keyForget(){
+  keyError(null);
+  return postJSON("/api/key/forget",{}).then(function(r){
+    if(!r.ok){keyError(r.error);$("key-toggle").checked=true;show("key-panel",true);return;}
+    $("key-input").value="";$("key-toggle").checked=false;
+    return keyRefresh();
+  });
+}
+$("key-toggle").addEventListener("change",function(){
+  if(this.checked){show("key-panel",true);keyError(null);$("key-input").focus();return;}
+  if(S.cfg&&S.cfg.user_key&&S.cfg.user_key.set){keyForget();return;}
+  show("key-panel",false);keyError(null);$("key-input").value="";
+});
+$("key-apply").addEventListener("click",keyApply);
+$("key-forget").addEventListener("click",keyForget);
+$("key-input").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();keyApply();}});
+/* key:end */
 
 /* ---------- settings ---------- */
 function isOffline(){return $("model-select").value==="offline";}

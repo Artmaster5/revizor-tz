@@ -141,7 +141,7 @@ class GuardTests(_Server):
         st, cfg = self.jget("/api/config")
         self.assertEqual(st, 200)
         self.assertEqual(cfg["version"], __version__)
-        self.assertEqual(cfg["version"], "1.5.0")
+        self.assertEqual(cfg["version"], "1.5.1")
         self.assertEqual(cfg["provider"], "offline")
         self.assertEqual([m["id"] for m in cfg["models"]], ["offline"])
         self.assertTrue(cfg["provider_note"])

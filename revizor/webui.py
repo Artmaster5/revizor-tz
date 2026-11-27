@@ -28,6 +28,9 @@ from urllib.parse import parse_qs, quote, unquote, urlsplit
 
 from . import __version__, answers as ans_mod, clarify, cli, config, readiness, rewrite_gate, score as score_mod, verdict as verdict_mod
 from .llm import choose_provider, is_placeholder, normalize_provider, review_batch_size_for
+from .llm._http import error_message, request_json
+from .llm import base as llm_base
+from .llm.base import redact, register_secret
 from .llm.pricing import PRICES
 from .merge import FOLD_STAGE, SEV_RANK, sort_key
 from .model import CRITERION_RU, Result
@@ -160,6 +163,80 @@ def active_provider(provider_arg: str, env: Mapping[str, str]) -> tuple[str, str
     return chosen, ""
 
 
+# -- the user's own key -----------------------------------------------------------------------------------------
+# Providers that need a key, in the order of cli.AUTO_ORDER; the variable is the first one of that table.
+KEY_LABELS = {"anthropic": "Anthropic (Claude)", "gemini": "Google Gemini", "openai": "OpenAI-совместимый"}
+KEY_PROVIDERS = tuple((name, KEY_LABELS[name], keys[0]) for name, keys in cli.AUTO_ORDER if name in KEY_LABELS)
+KEY_MAX_CHARS = 512
+KEY_CHECK_TIMEOUT = 8.0
+KEY_BUSY = "Проверка уже идёт: дождитесь её окончания."
+KEY_UNCHECKED_NOTE = ("Проверить ключ сейчас не удалось: провайдер не ответил. Ключ принят, он проверится при "
+                      "первом запуске.")
+
+
+def hide_secrets(text: Any) -> str:
+    """Replace the keys registered with ``register_secret`` by «***» and nothing else (console lines of a check are
+    shown as they are; only a pasted key must never appear in them)."""
+    s = str(text)
+    with llm_base._SECRETS_LOCK:
+        known = sorted(llm_base._SECRETS, key=len, reverse=True)
+    for sec in known:
+        if sec in s:
+            s = s.replace(sec, "***")
+    return s
+
+
+def key_shape_problem(key: Any) -> str:
+    """Why a pasted key is refused before any request, in plain Russian; "" when its shape is fine. The text never
+    repeats the value or a part of it."""
+    if not isinstance(key, str):
+        return "ключ должен быть строкой."
+    k = key.strip()
+    if not k:
+        return "поле пустое."
+    if len(k) > KEY_MAX_CHARS:
+        return f"ключ длиннее {KEY_MAX_CHARS} знаков."
+    if any(ch.isspace() or unicodedata.category(ch)[0] == "C" for ch in k):
+        return "внутри есть пробелы, переносы строк или скрытые знаки."
+    if not k.isascii():
+        return "в ключе есть знаки не из латиницы и цифр."
+    if is_placeholder(k):
+        return "это образец, а не настоящий ключ."
+    return ""
+
+
+def check_key_with_provider(provider: str, key: str, env: Mapping[str, str]) -> tuple[str, str]:
+    """One cheap request that costs nothing (the model list) with the key. Returns ("ok" | "rejected" | "unknown",
+    the provider's reason without the key). 401 and 403 mean rejected; no answer or any other status is unknown."""
+    from .llm import _get
+    from .llm.anthropic_backend import DEFAULT_BASE_URL as ANTHROPIC_URL
+    from .llm.gemini_backend import DEFAULT_BASE_URL as GEMINI_URL
+    from .llm.openai_compat_backend import OPENAI_BASE_URL, normalize_base_url
+
+    if provider == "anthropic":
+        base = (_get(env, "ANTHROPIC_BASE_URL") or ANTHROPIC_URL).rstrip("/")
+        url, headers = base + "/v1/models?limit=1", {"x-api-key": key, "anthropic-version": "2023-06-01"}
+    elif provider == "gemini":
+        base = (_get(env, "GEMINI_BASE_URL") or GEMINI_URL).rstrip("/")
+        url, headers = base + "/v1beta/models?pageSize=1", {"x-goog-api-key": key}
+    else:
+        base = normalize_base_url(_get(env, "OPENAI_BASE_URL") or OPENAI_BASE_URL)
+        url, headers = base + "/models", {"Authorization": "Bearer " + key}
+    try:
+        res = request_json("GET", url, headers=headers, timeout=KEY_CHECK_TIMEOUT)
+    except Exception:  # no answer, a refused connection, a timeout: the key is judged at the first check
+        return "unknown", ""
+    reason = redact(error_message(res))[:200]
+    if res.status == 200:
+        return "ok", ""
+    if res.status in (401, 403):
+        return "rejected", reason
+    # Google answers 400 «API key not valid» for a wrong key instead of 401
+    if provider == "gemini" and res.status == 400 and re.search(r"API[ _]KEY[ _](NOT[ _]VALID|INVALID)", res.text, re.I):
+        return "rejected", reason
+    return "unknown", ""
+
+
 # Short hints next to the well-known Claude models in the model list (the default gets «по умолчанию» instead).
 _MODEL_NOTES = {"claude-haiku-5-5": " — дешевле", "claude-opus-5-5": " — максимум"}
 
@@ -213,7 +290,7 @@ class Job:
 
     # progress ------------------------------------------------------------------------------------------------
     def feed(self, line: str) -> None:
-        line = str(line)
+        line = hide_secrets(line)  # a key the user pasted is hidden in every line, whatever wrote it
         with self.lock:
             self.log.append(line)
             self._parse(line)
@@ -266,7 +343,7 @@ class Job:
                     st["state"] = "skipped"
             self.files = dict(files or {})
             self.result = result
-            self.error = error
+            self.error = redact(error)
             self.t_end = time.monotonic()
             self.state = state
 
@@ -779,11 +856,17 @@ class UIServer:
                  log: Callable[[str], None] | None = None, max_doc_bytes: int = MAX_DOC_MB * 1024 * 1024,
                  max_answers_bytes: int = MAX_ANSWERS_MB * 1024 * 1024,
                  example_path: str | Path | None = None) -> None:
+        self._base_env = dict(env)  # what the window was started with; the user's key is added on top, never into it
         self.env = dict(env)
         self.port = port
         self.out_dir = str(out_dir)
         defaults = dict(defaults or {})
-        self.provider_arg = provider or "auto"
+        self._base_provider_arg = provider or "auto"
+        self.provider_arg = self._base_provider_arg
+        self._cli_model = defaults.get("model")
+        self._user_key = ""  # in the memory of this process only: never written, logged or put into an answer
+        self._user_provider = ""
+        self.key_checker: Callable[[str, str, Mapping[str, str]], tuple[str, str]] = check_key_with_provider
         self.no_cache = no_cache
         self.backend = backend
         self.page_path = Path(page_path) if page_path else Path(__file__).with_name("webui_page.html")
@@ -792,7 +875,7 @@ class UIServer:
         self._log = log or (lambda s: print(s, flush=True))
         self._log_lock = threading.Lock()
         self.provider, self.provider_note = active_provider(self.provider_arg, self.env)
-        self.models, self.default_model = model_choices(self.provider, self.env, defaults.get("model"))
+        self.models, self.default_model = model_choices(self.provider, self.env, self._cli_model)
         self.example_path = Path(example_path) if example_path else EXAMPLE_PATH
         self.default_depth = defaults.get("depth") if defaults.get("depth") in ("full", "fast") else "full"
         self.default_cap = str(defaults.get("max_cost") or "")
@@ -851,6 +934,9 @@ class UIServer:
             latest = self.latest
         return {"ok": True, "version": __version__, "provider": self.provider, "provider_note": self.provider_note,
                 "models": self.models, "default_model": self.default_model,
+                "user_key": {"set": bool(self._user_key), "provider": self._user_provider,
+                             "label": KEY_LABELS.get(self._user_provider, "")},
+                "key_providers": [{"id": i, "label": label} for i, label, _var in KEY_PROVIDERS],
                 "depths": [{"id": i, "label": label} for i, label in DEPTHS], "default_depth": self.default_depth,
                 "formats": list(DOC_FORMATS), "max_doc_mb": _mb(self.max_doc_bytes),
                 "max_answers_mb": _mb(self.max_answers_bytes),
@@ -859,6 +945,53 @@ class UIServer:
                             if self.example_path.is_file() else None),
                 "preloaded": ({"upload_id": pre["id"], "name": pre["name"], "size": pre["size"]} if pre else None),
                 "job": latest.status(0) if latest else None}
+
+    def _derive(self) -> None:
+        """The effective env, provider and model list from the original ones plus the user's key (caller holds
+        self.lock)."""
+        env = dict(self._base_env)
+        arg = self._base_provider_arg
+        if self._user_key:
+            env[dict((i, v) for i, _l, v in KEY_PROVIDERS)[self._user_provider]] = self._user_key
+            arg = self._user_provider
+        self.env, self.provider_arg = env, arg
+        self.provider, self.provider_note = active_provider(arg, env)
+        self.models, self.default_model = model_choices(self.provider, env, self._cli_model)
+
+    def set_key(self, body: dict) -> dict:
+        """«Вставить свой ключ»: check the shape, ask the provider (a free request), keep the pair in memory."""
+        provider = body.get("provider")
+        if not isinstance(provider, str) or provider not in KEY_LABELS:
+            raise ApiError(400, "Ключ не принят: такого провайдера нет в списке.")
+        why = key_shape_problem(body.get("key"))
+        if why:
+            raise ApiError(400, "Ключ не принят: " + why)
+        key = body["key"].strip()
+        with self.lock:
+            if self.running is not None:
+                raise ApiError(409, KEY_BUSY)
+            env = dict(self._base_env)
+        register_secret(key)  # from now on every error text hides it
+        verdict, reason = self.key_checker(provider, key, env)
+        if verdict == "rejected":
+            raise ApiError(400, "Ключ не принят провайдером" + (": " + redact(reason)[:200] if reason else "."))
+        with self.lock:
+            if self.running is not None:  # a check started while the provider was being asked
+                raise ApiError(409, KEY_BUSY)
+            self._user_key, self._user_provider = key, provider
+            self._derive()
+        self._say(f"Свой ключ принят: {KEY_LABELS[provider]}.")
+        return {"ok": True, "provider": provider, "label": KEY_LABELS[provider],
+                "note": KEY_UNCHECKED_NOTE if verdict != "ok" else ""}
+
+    def forget_key(self) -> dict:
+        with self.lock:
+            if self.running is not None:
+                raise ApiError(409, KEY_BUSY)
+            self._user_key = self._user_provider = ""
+            self._derive()
+        self._say("Свой ключ забыт.")
+        return {"ok": True}
 
     def example(self, body: dict) -> dict:
         """«Попробовать на примере»: the example document is stored like an upload. With no key (rules only, free) the
@@ -994,7 +1127,9 @@ class UIServer:
         model = self._model(body.get("model"))
         depth = self._depth(body.get("depth", "full"))
         try:
-            return estimate_for(str(u["path"]), provider=self.provider, model=model, depth=depth, env=self.env)
+            with self.lock:
+                provider, env = self.provider, self.env
+            return estimate_for(str(u["path"]), provider=provider, model=model, depth=depth, env=env)
         except Exception as e:
             raise ApiError(400, f"Оценка не удалась: внутренняя ошибка ({type(e).__name__}).")
 
@@ -1010,13 +1145,14 @@ class UIServer:
                previous: Job | None = None, answers_label: str = "") -> dict:
         stem = Path(doc["name"]).stem or "document"
         out_path = Path(self.out_dir) / (stem + ("_answered" if ans else "") + ".md")
-        argv = build_argv(doc_path=str(doc["path"]), out_path=str(out_path), depth=depth, model=model,
-                          provider_arg=self.provider_arg, answers_path=str(ans["path"]) if ans else "",
-                          max_cost=cap, no_cache=self.no_cache)
-        provider = "offline" if model == OFFLINE_ID else self.provider
         with self.lock:
             if self.running is not None:
                 raise ApiError(409, "Проверка уже идёт: дождитесь её окончания.")
+            env = self.env  # a started check keeps the env (and the key in it) it started with
+            argv = build_argv(doc_path=str(doc["path"]), out_path=str(out_path), depth=depth, model=model,
+                              provider_arg=self.provider_arg, answers_path=str(ans["path"]) if ans else "",
+                              max_cost=cap, no_cache=self.no_cache)
+            provider = "offline" if model == OFFLINE_ID else self.provider
             job = Job(secrets.token_hex(8), doc_name=doc["name"], answers_name=(answers_label or ans["name"]) if ans else "",
                       provider=provider, model=model, depth=depth, max_cost=cap, out_dir=self.out_dir,
                       report_stem=out_path.stem)
@@ -1031,7 +1167,7 @@ class UIServer:
         backend = None if model == OFFLINE_ID else self.backend
         self._say(f"Проверка начата: {doc['name']} · {model} · глубина {depth}"
                   + (" · с ответами автора" if ans else ""))
-        threading.Thread(target=self._work, args=(job, argv, backend), name="revizor-ui-check", daemon=True).start()
+        threading.Thread(target=self._work, args=(job, argv, backend, env), name="revizor-ui-check", daemon=True).start()
         return {"ok": True, "job_id": job.id}
 
     def _job(self, job_id: Any) -> Job:
@@ -1114,7 +1250,7 @@ class UIServer:
             shutil.rmtree(folder, ignore_errors=True)
             raise
 
-    def _work(self, job: Job, argv: list[str], backend) -> None:
+    def _work(self, job: Job, argv: list[str], backend, env: Mapping[str, str]) -> None:
         try:
             args = cli.build_parser().parse_args(argv)
             args.rerun_note = RERUN_NOTE
@@ -1124,7 +1260,7 @@ class UIServer:
             # both spellings: «C:\\…\\» as Windows prints it and «C:/…/» as a command in the questionnaire writes it
             args.hide_prefixes = sorted({form for d in dirs for form in (str(d) + os.sep, d.as_posix() + "/")},
                                         key=len, reverse=True)
-            code, result, written = cli.execute(args, self.env, job.feed, injected_backend=backend)
+            code, result, written = cli.execute(args, env, job.feed, injected_backend=backend)
             if result is None or not written:
                 last = next((x for x in reversed(job.log) if x.startswith("Не удалось")), "")
                 job.finish("failed", error=last or "Отчёт не записан.")
@@ -1136,7 +1272,7 @@ class UIServer:
                     job.details = details_from(result, offline=job.model == OFFLINE_ID or job.provider == "offline")
                 job.finish("done", result=summary, files=files)
         except cli.UsageError as e:
-            job.finish("failed", error=f"Ошибка в параметрах: {str(e)[:300]}")
+            job.finish("failed", error=f"Ошибка в параметрах: {redact(e)[:300]}")
         except Exception as e:  # never a traceback on the page or in the terminal
             job.finish("failed", error=f"Внутренняя ошибка агента ({type(e).__name__}). Отчёт не записан.")
         finally:
@@ -1332,6 +1468,12 @@ class _Handler(BaseHTTPRequestHandler):
             self._json(200, ui.run(self._read_json()))
         elif parts.path == "/api/example":
             self._json(200, ui.example(self._read_json()))
+        elif parts.path in ("/api/key", "/api/key/forget"):
+            if parts.query:  # a key is accepted in the JSON body only, never in the address
+                self.close_connection = True
+                raise ApiError(400, "Ключ принимается только в теле запроса, не в адресе.")
+            body = self._read_json()
+            self._json(200, ui.set_key(body) if parts.path == "/api/key" else ui.forget_key())
         elif parts.path == "/api/rerun":
             self._json(200, ui.rerun(self._read_json(MAX_RERUN_BYTES)))
         else:
