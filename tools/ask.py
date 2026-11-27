@@ -142,7 +142,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--provider", default="anthropic", choices=["anthropic", "gemini", "openai", "ollama"])
     ap.add_argument("--model", default=None)
     ap.add_argument("question", nargs="?", default=None, help="вопрос; без него откроется диалог")
-    args = ap.parse_args(argv)
+    args = ap.parse_intermixed_args(argv)  # Python 3.10: the question may follow --input
 
     result = report_json.load_result(Path(args.report).resolve())
     doc = loader.load(args.input)
