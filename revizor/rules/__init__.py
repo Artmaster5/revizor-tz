@@ -8,6 +8,7 @@ from ..merge import absorbed_record, rule_blocker
 from ..model import SEVERITIES, Finding, Requirement, Skipped, SourceDoc
 from ._common import Ctx
 from .advisory_rules import ADVISORY_RULES
+from .ambiguity_rules import AMBIGUITY_RULES
 from .api_rules import API_RULES
 from .crosscheck_rules import CROSSCHECK_RULES
 from .glossary_rules import GLOSSARY_RULES
@@ -40,6 +41,17 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("non-atomic", "singularity", "MINOR", "requirement", "Несколько требований в одном пункте"),
     _R("incomplete-reference", "unambiguity", "MINOR", "requirement", "Ссылка на документ без точного адреса"),
     _R("number-without-unit", "unambiguity", "MAJOR", "requirement", "Время или срок без единицы измерения"),
+    # words with two readings, one statement in two places
+    _R("period-event", "unambiguity", "MINOR", "set", "Период собирает операции, а событие, по которому операция попадает в период, не названо"),
+    _R("city-or-zone", "unambiguity", "MINOR", "set", "Город рядом с границей дня: часовой пояс или место операции"),
+    _R("revert-no-list", "completeness", "MINOR", "set", "«Вернуть прежнее состояние» без перечня, что возвращается"),
+    _R("moment-vs-posted", "set_consistency", "MINOR", "set", "Одна величина и «в момент покупки», и по «проведённым» операциям"),
+    _R("restated-rule", "set_consistency", "MINOR", "set", "Одно правило в двух разделах разными словами или с разными числами"),
+    _R("amount-currency", "unambiguity", "MINOR", "set", "«Сумма операции» там, где несколько валют"),
+    _R("balance-hold", "unambiguity", "MINOR", "set", "«Остаток» или «баланс» там, где есть блокировки"),
+    _R("operation-date", "unambiguity", "MINOR", "set", "«Дата операции» там, где есть авторизация и проведение"),
+    _R("fee-inclusion", "unambiguity", "MINOR", "set", "Лимит на сумму: с комиссией или без"),
+    _R("actor-names", "unambiguity", "MINOR", "set", "Один участник под несколькими именами без пояснения"),
     # whole document
     _R("missing-ids", "traceability", "MINOR", "set", "Требования без номеров"),
     _R("unit-mix", "set_consistency", "MAJOR", "set", "Одна величина в разных единицах без правила пересчёта"),
@@ -97,7 +109,7 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("example-in-requirement", "completeness", "MINOR", "requirement", "Пример вместо полного перечня", True),
 ]}
 
-_IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **SAFETY_RULES, **TIME_RULES, **VALUE_RULES, **GLOSSARY_RULES, **CROSSCHECK_RULES, **ADVISORY_RULES}
+_IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **SAFETY_RULES, **TIME_RULES, **VALUE_RULES, **GLOSSARY_RULES, **CROSSCHECK_RULES, **ADVISORY_RULES, **AMBIGUITY_RULES}
 assert set(_IMPL) == set(RULES), set(_IMPL) ^ set(RULES)
 
 last_errors: list[str] = []
