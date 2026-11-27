@@ -851,7 +851,7 @@ function startRun(){
   postJSON("/api/run",pubFields({doc:S.doc.upload_id,answers:S.answers?S.answers.upload_id:null,model:$("model-select").value,
     depth:$("depth-select").value,max_cost:cap})).then(function(r){
     S.starting=false;
-    if(PUB&&r.ok){if(r.note){$("notice").textContent=String(r.note);show("notice",true);}else show("notice",false);}
+    if(PUB&&r.ok&&r.note){$("notice").textContent=String(r.note);show("notice",true);}
     if(!r.ok){
       if(r.status===409){runMsg("");attachLatest(r.error);return;}
       runMsg(r.error,true);refreshRun();return;}

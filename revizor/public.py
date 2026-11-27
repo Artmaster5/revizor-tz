@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import hmac
 import os
+import re
 import secrets
 import shutil
 import threading
@@ -607,6 +608,13 @@ class _PublicHandler(webui._Handler):
             if parts:
                 ip = parts[0] if hops < 0 or len(parts) < hops else parts[-hops]
         return ip[:64]
+
+    def log_request(self, code="-", size="-") -> None:  # as the window, but a check's id is cut to 6 signs
+        if self.command in ("GET", "HEAD") and str(code).isdigit() and int(code) < 400:
+            return
+        path = re.sub(r"[0-9a-f]{12,}", lambda m: m.group(0)[:6] + "…", urlsplit(self.path or "").path)
+        path = "".join(ch if ch.isprintable() else "?" for ch in path)[:200]
+        self.server.ui._say(f"{self.command} {path} {int(code) if str(code).isdigit() else code}")
 
     def do_HEAD(self) -> None:
         self._guarded(self._get)

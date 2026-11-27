@@ -253,6 +253,7 @@ class IsolationTests(_Site):
             self.assertNotIn(b"root:", body)
         report = s["result"]["files"][0]["url"]
         self.assertEqual(self.req("GET", report)[0], 200)
+        self.assertFalse(any(jid in line for line in self.logged), "the server log never holds a whole check id")
 
 
 class VisitorKeyTests(_Site):
