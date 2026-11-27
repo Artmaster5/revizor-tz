@@ -415,7 +415,7 @@ footer{color:var(--muted);font-size:.8rem;text-align:center;padding:10px 16px 14
    <p class="quiet vnote" id="verdict-note" hidden></p>
    <div class="ready-lines" id="readiness" hidden><p id="ready-dev"></p><p id="ready-test"></p></div>
    <div class="nums" id="res-numbers">
-    <div class="tile"><div class="v" id="n-score">—</div><div class="k" id="k-score">Индекс готовности</div><div class="bar" id="score-bar"><i></i></div></div>
+    <div class="tile" title="Оценка проверяемого документа, а не агента: чем ниже, тем больше в нём дефектов. 85 и выше — готов, 60–84 — готов после правок, 40–59 — нужна существенная доработка, ниже 40 — не готов."><div class="v" id="n-score">—</div><div class="k" id="k-score">Готовность документа</div><div class="bar" id="score-bar"><i></i></div></div>
     <div class="tile t-crit"><div class="v" id="n-crit">0</div><div class="k" id="k-crit">блокеров</div></div>
     <div class="tile t-maj"><div class="v" id="n-maj">0</div><div class="k" id="k-maj">существенных</div></div>
     <div class="tile t-min"><div class="v" id="n-min">0</div><div class="k" id="k-min">мелких</div></div>
@@ -1022,7 +1022,7 @@ function renderRerunNote(r){
     li("Ответы замечаний не закрывают: открытых замечаний по-прежнему "+num(w.total)+".");
   }
   if(af.score!=null){var same=num(af.score)===num(r.score);
-    li("Индекс готовности: в документе как он написан — "+(r.score==null?"—":r.score)+"; с учётом ответов — "+af.score
+    li("Готовность документа: как он написан — "+(r.score==null?"—":r.score)+"; с учётом ответов — "+af.score
       +(pv&&pv.score!=null?" (было "+pv.score+")":"")+(same?" — без изменений.":"."));}
   if(af.verdict&&af.verdict_text){
     if(af.verdict===r.verdict&&(af.left_blockers||[]).length)li("Итог не меняется: ответы не закрывают "+(af.left_blockers.length>1?"блокеры ":"блокер ")+af.left_blockers.join(", ")+".");
@@ -1405,8 +1405,8 @@ function showResult(st){
     show("res-numbers",true);show("res-diag",false);
     var f=r.findings||{};var sc=r.score;
     var af=r.answers&&r.answers.after,pv=r.answers&&r.answers.previous;
-    var kl={"k-score":"Индекс готовности","k-crit":"блокеров","k-maj":"существенных","k-min":"мелких"};
-    if(af){f=af.open||f;sc=af.score;kl={"k-score":"Индекс с учётом ответов"+(pv&&pv.score!=null?" (было "+pv.score+")":""),
+    var kl={"k-score":"Готовность документа","k-crit":"блокеров","k-maj":"существенных","k-min":"мелких"};
+    if(af){f=af.open||f;sc=af.score;kl={"k-score":"Готовность документа с учётом ответов"+(pv&&pv.score!=null?" (было "+pv.score+")":""),
       "k-crit":"блокеров с учётом ответов"+(pv?" (было "+num((pv.findings||{}).critical)+")":""),
       "k-maj":"существенных с учётом ответов"+(pv?" (было "+num((pv.findings||{}).major)+")":""),
       "k-min":"мелких с учётом ответов"+(pv?" (было "+num((pv.findings||{}).minor)+")":"")};}
