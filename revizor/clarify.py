@@ -74,6 +74,10 @@ RULE_GROUP: dict[str, str] = {
     "get-mutation": "architect", "error-in-success": "architect", "status-mismatch": "architect",
     "param-type-mismatch": "architect", "content-type-without-body": "architect", "api-reliability": "architect",
     "sensitive-in-query": "security",
+    # defects made of several parts
+    "refund-checklist": "business", "error-body-shapes": "architect", "error-code-unlinked": "architect",
+    "api-access-codes": "architect", "api-ownership": "security", "list-no-order-limit": "architect",
+    "notification-checklist": "business", "enum-no-values": "business", "param-table-no-required": "architect",
     # manipulation and data protection
     "prompt-injection": "security", "hidden-text": "security", "sensitive-data": "security",
     # time, quantities, thresholds
