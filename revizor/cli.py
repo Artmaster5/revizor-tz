@@ -57,6 +57,9 @@ def build_parser() -> argparse.ArgumentParser:
                    help="задать до 7 вопросов прямо в терминале (сначала блокирующие), затем учесть ответы")
     p.add_argument("--baseline", metavar="OLD.json",
                    help="JSON-отчёт прошлой проверки: показать, что исправлено, что осталось и что появилось")
+    p.add_argument("--compare", nargs=2, metavar=("OLD.json", "NEW.json"),
+                   help="сравнить две версии ТЗ по их JSON-отчётам: что закрыто, что осталось, что новое; модель не нужна. "
+                        "Результат — <имя>.compare.md и .compare.html рядом с --output (или с NEW.json)")
     p.add_argument("--no-cache", action="store_true", help="не брать ответы модели из кэша (запись в кэш остаётся)")
     p.add_argument("--fail-on", choices=("never", "critical", "major"), default="never",
                    help="для CI: вернуть код 3, если есть дефекты этого уровня; код 4, если документ не удалось прочитать "
@@ -188,6 +191,10 @@ def _main(argv, env_in, say, injected_backend, input_fn=None) -> int:
         from . import webui
 
         return webui.serve(args, config.build_env(env_in), say, backend=injected_backend)
+    if args.compare:
+        from . import compare as compare_mod
+
+        return compare_mod.run(args.compare[0], args.compare[1], args.output, say)
     inp, _outp = _paths(args)
     env = config.build_env(env_in)
     provider = _provider_of(args)
