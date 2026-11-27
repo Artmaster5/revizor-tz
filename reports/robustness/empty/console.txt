@@ -1,0 +1,5 @@
+
+Итог: документ не проверен — Файл пустой
+Записано: /var/folders/0w/0cljy90n19zbhj0vkkhtrr440000gn/T/tmpufbpg2zq/work/empty/report.md, /var/folders/0w/0cljy90n19zbhj0vkkhtrr440000gn/T/tmpufbpg2zq/work/empty/report.json, /var/folders/0w/0cljy90n19zbhj0vkkhtrr440000gn/T/tmpufbpg2zq/work/empty/report.html
+Время: 0.1 с · Стоимость: $0 (модель не вызывалась)
+Расход: модель не вызывалась — вызовов 0, вход 0, выход 0, чтение кэша 0, запись кэша 0, $0

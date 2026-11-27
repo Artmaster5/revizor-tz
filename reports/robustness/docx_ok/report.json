@@ -1,0 +1,1606 @@
+{
+  "format": "revizor-report/1",
+  "summary": {
+    "tests": {
+      "ready": 3,
+      "blocked": 0
+    },
+    "answers": null,
+    "verdict_after_answers": "",
+    "baseline": null,
+    "requirements": 10,
+    "requirements_with_findings": 2,
+    "findings": 3,
+    "by_severity": {
+      "CRITICAL": 0,
+      "MAJOR": 1,
+      "MINOR": 2
+    },
+    "by_criterion": {
+      "completeness": 0,
+      "unambiguity": 1,
+      "consistency": 0,
+      "verifiability": 0,
+      "feasibility": 0,
+      "necessity": 0,
+      "singularity": 0,
+      "set_completeness": 1,
+      "set_consistency": 0,
+      "set_feasibility": 0,
+      "comprehensibility": 0,
+      "traceability": 1
+    },
+    "observations": 3,
+    "questions": 3,
+    "questions_by_priority": {
+      "blocker": 0,
+      "important": 1,
+      "nice": 2
+    },
+    "readiness": 95,
+    "readiness_band": "готов",
+    "clarity_bands": {
+      "ясное": 9,
+      "есть замечания": 1,
+      "нужна доработка": 0,
+      "в таком виде использовать нельзя": 0
+    },
+    "verdict": "CONDITIONAL",
+    "verdict_after_blocker_answers": "",
+    "preliminary": true
+  },
+  "passport": {
+    "doc_name": "good.docx",
+    "doc_sha256": "093e1b9874179baea923f2b4283c388c3c29ad5abfed0d60b77a21b1f9b17728",
+    "answers_sha256": "",
+    "ruleset_version": "1.3",
+    "agent_version": "1.6.0 (pre-evening-27-11-36-gbff5c00-dirty)",
+    "provider": "offline",
+    "model": "",
+    "model_version": "",
+    "started_at": "2026-11-27T22:43:33+05:00",
+    "duration_s": 0.07,
+    "cost_usd": 0.0,
+    "mode": "offline"
+  },
+  "run": {
+    "agent_name": "Ревизор ТЗ",
+    "agent_version": "1.6.0 (pre-evening-27-11-36-gbff5c00-dirty)",
+    "started_at": "2026-11-27T22:43:33+05:00",
+    "duration_s": 0.07,
+    "mode": "offline",
+    "provider": "offline",
+    "model": "",
+    "model_version": "",
+    "effort": "",
+    "doc_name": "good.docx",
+    "doc_format": "docx",
+    "doc_size_bytes": 1650,
+    "doc_sha256": "093e1b9874179baea923f2b4283c388c3c29ad5abfed0d60b77a21b1f9b17728",
+    "answers_sha256": "",
+    "doc_pages": null,
+    "doc_lines": 28,
+    "doc_chars": 1014,
+    "llm_calls": 0,
+    "llm_cache_hits": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0,
+    "cost_usd": 0.0,
+    "cost_note": "модель не вызывалась",
+    "quotes_confirmed": 6,
+    "quotes_restored": 0,
+    "quotes_dropped": 0,
+    "skeptic_kept": 0,
+    "skeptic_rejected": 0,
+    "skeptic_merged": 0,
+    "skeptic_advisory": 0,
+    "skeptic_dedup": 0,
+    "manual_minutes_estimate": null,
+    "warnings": [
+      "Документ прочитан из Word: рисунки и схемы-картинки не учитываются, нумерация списков заменена маркерами."
+    ],
+    "injection_suspected": false,
+    "masked_values": 0,
+    "score": 95,
+    "score_formula": "10 × 9,71 (средняя ясность 10 треб.) − 2 (штраф за замечания к набору: 8×0 + 3×0 + 1×2 = 2) = 95",
+    "rules_version": "1.3",
+    "doc_words": 150,
+    "context_files": [],
+    "dup_merged": 0,
+    "critical_demoted": 0,
+    "agent_commit": "bff5c00",
+    "agent_tag": "",
+    "agent_dirty": true,
+    "doc_title": "Требования: переводы по номеру телефона",
+    "stage_seconds": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "diagnostic": null,
+  "requirements": [
+    {
+      "rid": "REQ-001",
+      "doc_id": "1.1",
+      "section": "Требования: переводы по номеру телефона › 1. Общие положения",
+      "kind": "functional",
+      "quote": "1.1. Клиент банка может перевести деньги другому клиенту по номеру телефона в мобильном приложении.",
+      "summary": "",
+      "block_ids": [
+        "B003"
+      ],
+      "line_start": 5,
+      "line_end": 5,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-002",
+      "doc_id": "1.2",
+      "section": "Требования: переводы по номеру телефона › 1. Общие положения",
+      "kind": "functional",
+      "quote": "1.2. Лимит одного перевода составляет 500 000 тенге, суточный лимит — 1 000 000 тенге.",
+      "summary": "",
+      "block_ids": [
+        "B004"
+      ],
+      "line_start": 7,
+      "line_end": 7,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-003",
+      "doc_id": "1.3",
+      "section": "Требования: переводы по номеру телефона › 1. Общие положения",
+      "kind": "functional",
+      "quote": "1.3. Комиссия за перевод внутри банка не взимается.",
+      "summary": "",
+      "block_ids": [
+        "B005"
+      ],
+      "line_start": 9,
+      "line_end": 9,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-004",
+      "doc_id": "2.1",
+      "section": "Требования: переводы по номеру телефона › 2. Функциональные требования",
+      "kind": "functional",
+      "quote": "2.1. Система должна показывать имя получателя (в формате «Имя Ф.») до подтверждения перевода.",
+      "summary": "",
+      "block_ids": [
+        "B007"
+      ],
+      "line_start": 13,
+      "line_end": 13,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-005",
+      "doc_id": "2.2",
+      "section": "Требования: переводы по номеру телефона › 2. Функциональные требования",
+      "kind": "functional",
+      "quote": "2.2. Система должна запрашивать подтверждение перевода одноразовым кодом из СМС.",
+      "summary": "",
+      "block_ids": [
+        "B008"
+      ],
+      "line_start": 15,
+      "line_end": 15,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-006",
+      "doc_id": "2.3",
+      "section": "Требования: переводы по номеру телефона › 2. Функциональные требования",
+      "kind": "functional",
+      "quote": "2.3. Если номер получателя не найден, система должна предложить отправить приглашение.",
+      "summary": "",
+      "block_ids": [
+        "B009"
+      ],
+      "line_start": 17,
+      "line_end": 17,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-007",
+      "doc_id": "2.4",
+      "section": "Требования: переводы по номеру телефона › 2. Функциональные требования",
+      "kind": "functional",
+      "quote": "2.4. После успешного перевода система должна показать чек и отправить push-уведомление обоим клиентам.",
+      "summary": "",
+      "block_ids": [
+        "B010"
+      ],
+      "line_start": 19,
+      "line_end": 19,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-008",
+      "doc_id": "2.5",
+      "section": "Требования: переводы по номеру телефона › 2. Функциональные требования",
+      "kind": "functional",
+      "quote": "2.5. Система должна быстро обрабатывать переводы и быть удобной для пользователя.",
+      "summary": "",
+      "block_ids": [
+        "B011"
+      ],
+      "line_start": 21,
+      "line_end": 21,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-009",
+      "doc_id": "3.1",
+      "section": "Требования: переводы по номеру телефона › 3. Нефункциональные требования",
+      "kind": "nonfunctional",
+      "quote": "3.1. Время ответа сервера на запрос перевода не должно превышать 3 секунд при нагрузке 200 запросов в секунду.",
+      "summary": "",
+      "block_ids": [
+        "B013"
+      ],
+      "line_start": 25,
+      "line_end": 25,
+      "page": null,
+      "origin": "heuristic"
+    },
+    {
+      "rid": "REQ-010",
+      "doc_id": "3.2",
+      "section": "Требования: переводы по номеру телефона › 3. Нефункциональные требования",
+      "kind": "nonfunctional",
+      "quote": "3.2. Все операции записываются в журнал аудита и хранятся не менее 5 лет.",
+      "summary": "",
+      "block_ids": [
+        "B014"
+      ],
+      "line_start": 27,
+      "line_end": 27,
+      "page": null,
+      "origin": "heuristic"
+    }
+  ],
+  "skipped": [
+    {
+      "block_ids": [
+        "B001"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Требования: переводы по номеру телефона",
+      "line_start": 1,
+      "line_end": 1,
+      "text": "Требования: переводы по номеру телефона",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B002"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Требования: переводы по номеру телефона › 1. Общие положения",
+      "line_start": 3,
+      "line_end": 3,
+      "text": "1. Общие положения",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B006"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Требования: переводы по номеру телефона › 2. Функциональные требования",
+      "line_start": 11,
+      "line_end": 11,
+      "text": "2. Функциональные требования",
+      "origin": "heuristic"
+    },
+    {
+      "block_ids": [
+        "B012"
+      ],
+      "category": "heading",
+      "reason": "заголовок раздела",
+      "section": "Требования: переводы по номеру телефона › 3. Нефункциональные требования",
+      "line_start": 23,
+      "line_end": 23,
+      "text": "3. Нефункциональные требования",
+      "origin": "heuristic"
+    }
+  ],
+  "reviews": [
+    {
+      "rid": "REQ-001",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-002",
+      "criteria": {
+        "completeness": {
+          "status": "issue",
+          "note": "Лимит по периоду без определения: что такое сутки"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 9.6
+    },
+    {
+      "rid": "REQ-003",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-004",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-005",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-006",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-007",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-008",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "issue",
+          "note": "Размытые формулировки: «быстро», «удобной»"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 7.5
+    },
+    {
+      "rid": "REQ-009",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    },
+    {
+      "rid": "REQ-010",
+      "criteria": {
+        "completeness": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "unambiguity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "consistency": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "verifiability": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "feasibility": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "necessity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        },
+        "singularity": {
+          "status": "unchecked",
+          "note": "не проверялось без модели"
+        }
+      },
+      "by_model": false,
+      "clarity": 10.0
+    }
+  ],
+  "findings": [
+    {
+      "scope": "set",
+      "criterion": "traceability",
+      "severity": "MINOR",
+      "title": "У документа не указаны версия и дата",
+      "problem": "В документе не найдено ни номера версии, ни даты. Нельзя понять, какая редакция актуальна: замечания ревью, задачи и тесты нельзя привязать к конкретной версии, а изменения требований — отследить.",
+      "recommendation": "Добавьте в начало документа номер версии (например, 1.0), дату, автора и таблицу истории изменений.",
+      "quotes": [
+        {
+          "text": "Требования: переводы по номеру телефона",
+          "line_start": 1,
+          "line_end": 1,
+          "page": null,
+          "section": "Требования: переводы по номеру телефона",
+          "rid": "",
+          "exact": true
+        }
+      ],
+      "req_ids": [],
+      "question": {
+        "text": "Какую версию и дату присвоить документу?",
+        "options": [
+          "1.0 — первая согласуемая редакция",
+          "0.x — черновик до согласования"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:no-version",
+      "rule_ids": [
+        "no-version"
+      ],
+      "stage": "rules",
+      "fid": "D-001",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-02",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен допускать проверку на соответствие потребности",
+      "witness": null
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Неясно, обязательно ли требование («может»)",
+      "problem": "Слово «может» не говорит, обязательно ли это поведение: его можно реализовать, а можно и нет. Тогда непонятно, считать ли его отсутствие дефектом. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Если поведение обязательно — пишите «должна»; если необязательно — пометьте его как опциональное с приоритетом.",
+      "quotes": [
+        {
+          "text": "Клиент банка может перевести деньги другому клиенту по номеру телефона в мобильном приложении",
+          "line_start": 5,
+          "line_end": 5,
+          "page": null,
+          "section": "Требования: переводы по номеру телефона › 1. Общие положения",
+          "rid": "REQ-001",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-001"
+      ],
+      "question": {
+        "text": "Обязательно ли поведение «может»?",
+        "options": [
+          "Обязательно",
+          "Необязательно — пометить приоритет"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:weak-modal",
+      "rule_ids": [
+        "weak-modal"
+      ],
+      "stage": "rules",
+      "fid": "Н-01",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть лазеек («может», «желательно», «по возможности»)",
+      "witness": null
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Лимит по периоду без определения: что такое сутки",
+      "problem": "Лимиты или счётчики заданы на период «сутки», но нигде не сказано, как он считается. «Месяц» может быть календарным (с 1-го числа) или скользящим (последние 30 дней); «сутки» — календарным днём или 24 часами от первой операции. От этого зависит, когда счётчик обнуляется и пропустит ли система операцию.",
+      "recommendation": "Определите период один раз: «Месяц — календарный, с 1-го числа 00:00 по последнее число» (или скользящие 30 дней) и когда обнуляется счётчик.",
+      "quotes": [
+        {
+          "text": "Лимит одного перевода составляет 500 000 тенге, суточный лимит — 1 000 000 тенге",
+          "line_start": 7,
+          "line_end": 7,
+          "page": null,
+          "section": "Требования: переводы по номеру телефона › 1. Общие положения",
+          "rid": "REQ-002",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-002"
+      ],
+      "question": {
+        "text": "Как считаются сутки в лимитах: календарный день с 00:00 или 24 часа от первой операции?",
+        "options": [
+          "Календарный период, счётчик обнуляется в начале периода",
+          "Скользящий период (30 дней / 24 часа)"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:period-undefined",
+      "rule_ids": [
+        "period-undefined"
+      ],
+      "stage": "rules",
+      "fid": "D-002",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-03",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным",
+      "witness": null
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MAJOR",
+      "title": "Размытые формулировки: «быстро», «удобной»",
+      "problem": "Слово «быстро» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное. Здесь же: «удобной». По такой формулировке нельзя написать тест с однозначным ожидаемым результатом.",
+      "recommendation": "Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
+      "quotes": [
+        {
+          "text": "Система должна быстро обрабатывать переводы и быть удобной для пользователя",
+          "line_start": 21,
+          "line_end": 21,
+          "page": null,
+          "section": "Требования: переводы по номеру телефона › 2. Функциональные требования",
+          "rid": "REQ-008",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-008"
+      ],
+      "question": {
+        "text": "Что конкретно означает «быстро» в этом требовании?",
+        "options": [
+          "Задать число и условия измерения (дописать в требование)",
+          "Перечислить случаи, когда это применяется",
+          "Убрать слово — оно ничего не добавляет"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:vague-word",
+      "rule_ids": [
+        "vague-word"
+      ],
+      "stage": "rules",
+      "fid": "D-003",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-01",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании не должно быть расплывчатых и субъективных слов",
+      "witness": null
+    },
+    {
+      "scope": "requirement",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Требование сформулировано через отрицание («не должно»)",
+      "problem": "Отрицательная формулировка говорит, чего не должно быть, но не говорит, что должно происходить вместо этого. Тестировщику трудно проверить «отсутствие» без перечня случаев. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Если возможно, переформулируйте положительно: что система делает в этом случае (например, «отклоняет операцию с сообщением …»).",
+      "quotes": [
+        {
+          "text": "Время ответа сервера на запрос перевода не должно превышать 3 секунд при нагрузке 200 запросов в секунду",
+          "line_start": 25,
+          "line_end": 25,
+          "page": null,
+          "section": "Требования: переводы по номеру телефона › 3. Нефункциональные требования",
+          "rid": "REQ-009",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-009"
+      ],
+      "question": {
+        "text": "Что система должна сделать вместо запрещённого действия?",
+        "options": [
+          "Описать положительное действие",
+          "Оставить как есть — запрет понятен"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:negative-wording",
+      "rule_ids": [
+        "negative-wording"
+      ],
+      "stage": "rules",
+      "fid": "Н-02",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.7 — в требовании следует избегать отрицательных формулировок",
+      "witness": null
+    },
+    {
+      "scope": "requirement",
+      "criterion": "verifiability",
+      "severity": "MINOR",
+      "title": "Обобщение «Все» без границ",
+      "problem": "Слова вроде «Все» охватывают все случаи без исключений. Обычно исключения есть (ошибки, отмены, особые клиенты), и тогда требование окажется невыполнимым или непроверяемым. Это наблюдение, а не обязательно дефект.",
+      "recommendation": "Проверьте, действительно ли нет исключений; если есть — перечислите их или ограничьте охват.",
+      "quotes": [
+        {
+          "text": "Все операции записываются в журнал аудита и хранятся не менее 5 лет",
+          "line_start": 27,
+          "line_end": 27,
+          "page": null,
+          "section": "Требования: переводы по номеру телефона › 3. Нефункциональные требования",
+          "rid": "REQ-010",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-010"
+      ],
+      "question": {
+        "text": "Есть ли исключения из «Все»?",
+        "options": [
+          "Нет — без исключений",
+          "Есть — перечислить"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:universal-quantifier",
+      "rule_ids": [
+        "universal-quantifier"
+      ],
+      "stage": "rules",
+      "fid": "Н-03",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": true,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть проверяемым",
+      "witness": null
+    }
+  ],
+  "rejected": [],
+  "dropped": [],
+  "questions": [
+    {
+      "qid": "В-01",
+      "text": "Что конкретно означает «быстро» в этом требовании?",
+      "why": "Слово «быстро» каждый понимает по-своему: заказчик, разработчик и тестировщик представят разное.",
+      "addressee": "analyst",
+      "options": [
+        "Задать число и условия измерения (дописать в требование)",
+        "Перечислить случаи, когда это применяется",
+        "Убрать слово — оно ничего не добавляет"
+      ],
+      "priority": "important",
+      "finding_ids": [
+        "D-003"
+      ],
+      "req_ids": [
+        "REQ-008"
+      ],
+      "quote": {
+        "text": "Система должна быстро обрабатывать переводы и быть удобной для пользователя",
+        "line_start": 21,
+        "line_end": 21,
+        "page": null,
+        "section": "Требования: переводы по номеру телефона › 2. Функциональные требования",
+        "rid": "REQ-008",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "term",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "5ec0e29dbba8",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-003"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "READY",
+        "index_after": 98,
+        "index_delta": 3
+      }
+    },
+    {
+      "qid": "В-02",
+      "text": "Какую версию и дату присвоить документу?",
+      "why": "В документе не найдено ни номера версии, ни даты.",
+      "addressee": "analyst",
+      "options": [
+        "1.0 — первая согласуемая редакция",
+        "0.x — черновик до согласования"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-001"
+      ],
+      "req_ids": [],
+      "quote": {
+        "text": "Требования: переводы по номеру телефона",
+        "line_start": 1,
+        "line_end": 1,
+        "page": null,
+        "section": "Требования: переводы по номеру телефона",
+        "rid": "",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "owner",
+      "assumption": "Версией считаем дату последнего изменения файла.",
+      "fingerprint": "9a8d660c397d",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-001"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 96,
+        "index_delta": 1
+      }
+    },
+    {
+      "qid": "В-03",
+      "text": "Как считаются сутки в лимитах: календарный день с 00:00 или 24 часа от первой операции?",
+      "why": "Лимиты или счётчики заданы на период «сутки», но нигде не сказано, как он считается.",
+      "addressee": "analyst",
+      "options": [
+        "Календарный период, счётчик обнуляется в начале периода",
+        "Скользящий период (30 дней / 24 часа)"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-002"
+      ],
+      "req_ids": [
+        "REQ-002"
+      ],
+      "quote": {
+        "text": "Лимит одного перевода составляет 500 000 тенге, суточный лимит — 1 000 000 тенге",
+        "line_start": 7,
+        "line_end": 7,
+        "page": null,
+        "section": "Требования: переводы по номеру телефона › 1. Общие положения",
+        "rid": "REQ-002",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "Месяц считаем календарным (с 1-го по последнее число), сутки — с 00:00 до 24:00.",
+      "fingerprint": "6ba0dddd8f35",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-002"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "CONDITIONAL",
+        "index_after": 96,
+        "index_delta": 1
+      }
+    }
+  ],
+  "fix_first": [
+    {
+      "action": "Размытые формулировки: «быстро», «удобной». Замените «быстро» проверяемым условием: укажите время в секундах или миллисекундах, долю запросов (например, 95%) и нагрузку, при которой оно выполняется.",
+      "finding_ids": [
+        "D-003"
+      ]
+    },
+    {
+      "action": "У документа не указаны версия и дата. Добавьте в начало документа номер версии (например, 1.0), дату, автора и таблицу истории изменений.",
+      "finding_ids": [
+        "D-001"
+      ]
+    },
+    {
+      "action": "Лимит по периоду без определения: что такое сутки. Определите период один раз: «Месяц — календарный, с 1-го числа 00:00 по последнее число» (или скользящие 30 дней) и когда обнуляется счётчик.",
+      "finding_ids": [
+        "D-002"
+      ]
+    }
+  ],
+  "strengths": [],
+  "coverage": [],
+  "verdict": "CONDITIONAL",
+  "verdict_text": "⚠️ Начинать можно только после ответов на вопросы и исправления существенных замечаний (модель не использовалась: проверены только автоматические правила, итог предварительный)",
+  "verdict_reason": "Блокеров нет, но есть 1 существенное замечание: без ответов автора разработчик и тестировщик могут понять эти места по-разному. Проверка выполнена только автоматическими правилами: смысловые противоречия, пропущенные сценарии и пограничные случаи без модели не ищутся.",
+  "tests": [
+    {
+      "tid": "Т-01",
+      "title": "2.3: если номер получателя не найден",
+      "kind": "positive",
+      "req_ids": [
+        "REQ-006"
+      ],
+      "given": "Система работает в обычном режиме, данные для сценария подготовлены.",
+      "when": "Создать условие: номер получателя не найден.",
+      "then": "Система должна предложить отправить приглашение (требование 2.3).",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule",
+      "explicit_limit": false,
+      "values": []
+    },
+    {
+      "tid": "Т-02",
+      "title": "3.2: граничные допустимые значения 5",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-010"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.2: «Все операции записываются в журнал аудита и хранятся не менее 5 лет».",
+      "when": "Ввести или передать значения на границе допустимого: 5. (шаг значения не задан: взяты соседние целые.)",
+      "then": "Значения принимаются без ошибки: по требованию 3.2 допустимо «не менее 5».",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule",
+      "explicit_limit": true,
+      "values": [
+        "5"
+      ]
+    },
+    {
+      "tid": "Т-03",
+      "title": "3.2: значения сразу за границей 4",
+      "kind": "boundary",
+      "req_ids": [
+        "REQ-010"
+      ],
+      "given": "Система работает в обычном режиме; проверяется требование 3.2: «Все операции записываются в журнал аудита и хранятся не менее 5 лет».",
+      "when": "Ввести или передать значения сразу за границей: 4. (шаг значения не задан: взяты соседние целые.)",
+      "then": "Значения не принимаются как допустимые: по требованию 3.2 допустимо только «не менее 5».",
+      "blocked_by": [],
+      "finding_ids": [],
+      "origin": "rule",
+      "explicit_limit": true,
+      "values": [
+        "5"
+      ]
+    }
+  ],
+  "verdict_after_answers": "",
+  "verdict_after_answers_text": "",
+  "audit": [
+    {
+      "type": "test_unverifiable",
+      "items": [
+        {
+          "req_ids": [
+            "REQ-008"
+          ],
+          "what": "2.5: 2.5",
+          "blocked_by": [
+            "В-01"
+          ],
+          "answered": [],
+          "finding_ids": [
+            "D-003"
+          ],
+          "why": "в документе нет конкретного действия или ожидаемого результата"
+        }
+      ]
+    }
+  ],
+  "checklist": [],
+  "gap_map": [
+    {
+      "id": "ST1",
+      "group": "Состояния",
+      "title": "Состояния переключателей и статусов",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "ST2",
+      "group": "Состояния",
+      "title": "Смена состояния посреди периода",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "ST3",
+      "group": "Состояния",
+      "title": "Начальное состояние",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP1",
+      "group": "Отказы и альтернативные пути",
+      "title": "Ошибки на шагах основного сценария",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP2",
+      "group": "Отказы и альтернативные пути",
+      "title": "Ветки ошибок на схемах",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP3",
+      "group": "Отказы и альтернативные пути",
+      "title": "Недоступность соседних систем",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "NP4",
+      "group": "Отказы и альтернативные пути",
+      "title": "Сообщения клиенту",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL1",
+      "group": "Значения, деньги и время",
+      "title": "Числовые параметры: единицы и границы",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL2",
+      "group": "Значения, деньги и время",
+      "title": "Валюта и округление",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL3",
+      "group": "Значения, деньги и время",
+      "title": "Время и периоды",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL4",
+      "group": "Значения, деньги и время",
+      "title": "Полнота перечней",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL5",
+      "group": "Значения, деньги и время",
+      "title": "Изменения задним числом",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL6",
+      "group": "Значения, деньги и время",
+      "title": "Несколько однотипных объектов",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL7",
+      "group": "Значения, деньги и время",
+      "title": "Шаг и точность чисел",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "VL8",
+      "group": "Значения, деньги и время",
+      "title": "Значение по умолчанию",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "IF1",
+      "group": "Интерфейсы между системами",
+      "title": "Надёжность интерфейса",
+      "status": "na",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "в документе нет описания программного интерфейса"
+    },
+    {
+      "id": "IF2",
+      "group": "Интерфейсы между системами",
+      "title": "Ошибки интерфейса",
+      "status": "na",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "в документе нет описания программного интерфейса"
+    },
+    {
+      "id": "IF3",
+      "group": "Интерфейсы между системами",
+      "title": "Права доступа в интерфейсе",
+      "status": "na",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "в документе нет описания программного интерфейса"
+    },
+    {
+      "id": "IF4",
+      "group": "Интерфейсы между системами",
+      "title": "Интеграции",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "DT1",
+      "group": "Данные и экран",
+      "title": "Модель данных",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "UI1",
+      "group": "Данные и экран",
+      "title": "Экран",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN1",
+      "group": "Согласованность документа",
+      "title": "Название задачи",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN2",
+      "group": "Согласованность документа",
+      "title": "Перечни систем и участников",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN3",
+      "group": "Согласованность документа",
+      "title": "Термины",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN4",
+      "group": "Согласованность документа",
+      "title": "Цель и требования",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "CN5",
+      "group": "Согласованность документа",
+      "title": "Экран, функции и интерфейс",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR1",
+      "group": "Адресуемость и проверяемость",
+      "title": "Номера требований",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR2",
+      "group": "Адресуемость и проверяемость",
+      "title": "Критерии приёмки",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR3",
+      "group": "Адресуемость и проверяемость",
+      "title": "Проверяемость через действие системы",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "TR4",
+      "group": "Адресуемость и проверяемость",
+      "title": "Нефункциональные требования",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD1",
+      "group": "Данные клиентов и карт",
+      "title": "Персональные данные",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD2",
+      "group": "Данные клиентов и карт",
+      "title": "Где хранятся и кому передаются данные",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD3",
+      "group": "Данные клиентов и карт",
+      "title": "Данные карт",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD4",
+      "group": "Данные клиентов и карт",
+      "title": "Что видно посторонним",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    },
+    {
+      "id": "PD5",
+      "group": "Данные клиентов и карт",
+      "title": "Журнал аудита и откат",
+      "status": "unchecked",
+      "line": 0,
+      "finding_ids": [],
+      "checked": [],
+      "note": "без модели не оценивается"
+    }
+  ],
+  "readiness": {
+    "dev": {
+      "ok": true,
+      "text": "Можно отдавать в разработку: блокеров нет (предварительно)",
+      "blockers": []
+    },
+    "test": {
+      "ok": false,
+      "text": "Нельзя отдавать в тестирование: в документе нет критериев приёмки (предварительно)",
+      "coverage_pct": null,
+      "uncovered": []
+    }
+  }
+}

@@ -1,0 +1,5 @@
+
+Итог: документ не проверен — Файл Word (.docx) повреждён
+Записано: /var/folders/0w/0cljy90n19zbhj0vkkhtrr440000gn/T/tmpufbpg2zq/work/docx_cut/report.md, /var/folders/0w/0cljy90n19zbhj0vkkhtrr440000gn/T/tmpufbpg2zq/work/docx_cut/report.json, /var/folders/0w/0cljy90n19zbhj0vkkhtrr440000gn/T/tmpufbpg2zq/work/docx_cut/report.html
+Время: 0.0 с · Стоимость: $0 (модель не вызывалась)
+Расход: модель не вызывалась — вызовов 0, вход 0, выход 0, чтение кэша 0, запись кэша 0, $0
