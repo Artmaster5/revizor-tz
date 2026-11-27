@@ -8,7 +8,7 @@
 - Runs with no key, for free: `python main.py --input docs/requirements.md --output reports/my_report.md --provider offline`.
 - Providers: Anthropic, Google Gemini, OpenAI-compatible servers, Ollama / any local OpenAI-compatible server, offline (`revizor/llm/`).
 - Clarification loop: questions to the author with options and an assumption, answers, re-check, «было → стало» diff, rewritten requirements (`*.fixed.md`), letter by addressee.
-- 1198 tests in 50 test files (`tests/`), no network and no keys. Measured results and method: `eval/ACCURACY.md`; two runs from 27.11.2026 (free Gemini, local Gemma 4) are stored in `docs/runs/`.
+- 1224 tests in 53 test files (`tests/`), no network and no keys. Measured results and method: `eval/ACCURACY.md`; two runs from 27.11.2026 (free Gemini, local Gemma 4) are stored in `docs/runs/`.
 
 ---
 
@@ -119,6 +119,15 @@ python main.py --ui
 
 ---
 
+### 3.1. Добавлено 27.11.2026
+
+| Функция | Что делает | Где в коде | Как запустить |
+| :--- | :--- | :--- | :--- |
+| MCP-сервер | агент вызывается из Claude Desktop, Cursor и VS Code; инструменты `check_requirements` (в том числе быстрый режим `depth: fast`), `verify_quote`, `list_checks`, `estimate_run`; stdio, JSON-RPC 2.0, без внешних библиотек | `revizor/mcp_server.py`, `mcp_server.py`, `docs/MCP.md`, `tests/test_mcp_server.py` | `python mcp_server.py` |
+| Сравнение двух версий ТЗ | сопоставляет дефекты двух проверок по правилу, критерию и тексту цитаты (номера строк не важны): «Закрыто · Осталось · Новых», индекс готовности и блокеры «было → стало»; пишет `.compare.md` и `.compare.html` | `revizor/compare.py`, `tests/test_compare.py` | `python main.py --compare старый.json новый.json --output reports/diff` |
+| Пример сравнения | исходный документ организаторов против версии, где внесены 9 формулировок агента и ответы автора из `docs/demo/answers.md`: закрыто 15, осталось 12, новых 6; индекс готовности 54 → 82; блокеры 3 → 0 (проверка правилами без модели); каждая правка с источником | `docs/demo/compare/v1_v3.compare.md`, `docs/demo/compare/CHANGES.md` | см. `docs/USAGE.md` |
+| Тема отчёта | кнопка в HTML-отчёте: авто (как в системе), светлая, тёмная; выбор запоминается в браузере; при печати отчёт светлый; скрипт разрешён по хешу в Content-Security-Policy, внешних ресурсов нет | `revizor/report_html.py`, `tests/test_theme_toggle.py` | открыть `reports/report.html` |
+
 ## 4. Точность
 
 ### 4.1. Метод
@@ -183,7 +192,7 @@ python main.py --ui
 
 | Что | Значение | Где проверить |
 | :--- | :--- | :--- |
-| Число тестов | 1198 (число определений `def test_` в `tests/`) | `README.md`; `grep -rn "def test_" tests` |
+| Число тестов | 1224 (число определений `def test_` в `tests/`) | `README.md`; `grep -rn "def test_" tests` |
 | Файлов с тестами | 50 (`tests/test_*.py`) | `ls tests` |
 | Запуск | `python -m unittest discover -s tests -t .`; без сети и без ключей, провайдеры проверяются с заглушкой вместо сервера | `docs/ARCHITECTURE.md` |
 | CI | GitHub Actions, матрица 3 системы × 3 версии Python: Ubuntu, Windows, macOS × Python 3.10, 3.12, 3.13; установка зависимостей, тесты, дымовой прогон `--provider offline`; отдельный прогон в консоли Windows с кодовой страницей 866. Запускается вручную (`workflow_dispatch`) | `.github/workflows/tests.yml` |
@@ -270,7 +279,7 @@ eval/                      ACCURACY.md, RESULTS.md, score.py, run_all.py, summar
                            docs/ (документ организаторов и четыре документа с ключами), blind/ blind2/ blind3/ (двенадцать документов с ключами), results/
 reports/                   сданный отчёт (report.*), повторная проверка с ответами (report_answered.*), образцы Haiku, без модели, диагностики
 examples/                  PDF-версия документа организаторов, испорченные файлы (examples/broken/)
-tests/                     50 файлов с тестами, 1198 тестов; fixtures/
+tests/                     50 файлов с тестами, 1224 теста; fixtures/
 tools/                     roi.py (окупаемость), rerender.py (пересборка отчёта из JSON), make_fixtures.py, shots.py, build_slides.py
 .github/workflows/         tests.yml
 ```

@@ -1,6 +1,6 @@
 # Ревизор ТЗ
 
-[![тесты](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) — 1198 тестов проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13
+[![тесты](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) — 1224 теста проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13
 
 ИИ-агент проверяет документ с требованиями до начала разработки и пишет отчёт на русском языке. Главное в нём — уточнение: агент задаёт автору конкретные вопросы, принимает ответы, перепроверяет документ и показывает, что изменилось.
 
@@ -10,15 +10,17 @@
 | :--- | :--- |
 | Видео, 4 мин 44 с | [youtu.be/4_AOG0X5nH4](https://youtu.be/4_AOG0X5nH4) |
 | Презентация | [`presentation.pdf`](presentation.pdf) |
-| Отчёт агента по документу организаторов | [`reports/report.md`](reports/report.md), страница [`report.html`](reports/report.html), [`report.pdf`](reports/report.pdf), сводка на одну страницу [`report.summary.md`](reports/report.summary.md) |
+| Отчёт агента по документу организаторов | [`reports/report.md`](reports/report.md), страница [`report.html`](reports/report.html) (светлая и тёмная тема — кнопкой), [`report.pdf`](reports/report.pdf), сводка на одну страницу [`report.summary.md`](reports/report.summary.md) |
 | Вопросы автору и перепроверка с ответами | [`reports/report.questions.md`](reports/report.questions.md), письмо автору [`report.letter.md`](reports/report.letter.md), пример ответов [`docs/demo/answers.md`](docs/demo/answers.md) |
 | Требования, переписанные агентом | [`reports/report.fixed.md`](reports/report.fixed.md) |
 | Черновики приёмочных тестов и задачи для Jira | [`report.tests.md`](reports/report.tests.md), [`report.jira.csv`](reports/report.jira.csv) |
 | Точность | все 10 дефектов организаторов; 49 из 52 и ещё 2 частично по нашему списку (независимый судья, Opus); 102 из 109 на 8 незнакомых документах, включая казахский и английский (Sonnet) — [подробно](#точность) |
 | Бесплатно и локально | бесплатный Gemini: 2 мин 43 с, $0, все 10 дефектов организаторов; локальная Gemma 4 на MacBook (модель 6,4 ГБ, документ не покидает компьютер): 36 мин, $0, 9 из 10 полностью и место десятого — [`docs/runs/`](docs/runs/README.md) |
 | Запустить за минуту, без ключа | [Запуск одной командой](#запуск-одной-командой); окно — `python main.py --ui`, кнопка «Попробовать на примере» |
+| Сравнение двух версий ТЗ | `python main.py --compare старый.json новый.json`: что закрыто, что осталось, что нового. Пример — автор ответил на вопросы агента, вышла новая версия: закрыто 15 дефектов, блокеры 3 → 0, индекс готовности 54 → 82 (проверка правилами без модели) — [`docs/demo/compare/`](docs/demo/compare/v1_v3.compare.md), что изменено и по какому ответу — [`CHANGES.md`](docs/demo/compare/CHANGES.md) |
+| Вызов из чата с ИИ (MCP) | агент подключается к Claude Desktop, Cursor и VS Code: аналитик пишет в чате «проверь это ТЗ» — [`docs/MCP.md`](docs/MCP.md) |
 | Как устроен | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
-| Тесты агента | 1198 тестов без ключей и без сети; на GitHub проходят на Windows, macOS и Linux — [запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) |
+| Тесты агента | 1224 теста без ключей и без сети; на GitHub проходят на Windows, macOS и Linux — [запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) |
 | Ценность для банка и пилот | [`docs/VALUE.md`](docs/VALUE.md), [`docs/PILOT.md`](docs/PILOT.md) |
 | Полная карта проекта: все функции, где каждая в коде, все числа с источником | [`docs/FOR_AI_REVIEW.md`](docs/FOR_AI_REVIEW.md), удобно и для проверки с помощью ИИ |
 | Всё по четырём критериям | [`SUBMISSION.md`](SUBMISSION.md) |
@@ -52,6 +54,10 @@ python main.py --input docs/requirements.md --output reports/my_answered.md --pr
 ```
 
 Подробно — в [`docs/USAGE.md`](docs/USAGE.md#диалог-с-автором-тз) и [`docs/INTEGRATION.md`](docs/INTEGRATION.md#петля-1-ответы-автора-на-вопросы).
+
+## Вызов из чата с ИИ (MCP)
+
+Агент подключается к Claude Desktop, Cursor и VS Code как MCP-сервер: аналитик пишет в чате «проверь это ТЗ», чат запускает проверку и пересказывает итог, а полный отчёт ложится в папку. Запуск: `python mcp_server.py`. Инструменты: `check_requirements` (проверка, можно быстрый режим `depth: fast`), `verify_quote` (есть ли цитата в документе, без модели), `list_checks` (что проверяет агент), `estimate_run` (цена и время до запуска). Настройка для каждого приложения и пример диалога — [`docs/MCP.md`](docs/MCP.md).
 
 ## Запуск одной командой
 
@@ -171,7 +177,7 @@ python main.py --input docs/requirements.md --output reports/my_answered.md --pr
 
 Сданный отчёт `reports/report.md` сделан в глубоком режиме на модели `claude-opus-5-5`, версия 1.5.0. Его написал сам агент командой `python main.py --input docs/requirements.md --output reports/report.md --model claude-opus-5-5`; повторная проверка с ответами автора — та же команда с `--output reports/report_answered.md --answers docs/demo/answers.md`. Тот же документ на модели `claude-haiku-5-5` — [`reports/report_haiku.md`](reports/report_haiku.md). История тегов и перерисованных отчётов — в [`docs/HISTORY.md`](docs/HISTORY.md). Отчёт на модели Haiku в `reports/` собран на прежней версии (тег `v1.1.1`); числа раздела «Точность» ниже измерены на версии 1.4.0 отдельными прогонами.
 
-**Тесты.** 1198 тестов, без ключей и без сети; на GitHub они проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13 ([запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml)):
+**Тесты.** 1224 теста, без ключей и без сети; на GitHub они проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13 ([запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml)):
 
 ```bash
 python -m unittest discover -s tests -t .
