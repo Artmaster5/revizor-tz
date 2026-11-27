@@ -218,7 +218,7 @@ class Concurrency(_Base):
 
 class StageSeconds(_Base):
     def test_nine_numbers_in_the_run_info_and_json(self):
-        res, _, wall = self.run_with(4, {"set_completeness": 0.1, "skeptic": 0.05})
+        res, _, wall = self.run_with(4, {"set_completeness": 0.1, "skeptic": 0.08})  # away from the 0.05 rounding edge (Windows clock ~16 ms)
         sec = res.run.stage_seconds
         self.assertEqual(len(sec), 9)
         self.assertTrue(all(isinstance(x, float) and x >= 0 for x in sec))
@@ -240,7 +240,7 @@ class StageSeconds(_Base):
             self.assertEqual(int(re.search(r" · (\d+) с$", ln).group(1)), int(round(sec)))
 
     def test_stages_four_and_five_have_their_own_spans(self):
-        res, _, _ = self.run_with(6, {"review_clarity": 0.05, "set_completeness": 0.25})
+        res, _, _ = self.run_with(6, {"review_clarity": 0.05, "set_completeness": 0.3})  # 0.25 could round down to 0.2 on Windows
         sec = res.run.stage_seconds
         self.assertGreaterEqual(sec[4], 0.24)
         self.assertLess(sec[3], sec[4])

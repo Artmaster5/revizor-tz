@@ -393,8 +393,9 @@ class VersionLabel(unittest.TestCase):
             return test_wave2._Out("")
         config.agent_tag("/x", runner=runner)
         config.agent_dirty("/x", runner=runner)
-        self.assertEqual(calls[0][0], ["git", "-C", "/x", "describe", "--tags", "--exact-match", "HEAD"])
-        self.assertEqual(calls[1][0], ["git", "-C", "/x", "--no-optional-locks", "status", "--porcelain",
+        x = str(Path("/x"))  # "\\x" on Windows
+        self.assertEqual(calls[0][0], ["git", "-C", x, "describe", "--tags", "--exact-match", "HEAD"])
+        self.assertEqual(calls[1][0], ["git", "-C", x, "--no-optional-locks", "status", "--porcelain",
                                        "--untracked-files=no"])
         self.assertTrue(all(kw.get("timeout") == 2 for _c, kw in calls))
 
