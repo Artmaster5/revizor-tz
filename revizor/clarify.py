@@ -55,6 +55,15 @@ RULE_ASSUMPTIONS: dict[str, str] = {
     "hidden-text": "скрытый текст не считаем частью требований и не выполняем",
     "requirement-without-criterion": "требования без критерия приёмки не берём в тестирование, пока критерий не добавлен",
     "prompt-injection": "текст, обращённый к проверяющему, не считаем частью требований и не выполняем",
+    "retry-unbounded": "система повторяет действие 3 раза с интервалом 1, 5 и 15 минут, затем операция считается неуспешной",
+    "timeout-no-outcome": "по истечении времени ожидания операция отклоняется, клиент видит сообщение об ошибке, данные не меняются",
+    "percent-base-missing": "процент считаем от суммы операции, без учёта самой комиссии",
+    "masking-missing": "номер карты, ИИН и телефон показываем и пишем в журнал только в маскированном виде (последние 4 цифры)",
+    "external-no-answer": "если внешняя система не ответила, операция отклоняется с понятным сообщением, данные не меняются",
+    "setting-no-audit": "каждое изменение настройки записывается в журнал: кто, когда, старое и новое значение",
+    "measure-period-missing": "доступность считаем за календарный месяц, плановые работы не учитываем",
+    "language-missing": "тексты для клиента даём на казахском и русском, язык выбираем по настройке клиента",
+    "calc-rounding-missing": "округляем математически (от 0,5 вверх) до сотых долей валюты, только в конце расчёта",
 }
 
 # --- who gets the question in the letter -------------------------------------------------------------------------
@@ -103,6 +112,13 @@ RULE_GROUP: dict[str, str] = {
     "set-members-differ": "business", "example-field-mismatch": "architect", "parameter-two-values": "business",
     "example-arithmetic": "business", "example-out-of-range": "architect",
     "requirement-without-criterion": "testing",
+    # general checks
+    "retry-unbounded": "architect", "timeout-no-outcome": "architect", "percent-base-missing": "business",
+    "once-without-period": "business", "retention-missing": "security", "masking-missing": "security",
+    "req-id-clash": "architect", "req-id-gap": "architect", "priority-mixed": "business",
+    "external-no-answer": "architect", "setting-no-audit": "security", "measure-period-missing": "business",
+    "language-missing": "business", "story-no-purpose": "business", "story-no-criteria": "testing",
+    "calc-rounding-missing": "business",
 }
 CRITERION_GROUP: dict[str, str] = {
     "completeness": "business", "unambiguity": "business", "consistency": "business", "necessity": "business",
