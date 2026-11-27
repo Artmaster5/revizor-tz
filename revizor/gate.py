@@ -20,7 +20,7 @@ from .textfmt import lines_text, shorten
 
 HARD_WHY = ("stated", "misread")                 # the finding is wrong
 SOFT_WHY = ("scope", "design", "clear", "guess", "formal")   # the finding is a nitpick
-# Measured on stored runs (fable/шум/gate, 26.11): «stated» and «misread» were wrong more often than right even with a
+# Measured on stored runs (26.11): «stated» and «misread» were wrong more often than right even with a
 # verified quote, and «formal» removed defects the customer's own list counts — these three never remove a finding.
 EFFECT = {"stated": "keep", "misread": "keep", "scope": "advisory", "design": "advisory", "clear": "advisory",
           "guess": "advisory", "formal": "keep"}              # "reject" | "advisory" | "keep"
