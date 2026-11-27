@@ -14,6 +14,8 @@ The output is deterministic: the same input gives the same bytes.
 from __future__ import annotations
 
 import argparse
+import base64
+import hashlib
 import html as _html
 import re
 import sys
@@ -427,13 +429,17 @@ def _starts_block_non_table(line: str) -> bool:
 
 # ---------------------------------------------------------------- page
 
+_DARK = """--bg:#10151b;--paper:#171d25;--ink:#e6eaef;--muted:#9aa6b4;--line:#2d3744;
+--zebra:#1b222b;--link:#7db4ff;--accent:#5fd0a2;--accent-soft:#16302a;--code:#222b36;--crit:#ff8a80;--crit-bg:#3b1d1b;
+--maj:#ffc266;--maj-bg:#3a2d12;--min:#7ee2a6;--min-bg:#16301f;--shadow:none"""
+
 _CSS = """
 :root{--bg:#f6f7f9;--paper:#fff;--ink:#1f2933;--muted:#5f6b7a;--line:#d9dee5;--zebra:#f4f6f9;--link:#0b5cad;
 --accent:#0f6b4f;--accent-soft:#e8f3ee;--code:#eef1f5;--crit:#b42318;--crit-bg:#fdecea;--maj:#9a5b00;--maj-bg:#fff2d6;
 --min:#146c3a;--min-bg:#e3f5ea;--shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.05)}
-@media (prefers-color-scheme:dark){:root{--bg:#10151b;--paper:#171d25;--ink:#e6eaef;--muted:#9aa6b4;--line:#2d3744;
---zebra:#1b222b;--link:#7db4ff;--accent:#5fd0a2;--accent-soft:#16302a;--code:#222b36;--crit:#ff8a80;--crit-bg:#3b1d1b;
---maj:#ffc266;--maj-bg:#3a2d12;--min:#7ee2a6;--min-bg:#16301f;--shadow:none}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){%DARK%}}
+:root[data-theme="dark"]{%DARK%}
+:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.65 -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
@@ -487,14 +493,18 @@ nav.toc ol{position:absolute;left:20px;right:20px;top:100%;margin:0;padding:10px
 background:var(--paper);border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;box-shadow:var(--shadow);
 max-height:70vh;overflow:auto;font-size:.93rem}
 nav.toc li{margin:.18em 0}
+.theme-btn{position:fixed;top:8px;right:12px;z-index:30;font:600 .8rem/1.2 inherit;font-family:inherit;color:var(--ink);background:var(--paper);
+border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer;box-shadow:var(--shadow)}
+.theme-btn:hover{border-color:var(--accent)}.theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 footer{max-width:920px;margin:18px auto 0;padding:0 20px;color:var(--muted);font-size:.82rem;text-align:center}
 @media (max-width:640px){body{font-size:15px}.doc{padding:14px 10px 40px}.sheet{padding:18px 14px 26px;border-radius:8px}
 h1{font-size:1.4rem}h2{font-size:1.2rem}nav.toc>details{padding:0 10px}nav.toc ol{left:10px;right:10px}}
 @page{size:A4;margin:14mm}
 @media print{
+:root:root:root{color-scheme:light;--bg:#fff;--paper:#fff;--ink:#000;--muted:#444;--line:#bbb;--zebra:#fff;--link:#000;--code:#fff;--crit:#a00;--crit-bg:#fff;--maj:#8a5200;--maj-bg:#fff;--min:#0a5a2e;--min-bg:#fff;--accent:#000;--accent-soft:#fff;--shadow:none}
 html,body{background:#fff!important;color:#000!important;font-size:10.5pt;line-height:1.5}
 .doc{max-width:none;padding:0}.sheet{border:0;box-shadow:none;padding:0;border-radius:0;background:#fff}
-nav.toc,footer{display:none!important}
+nav.toc,footer,.theme-btn{display:none!important}
 a{color:#000;border:0;text-decoration:none}
 a[href^="http"]::after,a[href^="mailto"]::after{content:" (" attr(href) ")";font-size:.85em;word-break:break-all}
 .tablewrap{overflow:visible;border:0}
@@ -509,6 +519,18 @@ h1,h2,h3,h4{break-after:avoid;page-break-after:avoid}
 h2{border-bottom:1px solid #888;margin-top:1.6em}
 [id]{scroll-margin-top:0}
 }
+"""
+
+
+_JS = """
+(function(){var K="revizor-theme",M=["auto","light","dark"],L={auto:"авто",light:"светлая",dark:"тёмная"},d=document.documentElement,m="%INIT%";
+if(m==="auto"){try{var t=localStorage.getItem(K);if(t==="light"||t==="dark")m=t;}catch(e){}}
+function set(v){m=v;if(v==="auto")d.removeAttribute("data-theme");else d.setAttribute("data-theme",v);}
+function paint(b){var s="Тема: "+L[m];b.textContent=s;b.setAttribute("aria-label",s+". Нажмите, чтобы сменить: авто, светлая, тёмная");}
+set(m);
+document.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("theme-btn");if(!b)return;paint(b);
+b.addEventListener("click",function(){set(M[(M.indexOf(m)+1)%3]);try{localStorage.setItem(K,m);}catch(e){}paint(b);});});
+})();
 """
 
 
@@ -529,7 +551,10 @@ def render_html(markdown_text: str, title: str | None = None, theme: str | None 
         body = "<pre>" + _html.escape(str(markdown_text)) + "</pre>"
         doc = _Doc("")
         doc.h1 = None
-    css = _CSS if theme != "light" else _CSS.replace("@media (prefers-color-scheme:dark){", "@media not all{")
+    css = _CSS.replace("%DARK%", _DARK)
+    js = _JS.replace("%INIT%", "light" if theme == "light" else "auto")
+    sha = base64.b64encode(hashlib.sha256(js.encode("utf-8")).digest()).decode("ascii")
+    pin = ' data-theme="light"' if theme == "light" else ""
     scheme = "light dark" if theme != "light" else "light"
     page_title = title or doc.h1 or "Отчёт Ревизора ТЗ"
     toc = ""
@@ -538,11 +563,13 @@ def render_html(markdown_text: str, title: str | None = None, theme: str | None 
         toc = (f'<nav class="toc" aria-label="Содержание"><details><summary>Содержание</summary>'
                f'<ol>\n{items}\n</ol></details></nav>\n')
     return (
-        '<!DOCTYPE html>\n<html lang="ru">\n<head>\n<meta charset="utf-8">\n'
+        '<!DOCTYPE html>\n<html lang="ru"' + pin + '>\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; img-src data:\">\n"
+        "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; script-src 'sha256-" + sha + "'; img-src data:\">\n"
         '<meta name="color-scheme" content="' + scheme + '">\n'
-        f"<title>{_html.escape(page_title)}</title>\n<style>{css}</style>\n</head>\n<body>\n{toc}"
+        f"<title>{_html.escape(page_title)}</title>\n<style>{css}</style>\n<script>{js}</script>\n</head>\n<body>\n"
+        '<button type="button" id="theme-btn" class="theme-btn" aria-label="Сменить тему оформления">Тема: авто</button>\n'
+        f"{toc}"
         f'<main class="doc"><article class="sheet">\n{body}\n</article></main>\n'
         "<footer>Отчёт сформирован программой «Ревизор ТЗ». Решение остаётся за человеком.</footer>\n"
         "</body>\n</html>\n"
