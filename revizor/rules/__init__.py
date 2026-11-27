@@ -16,6 +16,7 @@ from .set_rules import SET_RULES
 from .text_rules import TEXT_RULES
 from .time_rules import TIME_RULES
 from .value_rules import VALUE_RULES
+from .general_rules import GENERAL_RULES  # noqa: E402
 
 RULESET_VERSION = "1.2"
 
@@ -86,6 +87,23 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("example-arithmetic", "set_consistency", "MAJOR", "set", "Расчёт в примере не сходится при пересчёте"),
     _R("example-out-of-range", "set_consistency", "MINOR", "set", "Пример нарушает диапазон или формат своего параметра"),
     _R("requirement-without-criterion", "traceability", "MINOR", "set", "Требования без критерия приёмки, когда критерии ссылаются на номера"),
+    # general checks of a senior analyst (repeats, percentages, storage, numbering, external calls, languages)
+    _R("retry-unbounded", "set_completeness", "MINOR", "set", "Повтор действия без числа попыток или интервала"),
+    _R("timeout-no-outcome", "set_completeness", "MINOR", "set", "Время ожидания без описания, что происходит по его истечении"),
+    _R("percent-base-missing", "set_completeness", "MINOR", "set", "Процент комиссии, скидки или штрафа без базы расчёта"),
+    _R("once-without-period", "set_completeness", "MINOR", "set", "«Один раз» без периода и без условия, когда можно снова"),
+    _R("retention-missing", "set_completeness", "MINOR", "set", "Данные хранятся без срока хранения"),
+    _R("masking-missing", "set_feasibility", "MINOR", "set", "Номер карты, ИИН или телефон показываются или логируются без маскирования"),
+    _R("req-id-clash", "traceability", "MAJOR", "set", "Один номер у двух разных требований"),
+    _R("req-id-gap", "traceability", "MINOR", "set", "Пропуск в нумерации требований"),
+    _R("priority-mixed", "set_consistency", "MINOR", "set", "Приоритет указан не у всех требований"),
+    _R("external-no-answer", "set_completeness", "MINOR", "set", "Обращение к внешней системе без правила на случай молчания"),
+    _R("setting-no-audit", "set_completeness", "MINOR", "set", "Сотрудник меняет настройку без записи «кто и когда»"),
+    _R("measure-period-missing", "set_completeness", "MINOR", "set", "Доступность в процентах без периода измерения"),
+    _R("language-missing", "set_completeness", "MINOR", "set", "Тексты для клиента без указания языков"),
+    _R("story-no-purpose", "completeness", "MINOR", "set", "История пользователя без цели («чтобы …»)"),
+    _R("story-no-criteria", "set_completeness", "MINOR", "set", "История без критериев приёмки, когда у других они есть"),
+    _R("calc-rounding-missing", "set_completeness", "MAJOR", "set", "Расчёт процентов или платежа без правила округления"),
     # advisory observations (low precision, never affect the verdict)
     _R("negative-wording", "unambiguity", "MINOR", "requirement", "Отрицательная формулировка", True),
     _R("vague-pronoun", "unambiguity", "MINOR", "requirement", "Местоимение без ясного предмета", True),
@@ -97,7 +115,7 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("example-in-requirement", "completeness", "MINOR", "requirement", "Пример вместо полного перечня", True),
 ]}
 
-_IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **SAFETY_RULES, **TIME_RULES, **VALUE_RULES, **GLOSSARY_RULES, **CROSSCHECK_RULES, **ADVISORY_RULES}
+_IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **SAFETY_RULES, **TIME_RULES, **VALUE_RULES, **GENERAL_RULES, **GLOSSARY_RULES, **CROSSCHECK_RULES, **ADVISORY_RULES}
 assert set(_IMPL) == set(RULES), set(_IMPL) ^ set(RULES)
 
 last_errors: list[str] = []
