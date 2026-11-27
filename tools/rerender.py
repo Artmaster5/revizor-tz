@@ -52,8 +52,8 @@ def prepare(result: Result, *, as_is: bool = False) -> Result:
     return result
 
 
-def files_for(result: Result, out: Path, *, side_files: bool = True) -> list[tuple[Path, str]]:
-    md_text = report_md.render(result, out.name, rerendered=True)
+def files_for(result: Result, out: Path, *, side_files: bool = True, rerendered: bool = True) -> list[tuple[Path, str]]:
+    md_text = report_md.render(result, out.name, rerendered=rerendered)
     files = [(out, md_text)]
     if not side_files or result.diagnostic is not None:
         return files

@@ -14,7 +14,7 @@ import re
 from collections import OrderedDict
 from datetime import datetime
 
-from . import answers as ans_mod, baseline as baseline_mod, clarify, consistency, gapcheck, impact as impact_mod, readiness as readiness_mod, rules as rules_mod, score, standard as standard_mod, verdict
+from . import answers as ans_mod, baseline as baseline_mod, clarify, consistency, gapcheck, impact as impact_mod, readiness as readiness_mod, rules as rules_mod, score, standard as standard_mod, verdict, witness
 from .config import version_label
 from .consistency import BLOCKER_SHORT, blockers as _blocker_list, fix_links, marks_of, tally
 from .merge import FAMILY, FOLD_STAGE
@@ -593,6 +593,9 @@ def _passport(result: Result, rerendered: bool = False) -> str:
         qline += f" (восстановлено по сходству {num(r.quotes_restored)})"
     rows.append(("Проверка цитат", qline))
     rows.append(("Перепроверка", recheck_line(result)))
+    wl = witness.passport_line(result)
+    if wl:
+        rows.append(("Примеры-свидетели", wl))
     rows.append(("Защита данных", f"замаскировано {num(r.masked_values)} "
                  f"{plural(r.masked_values, ('значение', 'значения', 'значений'))}, похожих на номера карт, ИИН/БИН, "
                  "адреса почты или телефоны" if r.masked_values else
@@ -921,7 +924,7 @@ def card(f: Finding, *, show_req_links: bool, shown: Shown | None = None, brief:
             line += " Готовая формулировка — в `*.fixed.md`."
         if f.fix_check:
             line += " " + md(clarify.fix_check_text(f))
-        items = [line] + extra_lines + [_cap("; ".join(tail))]
+        items = [line] + witness.witness_lines(f) + extra_lines + [_cap("; ".join(tail))]
         return "\n".join([f'<a id="{anchor(f.fid)}"></a>'] + body + [""]
                          + [(x if x.startswith("  - ") else f"- {x}") for x in items if x])
     lines = [f'<a id="{anchor(f.fid)}"></a>', head, ""]
@@ -933,6 +936,7 @@ def card(f: Finding, *, show_req_links: bool, shown: Shown | None = None, brief:
     elif quotes:
         items.append("Места:" if folded else "Цитаты:")
         items += ["  - " + x for x in quotes]
+    items += witness.witness_lines(f)
     if rec:
         items.append("Как исправить: " + rec)
     if f.fixed_wording:
@@ -975,6 +979,7 @@ def compact_card(f: Finding, dname: str) -> str:
     if tail:
         last = f"{last} · {'; '.join(tail)}" if last else _cap("; ".join(tail))
     lines = [f'<a id="{anchor(f.fid)}"></a>', head, "", f"- Где: {where}"]
+    lines += [x if x.startswith("  - ") else "- " + x for x in witness.witness_lines(f)]
     if last:
         lines.append("- " + last)
     lines.append("- Как найдено: " + how_found(f) + standard_tail(f))

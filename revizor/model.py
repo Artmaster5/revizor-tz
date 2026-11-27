@@ -300,6 +300,9 @@ class Finding(_Dictable):
     level_trail: list[dict[str, Any]] = field(default_factory=list)
     # one Russian line: the characteristic of ISO/IEC/IEEE 29148:2018 the finding violates (standard.py); "" when unknown
     standard: str = ""
+    # «пример-свидетель» of a contradiction (witness.py): {"case", "a": {"text", "line", "outcome"}, "b": {…}, "by"};
+    # both quotes are verified in the document by code; None = no witness
+    witness: dict[str, Any] | None = None
 
 
 @dataclass

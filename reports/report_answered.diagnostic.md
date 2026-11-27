@@ -111,3 +111,4 @@
 | `checklist_answered` | 1 |
 | `rewrite_withheld` | 23 |
 | `strengths_dropped` | 1 |
+| `witness` | 1 |
