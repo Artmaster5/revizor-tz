@@ -19,7 +19,7 @@ python main.py --ui                                                             
 
 - Сайт агента без установки: https://revizor-tz.onrender.com — свой документ или готовый пример, вопросы автору и перепроверка.
 - Слайды: [`presentation.pdf`](presentation.pdf); исходник и сборка — [`docs/slides/`](docs/slides/README.md).
-- Видео (5 мин 41 с, YouTube, доступ по ссылке): https://youtu.be/YJkQLceutBc
+- Видео (5 мин 41 с, YouTube, доступ по ссылке): https://youtu.be/sudWHX-ZSPQ
 
 ## Что смотреть первым
 

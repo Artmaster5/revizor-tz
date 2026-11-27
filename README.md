@@ -8,7 +8,7 @@
 
 | Что | Где |
 | :--- | :--- |
-| Видео, 5 мин 41 с | [youtu.be/YJkQLceutBc](https://youtu.be/YJkQLceutBc) |
+| Видео, 5 мин 41 с | [youtu.be/sudWHX-ZSPQ](https://youtu.be/sudWHX-ZSPQ) |
 | Презентация | [`presentation.pdf`](presentation.pdf) |
 | Попробовать без установки | сайт агента: **https://revizor-tz.onrender.com** — свой документ или готовый пример, вопросы автору и перепроверка с ответами — [подробно](#попробовать-без-установки) |
 | Отчёт агента по документу организаторов | [`reports/report.md`](reports/report.md), страница [`report.html`](reports/report.html) (светлая и тёмная тема — кнопкой), [`report.pdf`](reports/report.pdf), сводка на одну страницу [`report.summary.md`](reports/report.summary.md) |
