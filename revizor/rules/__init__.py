@@ -10,6 +10,7 @@ from ._common import Ctx
 from .advisory_rules import ADVISORY_RULES
 from .ambiguity_rules import AMBIGUITY_RULES
 from .api_rules import API_RULES
+from .composite_rules import COMPOSITE_RULES
 from .crosscheck_rules import CROSSCHECK_RULES
 from .glossary_rules import GLOSSARY_RULES
 from .safety_rules import SAFETY_RULES
@@ -71,6 +72,16 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("content-type-without-body", "set_consistency", "MINOR", "set", "Content-Type у запроса без тела"),
     _R("sensitive-in-query", "set_feasibility", "MAJOR", "set", "Чувствительные данные в строке запроса"),
     _R("api-reliability", "set_completeness", "MINOR", "set", "Интерфейс без лимитов, тайм-аутов, идемпотентности или версии"),
+    # defects made of several parts (one finding names every missing part)
+    _R("refund-checklist", "set_completeness", "MAJOR", "set", "Возврат меняет считаемую величину, а правила возврата описаны не полностью"),
+    _R("error-body-shapes", "set_consistency", "MAJOR", "set", "Тело ошибки в разных примерах устроено по-разному"),
+    _R("error-code-unlinked", "set_consistency", "MINOR", "set", "Коды ошибок без условия или не сходятся с методами"),
+    _R("api-access-codes", "set_completeness", "MINOR", "set", "Интерфейс с токеном и идентификатором в пути без кодов 401/403/404"),
+    _R("api-ownership", "set_feasibility", "MAJOR", "set", "Метод по идентификатору объекта без проверки права вызывающего"),
+    _R("list-no-order-limit", "set_completeness", "MINOR", "set", "Метод возвращает список без порядка и ограничения размера"),
+    _R("notification-checklist", "set_completeness", "MINOR", "set", "Уведомления без текста, языка, сбоя доставки, повторов, времени или отключения"),
+    _R("enum-no-values", "set_completeness", "MINOR", "set", "«Одно из значений» без перечня значений"),
+    _R("param-table-no-required", "set_completeness", "MINOR", "set", "Таблица параметров запроса без признака «обязательный»"),
     # manipulation and data protection
     _R("prompt-injection", "set_feasibility", "MAJOR", "set", "Текст, обращённый к проверяющему или ИИ"),
     _R("hidden-text", "set_feasibility", "MINOR", "set", "Скрытый текст: HTML-комментарии и невидимые символы"),
@@ -109,7 +120,7 @@ RULES: dict[str, RuleInfo] = {r.id: r for r in [
     _R("example-in-requirement", "completeness", "MINOR", "requirement", "Пример вместо полного перечня", True),
 ]}
 
-_IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **SAFETY_RULES, **TIME_RULES, **VALUE_RULES, **GLOSSARY_RULES, **CROSSCHECK_RULES, **ADVISORY_RULES, **AMBIGUITY_RULES}
+_IMPL = {**TEXT_RULES, **SET_RULES, **API_RULES, **COMPOSITE_RULES, **SAFETY_RULES, **TIME_RULES, **VALUE_RULES, **GLOSSARY_RULES, **CROSSCHECK_RULES, **ADVISORY_RULES, **AMBIGUITY_RULES}
 assert set(_IMPL) == set(RULES), set(_IMPL) ^ set(RULES)
 
 last_errors: list[str] = []
