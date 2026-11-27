@@ -142,9 +142,9 @@ class AnsweredReport(_Texts):
     def test_head_says_what_the_answers_close(self):
         res, main, _d = self.cases["answered"]
         head = main.split('<a id="s1"></a>', 1)[0]
-        self.assertIn("· ответы автора закрывают 19 замечаний, из них блокеров 6; после внесения ответов в текст останется 60, блокеров 1", head)
+        self.assertIn("· ответы автора закрывают 28 замечаний, из них блокеров 5; после внесения ответов в текст останется 58, блокеров 1", head)
         self.assertIn("Индекс считается по тексту документа; пока ответы не внесены в текст, он прежний.", head)
-        self.assertRegex(head, r"блокеров 7 · существенных 20 · мелких 52")  # the numbers consistency reads stay
+        self.assertRegex(head, r"блокеров 6 · существенных 26 · мелких 54")  # the numbers consistency reads stay
 
     def test_dialog_lines_and_question_table(self):
         _r, main, det = self.cases["answered"]
@@ -152,7 +152,7 @@ class AnsweredReport(_Texts):
         self.assertIn("### Диалог с автором", s7)
         self.assertIn("→ «Раздел заполняет QA-лид команды вместе с автором документа", s7)
         self.assertIn("→ замечания остаются", s7)
-        self.assertIn("→ закрывает [D-076](#d-076)", s7)
+        self.assertIn("→ закрывает [D-119](#d-119)", s7)
         self.assertIn("| № | Вопрос | Кому | Приоритет | К замечаниям |", s7)
         self.assertIn('| <a id="v-01"></a>В-01 |', s7)
         self.assertNotIn("Варианты ответа:", s7)
@@ -164,12 +164,12 @@ class QuestionGain(_Texts):
         res = self.cases["model"][0]
         by = {q.qid: q for q in res.questions}
         self.assertEqual(report_md._q_gain(by["В-01"], res), " — снимет 2 блокера")
-        self.assertEqual(report_md._q_gain(by["В-03"], res), " — снимет блокер [D-076](#d-076)")
+        self.assertEqual(report_md._q_gain(by["В-03"], res), " — снимет блокер [D-119](#d-119)")
         extra = Question(qid="В-99", text="?", why="", addressee="analyst", priority="blocker",
-                         finding_ids=["D-076"])
+                         finding_ids=["D-119"])
         res.questions.append(extra)
         try:
-            self.assertEqual(report_md._q_gain(by["В-03"], res), " — один из 2 вопросов к блокеру [D-076](#d-076)")
+            self.assertEqual(report_md._q_gain(by["В-03"], res), " — один из 2 вопросов к блокеру [D-119](#d-119)")
         finally:
             res.questions.remove(extra)
 
@@ -177,11 +177,11 @@ class QuestionGain(_Texts):
         res = _saved("report.json")
         by = {q.qid: q for q in res.questions}
         extra = Question(qid="В-99", text="?", why="", addressee="analyst", priority="blocker",
-                         finding_ids=["D-076"])
+                         finding_ids=["D-119"])
         res.questions.append(extra)
-        self.assertEqual(report_md._q_gain(by["В-03"], res), " — один из 2 вопросов к блокеру [D-076](#d-076)")
+        self.assertEqual(report_md._q_gain(by["В-03"], res), " — один из 2 вопросов к блокеру [D-119](#d-119)")
         extra.answer = "ответ"
-        self.assertEqual(report_md._q_gain(by["В-03"], res), " — снимет блокер [D-076](#d-076)")
+        self.assertEqual(report_md._q_gain(by["В-03"], res), " — снимет блокер [D-119](#d-119)")
 
 
 class FileList(_CliBase):

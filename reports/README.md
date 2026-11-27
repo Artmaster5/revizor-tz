@@ -5,13 +5,13 @@
 
 | Файлы | Что это | Как получено |
 | :--- | :--- | :--- |
-| `report.*` | **сдаваемый отчёт**: глубокий режим, Opus (максимум), модель `claude-opus-5-5`, версия 1.4.0; 49 требований, 79 замечаний (7 блокеров, 20 существенных, 52 мелких), 21 вопрос автору, индекс готовности 23 из 100 | `--model claude-opus-5-5` |
-| [`report.pdf`](report.pdf) | сдаваемый отчёт вместе с подробностями в PDF, 94 страницы | печать страницы [`report.html`](report.html) в браузере; сам агент PDF не пишет |
+| `report.*` | **сдаваемый отчёт**: глубокий режим, Opus (максимум), модель `claude-opus-5-5`, версия 1.5.0; 49 требований, 86 замечаний (6 блокеров, 26 существенных, 54 мелких), 21 вопрос автору, индекс готовности 18 из 100 | `--model claude-opus-5-5` |
+| [`report.pdf`](report.pdf) | сдаваемый отчёт вместе с подробностями в PDF, 104 страницы | печать страницы [`report.html`](report.html) в браузере; сам агент PDF не пишет |
 | `report_haiku.*` | тот же документ на модели Haiku (дешевле), `claude-haiku-5-5`; прежняя версия (тег `v1.1.1`) | `--model claude-haiku-5-5` |
-| `report_offline.*` | тот же документ без модели, только правила | `--provider offline` |
-| `report_offline_pdf.*` | то же без модели, но на вход подан PDF [`examples/requirements.pdf`](../examples/requirements.pdf) | `--provider offline` |
-| `report_answered.*` | повторная проверка после ответов автора, модель `claude-opus-5-5`, версия 1.4.0: учтено 17 ответов из 20, закрыто 19 замечаний, блокеров осталось 1 из 7 | `--answers docs/demo/answers.md` |
-| `report_offline_answered.*` | повторная проверка после ответов автора без модели | `--provider offline --answers reports/sample_answers.md` |
+| `report_offline.*` | тот же документ без модели, только правила; 58 требований, 27 замечаний (3 блокера, 10 существенных, 14 мелких), 26 вопросов автору, индекс готовности 54 из 100 | `--provider offline` |
+| `report_offline_pdf.*` | то же без модели, но на вход подан PDF [`examples/requirements.pdf`](../examples/requirements.pdf); 60 требований, 28 замечаний, 27 вопросов автору | `--provider offline` |
+| `report_answered.*` | повторная проверка после ответов автора, модель `claude-opus-5-5`, версия 1.5.0: учтено 17 ответов из 20, закрыто 28 замечаний, блокеров осталось 1 из 6 | `--answers docs/demo/answers.md` |
+| `report_offline_answered.*` | повторная проверка после ответов автора без модели: учтено 5 ответов из 26, закрыто 4 замечания, блокеров осталось 1 из 3 | `--provider offline --answers reports/sample_answers.md` |
 | [`sample_answers.md`](sample_answers.md) | заполненная анкета для примера без модели | анкета `report_offline.questions.md` с вписанными ответами |
 | [`diagnostics/`](diagnostics/) | отчёты «Документ не проверен» на битых и пустых файлах из [`examples/broken/`](../examples/broken/) | запуск на каждом файле |
 

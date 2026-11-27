@@ -9,39 +9,39 @@
     "verdict_after_answers": "",
     "baseline": null,
     "requirements": 60,
-    "requirements_with_findings": 21,
-    "findings": 24,
+    "requirements_with_findings": 24,
+    "findings": 28,
     "by_severity": {
       "CRITICAL": 3,
       "MAJOR": 10,
-      "MINOR": 11
+      "MINOR": 15
     },
     "by_criterion": {
-      "completeness": 3,
-      "unambiguity": 0,
+      "completeness": 4,
+      "unambiguity": 1,
       "consistency": 0,
       "verifiability": 1,
       "feasibility": 0,
       "necessity": 0,
       "singularity": 0,
-      "set_completeness": 6,
-      "set_consistency": 8,
+      "set_completeness": 7,
+      "set_consistency": 9,
       "set_feasibility": 2,
       "comprehensibility": 2,
       "traceability": 2
     },
     "observations": 2,
-    "questions": 23,
+    "questions": 27,
     "questions_by_priority": {
       "blocker": 3,
       "important": 9,
-      "nice": 11
+      "nice": 15
     },
     "readiness": 54,
     "readiness_band": "нужна существенная доработка",
     "clarity_bands": {
-      "ясное": 43,
-      "есть замечания": 12,
+      "ясное": 42,
+      "есть замечания": 13,
       "нужна доработка": 5,
       "в таком виде использовать нельзя": 0
     },
@@ -53,21 +53,21 @@
     "doc_name": "requirements.pdf",
     "doc_sha256": "a3c843859abd66e80d5c043db69a934c085eaa8dc3647424cdd3edd75163fb21",
     "answers_sha256": "",
-    "ruleset_version": "1.2",
-    "agent_version": "1.4.0 (v1.4.0-1-g75f63c7-dirty)",
+    "ruleset_version": "1.3",
+    "agent_version": "1.5.0 (v1.5.0-1-g5add39f)",
     "provider": "offline",
     "model": "",
     "model_version": "",
-    "started_at": "2026-11-27T09:10:59+05:00",
-    "duration_s": 0.19,
+    "started_at": "2026-11-27T09:34:53+05:00",
+    "duration_s": 0.28,
     "cost_usd": 0.0,
     "mode": "offline"
   },
   "run": {
     "agent_name": "Ревизор ТЗ",
-    "agent_version": "1.4.0 (v1.4.0-1-g75f63c7-dirty)",
-    "started_at": "2026-11-27T09:10:59+05:00",
-    "duration_s": 0.19,
+    "agent_version": "1.5.0 (v1.5.0-1-g5add39f)",
+    "started_at": "2026-11-27T09:34:53+05:00",
+    "duration_s": 0.28,
     "mode": "offline",
     "provider": "offline",
     "model": "",
@@ -89,7 +89,7 @@
     "cache_write_tokens": 0,
     "cost_usd": 0.0,
     "cost_note": "модель не вызывалась",
-    "quotes_confirmed": 47,
+    "quotes_confirmed": 52,
     "quotes_restored": 0,
     "quotes_dropped": 0,
     "skeptic_kept": 0,
@@ -104,20 +104,20 @@
     "injection_suspected": false,
     "masked_values": 0,
     "score": 54,
-    "score_formula": "10 × 9,38 (средняя ясность 60 треб.) − 40 (штраф за замечания к набору: 8×3 + 3×9 + 1×8 = 59, но не больше 40) = 54",
-    "rules_version": "1.2",
+    "score_formula": "10 × 9,35 (средняя ясность 60 треб.) − 40 (штраф за замечания к набору: 8×3 + 3×9 + 1×12 = 63, но не больше 40) = 54",
+    "rules_version": "1.3",
     "doc_words": 994,
     "context_files": [],
     "dup_merged": 0,
     "critical_demoted": 0,
-    "agent_commit": "75f63c7",
+    "agent_commit": "5add39f",
     "agent_tag": "",
-    "agent_dirty": true,
+    "agent_dirty": false,
     "doc_title": "Уведомление о расходах по карте",
     "stage_seconds": [
       0.1,
-      0.0,
-      0.0,
+      0.1,
+      0.1,
       0.0,
       0.0,
       0.0,
@@ -1779,8 +1779,8 @@
           "note": "не проверялось без модели"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Одна величина привязана и к «моменту покупки», и к «проведённым» операциям"
         },
         "verifiability": {
           "status": "unchecked",
@@ -1800,7 +1800,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.6
     },
     {
       "rid": "REQ-002",
@@ -1981,16 +1981,16 @@
       "rid": "REQ-007",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Возврат меняет считаемую величину, а правила возврата описаны не полностью"
         },
         "unambiguity": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Город рядом с границей дня или месяца: это часовой пояс или место операции?"
         },
         "consistency": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "Одна величина привязана и к «моменту покупки», и к «проведённым» операциям"
         },
         "verifiability": {
           "status": "unchecked",
@@ -2010,7 +2010,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 8.9
     },
     {
       "rid": "REQ-008",
@@ -2961,8 +2961,8 @@
       "rid": "REQ-035",
       "criteria": {
         "completeness": {
-          "status": "unchecked",
-          "note": "не проверялось без модели"
+          "status": "issue",
+          "note": "«Вернуть прежнее состояние» без перечня того, что именно возвращается"
         },
         "unambiguity": {
           "status": "unchecked",
@@ -2990,7 +2990,7 @@
         }
       },
       "by_model": false,
-      "clarity": 10.0
+      "clarity": 9.6
     },
     {
       "rid": "REQ-036",
@@ -3931,6 +3931,70 @@
     },
     {
       "scope": "set",
+      "criterion": "set_consistency",
+      "severity": "MINOR",
+      "title": "Одна величина привязана и к «моменту покупки», и к «проведённым» операциям",
+      "problem": "Одна и та же величина (лимит, сумма, начисление, остаток) в одном месте считается в момент покупки, а в другом — по проведённым операциям. Это разные множества: между покупкой и проведением проходят часы или дни, часть операций отменяется, сумма меняется. В итоге система в момент покупки видит одно число, а при расчёте — другое, и клиент увидит расхождение.",
+      "recommendation": "Выберите, по какому событию считается величина (покупка, авторизация или проведение), и опишите, что делать, если операцию потом отменили или изменили.",
+      "quotes": [
+        {
+          "text": "Дать клиенту возможность узнать о достижении личного бюджета в момент покупки",
+          "line_start": 23,
+          "line_end": 23,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Цели",
+          "rid": "REQ-001",
+          "exact": true
+        },
+        {
+          "text": "В  расходы  входят  проведённые  покупки",
+          "line_start": 40,
+          "line_end": 40,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+          "rid": "REQ-007",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-001",
+        "REQ-007"
+      ],
+      "question": {
+        "text": "Величина считается в момент покупки или только по проведённым операциям, и что будет с ней после отмены операции?",
+        "options": [
+          "Только по проведённым операциям",
+          "В момент покупки, при отмене пересчитываем",
+          "Предварительно в момент покупки, окончательно после проведения"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:moment-vs-posted",
+      "rule_ids": [
+        "moment-vs-posted"
+      ],
+      "stage": "rules",
+      "fid": "D-002",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-14",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть непротиворечивым"
+    },
+    {
+      "scope": "set",
       "criterion": "traceability",
       "severity": "MINOR",
       "title": "У большинства требований нет номеров",
@@ -4021,11 +4085,11 @@
         "missing-ids"
       ],
       "stage": "rules",
-      "fid": "D-002",
+      "fid": "D-003",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-14",
+      "question_id": "В-15",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -4084,7 +4148,7 @@
         "flow-happy-path"
       ],
       "stage": "rules",
-      "fid": "D-003",
+      "fid": "D-004",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4137,11 +4201,11 @@
         "condition-undefined"
       ],
       "stage": "rules",
-      "fid": "D-004",
+      "fid": "D-005",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-15",
+      "question_id": "В-16",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -4210,6 +4274,113 @@
     {
       "scope": "set",
       "criterion": "set_completeness",
+      "severity": "MINOR",
+      "title": "Возврат меняет считаемую величину, а правила возврата описаны не полностью",
+      "problem": "Возврат или отмена покупки меняет величину, которую считает система (кэшбэк, бонусы, лимит, расходы). В документе не описано: частичный возврат (только часть суммы покупки); отмена авторизации как отдельный случай, не равный возврату; что будет, если значение после возврата уйдёт ниже нуля. Без этого разработчик и тестировщик по-разному поймут, что делать с уже начисленным или потраченным, и величина разойдётся с реальными деньгами клиента.",
+      "recommendation": "Допишите правила возврата: частичный возврат (только часть суммы покупки); отмена авторизации как отдельный случай, не равный возврату; что будет, если значение после возврата уйдёт ниже нуля. Для каждого случая — как меняется считаемая величина и что происходит, если она уходит ниже нуля.",
+      "quotes": [
+        {
+          "text": "Возврат\nуменьшает расходы месяца исходной покупки",
+          "line_start": 40,
+          "line_end": 41,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+          "rid": "REQ-007",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-007"
+      ],
+      "question": {
+        "text": "Как возврат покупки меняет эту величину в каждом из перечисленных случаев?",
+        "options": [
+          "Описать все случаи в требованиях",
+          "Принять правило «возврат пересчитывает величину по исходной покупке»",
+          "Возвраты не влияют на величину — записать это явно"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:refund-checklist",
+      "rule_ids": [
+        "refund-checklist"
+      ],
+      "stage": "rules",
+      "fid": "D-006",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-17",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.6 — набор требований должен быть полным"
+    },
+    {
+      "scope": "set",
+      "criterion": "unambiguity",
+      "severity": "MINOR",
+      "title": "Город рядом с границей дня или месяца: это часовой пояс или место операции?",
+      "problem": "Рядом с границей суток, месяца или датой операции стоит название города или страны («дата операции в Алматы»). Это можно прочитать двумя способами: как часовой пояс, по которому считается граница дня, или как место, где совершена операция. Часового пояса (UTC+5, «время Астаны») в документе нигде нет. Для операции за границей или клиента в другом поясе разработчик и тестировщик получат разные даты.",
+      "recommendation": "Назовите пояс прямо: «граница суток — 00:00 по времени Астаны (UTC+5)»; если имеется в виду место совершения, так и напишите.",
+      "quotes": [
+        {
+          "text": "Месяц  определяется  по  дате  совершения  покупки  в  Алматы",
+          "line_start": 40,
+          "line_end": 40,
+          "page": 1,
+          "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+          "rid": "REQ-007",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-007"
+      ],
+      "question": {
+        "text": "Город в этом правиле — это часовой пояс (по какому считается дата) или место совершения операции?",
+        "options": [
+          "Часовой пояс: время Астаны (UTC+5)",
+          "Место совершения операции"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:city-or-zone",
+      "rule_ids": [
+        "city-or-zone"
+      ],
+      "stage": "rules",
+      "fid": "D-007",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-18",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть однозначным"
+    },
+    {
+      "scope": "set",
+      "criterion": "set_completeness",
       "severity": "MAJOR",
       "title": "Схема процесса показывает только успешный путь",
       "problem": "Схема описывает только последовательность успешных шагов: на ней нет ни одной ветки ошибки, отказа или альтернативного пути. Разработчик не узнает из схемы, куда идёт процесс при сбое шага, а тестировщик — какие ветки проверять; каждый достроит их по-своему.",
@@ -4253,7 +4424,7 @@
         "flow-happy-path"
       ],
       "stage": "rules",
-      "fid": "D-005",
+      "fid": "D-008",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4307,7 +4478,7 @@
         "time-without-conditions"
       ],
       "stage": "rules",
-      "fid": "D-006",
+      "fid": "D-009",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4371,7 +4542,7 @@
         "unit-mix"
       ],
       "stage": "rules",
-      "fid": "D-007",
+      "fid": "D-010",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4432,7 +4603,7 @@
         "empty-section"
       ],
       "stage": "rules",
-      "fid": "D-008",
+      "fid": "D-011",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4492,11 +4663,11 @@
         "unfilled-checklist"
       ],
       "stage": "rules",
-      "fid": "D-009",
+      "fid": "D-012",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-16",
+      "question_id": "В-19",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -4543,11 +4714,11 @@
         "no-version"
       ],
       "stage": "rules",
-      "fid": "D-010",
+      "fid": "D-013",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-17",
+      "question_id": "В-20",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -4603,11 +4774,11 @@
         "empty-table"
       ],
       "stage": "rules",
-      "fid": "D-011",
+      "fid": "D-014",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-18",
+      "question_id": "В-21",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -4687,7 +4858,7 @@
         "get-mutation"
       ],
       "stage": "rules",
-      "fid": "D-012",
+      "fid": "D-015",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4741,11 +4912,11 @@
         "api-reliability"
       ],
       "stage": "rules",
-      "fid": "D-013",
+      "fid": "D-016",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-19",
+      "question_id": "В-22",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -4795,11 +4966,11 @@
         "placeholder"
       ],
       "stage": "rules",
-      "fid": "D-014",
+      "fid": "D-017",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-20",
+      "question_id": "В-23",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -4849,11 +5020,65 @@
         "placeholder"
       ],
       "stage": "rules",
-      "fid": "D-015",
+      "fid": "D-018",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-21",
+      "question_id": "В-24",
+      "closed_by_answer": false,
+      "fixed_wording": "",
+      "advisory": false,
+      "advisory_reason": "",
+      "blocker_reason": "",
+      "see_also": [],
+      "gap_ids": [],
+      "also": [],
+      "absorbed": [],
+      "level_trail": [],
+      "standard": "ISO/IEC/IEEE 29148:2018, п. 5.2.5 — требование должно быть полным"
+    },
+    {
+      "scope": "set",
+      "criterion": "completeness",
+      "severity": "MINOR",
+      "title": "«Вернуть прежнее состояние» без перечня того, что именно возвращается",
+      "problem": "Требование говорит «вернуть в прежнее состояние», «откатить» или «отменить изменения», но не перечисляет, что именно возвращается: статус, сумма, лимит, начисленные бонусы, комиссия, блокировка, уведомления. Одни вернут только статус, другие — и деньги, и счётчики; то, что уже отправлено клиенту, вернуть нельзя совсем.",
+      "recommendation": "Допишите список: «возвращаются: статус заявки, сумма на счёте, лимит, бонусы; не возвращаются: отправленные уведомления».",
+      "quotes": [
+        {
+          "text": "При отклонении суммы вернуть прежнее состояние и результат ERROR",
+          "line_start": 155,
+          "line_end": 155,
+          "page": 3,
+          "section": "Уведомление о расходах по карте › Часть B. REST API › Логика работы метода",
+          "rid": "REQ-035",
+          "exact": true
+        }
+      ],
+      "req_ids": [
+        "REQ-035"
+      ],
+      "question": {
+        "text": "Что именно должно вернуться в прежнее состояние, а что остаётся как есть?",
+        "options": [
+          "Только статус",
+          "Статус, деньги и счётчики (лимиты, бонусы)",
+          "Всё, кроме отправленных уведомлений"
+        ],
+        "addressee": "analyst",
+        "gap": "",
+        "assumption": ""
+      },
+      "source": "rule:revert-no-list",
+      "rule_ids": [
+        "revert-no-list"
+      ],
+      "stage": "rules",
+      "fid": "D-019",
+      "status": "open",
+      "status_reason": "",
+      "merged_into": "",
+      "question_id": "В-25",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -4903,7 +5128,7 @@
         "sensitive-in-query"
       ],
       "stage": "rules",
-      "fid": "D-016",
+      "fid": "D-020",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -4966,7 +5191,7 @@
         "param-type-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-017",
+      "fid": "D-021",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -5029,7 +5254,7 @@
         "param-type-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-018",
+      "fid": "D-022",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -5092,11 +5317,11 @@
         "content-type-without-body"
       ],
       "stage": "rules",
-      "fid": "D-019",
+      "fid": "D-023",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-22",
+      "question_id": "В-26",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -5146,11 +5371,11 @@
         "open-list"
       ],
       "stage": "rules",
-      "fid": "D-020",
+      "fid": "D-024",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
-      "question_id": "В-23",
+      "question_id": "В-27",
       "closed_by_answer": false,
       "fixed_wording": "",
       "advisory": false,
@@ -5199,7 +5424,7 @@
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-021",
+      "fid": "D-025",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -5262,7 +5487,7 @@
         "error-in-success"
       ],
       "stage": "rules",
-      "fid": "D-022",
+      "fid": "D-026",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -5313,7 +5538,7 @@
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-023",
+      "fid": "D-027",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -5429,7 +5654,7 @@
         "status-mismatch"
       ],
       "stage": "rules",
-      "fid": "D-024",
+      "fid": "D-028",
       "status": "open",
       "status_reason": "",
       "merged_into": "",
@@ -5462,7 +5687,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-012"
+        "D-015"
       ],
       "req_ids": [
         "REQ-020",
@@ -5488,7 +5713,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-012"
+          "D-015"
         ],
         "blockers_closed": 1,
         "verdict_after": "BLOCKED",
@@ -5508,7 +5733,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-008"
+        "D-011"
       ],
       "req_ids": [],
       "quote": {
@@ -5529,7 +5754,7 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-008"
+          "D-011"
         ],
         "blockers_closed": 1,
         "verdict_after": "BLOCKED",
@@ -5549,7 +5774,7 @@
       ],
       "priority": "blocker",
       "finding_ids": [
-        "D-022"
+        "D-026"
       ],
       "req_ids": [
         "REQ-052"
@@ -5572,7 +5797,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-022"
+          "D-026"
         ],
         "blockers_closed": 1,
         "verdict_after": "BLOCKED",
@@ -5592,8 +5817,8 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-003",
-        "D-005"
+        "D-004",
+        "D-008"
       ],
       "req_ids": [
         "REQ-005",
@@ -5617,8 +5842,8 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-003",
-          "D-005"
+          "D-004",
+          "D-008"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5638,7 +5863,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-006"
+        "D-009"
       ],
       "req_ids": [
         "REQ-011"
@@ -5661,7 +5886,7 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-006"
+          "D-009"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5681,7 +5906,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-007"
+        "D-010"
       ],
       "req_ids": [
         "REQ-012",
@@ -5705,7 +5930,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-007"
+          "D-010"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5725,7 +5950,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-016"
+        "D-020"
       ],
       "req_ids": [
         "REQ-040"
@@ -5748,7 +5973,7 @@
       "letter_group": "security",
       "impact": {
         "closes": [
-          "D-016"
+          "D-020"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5767,7 +5992,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-017"
+        "D-021"
       ],
       "req_ids": [
         "REQ-041",
@@ -5791,7 +6016,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-017"
+          "D-021"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5810,7 +6035,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-018"
+        "D-022"
       ],
       "req_ids": [
         "REQ-042",
@@ -5834,7 +6059,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-018"
+          "D-022"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5853,7 +6078,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-021"
+        "D-025"
       ],
       "req_ids": [
         "REQ-045"
@@ -5876,7 +6101,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-021"
+          "D-025"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5895,7 +6120,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-023"
+        "D-027"
       ],
       "req_ids": [],
       "quote": {
@@ -5916,7 +6141,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-023"
+          "D-027"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -5936,7 +6161,7 @@
       ],
       "priority": "important",
       "finding_ids": [
-        "D-024"
+        "D-028"
       ],
       "req_ids": [
         "REQ-058"
@@ -5959,7 +6184,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-024"
+          "D-028"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6009,6 +6234,50 @@
     },
     {
       "qid": "В-14",
+      "text": "Величина считается в момент покупки или только по проведённым операциям, и что будет с ней после отмены операции?",
+      "why": "Одна и та же величина (лимит, сумма, начисление, остаток) в одном месте считается в момент покупки, а в другом — по проведённым операциям.",
+      "addressee": "analyst",
+      "options": [
+        "Только по проведённым операциям",
+        "В момент покупки, при отмене пересчитываем",
+        "Предварительно в момент покупки, окончательно после проведения"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-002"
+      ],
+      "req_ids": [
+        "REQ-001",
+        "REQ-007"
+      ],
+      "quote": {
+        "text": "Дать клиенту возможность узнать о достижении личного бюджета в момент покупки",
+        "line_start": 23,
+        "line_end": 23,
+        "page": 1,
+        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Цели",
+        "rid": "REQ-001",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "conflict",
+      "assumption": "Величина считается по проведённым операциям; в момент покупки показываем предварительное значение.",
+      "fingerprint": "89565ca98a8f",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-002"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-15",
       "text": "Какую схему номеров использовать для требований без номера?",
       "why": "Номер из документа есть только у 4 из 9 требований, которые описывают поведение системы, данные, интерфейс или ограничения.",
       "addressee": "analyst",
@@ -6018,7 +6287,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-002"
+        "D-003"
       ],
       "req_ids": [
         "REQ-002",
@@ -6043,7 +6312,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-002"
+          "D-003"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6052,7 +6321,7 @@
       }
     },
     {
-      "qid": "В-15",
+      "qid": "В-16",
       "text": "Как в документе определяется понятие «активной карты»?",
       "why": "Правило срабатывает или нет в зависимости от свойства, которое в документе нигде не определено: «активной карты».",
       "addressee": "analyst",
@@ -6062,7 +6331,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-004"
+        "D-005"
       ],
       "req_ids": [
         "REQ-006"
@@ -6085,7 +6354,7 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-004"
+          "D-005"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6094,7 +6363,92 @@
       }
     },
     {
-      "qid": "В-16",
+      "qid": "В-17",
+      "text": "Как возврат покупки меняет эту величину в каждом из перечисленных случаев?",
+      "why": "Возврат или отмена покупки меняет величину, которую считает система (кэшбэк, бонусы, лимит, расходы).",
+      "addressee": "analyst",
+      "options": [
+        "Описать все случаи в требованиях",
+        "Принять правило «возврат пересчитывает величину по исходной покупке»",
+        "Возвраты не влияют на величину — записать это явно"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-006"
+      ],
+      "req_ids": [
+        "REQ-007"
+      ],
+      "quote": {
+        "text": "Возврат\nуменьшает расходы месяца исходной покупки",
+        "line_start": 40,
+        "line_end": 41,
+        "page": 1,
+        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+        "rid": "REQ-007",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "scenario",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "f264d0949407",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-006"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-18",
+      "text": "Город в этом правиле — это часовой пояс (по какому считается дата) или место совершения операции?",
+      "why": "Рядом с границей суток, месяца или датой операции стоит название города или страны («дата операции в Алматы»).",
+      "addressee": "analyst",
+      "options": [
+        "Часовой пояс: время Астаны (UTC+5)",
+        "Место совершения операции"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-007"
+      ],
+      "req_ids": [
+        "REQ-007"
+      ],
+      "quote": {
+        "text": "Месяц  определяется  по  дате  совершения  покупки  в  Алматы",
+        "line_start": 40,
+        "line_end": 40,
+        "page": 1,
+        "section": "Уведомление о расходах по карте › Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+        "rid": "REQ-007",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "term",
+      "assumption": "Город означает часовой пояс: время Астаны, UTC+5.",
+      "fingerprint": "ab90a0b4aadb",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-007"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-19",
       "text": "Кто проводит ревью по чек-листу и когда?",
       "why": "В 28 ячейках таблицы (14 строк) оставлены все варианты ответа, например «Да / Нет».",
       "addressee": "qa",
@@ -6104,7 +6458,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-009"
+        "D-012"
       ],
       "req_ids": [],
       "quote": {
@@ -6125,7 +6479,7 @@
       "letter_group": "testing",
       "impact": {
         "closes": [
-          "D-009"
+          "D-012"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6134,7 +6488,7 @@
       }
     },
     {
-      "qid": "В-17",
+      "qid": "В-20",
       "text": "Какую версию и дату присвоить документу?",
       "why": "В документе версия или дата оставлены незаполненными.",
       "addressee": "analyst",
@@ -6144,7 +6498,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-010"
+        "D-013"
       ],
       "req_ids": [],
       "quote": {
@@ -6165,7 +6519,7 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-010"
+          "D-013"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6174,7 +6528,7 @@
       }
     },
     {
-      "qid": "В-18",
+      "qid": "В-21",
       "text": "Кто должен быть в этой таблице?",
       "why": "Таблица есть, но ни одна её строка не заполнена.",
       "addressee": "business",
@@ -6184,7 +6538,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-011"
+        "D-014"
       ],
       "req_ids": [],
       "quote": {
@@ -6205,7 +6559,7 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-011"
+          "D-014"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6214,7 +6568,7 @@
       }
     },
     {
-      "qid": "В-19",
+      "qid": "В-22",
       "text": "Как интерфейс должен вести себя при перегрузке, повторах и одновременных изменениях?",
       "why": "Интерфейс меняет данные, но в документе не описано: ограничение частоты запросов (код 429); тайм-ауты и повторы запросов; одновременные изменения одного объекта; идемпотентность изменяющих запросов; версия интерфейса.",
       "addressee": "architect",
@@ -6225,7 +6579,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-013"
+        "D-016"
       ],
       "req_ids": [
         "REQ-020"
@@ -6248,7 +6602,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-013"
+          "D-016"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6257,7 +6611,7 @@
       }
     },
     {
-      "qid": "В-20",
+      "qid": "В-23",
       "text": "Чем заменить заглушку «Prod: —»?",
       "why": "Вместо содержания стоит заглушка «Prod: —».",
       "addressee": "business",
@@ -6268,7 +6622,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-014"
+        "D-017"
       ],
       "req_ids": [
         "REQ-024"
@@ -6291,7 +6645,7 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-014"
+          "D-017"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6300,7 +6654,7 @@
       }
     },
     {
-      "qid": "В-21",
+      "qid": "В-24",
       "text": "Чем заменить заглушку «—»?",
       "why": "Вместо содержания стоит заглушка «—».",
       "addressee": "business",
@@ -6311,7 +6665,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-015"
+        "D-018"
       ],
       "req_ids": [
         "REQ-026"
@@ -6334,7 +6688,7 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-015"
+          "D-018"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6343,7 +6697,50 @@
       }
     },
     {
-      "qid": "В-22",
+      "qid": "В-25",
+      "text": "Что именно должно вернуться в прежнее состояние, а что остаётся как есть?",
+      "why": "Требование говорит «вернуть в прежнее состояние», «откатить» или «отменить изменения», но не перечисляет, что именно возвращается: статус, сумма, лимит, начисленные бонусы, комиссия, блокировка, уведомления.",
+      "addressee": "analyst",
+      "options": [
+        "Только статус",
+        "Статус, деньги и счётчики (лимиты, бонусы)",
+        "Всё, кроме отправленных уведомлений"
+      ],
+      "priority": "nice",
+      "finding_ids": [
+        "D-019"
+      ],
+      "req_ids": [
+        "REQ-035"
+      ],
+      "quote": {
+        "text": "При отклонении суммы вернуть прежнее состояние и результат ERROR",
+        "line_start": 155,
+        "line_end": 155,
+        "page": 3,
+        "section": "Уведомление о расходах по карте › Часть B. REST API › Логика работы метода",
+        "rid": "REQ-035",
+        "exact": true
+      },
+      "option_effects": [],
+      "answer": "",
+      "answer_effect": "",
+      "gap": "value",
+      "assumption": "без ответа автора работу по этому пункту начинать нельзя",
+      "fingerprint": "8ced541acb15",
+      "letter_group": "business",
+      "impact": {
+        "closes": [
+          "D-019"
+        ],
+        "blockers_closed": 0,
+        "verdict_after": "BLOCKED",
+        "index_after": 54,
+        "index_delta": 0
+      }
+    },
+    {
+      "qid": "В-26",
       "text": "Передаются ли параметры в теле запроса?",
       "why": "Для запроса задан заголовок Content-Type, но сказано, что тело запроса не используется.",
       "addressee": "architect",
@@ -6353,7 +6750,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-019"
+        "D-023"
       ],
       "req_ids": [
         "REQ-043",
@@ -6377,7 +6774,7 @@
       "letter_group": "architect",
       "impact": {
         "closes": [
-          "D-019"
+          "D-023"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6386,7 +6783,7 @@
       }
     },
     {
-      "qid": "В-23",
+      "qid": "В-27",
       "text": "Какие именно значения входят в перечень?",
       "why": "Перечень заканчивается словами «и далее», поэтому непонятно, что ещё в него входит.",
       "addressee": "analyst",
@@ -6397,7 +6794,7 @@
       ],
       "priority": "nice",
       "finding_ids": [
-        "D-020"
+        "D-024"
       ],
       "req_ids": [
         "REQ-045"
@@ -6420,7 +6817,7 @@
       "letter_group": "business",
       "impact": {
         "closes": [
-          "D-020"
+          "D-024"
         ],
         "blockers_closed": 0,
         "verdict_after": "BLOCKED",
@@ -6433,38 +6830,38 @@
     {
       "action": "Раздел «Тестирование требований» не заполнен: вместо содержания заглушка. Заполните раздел до начала разработки: для раздела о тестировании — что проверяется, на каких данных, кто и когда проводит проверку, какие критерии приёмки. Если раздел заполняет другая команда — назовите ответственного и срок.",
       "finding_ids": [
-        "D-008"
+        "D-011"
       ]
     },
     {
       "action": "Метод GET используется для изменения данных. Используйте PUT или PATCH для изменения настройки (POST — для создания новой записи) и передавайте параметры в теле запроса в формате JSON; GET оставьте только для чтения.",
       "finding_ids": [
-        "D-012"
+        "D-015"
       ]
     },
     {
       "action": "Ошибка возвращается с успешным кодом 200. Для ошибок используйте коды 4xx/5xx (например, 400 или 422 при недопустимом значении) с телом ошибки, а в ответ 2xx включайте только успешный результат.",
       "finding_ids": [
-        "D-022"
+        "D-026"
       ]
     },
     {
       "action": "Схема процесса показывает только успешный путь. Добавьте на схему ветки, о которых говорят требования: ошибка и отказ на каждом шаге, тайм-аут и недоступность соседней системы, отмена пользователем, повтор, неверный ввод; для каждой — куда идёт процесс и что видит пользователь.",
       "finding_ids": [
-        "D-003",
-        "D-005"
+        "D-004",
+        "D-008"
       ]
     },
     {
       "action": "Ограничение по времени без условий измерения. Допишите условия измерения: «в течение минуты для 95% событий при нагрузке до N событий в секунду; время считается от <момента начала> до <момента окончания>», и что делать, если срок не выдержан.",
       "finding_ids": [
-        "D-006"
+        "D-009"
       ]
     },
     {
       "action": "Денежные суммы в разных единицах: тиын и тенге. Выберите одну единицу для хранения и передачи сумм (обычно тиын — целым числом) и одну для показа клиенту; явно запишите правило: «1 тенге = 100 тиын» и в каком месте процесса выполняется пересчёт.",
       "finding_ids": [
-        "D-007"
+        "D-010"
       ]
     }
   ],
@@ -6689,7 +7086,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-003"
+            "D-004"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6703,7 +7100,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-005"
+            "D-008"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6717,7 +7114,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-006"
+            "D-009"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6731,7 +7128,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-007"
+            "D-010"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6745,7 +7142,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-012"
+            "D-015"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6759,7 +7156,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-016"
+            "D-020"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6773,7 +7170,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-017"
+            "D-021"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6787,7 +7184,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-018"
+            "D-022"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6801,7 +7198,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-021"
+            "D-025"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6815,7 +7212,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-022"
+            "D-026"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         },
@@ -6829,7 +7226,7 @@
           ],
           "answered": [],
           "finding_ids": [
-            "D-024"
+            "D-028"
           ],
           "why": "в документе нет конкретного действия или ожидаемого результата"
         }
@@ -7034,8 +7431,8 @@
       "status": "gap",
       "line": 0,
       "finding_ids": [
-        "D-003",
-        "D-005"
+        "D-004",
+        "D-008"
       ],
       "checked": [],
       "note": "ответ дало автоматическое правило"
@@ -7147,7 +7544,7 @@
       "status": "gap",
       "line": 0,
       "finding_ids": [
-        "D-013"
+        "D-016"
       ],
       "checked": [],
       "note": "ответ дало автоматическое правило"
@@ -7261,7 +7658,7 @@
       "status": "gap",
       "line": 0,
       "finding_ids": [
-        "D-002"
+        "D-003"
       ],
       "checked": [],
       "note": "ответ дало автоматическое правило"
@@ -7352,9 +7749,9 @@
       "ok": false,
       "text": "Нельзя отдавать в разработку: 3 блокера (предварительно)",
       "blockers": [
-        "D-008",
-        "D-012",
-        "D-022"
+        "D-011",
+        "D-015",
+        "D-026"
       ]
     },
     "test": {
