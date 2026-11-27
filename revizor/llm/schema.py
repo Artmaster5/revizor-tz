@@ -93,6 +93,74 @@ def parse_json_loose(text: str) -> Any:
     raise ValueError("в ответе не найден разборный JSON (начало: «%s»)" % snippet)
 
 
+
+def _salvage_shape(schema: Any) -> tuple[str, list[str], list[str]] | None:
+    """(list key, item keys that start an item, other top-level keys) for a schema {"<key>": [ {…}, … ]}."""
+    if not isinstance(schema, dict) or schema.get("type") != "object":
+        return None
+    req = schema.get("required") or []
+    props = schema.get("properties") or {}
+    if len(req) != 1 or not isinstance(props.get(req[0]), dict):
+        return None
+    arr = props[req[0]]
+    items = arr.get("items")
+    if arr.get("type") != "array" or not isinstance(items, dict) or items.get("type") != "object":
+        return None
+    starts = [k for k in (items.get("required") or []) if isinstance(k, str)]
+    if not starts:
+        return None
+    return req[0], starts, [k for k in props if k != req[0]]
+
+
+def salvage_items(text: str, schema: Any) -> tuple[dict, int] | None:
+    """Rescue a broken answer of the form {"<key>": [ {…}, {…}, … ]} item by item.
+
+    A weaker model sometimes breaks the JSON inside one item: an unescaped quote copied from the document,
+    a bad escape. The loose parser then finds only a nested object, and the whole answer is lost although
+    every other item is fine. Here each item that starts with one of its required keys is decoded on its
+    own; a broken one is skipped. Returns ({"<key>": items}, number of skipped items) or None.
+    """
+    shape = _salvage_shape(schema)
+    if shape is None or not isinstance(text, str):
+        return None
+    key, starts, others = shape
+    s = _THINK_RE.sub("", text)
+    head = re.search(r'"%s"\s*:\s*\[' % re.escape(key), s)
+    if head is None:
+        return None
+    start_re = re.compile(r'\{\s*"(?:%s)"\s*:' % "|".join(re.escape(k) for k in starts))
+    other_re = re.compile(r'"(?:%s)"\s*:' % "|".join(re.escape(k) for k in others)) if others else None
+    items: list[dict] = []
+    broken = 0
+    pos = head.end()
+    while True:
+        m = start_re.search(s, pos)
+        if m is None:
+            break
+        if other_re is not None:  # the list is over: the next top-level field starts before the next item
+            o = other_re.search(s, pos, m.start())
+            if o is not None:
+                break
+        try:
+            obj, end = _DECODER.raw_decode(s, m.start())
+        except ValueError:
+            broken += 1
+            pos = m.start() + 1
+            continue
+        if not isinstance(obj, dict):
+            broken += 1
+            pos = m.start() + 1
+            continue
+        items.append(obj)
+        pos = end
+        rest = s[end:end + 200].lstrip()
+        if rest.startswith("]"):
+            break
+    if not items:
+        return None
+    return {key: items}, broken
+
+
 # --- validate -----------------------------------------------------------------
 
 _TYPE_RU = {

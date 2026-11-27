@@ -15,7 +15,7 @@ import time
 from dataclasses import dataclass, fields
 from typing import Any, Callable
 
-from .schema import parse_json_loose, validate, validate_ex
+from .schema import parse_json_loose, salvage_items, validate, validate_ex
 
 # --- usage -------------------------------------------------------------------
 
@@ -374,6 +374,29 @@ class Backend:
             return data, ["$: ожидался объект JSON {…}, получено %s" % type(data).__name__]
         return data, []
 
+    def _salvage(self, text2: str, text: str, schema: dict | None, stage: str) -> dict | None:
+        """Both answers broke the form: keep every whole item of the better one (``salvage_items``) instead of
+        losing the whole batch. None when nothing whole is left. The skipped items are named in the notes."""
+        best = None
+        for t in (text2, text):
+            got = salvage_items(t, schema)
+            if got is None:
+                continue
+            data, errors, notes = validate_ex(got[0], schema)
+            if errors:
+                continue
+            key = next(iter(got[0]))
+            n = len(data.get(key) or [])
+            if best is None or n > best[1]:
+                best = (data, n, got[1], notes)
+        if best is None:
+            return None
+        data, n, broken, notes = best
+        self._tls.dropped = list(getattr(self._tls, "dropped", [])) + notes
+        self.add_note("Ответ модели на этапе «%s» дважды пришёл с испорченным JSON: взято %d целых записей%s."
+                      % (stage or "?", n, ", испорченных пропущено: %d" % broken if broken else ""))
+        return data
+
     @property
     def cache_model(self) -> str:
         """Model name in the answer-cache key. A backend that may change models during a run returns the
@@ -405,6 +428,7 @@ class Backend:
                     return data, Usage(seconds=time.monotonic() - t0, from_cache=True)
 
         total = Usage()
+        salvaged = False  # a partial answer rescued item by item is used but not cached: a rerun asks again
         sent_effort = effort  # what goes to the provider; the cache key keeps the REQUESTED effort
         try:
             text, usage = self._call_raw(system, user, max_tokens, effort)
@@ -443,6 +467,9 @@ class Backend:
             self._tls.dropped = []
             data, errors2 = self._check(text2, schema)
             if errors2:
+                data = self._salvage(text2, text, schema, stage)
+                salvaged = data is not None
+            if errors2 and data is None:
                 raise LLMBadOutput(
                     "Модель дважды вернула ответ не в нужной форме (этап «%s»): %s"
                     % (stage or "?", _short_errors(errors2)),
@@ -450,7 +477,7 @@ class Backend:
                     % (_short_errors(errors, 5), text2[:600]),
                 )
         total.seconds = time.monotonic() - t0
-        if cache is not None:
+        if cache is not None and not salvaged:
             # Key recomputed: the model may have been substituted during the call. The key uses the REQUESTED
             # effort even after a lower-effort retry, so the next identical run finds this answer and pays nothing.
             key = cache.key(self.provider, self.cache_model, effort, system, user)

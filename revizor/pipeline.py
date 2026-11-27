@@ -1235,7 +1235,14 @@ def _skeptic(gate, findings, info, inj, audit, unchecked, say, *, qi=None, econo
             unchecked.append(f"Перепроверка не выполнена для {count(len(ch), W_FINDING)} "
                              f"({ch[0].fid}…{ch[-1].fid}): {err}")
             continue
-        decisions += [d for d in ans.get("decisions") or [] if isinstance(d, dict)]
+        got = [d for d in ans.get("decisions") or [] if isinstance(d, dict)]
+        named = {str(d.get("fid") or "").strip() for d in got}
+        silent = [f.fid for f in ch if f.fid not in named]
+        if silent:  # e.g. a broken answer rescued item by item: say which findings the re-check did not judge
+            unchecked.append(f"Перепроверка не выполнена для {count(len(silent), W_FINDING)} "
+                             f"({', '.join(silent[:6])}{'…' if len(silent) > 6 else ''}): модель не вернула по ним "
+                             f"решения, они оставлены как есть.")
+        decisions += got
     out = apply_gate(findings, decisions, qi=qi, injection=info.injection_suspected, audit=audit)
     deduped = 0
     rest = gate_order(findings)

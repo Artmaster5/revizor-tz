@@ -1,6 +1,6 @@
 # Ревизор ТЗ
 
-[![тесты](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) — 1248 тестов проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13
+[![тесты](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) — 1256 тестов проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13
 
 ИИ-агент проверяет документ с требованиями до начала разработки и пишет отчёт на русском языке. Главное в нём — уточнение: агент задаёт автору конкретные вопросы, принимает ответы, перепроверяет документ и показывает, что изменилось.
 
@@ -21,7 +21,7 @@
 | Сравнение двух версий ТЗ | `python main.py --compare старый.json новый.json`: что закрыто, что осталось, что нового. Пример — автор ответил на вопросы агента, вышла новая версия: закрыто 15 дефектов, блокеры 3 → 0, индекс готовности 54 → 82 (проверка правилами без модели) — [`docs/demo/compare/`](docs/demo/compare/v1_v3.compare.md), что изменено и по какому ответу — [`CHANGES.md`](docs/demo/compare/CHANGES.md) |
 | Вызов из чата с ИИ (MCP) | агент подключается к Claude Desktop, Cursor и VS Code: аналитик пишет в чате «проверь это ТЗ» — [`docs/MCP.md`](docs/MCP.md) |
 | Как устроен | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
-| Тесты агента | 1248 тестов без ключей и без сети; на GitHub проходят на Windows, macOS и Linux — [запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) |
+| Тесты агента | 1256 тестов без ключей и без сети; на GitHub проходят на Windows, macOS и Linux — [запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml) |
 | Ценность для банка и пилот | [`docs/VALUE.md`](docs/VALUE.md), [`docs/PILOT.md`](docs/PILOT.md) |
 | Трудные вопросы и ответы на них: секретные документы, ошибки ИИ, деньги, внедрение | [`docs/FAQ.md`](docs/FAQ.md) |
 | Полная карта проекта: все функции, где каждая в коде, все числа с источником | [`docs/FOR_AI_REVIEW.md`](docs/FOR_AI_REVIEW.md), удобно и для проверки с помощью ИИ |
@@ -190,7 +190,7 @@ python main.py --input docs/requirements.md --output reports/my_answered.md --pr
 
 Сданный отчёт `reports/report.md` сделан в глубоком режиме на модели `claude-opus-5-5`, версия 1.5.0. Его написал сам агент командой `python main.py --input docs/requirements.md --output reports/report.md --model claude-opus-5-5`; повторная проверка с ответами автора — та же команда с `--output reports/report_answered.md --answers docs/demo/answers.md`. Тот же документ на модели `claude-haiku-5-5` — [`reports/report_haiku.md`](reports/report_haiku.md). История тегов и перерисованных отчётов — в [`docs/HISTORY.md`](docs/HISTORY.md). Отчёт на модели Haiku в `reports/` собран на прежней версии (тег `v1.1.1`); числа раздела «Точность» ниже измерены на версии 1.4.0 отдельными прогонами.
 
-**Тесты.** 1248 тестов, без ключей и без сети; на GitHub они проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13 ([запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml)):
+**Тесты.** 1256 тестов, без ключей и без сети; на GitHub они проходят на Windows, macOS и Linux, Python 3.10, 3.12 и 3.13 ([запуски](https://github.com/Artmaster5/revizor-tz/actions/workflows/tests.yml)):
 
 ```bash
 python -m unittest discover -s tests -t .

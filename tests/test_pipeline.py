@@ -386,6 +386,16 @@ class DegradationTests(_Base):
         self.assertTrue(any("Перепроверка не выполнена" in w for w in res.run.warnings))
         self.assertTrue(any(f.title == "Слабое замечание к набору" for f in res.findings))
 
+    def test_skeptic_silent_on_some_findings_is_named(self):
+        def first_only(u):
+            ans = skeptic_answer(u)
+            ans["decisions"] = ans["decisions"][:1]
+            return ans
+        res, _ = self.run_fake(make_script(skeptic=first_only))
+        silent = [w for w in res.run.warnings if "модель не вернула по ним решения" in w]
+        self.assertTrue(silent, res.run.warnings)
+        self.assertTrue(silent[0].startswith("Перепроверка не выполнена для"))
+
     def test_internal_error_becomes_diagnostic(self):
         def boom(stage, system, user):
             raise RuntimeError("bug")
