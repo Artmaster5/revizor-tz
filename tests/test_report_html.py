@@ -131,7 +131,7 @@ class Constructs(unittest.TestCase):
 class Safety(unittest.TestCase):
     def test_script_inert(self):
         h = render_html("<script>alert(1)</script>\n\nтекст <script>x</script>\n\n| <script>y</script> |\n|---|\n| z |")
-        self.assertNotIn("<script", h.lower())
+        self.assertEqual(h.lower().count("<script"), 1)   # только свой скрипт переключателя темы
         self.assertIn("&lt;script&gt;", h)
 
     def test_img_onerror_inert(self):
@@ -152,7 +152,7 @@ class Safety(unittest.TestCase):
         self.assertEqual([i for i in check(h).ids if i in ('x', 'a"b')], [])
 
     def test_no_script_in_page_chrome(self):
-        self.assertNotIn("<script", render_html("# a").lower())
+        self.assertEqual(render_html("# a").lower().count("<script"), 1)  # только переключатель темы
 
 
 class Output(unittest.TestCase):
@@ -189,7 +189,7 @@ class Smoke(unittest.TestCase):
         c = check(h)
         self.assertEqual(c.errors, [])
         self.assertEqual(c.stack, [])
-        self.assertNotIn("<script", h.lower())
+        self.assertEqual(h.lower().count("<script"), 1)   # только свой скрипт переключателя темы
         self.assertEqual(len(c.ids), len(set(c.ids)))
         in_source = set(re.findall(r'<a id="([^"]+)"></a>', src))      # links the report itself leaves dangling are not ours
         missing = [x for x in c.hrefs if x.startswith("#") and x[1:] in in_source and x[1:] not in c.ids]
