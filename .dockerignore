@@ -1,0 +1,24 @@
+# Секреты и локальные файлы в образ не попадают
+.env
+.env.*
+.git
+.github
+.venv
+.cache
+**/__pycache__
+**/*.pyc
+.DS_Store
+# не нужно сайту: тесты, оценка, презентация, рабочие прогоны
+tests
+eval
+tools
+presentation.pdf
+docs/slides
+docs/img
+reports/*.pdf
+reports/ui
+reports/live*
+reports/my_*
+reports/demo*
+reports/gemini*
+reports/blind*

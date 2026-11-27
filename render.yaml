@@ -1,0 +1,28 @@
+# Render Blueprint: New → Blueprint → этот репозиторий. Шаги и лимиты — docs/DEPLOY.md.
+services:
+  - type: web
+    name: revizor-tz
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      # бесплатный ключ Google Gemini: значение вводится в панели Render, в репозиторий не пишется
+      - key: GEMINI_API_KEY
+        sync: false
+      # адрес посетителя за прокси Render: первая запись X-Forwarded-For
+      - key: PUBLIC_TRUST_PROXY
+        value: first
+      # лимиты (можно менять в панели Render без новой сборки)
+      - key: PUBLIC_MAX_UPLOAD_MB
+        value: "5"
+      - key: PUBLIC_RUNS_PER_IP
+        value: "3"
+      - key: PUBLIC_DAILY_RUNS
+        value: "20"
+      - key: PUBLIC_CHECKS_PER_IP
+        value: "20"
+      - key: PUBLIC_RUN_TIMEOUT_S
+        value: "900"

@@ -85,7 +85,10 @@ class Settings:
         self.run_timeout = _env_int(env, "PUBLIC_RUN_TIMEOUT_S", 900, 30, 7200)
         self.job_ttl = _env_int(env, "PUBLIC_JOB_TTL_MIN", 120, 1, 7 * 24 * 60) * 60
         self.max_jobs = _env_int(env, "PUBLIC_MAX_JOBS", 200, 10, 10_000)
-        self.trust_proxy = _env_int(env, "PUBLIC_TRUST_PROXY", 0, 0, 5)
+        # The visitor's address behind a proxy: "" or 0 = the TCP peer; "first" = the first X-Forwarded-For entry
+        # (any proxy chain; a visitor can forge it, the daily total still holds); N = the N-th entry from the right.
+        tp = str(env.get("PUBLIC_TRUST_PROXY") or "").strip().lower()
+        self.trust_proxy = -1 if tp == "first" else _env_int(env, "PUBLIC_TRUST_PROXY", 0, 0, 5)
         self.access_code = str(env.get("ACCESS_CODE") or "").strip()
         p = str(env.get("PUBLIC_PROVIDER") or "gemini").strip().lower()
         self.provider = p if p in KEY_LABELS else "gemini"
@@ -602,7 +605,7 @@ class _PublicHandler(webui._Handler):
         if hops:
             parts = [p.strip() for p in (self.headers.get("X-Forwarded-For") or "").split(",") if p.strip()]
             if parts:
-                ip = parts[-hops] if len(parts) >= hops else parts[0]
+                ip = parts[0] if hops < 0 or len(parts) < hops else parts[-hops]
         return ip[:64]
 
     def do_HEAD(self) -> None:
