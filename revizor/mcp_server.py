@@ -58,6 +58,9 @@ TOOLS: list[dict[str, Any]] = [
             **_SOURCE_PROPS,
             "provider": {"type": "string", "enum": _PROVIDERS, "default": "auto",
                          "description": "Какая модель проверяет. auto — по ключам из .env; offline — без модели."},
+            "depth": {"type": "string", "enum": ["full", "fast"], "default": "full",
+                      "description": "full — три линзы и перепроверка; fast — один проход, быстрее "
+                                     "(удобно, если чат ограничивает время ответа инструмента)."},
             "output_dir": {"type": "string",
                            "description": "Папка для отчётов. По умолчанию — временная папка revizor-mcp."},
         }},
@@ -126,10 +129,18 @@ def _default_out_dir() -> Path:
 
 # ---------------------------------------------------------------- инструменты
 
+def _check_choice(name: str, value: str, allowed) -> None:
+    if value not in allowed:
+        raise RpcError(-32602, f"Параметр «{name}»: неизвестное значение «{value[:40]}»; допустимо: {', '.join(allowed)}.")
+
+
 def tool_check_requirements(args: dict) -> str:
     from . import cli, config
 
     provider = _str_arg(args, "provider") or "auto"
+    depth = _str_arg(args, "depth") or "full"
+    _check_choice("provider", provider, _PROVIDERS)
+    _check_choice("depth", depth, ("full", "fast"))
     out_dir = Path(_str_arg(args, "output_dir") or _default_out_dir()).expanduser()
     try:
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -138,9 +149,10 @@ def tool_check_requirements(args: dict) -> str:
     inp, _tmp = _source(args, out_dir / "source")
     stem = Path(inp).stem if not _tmp else "document"
     out_path = out_dir / f"{stem}.report.md"
-    parsed = cli.build_parser().parse_args(["--input", inp, "--output", str(out_path), "--provider", provider, "--quiet"])
     env = config.build_env()
     try:
+        parsed = cli.build_parser().parse_args(["--input", inp, "--output", str(out_path), "--provider", provider,
+                                                "--depth", depth, "--quiet"])
         with contextlib.redirect_stdout(sys.stderr):
             _code, result, written = cli.execute(parsed, env, lambda s: _log(str(s)))
     except cli.UsageError as e:
@@ -223,10 +235,8 @@ def tool_estimate_run(args: dict) -> str:
 
     provider = _str_arg(args, "provider") or "auto"
     depth = _str_arg(args, "depth") or "full"
-    if depth not in ("full", "fast"):
-        raise RpcError(-32602, "Параметр «depth» должен быть full или fast.")
-    if provider not in _PROVIDERS:
-        raise RpcError(-32602, f"Неизвестный провайдер «{provider}»; допустимо: {', '.join(_PROVIDERS)}.")
+    _check_choice("provider", provider, _PROVIDERS)
+    _check_choice("depth", depth, ("full", "fast"))
     inp, tmp = _source(args)
     lines: list[str] = []
     parsed = cli.build_parser().parse_args(["--input", inp, "--output", "x.md", "--provider", provider,
@@ -273,6 +283,9 @@ def _call_tool(params: Any) -> dict:
         raise
     except ToolError as e:
         return {"content": [{"type": "text", "text": str(e)}], "isError": True}
+    except SystemExit as e:  # чужой sys.exit внутри проверки не должен останавливать сервер
+        _log(f"Инструмент {params['name']} попытался завершить процесс (код {e.code}).")
+        return {"content": [{"type": "text", "text": "Проверка прервалась, сервер продолжает работу."}], "isError": True}
     except Exception as e:  # инструмент не должен ронять сервер
         _log(f"Ошибка инструмента {params['name']}: {type(e).__name__}: {e}")
         return {"content": [{"type": "text", "text": f"Не удалось выполнить инструмент: внутренняя ошибка "

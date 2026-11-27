@@ -36,6 +36,27 @@ class HandlerTests(unittest.TestCase):
         msg = json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"})
         self.assertIsNone(mcp_server.handle_line(msg))
 
+    def test_check_rejects_unknown_provider_and_depth(self):
+        for args in ({"path": str(DOC), "provider": "claude"}, {"path": str(DOC), "depth": "deep"}):
+            r = rpc("tools/call", {"name": "check_requirements", "arguments": args})
+            self.assertEqual(r["error"]["code"], -32602)
+
+    def test_check_fast_offline(self):
+        with tempfile.TemporaryDirectory() as d:
+            r = rpc("tools/call", {"name": "check_requirements", "arguments": {
+                "path": str(DOC), "provider": "offline", "depth": "fast", "output_dir": d}})
+            self.assertFalse(r["result"]["isError"], r["result"]["content"][0]["text"])
+            self.assertIn("Вердикт", r["result"]["content"][0]["text"])
+
+    def test_system_exit_inside_tool_keeps_server(self):
+        old = mcp_server._HANDLERS["list_checks"]
+        mcp_server._HANDLERS["list_checks"] = lambda args: (_ for _ in ()).throw(SystemExit(3))
+        try:
+            r = rpc("tools/call", {"name": "list_checks", "arguments": {}})
+        finally:
+            mcp_server._HANDLERS["list_checks"] = old
+        self.assertTrue(r["result"]["isError"])
+
     def test_ping_and_tools_list(self):
         self.assertEqual(rpc("ping")["result"], {})
         names = [t["name"] for t in rpc("tools/list")["result"]["tools"]]
