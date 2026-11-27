@@ -193,7 +193,7 @@ python main.py --ui
 | Что | Значение | Где проверить |
 | :--- | :--- | :--- |
 | Число тестов | 1224 (число определений `def test_` в `tests/`) | `README.md`; `grep -rn "def test_" tests` |
-| Файлов с тестами | 50 (`tests/test_*.py`) | `ls tests` |
+| Файлов с тестами | 53 (`tests/test_*.py`) | `ls tests` |
 | Запуск | `python -m unittest discover -s tests -t .`; без сети и без ключей, провайдеры проверяются с заглушкой вместо сервера | `docs/ARCHITECTURE.md` |
 | CI | GitHub Actions, матрица 3 системы × 3 версии Python: Ubuntu, Windows, macOS × Python 3.10, 3.12, 3.13; установка зависимостей, тесты, дымовой прогон `--provider offline`; отдельный прогон в консоли Windows с кодовой страницей 866. Запускается вручную (`workflow_dispatch`) | `.github/workflows/tests.yml` |
 | Переменная для тестов | `REVIZOR_NO_DOTENV=1` отключает чтение `.env` | `revizor/config.py`, `.github/workflows/tests.yml` |
@@ -279,7 +279,7 @@ eval/                      ACCURACY.md, RESULTS.md, score.py, run_all.py, summar
                            docs/ (документ организаторов и четыре документа с ключами), blind/ blind2/ blind3/ (двенадцать документов с ключами), results/
 reports/                   сданный отчёт (report.*), повторная проверка с ответами (report_answered.*), образцы Haiku, без модели, диагностики
 examples/                  PDF-версия документа организаторов, испорченные файлы (examples/broken/)
-tests/                     50 файлов с тестами, 1224 теста; fixtures/
+tests/                     53 файла с тестами, 1224 теста; fixtures/
 tools/                     roi.py (окупаемость), rerender.py (пересборка отчёта из JSON), make_fixtures.py, shots.py, build_slides.py
 .github/workflows/         tests.yml
 ```

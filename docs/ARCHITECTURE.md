@@ -112,7 +112,7 @@ flowchart LR
 
 ## Конвейер подробно: этапы модели и параллельность
 
-Запросы к модели по этапам: `slice`, `slice_rest`, `review_clarity`, `review_completeness`, `review_correctness` (при `--depth fast` один общий `review`), `set_consistency`, `set_completeness`, `set_standards`, `set_gaps` (проход-критик; идёт и при `--depth fast`; повторный запрос только по вопросам, на которые модель не ответила), `skeptic`, `questions`, `answers`, `tests`, `checklist` (только если в документе найден незаполненный чек-лист ревью; пункты по 25 за запрос). Пакеты требований (по 12, у Gemini по 40; меняет `LLM_BATCH_SIZE`) идут в пул запросов вместе с проверками набора. Число одновременных запросов задаёт `LLM_CONCURRENCY`: по умолчанию 4 у Claude и OpenAI, 1 у Gemini и Ollama. В режиме экономии нарезка идёт без модели, а шаги отправляются по ценности (см. «Сбои и запасные пути»).
+Запросы к модели по этапам: `slice`, `slice_rest`, `review_clarity`, `review_completeness`, `review_correctness` (при `--depth fast` один общий `review`), `set_consistency`, `set_completeness`, `set_standards`, `set_gaps` (проход-критик; идёт и при `--depth fast`; повторный запрос только по вопросам, на которые модель не ответила), `skeptic`, `questions`, `answers`, `tests`, `checklist` (только если в документе найден незаполненный чек-лист ревью; пункты по 25 за запрос). Пакеты требований (по 12, у Gemini по 40; меняет `LLM_BATCH_SIZE`) идут в пул запросов вместе с проверками набора. Число одновременных запросов задаёт `LLM_CONCURRENCY`: по умолчанию 6 у Claude, 4 у OpenAI, 1 у Gemini и Ollama. В режиме экономии нарезка идёт без модели, а шаги отправляются по ценности (см. «Сбои и запасные пути»).
 
 ## Модель данных
 
